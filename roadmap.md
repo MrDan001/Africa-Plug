@@ -60,18 +60,23 @@ Source: screenshot of the current build at `the-africa-plug-five.vercel.app`, ca
 **Rule:** the logo is a brand asset, not a design element. Use the supplied logo file exactly as provided. Never retype the wordmark in a font, redraw the globe, or recolour any part of it. The description below only tells a developer what the logo should look like, so they can check their work against it.
 
 **Lockup, left to right**
-1. **Globe mark:** a globe with an outline map of Africa, drawn in thin white lines with a pink accent.
-2. **Wordmark**, stacked on two lines:
-   - Small "THE", white, uppercase, wide letter-spacing, sitting above the word "AFRICA"
-   - **"AFRICA"** in white, bold, uppercase
-   - **"PLUG"** in pink, bold, uppercase, on the same line as "AFRICA" or directly alongside it as in the reference
+1. **Globe mark** (three parts):
+   - A circle drawn in thin white lines, with curved latitude and longitude lines to form a globe
+   - A **solid pink silhouette of Africa** in the centre of the globe
+   - A **pink power plug**, with its cord, entering the globe from the left and crossing the circle outline, pointing toward Africa. This is the "plug" in the brand name.
+2. **Wordmark**, to the right of the globe:
+   - Small **"THE"**, white, bold, uppercase, sitting above the start of the word "AFRICA"
+   - **"AFRICA"** in white, extra-bold, uppercase
+   - **"PLUG"** in pink, extra-bold, uppercase, on the same line directly after "AFRICA"
+   - The wordmark is a heavy, tightly spaced sans-serif, and the globe is about as tall as the two lines of text together
 
 **Logo colours**
 
 | Part | Colour |
 |---|---|
-| Globe lines | White |
-| Globe accent | Pink (same pink as the wordmark) |
+| Globe circle and grid lines | White |
+| Africa silhouette (solid fill) | Pink |
+| Power plug and cord | Pink |
 | "THE" and "AFRICA" | White |
 | "PLUG" | Pink, roughly `#F5005E` (estimate only) |
 
@@ -86,7 +91,8 @@ The pink in the logo, the pink "MOVING." in the headline and the solid pink butt
 
 **Files needed from the client (the screenshot is not enough)**
 - Logo as **SVG** (preferred), with a PNG fallback
-- A compact version of the globe mark alone, for the favicon and small sizes
+- A compact version of the globe mark alone (globe, Africa and plug, without the wordmark), for the favicon and small sizes
+- The logo on a transparent background, so it sits on both the header and the hero photograph
 - The exact pink as a hex value, which overrides the estimate above
 
 ---
