@@ -1,3 +1,5 @@
+import FeaturedStories from "@/components/blog/FeaturedStories";
+
 const photos = {
   fk: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1200&q=85",
   excavator: "https://images.unsplash.com/photo-1580901368919-7738efb0f87e?auto=format&fit=crop&w=1200&q=85",
@@ -117,33 +119,7 @@ export default function HomeSections() {
         </div>
       </section>
 
-      <section className="blog-section content-section" id="blog">
-        <div className="blog-intro">
-          <Eyebrow>LATEST FROM THE BLOG</Eyebrow>
-          <h2>IDEAS. INSIGHTS. REAL TALK.</h2>
-          <p>Articles, analysis and stories on business, opportunity, innovation and life in Africa.</p>
-          <a className="button button-pink" href="#blog">VISIT THE BLOG <span>→</span></a>
-        </div>
-        <div className="blog-cards">
-          <a href="#contact" className="blog-card">
-            <div role="img" aria-label="African city skyline" className="blog-image" style={{ backgroundImage: `url("${photos.city}")` }} />
-            <div className="blog-card-copy"><h3>Why Africa’s Next Wave Isn’t Just About Resources</h3><span>Business <Arrow /></span></div>
-          </a>
-          <a href="#contact" className="blog-card">
-            <div role="img" aria-label="Green agricultural landscape" className="blog-image" style={{ backgroundImage: `url("${photos.farm}")` }} />
-            <div className="blog-card-copy"><h3>The Power of Local Partnerships</h3><span>Investment <Arrow /></span></div>
-          </a>
-          <a href="#contact" className="blog-card">
-            <div role="img" aria-label="Connected city lights at night" className="blog-image" style={{ backgroundImage: `url("${photos.network}")` }} />
-            <div className="blog-card-copy"><h3>Building a More Connected Africa</h3><span>Innovation <Arrow /></span></div>
-          </a>
-        </div>
-        <div className="social-strip">
-          <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer"><b>in</b> Follow on LinkedIn</a>
-          <a href="https://www.youtube.com/" target="_blank" rel="noreferrer"><b>▶</b> Watch on YouTube</a>
-          <a href="https://www.instagram.com/" target="_blank" rel="noreferrer"><b>◎</b> Follow on Instagram</a>
-        </div>
-      </section>
+      <FeaturedStories variant="home" />
 
       <section className="closing-section" id="contact">
         <Eyebrow>STAY CONNECTED</Eyebrow>
