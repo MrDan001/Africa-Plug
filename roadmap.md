@@ -11,7 +11,7 @@ Last updated: 14 Oct 2026
 
 **Last reviewed:** 14 October 2026  
 **Repository checked:** [`MrDan001/Africa-Plug`](https://github.com/MrDan001/Africa-Plug), branch `main`  
-**Storefront update:** the Store now uses a warm, photo-led bookstore hero and two levels of wooden shelves, with ten designed covers, individual book details and a browser-persisted cart. The Store header has a condensed desktop menu and cart control. The cart can prepare an email order enquiry but is not payment checkout; secure payment and digital delivery remain launch dependencies.
+**Storefront update:** the Store now uses a warm, photo-led bookstore hero and two levels of wooden shelves, with ten designed covers shared with individual book details and a browser-persisted cart. The Store header has a condensed desktop menu and cart control. The cart can prepare an email order enquiry but is not payment checkout; secure payment and digital delivery remain launch dependencies.
 
 This section records what is present in the repository today. The stage descriptions below remain the target scope; a route or component existing does not mean the connected business workflow is complete or production-tested.
 

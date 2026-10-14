@@ -1453,3 +1453,6 @@ html { scroll-padding-top: 92px; }
 @media(prefers-reduced-motion:reduce){.tap-store-cover,.tap-store-product-cover-link{transition:none}}
 
 @media (min-width:681px) and (max-width:800px){.tap-store-page{padding-top:76px}}
+
+/* Keep the same photographic artwork cropped correctly on individual book pages. */
+.tap-book-cover--starter,.tap-book-cover--nigeria,.tap-book-cover--mapping,.tap-book-cover--partners,.tap-book-cover--research,.tap-book-cover--export,.tap-book-cover--deal,.tap-book-cover--supply,.tap-book-cover--market,.tap-book-cover--investor{background-size:cover;background-repeat:no-repeat}
