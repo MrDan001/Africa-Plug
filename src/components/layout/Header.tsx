@@ -4,12 +4,13 @@ import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 
 const NAV_ITEMS = [
-  { label: "TAP IN", href: "#tap-in" },
-  { label: "WORK WITH FK", href: "#work-with-fk" },
-  { label: "STORE", href: "#store" },
-  { label: "BLOG", href: "#blog" },
-  { label: "CONTACT", href: "#contact" },
-  { label: "ABOUT", href: "#about" },
+  { label: "Home", href: "#top" },
+  { label: "Discover", href: "#tap-in" },
+  { label: "Business & Investment", href: "#work-with-fk" },
+  { label: "Travel & Lifestyle", href: "#store" },
+  { label: "Culture", href: "#about" },
+  { label: "Media", href: "#blog" },
+  { label: "About", href: "#about" },
 ];
 
 function MenuIcon() {

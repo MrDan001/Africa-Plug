@@ -53,7 +53,8 @@ export default function MobileMenu({ items }: { items: NavItem[] }) {
           aria-label="Menu"
           className="mobile-menu-panel fixed inset-0 z-[60] flex flex-col bg-navy px-5"
         >
-          <div className="flex h-20 items-center justify-between border-b border-white/10">\n            <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/50">Explore</span>
+          <div className="flex h-20 items-center justify-between border-b border-white/10"> 
+            <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/50">Explore</span>
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -81,7 +82,7 @@ export default function MobileMenu({ items }: { items: NavItem[] }) {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="mobile-menu-link flex items-center justify-between border-b border-white/10 py-[17px] text-[17px] font-medium tracking-[0.015em] text-white/90 transition-colors hover:text-signal"
+                    className="mobile-menu-link block border-0 py-[17px] text-[17px] font-normal tracking-normal text-white/85 transition-colors hover:text-signal"
                   >
                     {item.label}
                   </Link>
