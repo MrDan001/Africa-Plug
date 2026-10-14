@@ -41,3 +41,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 The homepage Africa Playbook feature links directly to the Store and presents a designed collection of book-cover artwork. The Store presents ten demo guide/workbook covers on visual shelf boards. Each title has its own detail page with a longer description, included topics, demo price and purchase-enquiry action.
 
 **Commerce status:** titles, content and prices are placeholders. The current Pay action opens an email enquiry and does not charge a customer. Connect and test secure checkout and digital-file delivery before selling real products.
+
+
+## Homepage intro video
+
+A temporary Africa-themed YouTube sample is embedded in the intro-video slot immediately below the hero carousel. It is only a visual placeholder and should be replaced with the approved FK introduction video before launch. Keep large video files out of the Git repository and deployment bundle; for a real uploaded video, use a media host such as Vercel Blob or an unlisted YouTube upload.

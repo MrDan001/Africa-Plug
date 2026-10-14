@@ -24,12 +24,18 @@ export default function HomeSections() {
   return (
     <>
       <section className="intro-section section-grid" id="about">
-        <a className="video-poster" href="#work-with-fk" aria-label="Meet FK and explore commercial consultancy">
-          <div className="poster-image" role="img" aria-label="Podcast microphone in a dark recording studio" style={{ backgroundImage: `linear-gradient(180deg,rgba(4,5,9,.05),rgba(4,5,9,.38)),url("${photos.fk}")` }} />
-          <span className="play-button" aria-hidden="true">▶</span>
-          <span className="video-tag">MEET FK <i>•</i> INTRODUCTION</span>
-          <span className="video-duration">VIDEO INTRODUCTION <b>↗</b></span>
-        </a>
+        <div className="intro-video-card" aria-label="Africa Plug intro video sample">
+          <iframe
+            className="intro-video-embed"
+            src="https://www.youtube-nocookie.com/embed/jTC26BkcY_M?rel=0&playsinline=1"
+            title="Africa — cinematic travel video (temporary sample for The Africa Plug introduction)"
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+          <span className="intro-video-sample-badge">TEMPORARY VIDEO SAMPLE</span>
+        </div>
         <div className="intro-copy">
           <Eyebrow>MEET FK</Eyebrow>
           <h2>A FEW WORDS<br />ABOUT THE AFRICA PLUG</h2>
