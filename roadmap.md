@@ -553,3 +553,11 @@ EMAIL_FK=fk@
 - [x] Kept article cards, internal article routes, the official email contact and editable local article content intact.
 - [ ] Verify an article ends with the TAP takeaway followed by “End of article”, with no source list.
 - [ ] Confirm blog pages no longer navigate to external websites from article/source/social controls after deployment.
+
+
+### Homepage external-media cleanup — 14 October 2026
+
+- [x] Replaced the temporary YouTube sample iframe with a static, non-clickable introduction card.
+- [x] Kept a branded visual area under the homepage intro while awaiting the approved FK film.
+- [ ] Replace the static card with the approved video when provided; any player should be configured without unnecessary outbound navigation.
+- [ ] Verify homepage appearance on mobile and desktop after deployment.

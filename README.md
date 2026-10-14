@@ -89,3 +89,8 @@ The Blog now contains ten practical, fully written editorial explainers covering
 ## Blog outbound-link cleanup (14 October 2026)
 
 Removed the per-article “Sources and further reading” block and the external source URL list from the local article data. Also removed generic LinkedIn, YouTube and Instagram placeholder links from the homepage blog strip. Blog cards and article navigation remain internal, and the ten stories are stored in `src/lib/blog-posts.ts` for later editing. Official email contact links remain email actions, not website links. Remote images and the existing intro-video embed remain media resources rather than clickable blog/source links.
+
+
+## External link cleanup — homepage media (14 October 2026)
+
+The temporary third-party YouTube sample embed has been replaced with a non-clickable, photo-led introduction card. This avoids sending visitors to an unapproved external video and leaves a visual slot for the final FK introduction film. Blog article source links and generic social placeholder links were removed in the preceding commit. External photography assets remain loaded as images; they are not clickable outbound links.
