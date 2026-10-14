@@ -33,6 +33,14 @@ button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 ::selection { color: white; background: var(--signal); }
 
+.mobile-menu-panel { background: rgba(5,6,9,.985); }
+.mobile-menu-link:hover span { color: var(--signal); }
+.mobile-menu-link:focus-visible { outline: 1px solid var(--signal); outline-offset: -2px; }
+@media (max-width: 680px) {
+  .mobile-menu-panel { padding-left: 22px; padding-right: 22px; }
+  .mobile-menu-link { font-size: 16px; padding-top: 16px; padding-bottom: 16px; }
+}
+
 .site-header {
   position: absolute;
   inset: 0 0 auto;
