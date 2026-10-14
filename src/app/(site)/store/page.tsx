@@ -7,7 +7,7 @@ export default function StorePage() {
       title="TOOLS FOR YOUR NEXT STEP."
       description="Practical resources designed to help you understand the landscape, think clearly about opportunities and take informed next steps."
       actionLabel="ASK ABOUT THE STARTER GUIDE"
-      actionHref="mailto:ask@theafricaplug.com?subject=Africa%20Starter%20Guide"
+      actionHref="mailto:connect@theafricaplug.com?subject=Africa%20Starter%20Guide"
     >
       <div className="store-feature">
         <div className="store-feature-art" aria-hidden="true">
@@ -23,7 +23,7 @@ export default function StorePage() {
           <h2>The Africa Starter Guide</h2>
           <p>A practical guide for people who want to better understand Africa’s commercial landscape and approach opportunities with stronger context.</p>
           <p className="store-status"><span /> Preparing for release</p>
-          <a className="standard-text-link" href="mailto:ask@theafricaplug.com?subject=Notify%20me%20about%20the%20Africa%20Starter%20Guide">Ask for release updates <span aria-hidden="true">↗</span></a>
+          <a className="standard-text-link" href="mailto:connect@theafricaplug.com?subject=Notify%20me%20about%20the%20Africa%20Starter%20Guide">Ask for release updates <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <div className="standard-section-heading">
