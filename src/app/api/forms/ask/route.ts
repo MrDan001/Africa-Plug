@@ -1,3 +1,2 @@
-export async function POST() {
-  return Response.json({ error: "Not implemented" }, { status: 501 });
-}
+import { handleLeadSubmission } from "@/lib/forms/submit-lead";
+export async function POST(request: Request) { return handleLeadSubmission(request, "ask"); }
