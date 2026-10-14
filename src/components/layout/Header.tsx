@@ -29,6 +29,7 @@ export default function Header() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="brand-logo" />
           <span className="brand-wordmark" aria-hidden="true">
+            <span className="brand-the">THE</span>
             <span className="brand-africa">AFRICA</span>
             <span className="brand-plug">PLUG</span>
           </span>
