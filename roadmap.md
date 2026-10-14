@@ -561,3 +561,11 @@ EMAIL_FK=fk@
 - [x] Kept a branded visual area under the homepage intro while awaiting the approved FK film.
 - [ ] Replace the static card with the approved video when provided; any player should be configured without unnecessary outbound navigation.
 - [ ] Verify homepage appearance on mobile and desktop after deployment.
+
+
+## Journal header simplification — 14 October 2026
+
+- [x] Removed the “10 original articles…” sentence from the Blog hero.
+- [x] Removed the “10 ARTICLES” badge beside the archive heading.
+- [x] Removed unused CSS for both elements.
+- [ ] Verify mobile spacing and the transition from the Journal intro into the article grid after deployment.

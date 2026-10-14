@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FeaturedStories from "@/components/blog/FeaturedStories";
-import { BLOG_POSTS } from "@/lib/blog-posts";
 
 export const metadata: Metadata = {
   title: "The TAP Journal",
@@ -22,7 +21,6 @@ export default function BlogPage() {
             <div className="blog-page-topic-list" aria-label="Journal topics">
               <span>Business</span><span>Trade</span><span>Investment</span><span>Technology</span><span>Culture</span><span>Infrastructure</span>
             </div>
-            <p className="blog-page-library-note"><strong>{BLOG_POSTS.length} original articles.</strong> Each story includes a practical takeaway and links to public research for further reading.</p>
           </div>
         </div>
       </section>

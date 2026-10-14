@@ -25,8 +25,7 @@ export default function FeaturedStories({ variant = "home" }: FeaturedStoriesPro
           {isHome ? (
             <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link>
           ) : (
-            <span className="featured-blog-count">10 ARTICLES</span>
-          )}
+)}
         </header>
 
         {isHome ? (

@@ -94,3 +94,8 @@ Removed the per-article “Sources and further reading” block and the external
 ## External link cleanup — homepage media (14 October 2026)
 
 The temporary third-party YouTube sample embed has been replaced with a non-clickable, photo-led introduction card. This avoids sending visitors to an unapproved external video and leaves a visual slot for the final FK introduction film. Blog article source links and generic social placeholder links were removed in the preceding commit. External photography assets remain loaded as images; they are not clickable outbound links.
+
+
+## Journal header simplification (14 October 2026)
+
+Removed the library-count sentence from the Journal hero and the separate article-count badge beside the archive heading, as requested. The hero now focuses on the brand headline, introduction and topic labels; the full article grid remains intact. Related unused CSS was removed.

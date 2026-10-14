@@ -1451,10 +1451,7 @@ html { scroll-padding-top: 92px; }
 }
 
 /* TAP Journal article library — responsive archive cards and full article reading layout. */
-.blog-page-library-note { margin: 15px 0 0 !important; color: #c2c5cd !important; font-size: 11px !important; line-height: 1.65 !important; }
-.blog-page-library-note strong { color: #fff; }
 .featured-blog-intro { max-width: 640px; margin: 11px 0 0; color: #aeb4bf; font-size: 12px; line-height: 1.7; }
-.featured-blog-count { display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; padding: 10px 12px; border: 1px solid rgba(245,0,112,.55); color: #ff4b9e; font-size: 9px; font-weight: 900; letter-spacing: .12em; white-space: nowrap; }
 .featured-blog-grid--journal { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: none; min-height: 0; align-items: stretch; gap: 18px; }
 .featured-blog-grid--journal .featured-blog-card--journal { display: flex; min-height: 395px; flex-direction: column; background: #101217; }
 .featured-blog-grid--journal .featured-blog-card--journal::after { display: none; }
