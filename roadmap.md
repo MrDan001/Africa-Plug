@@ -343,7 +343,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 3: TAP IN, Blog and Store — PARTIAL FRONT-END / HARD-CODED DEMO
 
-**Current status:** Store now has ten hard-coded demo titles, a bookshelf presentation and book detail pages built from `src/components/store/books.ts`. Prices and descriptions are illustrative; checkout and digital delivery are not implemented. `src/app/(site)/tap-in/[slug]/page.tsx` is still `Placeholder`; TAP IN landing cards are static focus areas, not live opportunities. Blog entries in `src/lib/blog-posts.ts` are marked preview-only and article pages show an “article is being prepared” message rather than full stories. The Supabase client/server helper files contain only `export {}`; no database schema/migrations or connected content API exist.
+**Current status:** Store has ten hard-coded demo titles, photo-led cover designs, a rebuilt two-level wooden bookshelf layout, individual book-detail routes, and a browser-local cart with quantity updates/removal and an email order-enquiry action. Prices and descriptions remain illustrative; the cart does not take payment and digital delivery is not implemented. `src/app/(site)/tap-in/[slug]/page.tsx` is still `Placeholder`; TAP IN landing cards are static focus areas, not live opportunities. Blog entries in `src/lib/blog-posts.ts` are marked preview-only and article pages show an “article is being prepared” message rather than full stories. The Supabase client/server helper files contain only `export {}`; no database schema/migrations or connected content API exist.
 
 **Planned deliverables**
 - TAP IN listing page and one page per listing, with share image and Express Interest form (listing name attached automatically)
