@@ -1,4 +1,5 @@
 import FeaturedStories from "@/components/blog/FeaturedStories";
+import BookstoreFeature from "@/components/home/BookstoreFeature";
 
 const photos = {
   fk: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1200&q=85",
@@ -88,6 +89,8 @@ export default function HomeSections() {
           </a>
         </div>
       </section>
+
+      <BookstoreFeature />
 
       <section className="product-section" id="store">
         <div className="product-art" aria-label="Africa Starter Guide product preview">
