@@ -25,9 +25,13 @@ export default function Header() {
     <header className="site-header">
       <div className="header-inner">
         <Link href="#top" aria-label="Africa Plug — top of page" className="brand-lockup">
-          {/* Exact supplied brand asset; not redrawn or re-typeset. */}
+          {/* Exact supplied logo mark, paired with a readable wordmark for mobile. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo.svg" alt="The Africa Plug" className="brand-logo" />
+          <img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="brand-logo" />
+          <span className="brand-wordmark" aria-hidden="true">
+            <span className="brand-africa">AFRICA</span>
+            <span className="brand-plug">PLUG</span>
+          </span>
         </Link>
 
         <nav aria-label="Main navigation" className="desktop-nav">

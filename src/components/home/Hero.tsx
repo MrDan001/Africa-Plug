@@ -91,20 +91,6 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="hero-controls">
-        <div className="hero-caption">
-          <strong>{slide.captionTitle}</strong>
-          <span>{slide.captionText}</span>
-        </div>
-        <div className="carousel-tools">
-          <button type="button" aria-label="Previous slide" onClick={() => go(index - 1)} className="carousel-arrow">←</button>
-          <span className="slide-count">{String(index + 1).padStart(2, "0")} <i>/</i> {String(SLIDES.length).padStart(2, "0")}</span>
-          <button type="button" aria-label="Next slide" onClick={() => go(index + 1)} className="carousel-arrow">→</button>
-          <button type="button" aria-label={paused ? "Play carousel" : "Pause carousel"} aria-pressed={paused} className="pause-button" onClick={() => setPaused((value) => !value)}>
-            {paused ? <span aria-hidden="true">▶</span> : <span aria-hidden="true">Ⅱ</span>}
-          </button>
-        </div>
-      </div>
     </section>
   );
 }
