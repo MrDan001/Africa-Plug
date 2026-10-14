@@ -52,7 +52,8 @@ This section records what is present in the repository today. The stage descript
 - [x] Next.js application, shared site layout, navigation and footer exist.
 - [x] Black, white and TAP-pink visual system is in place.
 - [~] Compare the logo lockup on desktop/mobile against the approved original brand file.
-- [ ] Implement the intended fixed/sticky header; current header styling is top-absolute and scrolls away.
+- [x] The shared header is fixed in the final CSS rules.
+- [x] Desktop links now stay visible above 800px; hamburger navigation is reserved for narrower screens.
 - [ ] Add a visible, keyboard-accessible carousel pause/resume control and previous/next navigation.
 - [ ] Complete keyboard, accessibility, responsive-layout and cross-browser review.
 - [ ] Run and record a clean production build and lint check.
@@ -306,7 +307,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 1: Foundation and design shell — PRESENT, NOT SIGNED OFF
 
-**Current status:** The shared styling, site layout, header/mobile navigation, footer, hero carousel and legal pages exist. The final header override uses `position: fixed`; desktop navigation visibility was the problem. It previously switched to the hamburger at 1000px; this rebuild moves that responsive breakpoint to 800px. The supplied logo lockup still needs comparison with the approved asset. The hero has three hard-coded slides and auto-advances, but no visible pause control, arrows or progress indicators are rendered even though the target brief requires a pause control. Slide caption fields and a navigation helper are defined but not used. Homepage hero copy/CTAs also differ from parts of the visual reference. Legal drafts need business-detail confirmation and review.
+**Current status:** The shared styling, site layout, header/mobile navigation, footer, hero carousel and legal pages exist. The final header override uses `position: fixed`; desktop navigation previously switched to the hamburger at 1000px, so the current code moves that responsive breakpoint to 800px. The supplied logo lockup still needs comparison with the approved asset. The hero has three hard-coded slides and auto-advances, but no visible pause control, arrows or progress indicators are rendered even though the target brief requires a pause control. Slide caption fields and a navigation helper are defined but not used. Homepage hero copy/CTAs also differ from parts of the visual reference. Legal drafts need business-detail confirmation and review.
 
 **Planned deliverables / review target**
 - `src/app/globals.css`: colour tokens (navy, charcoal, pink signal), base styles
@@ -391,7 +392,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 6: SEO, QA and launch — PARTIAL SCAFFOLD; NOT LAUNCH-READY
 
-**Current status:** `robots.ts` and a core static sitemap are present, but the sitemap omits dynamic book/article detail routes and the Work With FK application route. `JsonLd.tsx` returns `null`. Cookie policy copy explicitly says a preference banner has not been verified; no actual consent banner is present in the active component tree. Legal pages contain substantive drafts but need confirmed business details and legal review. Vercel reports deployment completed for the current source; local build/lint and browser-based accessibility/mobile/performance checks were not run in this audit.
+**Current status:** `robots.ts` and a core static sitemap are present, but the sitemap omits dynamic book/article detail routes and the Work With FK application route. `JsonLd.tsx` returns `null`. Cookie policy copy explicitly says a preference banner has not been verified; no actual consent banner is present in the active component tree. Legal pages contain substantive drafts but need confirmed business details and legal review. The video-code commit previously reported a completed Vercel deployment; the latest storefront/cart commit was still deploying when this roadmap was last checked. Local build/lint and browser-based accessibility/mobile/performance checks were not run in this audit.
 
 **Planned deliverables**
 - Metadata, 1200x630 share image, en_GB locale, structured data, sitemap, robots.txt

@@ -71,4 +71,4 @@ See [roadmap.md](./roadmap.md) for the itemised done/partial/remaining checklist
 
 The Store page has been rebuilt with a warm, photo-led bookstore banner, ten designed book covers across two wooden shelf levels, individual book detail links, and a cart control in the Store header. The cart saves selections in browser local storage and supports quantity updates/removal. Its order action composes an email enquiry; it does not process payment. Secure checkout and digital delivery remain future launch requirements.
 
-The shared desktop navigation now remains visible above 800px; the hamburger is reserved for widths at or below 800px. Verify the deployed result on desktop, mobile, and 801–1000px widths.
+The shared desktop navigation now remains visible above 800px; the hamburger is reserved for widths at or below 800px. The storefront/cart commit was still deploying when last checked. Verify the deployed result on desktop, mobile, and 801–1000px widths.
