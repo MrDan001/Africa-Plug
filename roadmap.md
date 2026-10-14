@@ -569,3 +569,12 @@ EMAIL_FK=fk@
 - [x] Removed the “10 ARTICLES” badge beside the archive heading.
 - [x] Removed unused CSS for both elements.
 - [ ] Verify mobile spacing and the transition from the Journal intro into the article grid after deployment.
+
+
+## Build failure fix — 14 October 2026
+
+- [x] Fixed malformed conditional JSX in `src/components/blog/FeaturedStories.tsx` that caused the production build to fail at line 28 (Turbopack: “Expected '</', got '}'”).
+- [ ] Confirm the next Vercel production build for commit `15d1e555` completes successfully.
+- [ ] If the build reveals another error, address that error before treating the deployment as ready.
+
+**Verification note:** The supplied Vercel log showed the build stopping during JSX parsing, before compilation completed. The npm configuration and install-script messages were warnings; the malformed JSX was the fatal error.
