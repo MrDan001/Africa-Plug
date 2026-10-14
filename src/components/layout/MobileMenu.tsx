@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 type NavItem = { label: string; href: string };
@@ -10,82 +9,47 @@ export default function MobileMenu({ items }: { items: NavItem[] }) {
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = previous;
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Open menu"
+        onClick={() => setOpen((value) => !value)}
+        aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls="mobile-menu"
-        className="p-2 text-white"
+        className="mobile-menu-trigger"
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          aria-hidden="true"
-        >
-          <path d="M3 7h18M3 12h18M3 17h18" strokeLinecap="round" />
-        </svg>
+        {open ? (
+          <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="m5 5 14 14M19 5 5 19" strokeLinecap="round" />
+          </svg>
+        ) : (
+          <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M3 6.5h18M3 12h18M3 17.5h18" strokeLinecap="round" />
+          </svg>
+        )}
       </button>
 
       {open && (
-        <div
-          id="mobile-menu"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menu"
-          className="mobile-menu-panel fixed inset-0 z-[60] flex flex-col bg-navy px-5"
-        >
-          <div className="flex h-20 items-center justify-between border-b border-white/10"> 
-            <span className="text-[11px] font-medium uppercase tracking-[0.24em] text-white/50">Explore</span>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-              className="p-2 text-white"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <path d="M5 5l14 14M19 5L5 19" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-
-          <nav aria-label="Mobile" className="mt-6">
-            <ul className="space-y-0">
+        <div id="mobile-menu" className="mobile-menu-panel">
+          <nav aria-label="Mobile navigation">
+            <ul>
               {items.map((item) => (
                 <li key={item.href}>
-                  <Link
+                  <a
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="mobile-menu-link block border-0 py-[17px] text-[17px] font-normal tracking-normal text-white/85 transition-colors hover:text-signal"
+                    className="mobile-menu-link"
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>

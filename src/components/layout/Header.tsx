@@ -4,35 +4,25 @@ import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 
 const NAV_ITEMS = [
-  { label: "Home", href: "#top" },
-  { label: "Discover", href: "#tap-in" },
-  { label: "Business & Investment", href: "#work-with-fk" },
-  { label: "Travel & Lifestyle", href: "#store" },
-  { label: "Culture", href: "#about" },
-  { label: "Media", href: "#blog" },
-  { label: "About", href: "#about" },
+  { label: "TAP IN", href: "/tap-in" },
+  { label: "WORK WITH FK", href: "/work-with-fk" },
+  { label: "STORE", href: "/store" },
+  { label: "BLOG", href: "/blog" },
+  { label: "CONTACT", href: "/contact" },
+  { label: "ABOUT", href: "/about" },
 ];
-
-function MenuIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-      <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 export default function Header() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="#top" aria-label="Africa Plug — top of page" className="brand-lockup">
+        <Link href="#top" aria-label="The Africa Plug — back to top" className="brand-lockup">
           {/* Exact supplied logo mark, paired with a readable wordmark for mobile. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="brand-logo" />
           <span className="brand-wordmark" aria-hidden="true">
             <span className="brand-the">THE</span>
-            <span className="brand-africa">AFRICA</span>
-            <span className="brand-plug">PLUG</span>
+            <span className="brand-name"><span className="brand-africa">AFRICA</span><span className="brand-plug">PLUG</span></span>
           </span>
         </Link>
 
