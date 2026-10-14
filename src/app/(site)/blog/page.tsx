@@ -1,42 +1,54 @@
-import ContentPage from "@/components/layout/ContentPage";
+import type { Metadata } from "next";
+import Link from "next/link";
+import FeaturedStories from "@/components/blog/FeaturedStories";
 
-const themes = [
-  { label: "BUSINESS", title: "The deals shaping what comes next", copy: "Commercial thinking, market context and practical perspectives." },
-  { label: "CULTURE", title: "The people behind the progress", copy: "Stories and perspectives that add context to the wider picture." },
-  { label: "TRAVEL & LIFESTYLE", title: "See the continent with fresh eyes", copy: "Places, ideas and experiences worth knowing about." },
-];
+export const metadata: Metadata = {
+  title: "The TAP Journal",
+  description:
+    "Stories and perspectives on business, investment, culture, innovation and life across Africa.",
+};
 
 export default function BlogPage() {
   return (
-    <ContentPage
-      eyebrow="THE TAP JOURNAL"
-      title="IDEAS. CONTEXT. PERSPECTIVE."
-      description="A considered look at the businesses, people, places and conversations shaping the continent. The Blog will grow here as articles are edited and published."
-      actionLabel="ASK THE AFRICA PLUG"
-      actionHref="/contact"
-    >
-      <div className="standard-section-heading">
-        <p className="standard-eyebrow">EDITORIAL THEMES</p>
-        <h2>More than headlines.</h2>
-        <p>Explore the themes the journal will cover. These are editorial areas, not published articles.</p>
-      </div>
-      <div className="standard-card-grid">
-        {themes.map((theme, index) => (
-          <article className="standard-card" key={theme.label}>
-            <span className="standard-card-number">0{index + 1}</span>
-            <p className="standard-card-category">{theme.label}</p>
-            <h3>{theme.title}</h3>
-            <p>{theme.copy}</p>
-            <span className="standard-coming-label">ARTICLES COMING SOON</span>
-          </article>
-        ))}
-      </div>
-      <div className="standard-social-row">
-        <span>FOLLOW THE CONVERSATION</span>
-        <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-        <a href="https://www.youtube.com/" target="_blank" rel="noreferrer">YouTube ↗</a>
-        <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram ↗</a>
-      </div>
-    </ContentPage>
+    <div className="blog-page">
+      <section className="blog-page-hero">
+        <div className="blog-page-hero-inner">
+          <div className="blog-page-hero-copy">
+            <p className="blog-page-eyebrow">THE TAP JOURNAL</p>
+            <h1>Stories that help you see the bigger picture.</h1>
+          </div>
+          <div className="blog-page-hero-summary">
+            <p>
+              Thoughtful perspectives on the people, businesses, culture and
+              opportunities shaping Africa. Context beyond the headline, from
+              a continent that never stands still.
+            </p>
+            <div className="blog-page-topic-list" aria-label="Journal topics">
+              <span>Business</span>
+              <span>Investment</span>
+              <span>Culture</span>
+              <span>Innovation</span>
+              <span>Travel &amp; Lifestyle</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <FeaturedStories variant="page" />
+
+      <section className="blog-page-invitation">
+        <div>
+          <p className="blog-page-eyebrow">KEEP THE CONVERSATION GOING</p>
+          <h2>Have a perspective worth sharing?</h2>
+          <p>
+            We’re interested in useful insight, original ideas and stories that
+            add context to the way people understand Africa.
+          </p>
+        </div>
+        <Link href="/contact" className="blog-page-contact-link">
+          Speak to the team <span aria-hidden="true">↗</span>
+        </Link>
+      </section>
+    </div>
   );
 }
