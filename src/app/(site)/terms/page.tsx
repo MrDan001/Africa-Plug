@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main>Placeholder</main>;
+import { TermsOfUse } from "@/components/layout/LegalPages";
+
+export default function TermsPage() {
+  return <TermsOfUse />;
 }
