@@ -52,6 +52,8 @@ This section records what is present in the repository today. The stage descript
 - [x] Next.js application, shared site layout, navigation and footer exist.
 - [x] Black, white and TAP-pink visual system is in place.
 - [~] Compare the logo lockup on desktop/mobile against the approved original brand file.
+- [ ] Implement the intended fixed/sticky header; current header styling is top-absolute and scrolls away.
+- [ ] Add a visible, keyboard-accessible carousel pause/resume control and previous/next navigation.
 - [ ] Complete keyboard, accessibility, responsive-layout and cross-browser review.
 - [ ] Run and record a clean production build and lint check.
 
@@ -61,6 +63,8 @@ This section records what is present in the repository today. The stage descript
 - [ ] Open the deployed site on a phone and desktop to confirm the video is visible, plays, and does not overflow; deployment status alone does not confirm the visual result.
 - [ ] Replace the sample with the approved 40–60 second FK introduction, plus poster and captions.
 - [~] Homepage sections are mostly presentational and use hard-coded copy, imagery and sample proof points.
+- [ ] Fix homepage CTAs that point to themselves or to the generic contact anchor, plus the broken footer/search anchors.
+- [ ] Replace generic social links with official profiles.
 - [ ] Finalize approved copy, real testimonials/case studies, image assets and verified social links.
 
 ### Stage 3 — TAP IN, Blog and Store
@@ -71,6 +75,7 @@ This section records what is present in the repository today. The stage descript
 - [ ] Confirm actual books, covers, descriptions, prices, product files and selling terms.
 - [ ] Connect Store products to persistent data/CMS records.
 - [ ] Implement secure checkout, payment confirmation, receipts and protected digital delivery.
+- [ ] Implement the TAP IN slug/detail page, which currently renders `Placeholder`.
 - [ ] Replace sample TAP IN listings with approved opportunities and finish listing-specific enquiries.
 - [ ] Connect Blog articles, tags, publishing and article-detail content to persistent data.
 
@@ -96,11 +101,12 @@ This section records what is present in the repository today. The stage descript
 - [ ] Complete metadata, sitemap, structured data, social-sharing images and analytics events.
 - [ ] Verify environment variables, sender-domain configuration, email delivery, database and media storage.
 - [ ] Test all major pages, links, forms, video, checkout and digital delivery on mobile and desktop.
+- [ ] Add an automated test suite for form validation, content routes and critical payment/webhook flows.
 - [ ] Review performance, image/video loading, keyboard access and error states.
 - [ ] Confirm the production domain and verify the final live release after the checks above pass.
 
 ### Recommended next actions (in order)
-1. **Verify the current deployed homepage video and core mobile layout**. The deployment reports success, but a real browser/device check is still needed.
+1. **Verify the homepage video and core mobile layout**. The video-code commit received a successful deployment status, but the later documentation-only commit was still deploying at the last check and a real browser/device review is still needed.
 2. **Finish a focused QA pass of the existing homepage and Store demo** before layering on more visual changes.
 3. **Agree the real product catalogue and selling details**, then connect Store to persistent product data and implement checkout/delivery.
 4. **Build the CMS/admin and required business workflows** so products, articles and opportunities can be maintained without editing code.
