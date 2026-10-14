@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main>Placeholder</main>;
+import { RefundPolicy } from "@/components/layout/LegalPages";
+
+export default function DepositRefundTermsPage() {
+  return <RefundPolicy />;
 }
