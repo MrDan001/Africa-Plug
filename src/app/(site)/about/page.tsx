@@ -1,4 +1,5 @@
 import ContentPage from "@/components/layout/ContentPage";
+import EnquiryForm from "@/components/forms/EnquiryForm";
 
 const values = [
   { number: "01", title: "Clarity", copy: "Make the opportunity, the process and the next step easier to understand." },
@@ -35,8 +36,8 @@ export default function AboutPage() {
           <h2>Have something meaningful to build together?</h2>
           <p>We welcome conversations with brands, sponsors, event organisers, guests and organisations whose work fits the platform.</p>
         </div>
-        <a className="standard-button" href="mailto:connect@theafricaplug.com?subject=Partner%20with%20TAP">Explore a partnership <span aria-hidden="true">↗</span></a>
       </div>
+      <EnquiryForm kind="partner" />
     </ContentPage>
   );
 }
