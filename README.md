@@ -53,3 +53,8 @@ A temporary Africa-themed YouTube sample is embedded in the intro-video slot imm
 The latest repository roadmap now includes an actionable, stage-by-stage working checklist. The homepage and Store are front-end prototypes; the Store's sample Pay actions are email enquiries, not real checkout. The temporary intro video is embedded below the homepage carousel and its latest commit reports a completed Vercel deployment, but the live presentation still needs visual/device verification.
 
 See [roadmap.md](./roadmap.md) for remaining launch blockers across product data, CMS/admin, payments and digital delivery, forms/email, legal/compliance, SEO and QA.
+
+
+## SEO and legal implementation note
+
+The current sitemap contains the core static page routes; dynamic book-detail URLs have not yet been added. Privacy, Terms, Cookies and Refunds pages contain substantive policy drafts, but business details and legal review still need to be completed before launch. A source review is not a substitute for running the build and testing the live deployment.

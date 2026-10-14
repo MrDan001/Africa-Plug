@@ -27,7 +27,7 @@ This section records what is present in the repository today. The stage descript
 | Payments and commercial funnel | **Not implemented** | Stripe is installed and a helper exists, but checkout, Stripe webhook, Work With FK approval and scheduling routes return HTTP 501. The current application form is only an initial enquiry; it takes no payment. |
 | Database / CMS | **Not implemented as a connected content system** | Supabase packages and client/server helpers exist. The current pages are not backed by a finished content schema or a working content-management workflow; no migration/schema files are present in the current repository tree. |
 | Admin dashboard | **Not implemented** | `/admin` currently renders `Placeholder`, and its layout only renders children. The current branch does not show the promised secure CMS/admin workflow. |
-| SEO and legal | **Partial scaffold only** | `robots.ts` exists, but `sitemap.ts` returns an empty array. The Privacy, Terms, Cookies and Deposit & Refund Terms routes are placeholders, not final legal documents. |
+| SEO and legal | **Partially implemented; final review needed** | `robots.ts` exists and `sitemap.ts` lists the core static routes. Dynamic demo-book detail URLs are not included in the sitemap. Privacy, Terms, Cookies and Refunds pages contain substantive policy drafts, but they still need business-detail confirmation, implementation checks and appropriate legal review before launch. |
 | Configuration | **Example file present; live values unknown** | `.env.example` documents Resend sender/delivery and optional Turnstile variables. Repository inspection cannot confirm whether Vercel environment variables or Resend domain verification are correctly configured. Never put real secrets in Git. |
 | Build and production verification | **Not verified in this review** | No build, lint, end-to-end form delivery, or live production test was run as part of this GitHub-only inspection. Do not treat the latest commit as proof that the deployed site is healthy or that emails reach the inbox. |
 
@@ -40,7 +40,7 @@ This section records what is present in the repository today. The stage descript
 | 3. TAP IN, Blog and Store | **Front-end demo in progress** | Homepage Playbook feature now links directly to the shelf and no longer shows a duplicate “COMING SOON” book block. Ten demo covers are displayed on visual shelf boards, each with a dedicated detail route. Replace demo content with approved real products, connect persistent product records, implement secure checkout and digital delivery, and complete TAP IN workflows. |
 | 4. Forms and Work With FK funnel | **Initial enquiries partly implemented** | Verify live email delivery, implement distinct routing, newsletter, full application review/approval, verified payments and scheduling. |
 | 5. Admin dashboard | **Not started in this branch** | Build secure login and CMS workflows against persistent content/data. |
-| 6. SEO, QA and launch | **Partial scaffold** | Populate sitemap, finish legal/cookie/analytics setup, run build and device checks, verify the exact production deployment and domain. |
+| 6. SEO, QA and launch | **Partial scaffold** | Review the existing core-page sitemap and add dynamic product URLs as appropriate; finalize policy drafts and cookie/analytics setup, run build and device checks, and verify the exact production deployment and domain. |
 
 ## 1A. Working delivery checklist
 
@@ -90,7 +90,7 @@ This section records what is present in the repository today. The stage descript
 - [ ] Test admin permissions, uploads, edits, archiving and auditability before relying on the CMS.
 
 ### Stage 6 — SEO, compliance, QA and launch
-- [~] Basic robots and metadata scaffolding exists, but the sitemap is empty and legal routes are placeholders.
+- [~] `robots.ts` exists and `sitemap.ts` lists core static routes; individual book-detail URLs are not listed. Privacy, Terms, Cookies and Refunds pages contain substantive drafts but still need business-detail confirmation and legal review.
 - [ ] Finish and review original Privacy, Terms, Cookies and Refunds/Deposit terms before payments go live.
 - [ ] Implement and test the appropriate cookie-consent flow.
 - [ ] Complete metadata, sitemap, structured data, social-sharing images and analytics events.
@@ -261,7 +261,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 1: Foundation and design shell — BUILT, REVIEW PENDING
 
-**Current status:** The shared styling, site layout, header/mobile navigation, footer, hero carousel and legal route files exist. This is not fully signed off: the supplied logo lockup needs comparison with the approved asset, design decisions remain open, and the legal routes currently contain placeholders. The current homepage hero content/CTAs are hard-coded and differ from some of the reference wording in section 2A.
+**Current status:** The shared styling, site layout, header/mobile navigation, footer, hero carousel and legal route files exist. This is not fully signed off: the supplied logo lockup needs comparison with the approved asset, design decisions remain open, and the existing legal policy drafts need confirmation of the actual contracting entity/business address and appropriate review. The current homepage hero content/CTAs are hard-coded and differ from some of the reference wording in section 2A.
 
 **Planned deliverables / review target**
 - `src/app/globals.css`: colour tokens (navy, charcoal, pink signal), base styles
@@ -346,7 +346,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 6: SEO, QA and launch — PARTIAL SCAFFOLD; NOT LAUNCH-READY
 
-**Current status:** A robots route exists, but the sitemap currently returns no URLs. The legal route files are placeholders, and a production deployment, environment configuration, inbox delivery, build/lint, accessibility, mobile and performance checks have not been verified in this review.
+**Current status:** `robots.ts` exists and `sitemap.ts` currently emits a list of core static routes; dynamic product-detail URLs are not included. The legal pages contain substantive draft policy copy, but they need business-detail confirmation and appropriate legal review. A clean build/lint run, inbox delivery, accessibility, mobile and performance checks have not been independently verified in this source review.
 
 **Planned deliverables**
 - Metadata, 1200x630 share image, en_GB locale, structured data, sitemap, robots.txt
@@ -467,6 +467,6 @@ EMAIL_FK=fk@
 5. **Build the real content layer.** Define the Supabase schema and storage model, then connect TAP IN listings, Blog articles, Store products, slugs, detail pages, search/tags and featured content to real records. Replace the current placeholder detail pages.
 6. **Build and secure the admin/CMS.** Implement protected login and content editing for opportunities, enquiries, articles, products, media, homepage modules, settings and feature flags. Treat the admin specification as planned scope until these features exist and are tested in this repository.
 7. **Implement the commercial funnel only after decisions/legal review.** Finalise fees, deposit, refund, cancellation, no-show and rescheduling rules; obtain legal review; then implement verified Stripe payments/webhooks, approval messages and scheduling unlocks. The current checkout, webhook, approval and scheduling endpoints are stubs.
-8. **Complete launch QA.** Fill in the real legal pages and cookie consent, generate a useful sitemap, set metadata/structured data/analytics, verify all links and forms on phone and desktop, run build/lint and accessibility/performance checks, then confirm the production domain and post-deploy behaviour.
+8. **Complete launch QA.** Finalize and review the existing legal policy drafts, implement and verify cookie consent, review the existing sitemap and add dynamic product URLs where needed, set metadata/structured data/analytics, verify all links and forms on phone and desktop, run build/lint and accessibility/performance checks, then confirm the production domain and post-deploy behaviour.
 
 **Current recommendation:** Start with steps 1–3. That validates the repository/deployment boundary and turns the forms already in the code into a proven working contact channel before more features are added.
