@@ -86,7 +86,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .desktop-nav a:hover, .footer-nav a:hover { color: var(--signal); }
 .header-actions { display: flex; align-items: center; gap: 17px; }
 .header-cta { padding: 13px 22px !important; font-size: 10px !important; }
-.mobile-menu-wrap { display: block; }
+.mobile-menu-wrap { display: none; }
 .search-button { width: 25px; height: 25px; display: grid; place-items: center; color: #fff; }
 .search-button:hover { color: var(--signal); }
 
