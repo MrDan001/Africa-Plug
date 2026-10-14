@@ -654,3 +654,46 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .standard-process-step { grid-template-columns: 37px 1fr; gap: 12px; }
   .standard-social-row { gap: 14px; }
 }
+
+
+
+/* Lead capture forms */
+.enquiry-panel { margin-top: 38px; padding: clamp(22px,4vw,38px); border: 1px solid rgba(255,255,255,.13); border-top: 2px solid var(--signal); background: linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012)); }
+.enquiry-panel-heading { max-width: 650px; margin-bottom: 23px; }
+.enquiry-panel-heading h2 { margin: 0; color: #fff; font-size: clamp(25px,3.3vw,36px); line-height: 1.1; letter-spacing: -.035em; font-weight: 800; }
+.enquiry-panel-heading > p:last-child { margin: 10px 0 0; color: #a9afb9; font-size: 12px; line-height: 1.7; }
+.enquiry-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 17px; }
+.enquiry-form-grid label { display: flex; min-width: 0; flex-direction: column; gap: 8px; }
+.enquiry-form-grid label > span { color: #e9eaf0; font-size: 11px; font-weight: 600; }
+.enquiry-form-grid label > span b { color: var(--signal); }
+.enquiry-form-grid label > span small { color: #818792; font-size: 9px; font-weight: 400; margin-left: 6px; }
+.enquiry-form-grid input, .enquiry-form-grid select, .enquiry-form-grid textarea { width: 100%; min-width: 0; border: 1px solid rgba(255,255,255,.17); border-radius: 2px; outline: none; background: #090a0e; color: #f6f6f8; padding: 12px 13px; font: inherit; font-size: 12px; line-height: 1.5; transition: border-color .2s ease; }
+.enquiry-form-grid input:focus, .enquiry-form-grid select:focus, .enquiry-form-grid textarea:focus { border-color: var(--signal); }
+.enquiry-form-grid textarea { min-height: 135px; resize: vertical; }
+.enquiry-full-width { grid-column: 1 / -1; }
+.enquiry-form-grid input::placeholder, .enquiry-form-grid textarea::placeholder { color: #6f747f; }
+.enquiry-honeypot { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
+.enquiry-security { margin-top: 18px; color: #8f95a0; font-size: 10px; }
+.enquiry-security small { display: block; margin-top: 7px; }
+.enquiry-submit-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 17px; margin-top: 22px; }
+.enquiry-submit-row .standard-button { margin-top: 0; cursor: pointer; }
+.enquiry-submit-row .standard-button:disabled { cursor: not-allowed; opacity: .5; }
+.enquiry-submit-row > p { margin: 0; color: #959ba6; font-size: 10px; line-height: 1.6; }
+.enquiry-submit-row > p a, .enquiry-status a { color: white; text-decoration: underline; text-decoration-color: var(--signal); text-underline-offset: 3px; }
+.enquiry-status { margin: 20px 0 0; padding: 13px 14px; border: 1px solid rgba(255,255,255,.14); font-size: 12px; line-height: 1.65; }
+.enquiry-status.success { border-color: rgba(83,200,132,.45); background: rgba(83,200,132,.06); color: #b8f0ce; }
+.enquiry-status.error { border-color: rgba(245,0,112,.4); background: rgba(245,0,112,.06); color: #f5b7d1; }
+.enquiry-privacy-note { margin: 15px 0 0; color: #707681; font-size: 9px; line-height: 1.6; }
+.contact-official-email { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; padding: 19px; border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.025); }
+.contact-email-mark { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto; border: 1px solid var(--signal); color: var(--signal); font-size: 20px; }
+.contact-official-email .standard-eyebrow { margin-bottom: 5px; }
+.contact-official-email a { color: white; font-size: 15px; font-weight: 650; overflow-wrap: anywhere; }
+.contact-official-email div > p:last-child { margin: 5px 0 0; color: #9fa5b0; font-size: 11px; line-height: 1.6; }
+@media (max-width: 620px) {
+  .enquiry-panel { margin-top: 27px; padding: 20px 15px; }
+  .enquiry-form-grid { grid-template-columns: 1fr; gap: 15px; }
+  .enquiry-full-width { grid-column: auto; }
+  .enquiry-submit-row { align-items: flex-start; flex-direction: column; }
+  .contact-official-email { align-items: flex-start; padding: 16px 13px; }
+  .contact-official-email a { font-size: 13px; }
+}
