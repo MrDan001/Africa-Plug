@@ -65,3 +65,10 @@ The current sitemap contains the core static page routes; dynamic book-detail UR
 A source audit has compared the App Router pages, core components, API handlers, configuration and planning documents against the intended scope. Major visual pages are present, but this is still a front-end prototype with demo book data and preview blog/opportunity content. Secure checkout, digital delivery, the CMS/admin, newsletter handling, Work With FK approval/scheduling, and verified email-routing workflows are not complete. Some homepage/footer/search anchors and carousel accessibility controls also need fixing.
 
 See [roadmap.md](./roadmap.md) for the itemised done/partial/remaining checklist and audit findings. The earlier video-code commit received a successful Vercel status; the documentation-only audit commit was still deploying when recorded. Local build/lint and interactive browser/email-delivery QA were not run in this environment.
+
+
+## Storefront rebuild
+
+The Store page has been rebuilt with a warm, photo-led bookstore banner, ten designed book covers across two wooden shelf levels, individual book detail links, and a cart control in the Store header. The cart saves selections in browser local storage and supports quantity updates/removal. Its order action composes an email enquiry; it does not process payment. Secure checkout and digital delivery remain future launch requirements.
+
+The shared desktop navigation now remains visible above 800px; the hamburger is reserved for widths at or below 800px. Verify the deployed result on desktop, mobile, and 801–1000px widths.

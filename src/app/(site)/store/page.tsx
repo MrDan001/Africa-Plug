@@ -1,10 +1,4 @@
-import ContentPage from "@/components/layout/ContentPage";
+import type {Metadata} from "next";
 import BookShelf from "@/components/store/BookShelf";
-
-export default function StorePage() {
-  return (
-    <ContentPage eyebrow="THE TAP STORE" title="THE AFRICA PLUG BOOKSHELF." description="Practical guides. Clear context. Better-informed next steps.">
-      <BookShelf />
-    </ContentPage>
-  );
-}
+export const metadata:Metadata={title:"Bookstore",description:"Explore practical guides and workbooks from The Africa Plug."};
+export default function StorePage(){return <BookShelf/>;}
