@@ -80,3 +80,7 @@ The shared navigation now has clearer horizontal spacing on desktop, stays inlin
 ## Pink CTA text contrast (14 October 2026)
 
 Pink-background actions now use white text across the Playbook bookshelf CTA, search action, book purchase/pay links, product purchase action, cart checkout action and add-to-cart controls. Hover states that switch to a white background use a dark label for readable contrast. The legacy bookstore-feature and shelf CSS modules were updated too. Visual verification after deployment remains outstanding.
+
+## TAP Journal — ten original articles (14 October 2026)
+
+The Blog now contains ten practical, fully written editorial explainers covering AfCFTA, local partnerships, mobile money, digital business, energy, food systems, SME finance, logistics, climate resilience and the creative economy. Each article has its own route, summary, reading time, tags, practical takeaway and links to public institutional research. The homepage preview remains limited to four cards while the Journal page displays all ten. Article routes are included in the sitemap and searchable through the header search. The articles are hard-coded editorial content for this stage; CMS authoring, editing, drafts and publication controls are not yet implemented.

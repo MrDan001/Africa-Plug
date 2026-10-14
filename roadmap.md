@@ -21,7 +21,7 @@ This section records what is present in the repository today. The stage descript
 | Framework and styling | **Present** | Next.js 16, React 19, TypeScript and Tailwind CSS 4 are in `package.json`. Site layout, shared styling, header, mobile menu and footer are present. |
 | Homepage and visual shell | **Presentational prototype** | The three-slide carousel and major homepage sections are present. The intro-video slot embeds a temporary external YouTube sample. Homepage content and proof points are hard-coded; there is no verified live-opportunity feed, CMS-driven content, official FK video/captions, or separate homepage featured-product block. The sample video’s visual behaviour still needs browser/device review. |
 | Logo | **Needs brand verification** | `public/images/logo.svg` and `logo-mark.svg` exist. Header/footer code uses the mark plus an HTML/CSS wordmark; verify against the approved full supplied lockup before calling this exact-logo work complete. |
-| Public routes | **Mixed prototype / demo / placeholders** | Homepage, About, Contact, Work With FK and legal routes render front-end content. Store has ten hard-coded demo books, individual details, a photo-led bookshelf layout and a browser-local cart with quantity changes/removal. Demo titles/prices are not connected to a database, and the cart's email order enquiry does not take payment. Blog cards are preview records; article detail pages explicitly say the story is being prepared. TAP IN detail route is a placeholder and TAP IN landing content is a static focus-area list, not a live feed. |
+| Public routes | **Mixed prototype / demo / placeholders** | Homepage, About, Contact, Work With FK and legal routes render front-end content. Store has ten hard-coded demo books, individual details, a photo-led bookshelf layout and a browser-local cart with quantity changes/removal. Demo titles/prices are not connected to a database, and the cart's email order enquiry does not take payment. The TAP Journal now contains ten original static explainers with dedicated article routes and institutional source links; the content is not yet CMS-managed. TAP IN detail route is a placeholder and TAP IN landing content is a static focus-area list, not a live feed. |
 | Initial enquiry forms | **Implemented in code; delivery unverified** | Contact, Partner With TAP and Work With FK pages render the reusable enquiry form. Shared Zod validation, a honeypot, Resend email sending and optional Cloudflare Turnstile support are implemented. API route files also exist for Ask and TAP IN interest. The handler currently routes submissions to `EMAIL_CONNECT` (default `connect@theafricaplug.com`), not separate `ask@` and private `fk@` routing. |
 | Newsletter | **Not implemented** | `/api/forms/subscribe` returns HTTP 501, “Not implemented”. |
 | Payments and commercial funnel | **Not implemented** | Stripe is installed and a helper exists, but checkout, Stripe webhook, Work With FK approval and scheduling routes return HTTP 501. The current application form is only an initial enquiry; it takes no payment. |
@@ -80,7 +80,8 @@ This section records what is present in the repository today. The stage descript
 - [ ] Implement secure checkout, payment confirmation, receipts and protected digital delivery.
 - [ ] Implement the TAP IN slug/detail page, which currently renders `Placeholder`.
 - [ ] Replace sample TAP IN listings with approved opportunities and finish listing-specific enquiries.
-- [ ] Connect Blog articles, tags, publishing and article-detail content to persistent data.
+- [~] Ten original Blog articles and working static detail routes are now present, with reading times, tags and source notes.
+- [ ] Connect Blog articles to the CMS/database and add editor workflows for drafts, revisions, publishing, tags and social-share metadata.
 
 ### Stage 4 — Forms and Work With FK funnel
 - [~] Initial enquiry forms and shared validation are present in code; successful inbox delivery has not been confirmed in this review.
@@ -532,3 +533,13 @@ EMAIL_FK=fk@
 - [x] Updated the older bookstore-feature and bookshelf CSS module styles so alternate/shared CTA styles follow the same rule.
 - [x] Kept hover states readable where the background changes to white by switching hover text to a dark color.
 - [ ] Verify the affected buttons visually on desktop and mobile after the latest Vercel deployment.
+
+## TAP Journal content update — 14 October 2026
+
+- [x] Added ten original, full-length explainers across trade, partnerships, mobile money, digital business, energy, food systems, SME finance, logistics, climate resilience and the creative economy.
+- [x] Replaced the article-preview placeholder with full article content, a practical takeaway, topic tags, reading time and links to institutional sources.
+- [x] Updated the Journal landing page to show all ten stories in a responsive card grid; the homepage preview remains limited to four cards.
+- [x] Added all article URLs to the sitemap and the titles to header search.
+- [ ] Verify every article route, image, source link and responsive layout after deployment.
+- [ ] Add a secure CMS workflow for drafts, editorial review, publishing dates, revisions, author profiles, categories and social-sharing metadata. The new articles are currently static files, not managed by an admin dashboard.
+- [ ] Complete production build, lint and browser QA; these changes have been source-reviewed but not built in this environment.

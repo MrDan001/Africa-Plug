@@ -1,70 +1,77 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FEATURED_BLOG_POSTS } from "@/lib/blog-posts";
+import { BLOG_POSTS } from "@/lib/blog-posts";
 
-type BlogArticlePageProps = {
-  params: Promise<{ slug: string }>;
-};
+type BlogArticlePageProps = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return FEATURED_BLOG_POSTS.map((post) => ({ slug: post.slug }));
+  return BLOG_POSTS.map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: BlogArticlePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = FEATURED_BLOG_POSTS.find((item) => item.slug === slug);
-
+  const post = BLOG_POSTS.find((item) => item.slug === slug);
   if (!post) return { title: "Article not found" };
 
   return {
     title: post.title,
     description: post.excerpt,
+    authors: [{ name: post.author }],
+    keywords: post.tags,
+    openGraph: { type: "article", title: post.title, description: post.excerpt, images: [post.image] },
   };
 }
 
-export default async function BlogArticlePage({
-  params,
-}: BlogArticlePageProps) {
+export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
   const { slug } = await params;
-  const post = FEATURED_BLOG_POSTS.find((item) => item.slug === slug);
-
+  const post = BLOG_POSTS.find((item) => item.slug === slug);
   if (!post) notFound();
 
   return (
     <article className="blog-article-page">
       <div className="blog-article-shell">
-        <Link href="/blog" className="blog-article-back">
-          <span aria-hidden="true">←</span> THE TAP JOURNAL
-        </Link>
-
+        <Link href="/blog" className="blog-article-back"><span aria-hidden="true">←</span> THE TAP JOURNAL</Link>
         <header className="blog-article-heading">
           <p className="blog-page-eyebrow">{post.category}</p>
           <h1>{post.title}</h1>
           <p>{post.excerpt}</p>
+          <div className="blog-article-byline">
+            <span>{post.author}</span><span>{post.publishedAt}</span><span>{post.readingTime}</span>
+          </div>
+          <div className="blog-article-tags" aria-label="Article topics">
+            {post.tags.map((tag) => <span key={tag}>{tag}</span>)}
+          </div>
         </header>
-
-        <div
-          className="blog-article-cover"
-          role="img"
-          aria-label={post.imageAlt}
-          style={{ backgroundImage: `url("${post.image}")` }}
-        />
-
-        <section className="blog-article-preview">
-          <p className="blog-page-eyebrow">ARTICLE PREVIEW</p>
-          <h2>This story is being prepared for publication.</h2>
-          <p>
-            This featured card previews the direction of The Africa Plug’s
-            journal. The full article will appear here when the final story has
-            been written and approved.
-          </p>
-          <Link href="/blog" className="blog-page-contact-link">
-            Explore the Journal <span aria-hidden="true">↗</span>
-          </Link>
-        </section>
+        <div className="blog-article-cover" role="img" aria-label={post.imageAlt} style={{ backgroundImage: `url("${post.image}")` }} />
+        <div className="blog-article-content">
+          {post.sections.map((section) => (
+            <section className="blog-article-content-section" key={section.heading}>
+              <h2>{section.heading}</h2>
+              {section.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+              {section.checklist ? (
+                <ul className="blog-article-checklist">
+                  {section.checklist.map((item) => <li key={item.label}><strong>{item.label}.</strong> {item.detail}</li>)}
+                </ul>
+              ) : null}
+            </section>
+          ))}
+          <aside className="blog-article-takeaway">
+            <p className="blog-page-eyebrow">THE TAP TAKEAWAY</p>
+            <p>{post.takeaway}</p>
+          </aside>
+          <section className="blog-article-sources" aria-labelledby="blog-article-sources-heading">
+            <h2 id="blog-article-sources-heading">Sources and further reading</h2>
+            <p>These articles draw on public research and institutional guidance. Rules, prices and requirements can differ by country and should be checked for the specific transaction or project.</p>
+            <ol>
+              {post.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} <span aria-hidden="true">↗</span></a></li>)}
+            </ol>
+          </section>
+          <div className="blog-article-end">
+            <span>END OF ARTICLE</span>
+            <Link href="/blog">Explore more from The TAP Journal <span aria-hidden="true">→</span></Link>
+          </div>
+        </div>
       </div>
     </article>
   );
