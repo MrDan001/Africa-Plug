@@ -19,8 +19,8 @@
 .bookDescription{min-height:78px;margin:10px 0 16px;color:#b9bbc2;font-size:12px;line-height:1.6}
 .bookPurchase{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:13px;border-top:1px solid rgba(255,255,255,.12)}
 .bookPurchase strong{font-size:17px}
-.bookPurchase a{display:inline-flex;align-items:center;justify-content:center;gap:14px;padding:11px 14px;background:#f50070;color:#08080a;font-size:12px;font-weight:900}
-.bookPurchase a:hover{background:white}
+.bookPurchase a{display:inline-flex;align-items:center;justify-content:center;gap:14px;padding:11px 14px;background:#f50070;color:#fff;font-size:12px;font-weight:900}
+.bookPurchase a:hover{background:white;color:#08080a}
 .shelfFootnote{max-width:1400px;margin:22px auto 0;color:#9698a1;font-size:11px;line-height:1.6}
 @media(max-width:1050px){.bookGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.bookCover{min-height:245px}}
 @media(max-width:720px){.shelfHeading{display:block}.shelfIntro{margin-top:17px;font-size:14px}.bookGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.bookCover{min-height:205px;padding:12px 11px}.coverBrand{font-size:7px}.bookCover h3{font-size:22px}.coverFooter{font-size:6px}.bookDetails{padding:13px 11px}.bookDetails>h3{font-size:15px}.bookDescription{min-height:112px;font-size:11px}.bookPurchase strong{font-size:14px}.bookPurchase a{padding:10px;gap:7px}}

@@ -76,3 +76,7 @@ The shared desktop navigation now remains visible above 800px; the hamburger is 
 ## Header and Store spacing polish (14 October 2026)
 
 The shared navigation now has clearer horizontal spacing on desktop, stays inline above 800px, and switches to the hamburger menu at 800px and below. The Store wrapper no longer forces a full-viewport minimum height, preventing an artificial blank block after the catalogue on shorter layouts. After the commit deploys, verify the header at 801–1000px, wide desktop, and mobile widths, and confirm the Store footer follows the demo note without a large gap.
+
+## Pink CTA text contrast (14 October 2026)
+
+Pink-background actions now use white text across the Playbook bookshelf CTA, search action, book purchase/pay links, product purchase action, cart checkout action and add-to-cart controls. Hover states that switch to a white background use a dark label for readable contrast. The legacy bookstore-feature and shelf CSS modules were updated too. Visual verification after deployment remains outstanding.

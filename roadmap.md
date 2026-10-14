@@ -525,3 +525,10 @@ EMAIL_FK=fk@
 - [x] Removed the Store page's forced min-height: 100vh, which could leave a large empty block between the catalogue and footer when the Store content was shorter than the viewport.
 - [ ] Verify the deployed header at 801–1000px and wide desktop widths, verify mobile menu opening/closing, and confirm the Store footer now follows the catalogue note without an oversized gap.
 - [ ] Run production build/lint and browser visual QA after deployment; this change is source-reviewed but has not been built or tested in a browser here.
+
+## Pink CTA contrast polish — 14 October 2026
+
+- [x] Changed dark labels to white on pink-background CTAs, search, book purchase/pay, cart checkout and add-to-cart controls.
+- [x] Updated the older bookstore-feature and bookshelf CSS module styles so alternate/shared CTA styles follow the same rule.
+- [x] Kept hover states readable where the background changes to white by switching hover text to a dark color.
+- [ ] Verify the affected buttons visually on desktop and mobile after the latest Vercel deployment.
