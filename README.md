@@ -34,3 +34,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Africa Playbook and Store
+
+The homepage Africa Playbook feature links directly to the Store and presents a designed collection of book-cover artwork. The Store presents ten demo guide/workbook covers on visual shelf boards. Each title has its own detail page with a longer description, included topics, demo price and purchase-enquiry action.
+
+**Commerce status:** titles, content and prices are placeholders. The current Pay action opens an email enquiry and does not charge a customer. Connect and test secure checkout and digital-file delivery before selling real products.

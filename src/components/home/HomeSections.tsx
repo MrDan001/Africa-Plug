@@ -92,27 +92,6 @@ export default function HomeSections() {
 
       <BookstoreFeature />
 
-      <section className="product-section" id="store">
-        <div className="product-art" aria-label="Africa Starter Guide product preview">
-          <div className="guide-book">
-            <span className="guide-title">THE AFRICA<br />STARTER GUIDE</span>
-            <svg className="africa-outline" viewBox="0 0 100 112" role="img" aria-label="Outline illustration of Africa">
-              <path d="M42 5 57 8 63 18 78 20 81 31 94 35 83 48 76 52 78 64 70 76 61 82 55 99 47 106 40 91 33 78 26 65 25 52 14 42 17 30 29 24 33 13Z" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinejoin="round" />
-              <path d="M81 82 88 85 86 99 80 106 77 96Z" fill="none" stroke="currentColor" strokeWidth="2.3" />
-            </svg>
-            <span className="guide-foot">YOUR STEP-BY-STEP GUIDE<br />TO OPPORTUNITY IN AFRICA</span>
-          </div>
-          <div className="guide-phone"><div className="phone-speaker" /><b>THE AFRICA<br />STARTER GUIDE</b><span className="phone-map">✦</span></div>
-        </div>
-        <div className="product-copy">
-          <Eyebrow>FEATURED PRODUCT</Eyebrow>
-          <h2>THE AFRICA STARTER GUIDE</h2>
-          <p>A practical guide to help you understand the landscape, find real opportunities and take the right steps.</p>
-          <strong className="product-price">COMING SOON</strong>
-          <a className="button button-pink" href="#contact">GET PRODUCT UPDATES <span>→</span></a>
-        </div>
-      </section>
-
       <section className="partner-banner" id="partner" style={{ backgroundImage: `linear-gradient(90deg,rgba(2,4,8,.98) 0%,rgba(2,4,8,.91) 30%,rgba(2,4,8,.36) 100%),url("${photos.people}")` }}>
         <div className="partner-copy">
           <Eyebrow>PARTNER WITH TAP</Eyebrow>
