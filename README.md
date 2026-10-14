@@ -99,3 +99,8 @@ The temporary third-party YouTube sample embed has been replaced with a non-clic
 ## Journal header simplification (14 October 2026)
 
 Removed the library-count sentence from the Journal hero and the separate article-count badge beside the archive heading, as requested. The hero now focuses on the brand headline, introduction and topic labels; the full article grid remains intact. Related unused CSS was removed.
+
+
+## Production build fix — 14 October 2026
+
+The Vercel build for commit `a3ccaed` failed because `src/components/blog/FeaturedStories.tsx` contained a malformed conditional JSX expression in the Journal header. This was fixed in commit `15d1e555`. The roadmap tracks confirmation of the next Vercel build; deployment is not considered verified until that build reports success.
