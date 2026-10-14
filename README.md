@@ -72,3 +72,7 @@ See [roadmap.md](./roadmap.md) for the itemised done/partial/remaining checklist
 The Store page has been rebuilt with a warm, photo-led bookstore banner, ten designed book covers across two wooden shelf levels, matching photographic cover treatment on individual book detail pages, individual book detail links, and a cart control in the Store header. The cart saves selections in browser local storage and supports quantity updates/removal. Its order action composes an email enquiry; it does not process payment. Secure checkout and digital delivery remain future launch requirements.
 
 The shared desktop navigation now remains visible above 800px; the hamburger is reserved for widths at or below 800px. The storefront/cart commit was still deploying when last checked. Verify the deployed result on desktop, mobile, and 801–1000px widths.
+
+## Header and Store spacing polish (14 October 2026)
+
+The shared navigation now has clearer horizontal spacing on desktop, stays inline above 800px, and switches to the hamburger menu at 800px and below. The Store wrapper no longer forces a full-viewport minimum height, preventing an artificial blank block after the catalogue on shorter layouts. After the commit deploys, verify the header at 801–1000px, wide desktop, and mobile widths, and confirm the Store footer follows the demo note without a large gap.

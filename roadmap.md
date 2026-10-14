@@ -11,7 +11,7 @@ Last updated: 14 Oct 2026
 
 **Last reviewed:** 14 October 2026  
 **Repository checked:** [`MrDan001/Africa-Plug`](https://github.com/MrDan001/Africa-Plug), branch `main`  
-**Storefront update:** the Store now uses a warm, photo-led bookstore hero and two levels of wooden shelves, with ten designed covers shared with individual book details and a browser-persisted cart. The Store header has a condensed desktop menu and cart control. The cart can prepare an email order enquiry but is not payment checkout; secure payment and digital delivery remain launch dependencies.
+**Storefront update:** the Store uses a warm, photo-led bookstore hero and two levels of wooden shelves, with ten designed covers shared with individual book details and a browser-persisted cart. The shared header has more readable desktop menu spacing; inline navigation is intended for widths above 800px and the hamburger for 800px and below. The Store wrapper's forced 100vh minimum height has been removed to prevent a large blank block below the catalogue. The cart can prepare an email order enquiry but is not payment checkout; secure payment and digital delivery remain launch dependencies. The latest header/store spacing change still requires production visual verification after deployment.
 
 This section records what is present in the repository today. The stage descriptions below remain the target scope; a route or component existing does not mean the connected business workflow is complete or production-tested.
 
@@ -54,6 +54,7 @@ This section records what is present in the repository today. The stage descript
 - [~] Compare the logo lockup on desktop/mobile against the approved original brand file.
 - [x] The shared header is fixed in the final CSS rules.
 - [x] Desktop links now stay visible above 800px; hamburger navigation is reserved for narrower screens.
+- [x] Increased horizontal spacing between desktop menu links and added a final breakpoint guard so the desktop menu stays inline from 801px upward.
 - [ ] Add a visible, keyboard-accessible carousel pause/resume control and previous/next navigation.
 - [ ] Complete keyboard, accessibility, responsive-layout and cross-browser review.
 - [ ] Run and record a clean production build and lint check.
@@ -71,6 +72,7 @@ This section records what is present in the repository today. The stage descript
 ### Stage 3 — TAP IN, Blog and Store
 - [x] Homepage Africa Playbook links to the Store; duplicate “COMING SOON” feature has been removed.
 - [x] Ten demo book covers and compact shelf-board presentation are in place.
+- [x] Removed the Store wrapper's forced 100vh minimum height to eliminate artificial blank space after the catalogue on shorter layouts; confirm the live result after deployment.
 - [x] Each demo book has a separate detail route with a longer description, included topics and displayed demo price.
 - [~] The storefront now has a browser-local cart. The order action still opens an email enquiry and does not take payment.
 - [ ] Confirm actual books, covers, descriptions, prices, product files and selling terms.
@@ -516,3 +518,10 @@ EMAIL_FK=fk@
 8. **Complete launch QA.** Finalize and review the existing legal policy drafts, implement and verify cookie consent, review the existing sitemap and add dynamic product URLs where needed, set metadata/structured data/analytics, verify all links and forms on phone and desktop, run build/lint and accessibility/performance checks, then confirm the production domain and post-deploy behaviour.
 
 **Current recommendation after source audit:** The Store visual rebuild and browser-local demo cart are now in code. First verify the new layout, cart and desktop-menu breakpoint on real devices; then fix remaining homepage/footer/search CTA defects and add the missing carousel controls. Next agree the real product data and connect Store/TAP IN/Blog to a persistent backend. Build secure admin/CMS and the payment/digital-delivery workflows only after the required business decisions and legal review. Do not treat the current form or demo Pay buttons as confirmed commercial workflows.
+
+## Latest UI polish — 14 October 2026
+
+- [x] Increased desktop navigation spacing and set a clear responsive handoff: inline links above 800px; hamburger at 800px and below.
+- [x] Removed the Store page's forced min-height: 100vh, which could leave a large empty block between the catalogue and footer when the Store content was shorter than the viewport.
+- [ ] Verify the deployed header at 801–1000px and wide desktop widths, verify mobile menu opening/closing, and confirm the Store footer now follows the catalogue note without an oversized gap.
+- [ ] Run production build/lint and browser visual QA after deployment; this change is source-reviewed but has not been built or tested in a browser here.
