@@ -73,11 +73,7 @@ export default function Footer() {
           <h2>Have an opportunity in mind?</h2>
           <p>Tell us what you’re working on. We’ll help you find the right next step.</p>
           <a className="tap-footer-contact-row" href="mailto:connect@theafricaplug.com">
-            <span><small>BUSINESS & PARTNERSHIPS</small><b>connect@theafricaplug.com</b></span>
-            <Arrow />
-          </a>
-          <a className="tap-footer-contact-row" href="mailto:ask@theafricaplug.com">
-            <span><small>QUESTIONS & ENQUIRIES</small><b>ask@theafricaplug.com</b></span>
+            <span><small>OFFICIAL EMAIL · ALL ENQUIRIES</small><b>connect@theafricaplug.com</b></span>
             <Arrow />
           </a>
         </div>
