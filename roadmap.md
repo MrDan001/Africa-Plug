@@ -57,7 +57,7 @@ This section records what is present in the repository today. The stage descript
 
 ### Stage 2 — Homepage sections
 - [x] Three-slide homepage carousel is in place.
-- [x] Intro-video slot below the carousel now embeds a temporary Africa-themed YouTube sample. GitHub's Vercel status reports that the latest commit's deployment completed.
+- [x] Intro-video slot below the carousel now embeds a temporary Africa-themed YouTube sample. The video-code commit received a successful Vercel status; the later documentation-only audit commit was still deploying when checked.
 - [ ] Open the deployed site on a phone and desktop to confirm the video is visible, plays, and does not overflow; deployment status alone does not confirm the visual result.
 - [ ] Replace the sample with the approved 40–60 second FK introduction, plus poster and captions.
 - [~] Homepage sections are mostly presentational and use hard-coded copy, imagery and sample proof points.
@@ -106,7 +106,7 @@ This section records what is present in the repository today. The stage descript
 4. **Build the CMS/admin and required business workflows** so products, articles and opportunities can be maintained without editing code.
 5. **Complete legal, SEO, email, accessibility and launch checks** before treating the site as production-ready.
 
-**Audit scope and verification limits (14 October 2026):** I enumerated the repository tree (134 tracked entries) and reviewed the active app routes, shared navigation/components, main homepage and Store code, API handlers, data/helper modules, environment example, and project/CMS/roadmap documentation. This was a source review, not a browser-driven QA session. The Vercel status for the current source revision reports deployment completed, but I did not run `npm run build` or `npm run lint` locally because this environment could not clone the repository. Treat interactive behaviour, email delivery and mobile layout as unverified until tested. `docs/CMS_AND_LAUNCH_REQUIREMENTS.md` has been corrected to remove outdated claims that `/admin` already has authentication or video publishing.
+**Audit scope and verification limits (14 October 2026):** I enumerated the repository tree (134 tracked entries) and reviewed the active app routes, shared navigation/components, main homepage and Store code, API handlers, data/helper modules, environment example, and project/CMS/roadmap documentation. This was a source review, not a browser-driven QA session. The earlier video-code commit received a successful Vercel deployment status. The documentation-only audit commit was still pending in Vercel at the time of this note. I did not run `npm run build` or `npm run lint` locally because this environment could not clone the repository. Treat interactive behaviour, email delivery and mobile layout as unverified until tested. `docs/CMS_AND_LAUNCH_REQUIREMENTS.md` has been corrected to remove outdated claims that `/admin` already has authentication or video publishing.
 
 **Runtime caveat:** This is a repository-source review, not a live-site or delivery test. Deployment status, Vercel settings, production environment variables, sender-domain verification, inbox delivery and a successful build remain to be verified.
 
