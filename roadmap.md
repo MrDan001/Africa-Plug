@@ -42,6 +42,70 @@ This section records what is present in the repository today. The stage descript
 | 5. Admin dashboard | **Not started in this branch** | Build secure login and CMS workflows against persistent content/data. |
 | 6. SEO, QA and launch | **Partial scaffold** | Populate sitemap, finish legal/cookie/analytics setup, run build and device checks, verify the exact production deployment and domain. |
 
+## 1A. Working delivery checklist
+
+**Current position (14 October 2026):** The project is a functioning front-end prototype with a homepage, a Store demo and some enquiry-form code. We are between the end of the initial visual build and the early content/store integration stage. The site is **not launch-ready yet**: secure checkout, a connected CMS/admin, final product content, legal pages and end-to-end production QA remain open.
+
+**Legend:** [x] present in repository / implemented in code · [~] partial, demo-only or not yet verified in production · [ ] not done
+
+### Stage 1 — Foundation and design shell
+- [x] Next.js application, shared site layout, navigation and footer exist.
+- [x] Black, white and TAP-pink visual system is in place.
+- [~] Compare the logo lockup on desktop/mobile against the approved original brand file.
+- [ ] Complete keyboard, accessibility, responsive-layout and cross-browser review.
+- [ ] Run and record a clean production build and lint check.
+
+### Stage 2 — Homepage sections
+- [x] Three-slide homepage carousel is in place.
+- [x] Intro-video slot below the carousel now embeds a temporary Africa-themed YouTube sample. GitHub's Vercel status reports that the latest commit's deployment completed.
+- [ ] Open the deployed site on a phone and desktop to confirm the video is visible, plays, and does not overflow; deployment status alone does not confirm the visual result.
+- [ ] Replace the sample with the approved 40–60 second FK introduction, plus poster and captions.
+- [~] Homepage sections are mostly presentational and use hard-coded copy, imagery and sample proof points.
+- [ ] Finalize approved copy, real testimonials/case studies, image assets and verified social links.
+
+### Stage 3 — TAP IN, Blog and Store
+- [x] Homepage Africa Playbook links to the Store; duplicate “COMING SOON” feature has been removed.
+- [x] Ten demo book covers and compact shelf-board presentation are in place.
+- [x] Each demo book has a separate detail route with a longer description, included topics and displayed demo price.
+- [~] Pay buttons open an email enquiry only; they do not take payment.
+- [ ] Confirm actual books, covers, descriptions, prices, product files and selling terms.
+- [ ] Connect Store products to persistent data/CMS records.
+- [ ] Implement secure checkout, payment confirmation, receipts and protected digital delivery.
+- [ ] Replace sample TAP IN listings with approved opportunities and finish listing-specific enquiries.
+- [ ] Connect Blog articles, tags, publishing and article-detail content to persistent data.
+
+### Stage 4 — Forms and Work With FK funnel
+- [~] Initial enquiry forms and shared validation are present in code; successful inbox delivery has not been confirmed in this review.
+- [ ] Test contact and partnership forms end-to-end, including spam protection and failure messages.
+- [ ] Route general, Ask TAP, partner and private Work With FK enquiries to their intended destinations.
+- [ ] Implement newsletter signup and confirm that subscribers are stored and handled appropriately.
+- [ ] Build the application review and approve/decline workflow.
+- [ ] Connect verified deposit/balance payments, scheduling unlocks and transactional emails.
+- [ ] Test that only a verified payment—not a clicked button—unlocks the next step.
+
+### Stage 5 — Admin dashboard and CMS
+- [ ] Build the secure admin login and protected routes; current /admin is a placeholder in the inspected branch.
+- [ ] Set up and document persistent database tables/migrations for products, articles, opportunities, enquiries, applications and settings.
+- [ ] Build product, media, blog and opportunity management in the admin.
+- [ ] Test admin permissions, uploads, edits, archiving and auditability before relying on the CMS.
+
+### Stage 6 — SEO, compliance, QA and launch
+- [~] Basic robots and metadata scaffolding exists, but the sitemap is empty and legal routes are placeholders.
+- [ ] Finish and review original Privacy, Terms, Cookies and Refunds/Deposit terms before payments go live.
+- [ ] Implement and test the appropriate cookie-consent flow.
+- [ ] Complete metadata, sitemap, structured data, social-sharing images and analytics events.
+- [ ] Verify environment variables, sender-domain configuration, email delivery, database and media storage.
+- [ ] Test all major pages, links, forms, video, checkout and digital delivery on mobile and desktop.
+- [ ] Review performance, image/video loading, keyboard access and error states.
+- [ ] Confirm the production domain and verify the final live release after the checks above pass.
+
+### Recommended next actions (in order)
+1. **Verify the current deployed homepage video and core mobile layout**. The deployment reports success, but a real browser/device check is still needed.
+2. **Finish a focused QA pass of the existing homepage and Store demo** before layering on more visual changes.
+3. **Agree the real product catalogue and selling details**, then connect Store to persistent product data and implement checkout/delivery.
+4. **Build the CMS/admin and required business workflows** so products, articles and opportunities can be maintained without editing code.
+5. **Complete legal, SEO, email, accessibility and launch checks** before treating the site as production-ready.
+
 **Important documentation mismatch to resolve:** `docs/CMS_AND_LAUNCH_REQUIREMENTS.md` includes a paragraph saying that the existing `/admin` has admin authentication and Vercel Blob video publishing. That description does not match the current `main` files reviewed here: the current admin page is a placeholder. Keep the requirements in that document as target scope, but do not use that paragraph as proof that admin/video-publishing functionality exists in this repository.
 
 **Runtime caveat:** This is a repository-source review, not a live-site or delivery test. Deployment status, Vercel settings, production environment variables, sender-domain verification, inbox delivery and a successful build remain to be verified.

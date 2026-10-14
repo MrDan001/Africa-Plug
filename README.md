@@ -46,3 +46,10 @@ The homepage Africa Playbook feature links directly to the Store and presents a 
 ## Homepage intro video
 
 A temporary Africa-themed YouTube sample is embedded in the intro-video slot immediately below the hero carousel. It is only a visual placeholder and should be replaced with the approved FK introduction video before launch. Keep large video files out of the Git repository and deployment bundle; for a real uploaded video, use a media host such as Vercel Blob or an unlisted YouTube upload.
+
+
+## Current build status
+
+The latest repository roadmap now includes an actionable, stage-by-stage working checklist. The homepage and Store are front-end prototypes; the Store's sample Pay actions are email enquiries, not real checkout. The temporary intro video is embedded below the homepage carousel and its latest commit reports a completed Vercel deployment, but the live presentation still needs visual/device verification.
+
+See [roadmap.md](./roadmap.md) for remaining launch blockers across product data, CMS/admin, payments and digital delivery, forms/email, legal/compliance, SEO and QA.
