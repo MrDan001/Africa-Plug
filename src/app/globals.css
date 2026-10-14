@@ -1097,3 +1097,322 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .blog-article-cover { min-height: 245px; }
   .blog-article-preview { margin: 25px auto 45px; padding: 22px 16px 25px; }
 }
+
+
+/* October 2026 refresh: keep the shared header visible and make search fully usable. */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+html { scroll-padding-top: 92px; }
+.site-search { position: relative; display: flex; align-items: center; }
+.site-search .search-button {
+  width: 32px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.site-search .search-button:hover,
+.site-search .search-button:focus-visible { color: var(--signal); }
+.site-search .search-button:focus-visible { outline: 1px solid var(--signal); outline-offset: 3px; }
+.site-search-panel {
+  position: absolute;
+  top: calc(100% + 18px);
+  right: -6px;
+  z-index: 80;
+  width: min(430px, calc(100vw - 28px));
+  padding: 16px;
+  background: #050609;
+  border: 1px solid rgba(255,255,255,.17);
+  border-top: 2px solid var(--signal);
+  box-shadow: 0 18px 45px rgba(0,0,0,.55);
+}
+.site-search-form { display: flex; gap: 8px; }
+.site-search-form input {
+  min-width: 0;
+  flex: 1;
+  min-height: 44px;
+  padding: 0 12px;
+  color: white;
+  background: #111319;
+  border: 1px solid rgba(255,255,255,.19);
+  border-radius: 0;
+  font-size: 13px;
+}
+.site-search-form input:focus { outline: 1px solid var(--signal); border-color: var(--signal); }
+.site-search-form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 13px;
+  border: 1px solid var(--signal);
+  background: var(--signal);
+  color: #050609;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.site-search-heading { margin: 19px 0 9px; color: var(--signal); font-size: 9px; letter-spacing: .16em; font-weight: 900; }
+.site-search-results { display: grid; }
+.site-search-results > a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,.09);
+}
+.site-search-results > a b { display: block; color: white; font-size: 12px; line-height: 1.35; }
+.site-search-results > a small { display: block; margin-top: 4px; color: #9fa5b0; font-size: 10px; line-height: 1.5; }
+.site-search-results > a:hover b,
+.site-search-results > a:hover .site-search-arrow { color: var(--signal); }
+.site-search-arrow { color: #c9cbd1; font-size: 15px; }
+.site-search-shortcuts { display: flex; flex-wrap: wrap; gap: 7px; }
+.site-search-shortcuts a { padding: 9px 10px; background: #14151b; color: #d3d4da; font-size: 10px; }
+.site-search-shortcuts a:hover { color: white; background: #25202a; }
+.site-search-empty { margin: 0; padding: 12px 0 2px; color: #b5bac4; font-size: 12px; line-height: 1.7; }
+
+@media (max-width: 1000px) {
+  .header-inner { height: 76px; padding-left: 22px; padding-right: 22px; gap: 15px; }
+  .header-cta { display: none !important; }
+  .site-search-panel { right: -48px; }
+}
+@media (max-width: 480px) {
+  .header-inner { padding-left: 18px; padding-right: 18px; gap: 10px; }
+  .brand-logo { width: 45px; height: 45px; }
+  .brand-lockup { gap: 7px; }
+  .brand-africa, .brand-plug { font-size: 17px; }
+  .header-actions { gap: 13px; }
+  .site-search-panel { right: -45px; width: min(390px, calc(100vw - 26px)); padding: 13px; }
+  .site-search-form button { padding: 0 10px; }
+}
+
+/* Bookshelf styles are global by design so the catalogue cannot fall back to a plain text list. */
+.tap-shelf-section {
+  padding: clamp(38px, 6vw, 82px) clamp(18px, 4.5vw, 68px) 76px;
+  background: #08090c;
+  color: #f7f7fa;
+}
+.tap-shelf-heading {
+  max-width: 1400px;
+  margin: 0 auto 26px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, .75fr);
+  align-items: end;
+  gap: clamp(22px, 5vw, 76px);
+}
+.tap-shelf-eyebrow { margin: 0 0 13px; color: var(--signal); font-size: 10px; font-weight: 900; letter-spacing: .18em; line-height: 1.5; }
+.tap-shelf-heading h2 { margin: 0; max-width: 760px; color: #fff; font-size: clamp(30px, 4.7vw, 62px); font-weight: 900; letter-spacing: -.055em; line-height: .98; }
+.tap-shelf-intro { max-width: 410px; margin: 0 0 3px; color: #b6bbc5; font-size: 14px; line-height: 1.8; }
+.tap-shelf-notice {
+  max-width: 1400px;
+  margin: 0 auto 24px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid rgba(245,0,112,.28);
+  border-left: 3px solid var(--signal);
+  background: linear-gradient(90deg, rgba(245,0,112,.08), rgba(255,255,255,.018));
+}
+.tap-shelf-notice-mark { flex: 0 0 auto; display: grid; width: 21px; height: 21px; place-items: center; border: 1px solid var(--signal); border-radius: 50%; color: var(--signal); font-size: 12px; font-weight: 800; }
+.tap-shelf-notice p { margin: 0; color: #c1c4cc; font-size: 11px; line-height: 1.65; }
+.tap-shelf-notice strong { color: #fff; }
+.tap-shelf-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; align-items: stretch; }
+.tap-book-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #101115;
+  border: 1px solid rgba(255,255,255,.12);
+  transition: border-color .2s ease, transform .2s ease;
+}
+.tap-book-card:hover { transform: translateY(-3px); border-color: rgba(245,0,112,.8); }
+.tap-book-cover {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 270px;
+  aspect-ratio: .76;
+  padding: 16px 15px 14px;
+  overflow: hidden;
+  isolation: isolate;
+  color: white;
+  background: #171a22;
+}
+.tap-book-cover::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  background: radial-gradient(circle at 88% 17%, rgba(245,0,112,.50), transparent 35%), linear-gradient(155deg, rgba(255,255,255,.06), transparent 34%, rgba(0,0,0,.66));
+}
+.tap-book-cover::after {
+  position: absolute;
+  z-index: -1;
+  right: -53px;
+  bottom: 47px;
+  width: 156px;
+  height: 156px;
+  content: "";
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 50%;
+  box-shadow: 0 0 0 17px rgba(255,255,255,.025), 0 0 0 35px rgba(255,255,255,.025), 0 0 0 54px rgba(255,255,255,.02);
+}
+.tap-book-cover--starter { background-color: #1b1d22; }
+.tap-book-cover--nigeria { background-color: #202a22; }
+.tap-book-cover--mapping { background-color: #22253a; }
+.tap-book-cover--partners { background-color: #34202c; }
+.tap-book-cover--research { background-color: #1e3037; }
+.tap-book-cover--export { background-color: #3a2b1c; }
+.tap-book-cover--deal { background-color: #2b2634; }
+.tap-book-cover--supply { background-color: #18302c; }
+.tap-book-cover--market { background-color: #35252a; }
+.tap-book-cover--investor { background-color: #222a3c; }
+.tap-book-cover-brand { position: absolute; top: 15px; left: 15px; max-width: calc(100% - 46px); font-size: 8px; font-weight: 900; letter-spacing: .1em; line-height: 1.4; }
+.tap-book-cover-brand i { color: #ff5b9e; font-style: normal; }
+.tap-book-cover-index { position: absolute; top: 40px; right: 15px; color: rgba(255,255,255,.48); font-size: 10px; font-weight: 900; }
+.tap-book-cover-label { margin-bottom: 8px; color: #ff5b9e; font-size: 9px; font-weight: 900; letter-spacing: .14em; line-height: 1.5; }
+.tap-book-cover h3 { position: relative; margin: 0 0 14px; max-width: 100%; color: #fff; font-size: clamp(19px, 2.05vw, 28px); font-weight: 900; letter-spacing: -.045em; line-height: .99; overflow-wrap: anywhere; }
+.tap-book-cover-rule { width: 34px; height: 3px; background: var(--signal); }
+.tap-book-cover-footer { margin-top: 12px; color: rgba(255,255,255,.72); font-size: 7px; letter-spacing: .08em; line-height: 1.45; }
+.tap-book-details { display: flex; flex: 1; flex-direction: column; padding: 16px 15px 15px; }
+.tap-book-category { margin: 0 0 8px; color: var(--signal); font-size: 9px; font-weight: 900; letter-spacing: .14em; line-height: 1.45; }
+.tap-book-details > h3 { margin: 0; color: white; font-size: 16px; font-weight: 780; letter-spacing: -.025em; line-height: 1.25; }
+.tap-book-description { flex: 1; margin: 10px 0 16px; min-height: 74px; color: #aeb4bf; font-size: 11px; line-height: 1.7; }
+.tap-book-purchase { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); }
+.tap-book-purchase strong { color: white; font-size: 16px; line-height: 1; white-space: nowrap; }
+.tap-book-purchase a { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 10px; min-height: 39px; padding: 0 13px; background: var(--signal); color: #050609; font-size: 11px; font-weight: 900; transition: background .2s ease; }
+.tap-book-purchase a:hover { background: white; }
+.tap-shelf-footnote { max-width: 1400px; margin: 21px auto 0; color: #8f95a0; font-size: 10px; line-height: 1.7; }
+@media (max-width: 1080px) {
+  .tap-shelf-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .tap-book-cover { min-height: 240px; }
+}
+@media (max-width: 760px) {
+  .tap-shelf-section { padding: 34px 18px 54px; }
+  .tap-shelf-heading { display: block; margin-bottom: 23px; }
+  .tap-shelf-heading h2 { font-size: clamp(29px, 8vw, 43px); }
+  .tap-shelf-intro { margin-top: 16px; font-size: 13px; line-height: 1.75; }
+  .tap-shelf-notice { padding: 12px; margin-bottom: 18px; }
+  .tap-shelf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+  .tap-book-cover { aspect-ratio: .72; min-height: 195px; padding: 12px 10px 11px; }
+  .tap-book-cover-brand { top: 12px; left: 10px; font-size: 6px; letter-spacing: .065em; }
+  .tap-book-cover-index { top: 31px; right: 10px; font-size: 9px; }
+  .tap-book-cover-label { font-size: 7px; margin-bottom: 6px; }
+  .tap-book-cover h3 { margin-bottom: 11px; font-size: clamp(17px, 5.2vw, 23px); }
+  .tap-book-cover-footer { margin-top: 9px; font-size: 6px; }
+  .tap-book-details { padding: 12px 10px 11px; }
+  .tap-book-category { font-size: 7px; letter-spacing: .1em; }
+  .tap-book-details > h3 { font-size: 13px; }
+  .tap-book-description { min-height: 105px; margin: 9px 0 13px; font-size: 10px; line-height: 1.6; }
+  .tap-book-purchase { flex-wrap: wrap; gap: 8px; padding-top: 10px; }
+  .tap-book-purchase strong { font-size: 13px; }
+  .tap-book-purchase a { min-height: 35px; gap: 7px; padding: 0 10px; font-size: 10px; }
+}
+@media (max-width: 355px) {
+  .tap-shelf-grid { grid-template-columns: 1fr; gap: 15px; }
+  .tap-book-cover { aspect-ratio: 1.15; min-height: 235px; padding: 15px; }
+  .tap-book-cover-brand { top: 15px; left: 15px; font-size: 8px; }
+  .tap-book-cover-index { top: 40px; right: 15px; }
+  .tap-book-cover h3 { font-size: 25px; }
+  .tap-book-details { padding: 16px; }
+  .tap-book-details > h3 { font-size: 17px; }
+  .tap-book-description { min-height: 0; font-size: 12px; }
+}
+
+/* Footer uses the roomy, editorial lockup and two-link-column rhythm shown in the reference. */
+.site-footer { padding: 54px max(28px, calc((100vw - 1380px) / 2)) 22px; background: #030304; }
+.tap-footer-grid { grid-template-columns: minmax(250px, 1.2fr) minmax(110px, .65fr) minmax(130px, .75fr) minmax(220px, 1.2fr); gap: clamp(24px, 3.2vw, 54px); }
+.footer-logo-mark { width: 61px; height: 61px; }
+.footer-wordmark-name { font-size: clamp(18px, 1.6vw, 23px); gap: 3px; }
+.tap-footer-tagline { margin: 22px 0 10px; color: #aeb3bd; font-size: 20px; font-weight: 450; line-height: 1.4; }
+.tap-footer-email { display: inline-block; margin-top: 4px; color: var(--signal); font-size: 15px; font-weight: 800; overflow-wrap: anywhere; }
+.tap-footer-column { gap: 16px; }
+.tap-footer-column h2 { margin: 0 0 8px; font-size: 11px; letter-spacing: .2em; }
+.tap-footer-column a { color: #aeb3bd; font-size: 14px; line-height: 1.5; }
+.tap-footer-column a:hover { color: white; }
+.tap-footer-contact { padding: 4px 0 0; background: transparent; border: 0; }
+.tap-footer-kicker { margin: 0 0 14px; font-size: 11px; }
+.tap-footer-description { margin: 0; max-width: 340px; color: #aeb3bd; font-size: 14px; line-height: 1.7; }
+.tap-footer-primary-link { margin-top: 24px; border-bottom: 0; color: var(--signal); font-size: 14px; font-weight: 800; letter-spacing: 0; padding: 0; }
+.tap-footer-primary-link .footer-arrow { color: var(--signal); font-size: 21px; }
+.tap-footer-contact-note { max-width: 360px; margin: 20px 0 0; color: #888e99; font-size: 11px; line-height: 1.7; }
+.tap-footer-contact-note a { color: #c5c8cf; text-decoration: underline; text-underline-offset: 3px; }
+.tap-footer-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 17px 22px; max-width: 1380px; margin: 49px auto 0; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.11); color: #7d838e; }
+.tap-footer-bottom p { margin: 0; font-size: 10px; line-height: 1.5; }
+.tap-footer-motto { color: #7d838e; font-size: 10px !important; letter-spacing: .16em; }
+.tap-footer-bottom nav { display: flex; flex-wrap: wrap; gap: 15px 22px; }
+.tap-footer-bottom nav a { color: #8a909a; font-size: 10px; }
+.tap-footer-bottom nav a:hover { color: white; }
+@media (max-width: 1000px) {
+  .tap-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 26px; }
+  .tap-footer-brand { grid-column: 1 / -1; }
+  .tap-footer-contact { grid-column: 1 / -1; }
+}
+@media (max-width: 680px) {
+  .site-footer { padding: 42px 18px 20px; }
+  .tap-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 35px 27px; }
+  .footer-logo-lockup { align-items: center; gap: 11px; }
+  .footer-logo-mark { width: 67px; height: 67px; }
+  .footer-wordmark-the { font-size: 9px; }
+  .footer-wordmark-name { font-size: clamp(20px, 5.8vw, 25px); }
+  .tap-footer-tagline { margin: 19px 0 8px; font-size: 20px; }
+  .tap-footer-email { font-size: 15px; }
+  .tap-footer-column { gap: 14px; }
+  .tap-footer-column h2 { font-size: 10px; }
+  .tap-footer-column a { font-size: 13px; }
+  .tap-footer-contact { padding-top: 0; }
+  .tap-footer-contact-note { margin-top: 16px; }
+  .tap-footer-bottom { align-items: flex-start; flex-direction: column; gap: 15px; margin-top: 36px; padding-top: 22px; }
+  .tap-footer-motto { order: 0; font-size: 9px !important; letter-spacing: .12em; line-height: 1.8 !important; }
+  .tap-footer-copyright { order: 1; }
+  .tap-footer-bottom nav { order: 2; gap: 10px 15px; }
+  .tap-footer-bottom nav a { font-size: 10px; }
+}
+
+/* Consistent, editorial legal pages shared by all public policy routes. */
+.legal-page {
+  min-height: 70vh;
+  padding: 95px 24px 80px;
+  color: #f7f7fa;
+  background: radial-gradient(ellipse at 90% 0%, rgba(245,0,112,.085), transparent 32%), #050609;
+}
+.legal-page-shell { max-width: 960px; margin: 0 auto; }
+.legal-page-back { display: inline-flex; gap: 9px; align-items: center; color: #aeb3bd; font-size: 11px; font-weight: 650; }
+.legal-page-back span { color: var(--signal); font-size: 17px; }
+.legal-page-eyebrow { margin: 25px 0 12px; color: var(--signal); font-size: 10px; font-weight: 900; letter-spacing: .17em; }
+.legal-page h1 { max-width: 900px; margin: 0; color: white; font-size: clamp(38px, 6vw, 68px); font-weight: 900; letter-spacing: -.055em; line-height: .98; }
+.legal-page-intro { max-width: 740px; margin: 18px 0 0; color: #b3b8c2; font-size: 15px; line-height: 1.8; }
+.legal-page-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; color: #858b96; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; }
+.legal-page-meta::before { content: ""; width: 26px; height: 2px; background: var(--signal); }
+.legal-page-notice { margin: 28px 0 0; padding: 15px 17px; border-left: 3px solid var(--signal); background: rgba(245,0,112,.075); color: #d4d5db; font-size: 12px; line-height: 1.75; }
+.legal-page-sections { margin-top: 34px; border-top: 1px solid rgba(255,255,255,.14); }
+.legal-page-section { padding: 25px 0; border-bottom: 1px solid rgba(255,255,255,.11); }
+.legal-page-section h2 { margin: 0 0 12px; color: white; font-size: clamp(18px, 2.4vw, 22px); line-height: 1.25; letter-spacing: -.025em; }
+.legal-page-section p, .legal-page-section li { max-width: 850px; color: #aeb4bf; font-size: 13px; line-height: 1.85; }
+.legal-page-section p { margin: 9px 0 0; }
+.legal-page-section ul { margin: 12px 0 0; padding-left: 22px; }
+.legal-page-section li { padding: 3px 0; }
+.legal-page-contact { margin-top: 31px; padding: 22px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.025); }
+.legal-page-contact h2 { margin: 0; font-size: 18px; }
+.legal-page-contact p { margin: 9px 0 0; color: #aeb4bf; font-size: 12px; line-height: 1.7; }
+.legal-page-contact a { color: var(--signal); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 680px) {
+  .legal-page { padding: 88px 18px 54px; }
+  .legal-page-intro { font-size: 13px; line-height: 1.75; }
+  .legal-page-section { padding: 21px 0; }
+  .legal-page-section p, .legal-page-section li { font-size: 12px; }
+  .legal-page-contact { padding: 18px 15px; }
+}
