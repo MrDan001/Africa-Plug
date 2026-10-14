@@ -58,3 +58,10 @@ See [roadmap.md](./roadmap.md) for remaining launch blockers across product data
 ## SEO and legal implementation note
 
 The current sitemap contains the core static page routes; dynamic book-detail URLs have not yet been added. Privacy, Terms, Cookies and Refunds pages contain substantive policy drafts, but business details and legal review still need to be completed before launch. A source review is not a substitute for running the build and testing the live deployment.
+
+
+## Repository audit status (14 October 2026)
+
+A source audit has compared the App Router pages, core components, API handlers, configuration and planning documents against the intended scope. Major visual pages are present, but this is still a front-end prototype with demo book data and preview blog/opportunity content. Secure checkout, digital delivery, the CMS/admin, newsletter handling, Work With FK approval/scheduling, and verified email-routing workflows are not complete. Some homepage/footer/search anchors and carousel accessibility controls also need fixing.
+
+See [roadmap.md](./roadmap.md) for the itemised done/partial/remaining checklist and audit findings. Vercel reports the current source revision as deployed, but local build/lint and interactive browser/email-delivery QA were not run in this environment.

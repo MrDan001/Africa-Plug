@@ -19,15 +19,15 @@ This section records what is present in the repository today. The stage descript
 |---|---|---|
 | Project planning | **Documented** | `docs/PROJECT_SCOPE.md`, `roadmap.md`, and `docs/CMS_AND_LAUNCH_REQUIREMENTS.md` exist. They describe the target; they do not make the listed features implemented. |
 | Framework and styling | **Present** | Next.js 16, React 19, TypeScript and Tailwind CSS 4 are in `package.json`. Site layout, shared styling, header, mobile menu and footer are present. |
-| Homepage and visual shell | **Built as a front-end** | The homepage has a three-slide hero carousel and static sections for the FK introduction, Work With FK, TAP IN, a featured resource, partners, Blog and closing/contact area. The content, slides and image URLs are currently hard-coded. The FK introduction slot now contains a temporary Africa-themed YouTube sample immediately below the carousel. It is a visual placeholder, not the approved 40–60 second FK introduction; replace it with the final video and captions before launch. |
+| Homepage and visual shell | **Presentational prototype** | The three-slide carousel and major homepage sections are present. The intro-video slot embeds a temporary external YouTube sample. Homepage content and proof points are hard-coded; there is no verified live-opportunity feed, CMS-driven content, official FK video/captions, or separate homepage featured-product block. The sample video’s visual behaviour still needs browser/device review. |
 | Logo | **Needs brand verification** | `public/images/logo.svg` and `logo-mark.svg` exist. Header/footer code uses the mark plus an HTML/CSS wordmark; verify against the approved full supplied lockup before calling this exact-logo work complete. |
-| Public routes | **Front-end skeletons present; Store demo added** | Homepage, TAP IN, Blog, Store, About/Partner, Contact, Work With FK/application and legal route paths exist. The homepage Playbook feature links to Store and uses styled book-cover artwork; the duplicate “COMING SOON” featured-product block has been removed. Store presents ten demo books on shelf-board styling and each book has a detail route with a longer description and demo price. These are demo catalogue entries, not confirmed products; the Pay action opens an email enquiry, and checkout, product records and secure digital delivery are not connected. TAP IN and Blog data workflows remain incomplete. |
+| Public routes | **Mixed prototype / demo / placeholders** | Homepage, About, Contact, Work With FK and legal routes render front-end content. Store has ten hard-coded demo books and generated detail pages, but demo titles/prices are not connected to a database and Pay only opens an email enquiry. Blog cards are preview records; article detail pages explicitly say the story is being prepared. TAP IN detail route is a placeholder and TAP IN landing content is a static focus-area list, not a live feed. |
 | Initial enquiry forms | **Implemented in code; delivery unverified** | Contact, Partner With TAP and Work With FK pages render the reusable enquiry form. Shared Zod validation, a honeypot, Resend email sending and optional Cloudflare Turnstile support are implemented. API route files also exist for Ask and TAP IN interest. The handler currently routes submissions to `EMAIL_CONNECT` (default `connect@theafricaplug.com`), not separate `ask@` and private `fk@` routing. |
 | Newsletter | **Not implemented** | `/api/forms/subscribe` returns HTTP 501, “Not implemented”. |
 | Payments and commercial funnel | **Not implemented** | Stripe is installed and a helper exists, but checkout, Stripe webhook, Work With FK approval and scheduling routes return HTTP 501. The current application form is only an initial enquiry; it takes no payment. |
 | Database / CMS | **Not implemented as a connected content system** | Supabase packages and client/server helpers exist. The current pages are not backed by a finished content schema or a working content-management workflow; no migration/schema files are present in the current repository tree. |
 | Admin dashboard | **Not implemented** | `/admin` currently renders `Placeholder`, and its layout only renders children. The current branch does not show the promised secure CMS/admin workflow. |
-| SEO and legal | **Partially implemented; final review needed** | `robots.ts` exists and `sitemap.ts` lists the core static routes. Dynamic demo-book detail URLs are not included in the sitemap. Privacy, Terms, Cookies and Refunds pages contain substantive policy drafts, but they still need business-detail confirmation, implementation checks and appropriate legal review before launch. |
+| SEO and legal | **Partly implemented; launch work remains** | Root metadata, robots rules and a sitemap of core static pages exist. Sitemap coverage omits dynamic book pages and other relevant detail/flow routes; `JsonLd.tsx` returns `null` and is not a structured-data implementation. Policy pages contain substantive drafts but need confirmed business/controller details and legal review. No cookie-consent banner was found in the active implementation. |
 | Configuration | **Example file present; live values unknown** | `.env.example` documents Resend sender/delivery and optional Turnstile variables. Repository inspection cannot confirm whether Vercel environment variables or Resend domain verification are correctly configured. Never put real secrets in Git. |
 | Build and production verification | **Not verified in this review** | No build, lint, end-to-end form delivery, or live production test was run as part of this GitHub-only inspection. Do not treat the latest commit as proof that the deployed site is healthy or that emails reach the inbox. |
 
@@ -106,12 +106,50 @@ This section records what is present in the repository today. The stage descript
 4. **Build the CMS/admin and required business workflows** so products, articles and opportunities can be maintained without editing code.
 5. **Complete legal, SEO, email, accessibility and launch checks** before treating the site as production-ready.
 
-**Important documentation mismatch to resolve:** `docs/CMS_AND_LAUNCH_REQUIREMENTS.md` includes a paragraph saying that the existing `/admin` has admin authentication and Vercel Blob video publishing. That description does not match the current `main` files reviewed here: the current admin page is a placeholder. Keep the requirements in that document as target scope, but do not use that paragraph as proof that admin/video-publishing functionality exists in this repository.
+**Audit scope and verification limits (14 October 2026):** I enumerated the repository tree (134 tracked entries) and reviewed the active app routes, shared navigation/components, main homepage and Store code, API handlers, data/helper modules, environment example, and project/CMS/roadmap documentation. This was a source review, not a browser-driven QA session. The Vercel status for the current source revision reports deployment completed, but I did not run `npm run build` or `npm run lint` locally because this environment could not clone the repository. Treat interactive behaviour, email delivery and mobile layout as unverified until tested. `docs/CMS_AND_LAUNCH_REQUIREMENTS.md` has been corrected to remove outdated claims that `/admin` already has authentication or video publishing.
 
 **Runtime caveat:** This is a repository-source review, not a live-site or delivery test. Deployment status, Vercel settings, production environment variables, sender-domain verification, inbox delivery and a successful build remain to be verified.
 
 ---
 ---
+
+## 1B. Repository audit findings — 14 October 2026
+
+This section records implementation facts found in source. “Present” means source code exists; it does not mean the journey has passed live/browser testing.
+
+### Confirmed blockers and functional defects
+
+| Priority | Finding | Evidence / impact | Required action |
+|---|---|---|---|
+| Launch blocker | No secure Store checkout or delivery | `/api/checkout` returns HTTP 501; `/api/webhooks/stripe` returns HTTP 501; Pay links open email only. | Build and test verified payment, order records, receipts, refunds and protected digital delivery before taking payment. |
+| Launch blocker | Admin/CMS not implemented | `/admin` returns `Placeholder`; admin layout does not authenticate users; no persistent schema/migrations or connected content workflow exists in the tree. | Agree data model and build secure protected admin and CMS before promising self-service management. |
+| Launch blocker | Work With FK paid funnel not implemented | Approval and scheduling endpoints return HTTP 501; deposit/balance payment is not collected or verified. | Implement the reviewed workflow only after fees, payment provider, refund/cancellation/no-show rules and terms are agreed. |
+| High | TAP IN detail route is a placeholder | `src/app/(site)/tap-in/[slug]/page.tsx` returns `Placeholder`; landing page is a static list of focus areas, explicitly not verified live listings. | Build data-driven opportunity details, verified/live state, individual enquiry forms and share metadata. |
+| High | Home calls-to-action contain dead/self-targets | “START YOUR APPLICATION” and homepage listing rows route to `#contact`; several closing cards all link back to `#contact`. “VIEW LATEST LISTINGS” points back to the same `#tap-in` section. | Point each CTA to its intended real form, page or listing, then exercise every CTA on desktop and mobile. |
+| High | Footer/search contain anchors that do not exist | Homepage IDs currently include `about`, `work-with-fk`, `process`, `tap-in`, `partner` and `contact`; footer/search destinations such as `/#discover`, `/#understand` and `/#access` have no matching target. | Replace stale links with existing sections/pages or add the intended target sections. |
+| High | Requested persistent header is not in effect | `.site-header` uses `position: absolute`; it is not sticky/fixed after scrolling. | Implement the agreed static/sticky behaviour and test overlapping menus, anchor offsets and mobile viewport. |
+| High | Carousel accessibility controls are missing | `Hero.tsx` auto-advances but renders no visible pause, next/previous or progress controls; a `paused` state exists without a UI control. | Add usable keyboard-accessible controls, pause/resume and reduced-motion behaviour; retest. |
+| High | Homepage proof points are not verified | Hard-coded sample listings and a testimonial-style client quote appear as presentational content. | Obtain approval/evidence or mark as demo content before public launch. |
+| Medium | All enquiries share one destination | `submit-lead.ts` sends all lead types to `EMAIL_CONNECT`; separate Ask and private Work With FK routing are not implemented. | Configure/test intended email routing, delivery failure handling and notification destinations. |
+| Medium | Newsletter is unimplemented | `/api/forms/subscribe` returns HTTP 501 and there is no working subscriber store/provider integration. | Choose provider and implement confirmed opt-in, storage, unsubscribe and delivery behaviour. |
+| Medium | Blog content is preview-only | Starter records are explicitly `previewOnly: true`; article pages display a preparation notice, not the full article. | Approve and publish complete articles, authors, metadata and share images; otherwise keep clearly labelled as preview. |
+| Medium | Search is a hard-coded index, not content search | `SiteSearch.tsx` searches a static list of page/book destinations. It does not query article records or live TAP IN opportunities and includes destinations beyond the scoped Blog/TAP IN search. | Decide expected scope and implement/search-test actual published content. |
+| Medium | Sitemap coverage is incomplete | The current sitemap lists core static routes only; book/blog detail URLs and `/work-with-fk/apply` are missing. | Generate sitemap entries from published content and include relevant public flows. |
+| Medium | Structured data component is a stub | `src/components/seo/JsonLd.tsx` returns `null`. | Implement appropriate structured data and validate it if required by launch scope. |
+| Medium | Cookie banner/consent controls are missing | Policy text says the banner has not been verified; no consent UI was found in the active component tree. | Select a consent approach, implement it before enabling optional technologies where required, and test preferences. |
+| Tech debt | Orphaned placeholder components/helpers remain | Several `src/components/home/*` components and `JsonLd.tsx` return `null`; email/Stripe/Supabase helper modules export nothing. Bookstore/store CSS module files are not imported by their active components. | Either wire up each needed module or remove unused stubs and styles after confirming there are no intended consumers. |
+| Tech debt | No automated test suite/configuration is present | `package.json` defines dev/build/start/lint but no test script or test dependency appears in the manifest; no tests directory is in the tree. | Add suitable unit/integration tests for validation, checkout/webhooks, content routes and key interactions. |
+| Verification gap | Source/deploy status is not end-to-end QA | GitHub's Vercel status reports deployment completed, but no local build/lint or interactive browser/device test was run during this audit. | Record the results of build, lint, form delivery, accessibility and mobile/desktop QA before checking launch criteria complete. |
+
+### File groups reviewed
+
+- Repository inventory: 134 tracked tree entries; App Router pages and API routes enumerated.
+- Page/route source: homepage, shared site/admin layouts, About, Blog/list/detail, Contact, Store/list/detail, TAP IN/list/detail, Work With FK/application and legal routes.
+- Active components: Hero, HomeSections, BookstoreFeature, BookShelf/books data, FeaturedStories, Header, Footer, MobileMenu, SiteSearch, ContentPage, EnquiryForm and LegalPages; empty placeholder components and helper modules were also checked.
+- Business logic/configuration: API handlers in the current tree, form schema/Resend handler, package manifest, environment example, Next/TypeScript/ESLint configuration, sitemap and robots.
+- Planning documents: roadmap, project scope and CMS/launch requirements were compared with the implementation.
+
+The audit did not include a local npm install/build/lint or real browser and email-delivery tests because this environment could not clone the repository. It therefore does not certify live visual behaviour or third-party account configuration.
 
 ## 2. Audiences and conversion paths
 
@@ -259,16 +297,16 @@ africa-plug/
 
 Working rule: each stage is walked through first, and we start only after your go-ahead. Each stage ends with something you can open and review. Only new or changed files are delivered, as complete files, each labelled with its full path.
 
-### Stage 1: Foundation and design shell — BUILT, REVIEW PENDING
+### Stage 1: Foundation and design shell — PRESENT, NOT SIGNED OFF
 
-**Current status:** The shared styling, site layout, header/mobile navigation, footer, hero carousel and legal route files exist. This is not fully signed off: the supplied logo lockup needs comparison with the approved asset, design decisions remain open, and the existing legal policy drafts need confirmation of the actual contracting entity/business address and appropriate review. The current homepage hero content/CTAs are hard-coded and differ from some of the reference wording in section 2A.
+**Current status:** The shared styling, site layout, header/mobile navigation, footer, hero carousel and legal pages exist. The header CSS uses `position: absolute`, so it scrolls away rather than remaining fixed/sticky. The supplied logo lockup still needs comparison with the approved asset. The hero has three hard-coded slides and auto-advances, but no visible pause control, arrows or progress indicators are rendered even though the target brief requires a pause control. Slide caption fields and a navigation helper are defined but not used. Homepage hero copy/CTAs also differ from parts of the visual reference. Legal drafts need business-detail confirmation and review.
 
 **Planned deliverables / review target**
 - `src/app/globals.css`: colour tokens (navy, charcoal, pink signal), base styles
 - `src/app/layout.tsx`: fonts, en_GB metadata
 - `src/components/layout/Header.tsx` and `MobileMenu.tsx` (built to the header reference in section 2A)
 - `src/components/layout/Footer.tsx`
-- `src/components/home/Hero.tsx`: 3 slides, all three buttons on every slide, active slide's button solid pink, 6 to 7 second auto-advance, visible pause control. Built to the hero reference in section 2A.
+- `src/components/home/Hero.tsx`: 3 hard-coded slides, all three buttons on every slide, the active slide’s button is solid pink, and auto-advance is 6.5 seconds. **Pause control, arrows and progress indicators are not rendered**; caption fields are currently unused. Add and test the accessibility controls before sign-off.
 - `src/app/(site)/layout.tsx` and `page.tsx`
 - Shared legal page template and the four legal pages using it
 
@@ -278,9 +316,9 @@ Working rule: each stage is walked through first, and we start only after your g
 
 **Needs from client:** brand guidelines (placeholder colours used until then).
 
-### Stage 2: Homepage sections — PRESENTATIONAL BUILD EXISTS
+### Stage 2: Homepage sections — PRESENTATIONAL PROTOTYPE
 
-**Current status:** Major homepage sections are present as static front-end content. Real client-approved copy, the final FK video and captions, verified proof points, testimonials, and final photography/crops are still required. The current FK introduction area is a poster/link, not the finished video experience.
+**Current status:** Major homepage sections are present as hard-coded front-end content. The FK introduction area below the carousel now contains a temporary YouTube iframe sample, not the official FK introduction video. Its live visual playback has not been independently checked. Captions/subtitles, a poster workflow, CMS-managed media, approved copy and verified proof points/testimonials are still outstanding. The testimonial-style quote and homepage opportunity cards must be verified/approved or clearly labelled as examples before public launch.
 
 **Planned sections below the hero, in order:**
 1. FK video (40 to 60 seconds, inline, captions)
@@ -295,9 +333,9 @@ Working rule: each stage is walked through first, and we start only after your g
 
 **Needs from client:** FK video, hero photography and mobile crops, copy, testimonials, Selected Work cards.
 
-### Stage 3: TAP IN, Blog and Store — FRONT-END SKELETON ONLY
+### Stage 3: TAP IN, Blog and Store — PARTIAL FRONT-END / HARD-CODED DEMO
 
-**Current status:** The listing, Blog and Store landing routes exist, but currently show explanatory/static content. The individual TAP IN, article and product detail route files are placeholders. Supabase packages/helpers exist, but the site is not yet connected to a completed data model or working CMS; checkout and digital delivery are not implemented.
+**Current status:** Store now has ten hard-coded demo titles, a bookshelf presentation and book detail pages built from `src/components/store/books.ts`. Prices and descriptions are illustrative; checkout and digital delivery are not implemented. `src/app/(site)/tap-in/[slug]/page.tsx` is still `Placeholder`; TAP IN landing cards are static focus areas, not live opportunities. Blog entries in `src/lib/blog-posts.ts` are marked preview-only and article pages show an “article is being prepared” message rather than full stories. The Supabase client/server helper files contain only `export {}`; no database schema/migrations or connected content API exist.
 
 **Planned deliverables**
 - TAP IN listing page and one page per listing, with share image and Express Interest form (listing name attached automatically)
@@ -309,9 +347,9 @@ Working rule: each stage is walked through first, and we start only after your g
 
 **Needs from client:** first listings (excavator hire, honey), first articles, Africa Starter Guide file and price.
 
-### Stage 4: Forms and Work With FK funnel — PARTIAL
+### Stage 4: Forms and Work With FK funnel — INITIAL ENQUIRIES ONLY
 
-**Current status:** Contact, Partner With TAP and initial Work With FK enquiry forms use shared validation and a Resend handler. The code includes a honeypot and optional Turnstile checks. Live inbox delivery has not been verified, and the handler currently routes all these enquiry types through `EMAIL_CONNECT` (default `connect@theafricaplug.com`) rather than separate `ask@` / private `fk@` destinations. The newsletter endpoint, Stripe checkout/webhook, approval endpoint and scheduling endpoint currently return 501 and are not implemented. No payment is collected by the current Work With FK form.
+**Current status:** The contact, Ask, partner, TAP IN interest and Work With FK API routes call a shared Zod-validated Resend handler with a honeypot and optional Turnstile verification. All lead types currently send to the single `EMAIL_CONNECT` destination, not the separate routing described in the scope. Actual inbox delivery is unverified. Newsletter subscribe, checkout, Stripe webhook, approval and scheduling endpoints return HTTP 501. The Stripe, Supabase and generic email helper modules are empty `export {}` files. No payment is collected by the current Work With FK form.
 
 **Planned deliverables**
 - Forms: Partner With TAP, Ask The Africa Plug, Contact, email sign-up, Expression of Interest, all with Turnstile and clear success and error messages
@@ -326,7 +364,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 5: Admin dashboard — NOT IMPLEMENTED
 
-**Current status:** The current `/admin` page is a placeholder and the admin layout does not implement authentication or CMS functions. The CMS items below are planned requirements, not existing working features.
+**Current status:** `/admin` renders `Placeholder`; its layout only renders children and adds no authentication or access control. The CMS requirements below are target specifications, not working functionality in this branch.
 
 **Planned deliverables**
 - Secure login
@@ -346,7 +384,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 ### Stage 6: SEO, QA and launch — PARTIAL SCAFFOLD; NOT LAUNCH-READY
 
-**Current status:** `robots.ts` exists and `sitemap.ts` currently emits a list of core static routes; dynamic product-detail URLs are not included. The legal pages contain substantive draft policy copy, but they need business-detail confirmation and appropriate legal review. A clean build/lint run, inbox delivery, accessibility, mobile and performance checks have not been independently verified in this source review.
+**Current status:** `robots.ts` and a core static sitemap are present, but the sitemap omits dynamic book/article detail routes and the Work With FK application route. `JsonLd.tsx` returns `null`. Cookie policy copy explicitly says a preference banner has not been verified; no actual consent banner is present in the active component tree. Legal pages contain substantive drafts but need confirmed business details and legal review. Vercel reports deployment completed for the current source; local build/lint and browser-based accessibility/mobile/performance checks were not run in this audit.
 
 **Planned deliverables**
 - Metadata, 1200x630 share image, en_GB locale, structured data, sitemap, robots.txt
@@ -469,4 +507,4 @@ EMAIL_FK=fk@
 7. **Implement the commercial funnel only after decisions/legal review.** Finalise fees, deposit, refund, cancellation, no-show and rescheduling rules; obtain legal review; then implement verified Stripe payments/webhooks, approval messages and scheduling unlocks. The current checkout, webhook, approval and scheduling endpoints are stubs.
 8. **Complete launch QA.** Finalize and review the existing legal policy drafts, implement and verify cookie consent, review the existing sitemap and add dynamic product URLs where needed, set metadata/structured data/analytics, verify all links and forms on phone and desktop, run build/lint and accessibility/performance checks, then confirm the production domain and post-deploy behaviour.
 
-**Current recommendation:** Start with steps 1–3. That validates the repository/deployment boundary and turns the forms already in the code into a proven working contact channel before more features are added.
+**Current recommendation after source audit:** First fix verified navigation/CTA defects and add the missing carousel controls; then run an explicit phone/desktop QA pass. Next agree the real product data and connect Store/TAP IN/Blog to a persistent backend. Build secure admin/CMS and the payment/digital-delivery workflows only after the required business decisions and legal review. Do not treat the current form or demo Pay buttons as confirmed commercial workflows.

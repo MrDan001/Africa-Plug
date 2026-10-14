@@ -475,7 +475,7 @@ This mechanism lets the team build features now and launch them later.
 
 ### A. A real CMS needs a content/data backend
 
-The repo does not yet have the full CMS specified above. The existing `/admin` is currently focused on homepage-video publishing.
+The repo does not yet have the full CMS specified above. In the current inspected branch, `/admin` renders a placeholder and the admin layout does not implement authentication or content management. No homepage-video publishing workflow is present in the current route tree.
 
 A persistent content/data system is needed for:
 
@@ -566,7 +566,7 @@ The exact colours, typography and brand rules are still to come separately. The 
 
 ### J. Homepage video experience needs the final video/content package
 
-The repo already has infrastructure for homepage video, but the final brief requires:
+The current homepage uses an external YouTube iframe sample; an upload/publishing workflow is not present in the inspected route tree. The final brief requires:
 
 - 40–60 second video
 - Captions
@@ -661,7 +661,7 @@ At minimum, the final TAP site needs:
 
 ## Important Observation About the Repo
 
-The existing project is not yet at the complete CMS stage. The inspected setup is a Next.js app with the homepage, styling, a basic `/admin` area, admin authentication, and Vercel Blob video publishing. The current admin's main purpose is replacing/publishing the homepage video, rather than managing the complete TAP business system.
+The current project is not yet at the complete CMS stage. It is a Next.js app with the homepage, styling, public routes, enquiry-form code and a placeholder `/admin` route. In the inspected main branch, the admin route does not implement authentication or content management, and no Vercel Blob upload/publishing route is present. The homepage intro video is currently an external YouTube embed. Treat the CMS and video-management items in this file as target requirements, not implemented capabilities.
 
 The next major conceptual step is not simply “build more pages.” It is:
 
@@ -671,4 +671,4 @@ That is the point where the project becomes the website described in the 13-step
 
 ---
 
-**Reference status:** Keep this document as planning documentation. Do not treat every listed capability as implemented, and do not change scope or production behavior solely by adding this file.
+**Source-audit note (14 October 2026):** The current implementation status is recorded in `roadmap.md`. This document remains a requirements specification. The current branch has a placeholder admin route and no dedicated video-upload workflow; do not describe admin authentication, CMS or media publishing as already implemented until those code paths exist and are tested.

@@ -1,7 +1,8 @@
 # The Africa Plug Website: Project Scope and Build Plan
 
 **Date:** 11 October 2026  
-**Owner:** @MrDan
+**Owner:** @MrDan  
+**Document type:** Target scope and requirements, not a completion report. For verified implemented/remaining status, use `roadmap.md`.
 
 ## 1. Project overview
 
