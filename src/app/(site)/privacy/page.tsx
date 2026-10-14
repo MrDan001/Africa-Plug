@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main>Placeholder</main>;
+import { PrivacyPolicy } from "@/components/layout/LegalPages";
+
+export default function PrivacyPage() {
+  return <PrivacyPolicy />;
 }
