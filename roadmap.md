@@ -543,3 +543,13 @@ EMAIL_FK=fk@
 - [ ] Verify every article route, image, source link and responsive layout after deployment.
 - [ ] Add a secure CMS workflow for drafts, editorial review, publishing dates, revisions, author profiles, categories and social-sharing metadata. The new articles are currently static files, not managed by an admin dashboard.
 - [ ] Complete production build, lint and browser QA; these changes have been source-reviewed but not built in this environment.
+
+
+## Blog external-link cleanup — 14 October 2026
+
+- [x] Removed “Sources and further reading” from all article detail pages.
+- [x] Removed external institutional URLs from the local blog post data model.
+- [x] Removed generic placeholder LinkedIn, YouTube and Instagram links from the homepage blog preview.
+- [x] Kept article cards, internal article routes, the official email contact and editable local article content intact.
+- [ ] Verify an article ends with the TAP takeaway followed by “End of article”, with no source list.
+- [ ] Confirm blog pages no longer navigate to external websites from article/source/social controls after deployment.

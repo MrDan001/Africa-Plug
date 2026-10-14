@@ -1,10 +1,8 @@
 export type BlogChecklistItem = { label: string; detail: string };
 export type BlogSection = { heading: string; paragraphs: string[]; checklist?: BlogChecklistItem[] };
-export type BlogSource = { label: string; url: string };
 export type BlogPost = {
   slug: string; category: string; title: string; excerpt: string; image: string; imageAlt: string;
-  publishedAt: string; readingTime: string; author: string; tags: string[]; takeaway: string;
-  sections: BlogSection[]; sources: BlogSource[];
+  publishedAt: string; readingTime: string; author: string; tags: string[]; takeaway: string; sections: BlogSection[];
 };
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -61,20 +59,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "Then build repeatability: a named importer or distributor, written commercial terms, quality specifications, a process for disputes and a clear record of what the customer actually paid. The AfCFTA opportunity is not only about exporting more. It is about learning to serve customers across borders reliably enough that the second and tenth orders become easier than the first."
         ]
       }
-    ],
-    "sources": [
-      {
-        "label": "African Union — Agreement Establishing the African Continental Free Trade Area",
-        "url": "https://static.au.int/sw/node/34270"
-      },
-      {
-        "label": "African Union — AfCFTA Rules of Origin Manual",
-        "url": "https://au.int/sw/node/42264"
-      },
-      {
-        "label": "World Bank — Integrating Africa: From Threads to Hubs",
-        "url": "https://www.worldbank.org/en/brief/2026/08/25/integrating-africa-from-threads-to-hubs"
-      }
     ]
   },
   {
@@ -128,16 +112,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "Good partnerships need enough structure to make disagreement manageable. Decide who may commit the business, approve prices, handle customer data and sign contracts. Agree how issues are escalated and how progress will be reviewed. These practices do not signal distrust; they protect a relationship from preventable confusion.",
           "The best local partner is not necessarily the person who promises the fastest route to success. It is the person who can tell you when an idea will not work, show evidence for their advice and take responsibility for agreed tasks. Access may get a business into the conversation. Reliable delivery is what earns the next conversation."
         ]
-      }
-    ],
-    "sources": [
-      {
-        "label": "World Bank — Integrating Africa: From Threads to Hubs",
-        "url": "https://www.worldbank.org/en/brief/2026/08/25/integrating-africa-from-threads-to-hubs"
-      },
-      {
-        "label": "International Trade Administration — Identify and Apply Rules of Origin",
-        "url": "https://www.trade.gov/identify-and-apply-rules-origin"
       }
     ]
   },
@@ -194,16 +168,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "The objective is not to adopt every fashionable payment option. It is to make paying easy for the customer and make the resulting money traceable to the business. Start with channels customers actually use, measure failed payments and support requests, then expand when the evidence shows that an additional option solves a real problem."
         ]
       }
-    ],
-    "sources": [
-      {
-        "label": "GSMA — Mobile Money Accounted for $2 Trillion in Transactions in 2025",
-        "url": "https://www.gsma.com/newsroom/press-release/mobile-money-accounted-for-2-trillion-in-transactions-in-2025-doubling-since-2021-as-active-accounts-continue-to-grow/"
-      },
-      {
-        "label": "GSMA — The State of the Industry Report on Mobile Money 2026",
-        "url": "https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-for-development/gsma_resources/the-state-of-the-industry-report-on-mobile-money-2026-global-and-regional-deep-dive/"
-      }
     ]
   },
   {
@@ -257,20 +221,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "Page views and social-media likes can show that people noticed a message, but they do not automatically tell you whether the business is improving. Track meaningful actions: qualified enquiries, completed payments, time to fulfil, repeat purchases, complaints and the cost of serving an order. Review the data regularly and ask what decision it should change.",
           "Digital transformation is a series of operating improvements, not a one-time launch. When customer feedback reveals a problem, change the process. When an integration becomes unreliable, create a safe fallback. When demand grows, automate repetitive work that is already understood. The goal is a business that works better because of technology, not a business that simply owns more technology."
         ]
-      }
-    ],
-    "sources": [
-      {
-        "label": "World Bank — Digital Transformation Drives Development in Africa",
-        "url": "https://www.worldbank.org/en/results/2024/01/18/digital-transformation-drives-development-in-afe-afw-africa"
-      },
-      {
-        "label": "World Bank — Digital Africa: Technological Transformation for Jobs",
-        "url": "https://www.worldbank.org/en/region/afr/publication/digital-africa"
-      },
-      {
-        "label": "UN Trade and Development — Reforms Enabling E-commerce and Digital Trade",
-        "url": "https://unctad.org/publication/fast-tracking-implementation-reforms-enabling-e-commerce-and-digital-trade"
       }
     ]
   },
@@ -327,16 +277,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "Energy planning can also reveal where a process should change. Moving heavy work to more reliable hours, improving insulation, using efficient equipment or reducing idle consumption may be cheaper than adding generation. The strongest investment plan combines technical choices with an honest view of how energy affects revenue and delivery."
         ]
       }
-    ],
-    "sources": [
-      {
-        "label": "International Energy Agency — Financing Electricity Access in Africa",
-        "url": "https://www.iea.org/reports/financing-electricity-access-in-africa/pathway-to-universal-access"
-      },
-      {
-        "label": "International Energy Agency — Universal Access to Clean Cooking in Africa",
-        "url": "https://www.iea.org/reports/universal-access-to-clean-cooking-in-africa"
-      }
     ]
   },
   {
@@ -391,16 +331,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "Food businesses often rely on parties who do not share the same information: growers, aggregators, processors, storage operators, transporters, traders and buyers. A simple system for volumes, dates, grades and expected arrival can help these parties make decisions earlier. Better coordination will not remove weather or infrastructure risk, but it can prevent avoidable losses caused by late information.",
           "The commercial measure is what reaches the market in the condition the buyer needs, at a cost the chain can sustain. Improving that measure may require equipment, but it can also require new agreements, training and shared schedules. The harvest is the beginning of the product's journey to market—not the end of the business problem."
         ]
-      }
-    ],
-    "sources": [
-      {
-        "label": "World Bank — From Loss to Resilience in Nigeria",
-        "url": "https://blogs.worldbank.org/en/opendata/from-loss-to-resilience-in-nigeria--turning-a-growing-agricultur"
-      },
-      {
-        "label": "African Development Bank — Africa Adaptation Acceleration Program",
-        "url": "https://www.afdb.org/en/cop26/flagship-climate-initiatives"
       }
     ]
   },
@@ -457,16 +387,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "The aim is not to make a small business look larger than it is. It is to make the real business understandable. Strong records improve day-to-day decisions even if a loan or investment never materialises. They help the owner discover which customers pay late, which products tie up stock and whether growth is producing cash or only activity."
         ]
       }
-    ],
-    "sources": [
-      {
-        "label": "World Bank — From Collateral to Cashflow: Expanding Access to Finance for Nigeria’s Female Business Owners",
-        "url": "https://connect4impact.worldbank.org/topic/collateral-cashflow-expanding-access-finance-nigerias-female-business-owners-2024"
-      },
-      {
-        "label": "World Bank — Innovative Lending Products for Women-Led SMEs in Nigeria",
-        "url": "https://microdata.worldbank.org/catalog/6289"
-      }
     ]
   },
   {
@@ -522,20 +442,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "Logistics becomes a competitive advantage when customers trust the promise. That requires the right carrier, sensible buffer time, written procedures and a plan for disruption. You cannot remove every road, port or border risk, but you can be honest about what the route can deliver and build the commercial offer around that reality."
         ]
       }
-    ],
-    "sources": [
-      {
-        "label": "World Bank — Trade and Development Chart: Trucking Goods Across Africa",
-        "url": "https://blogs.worldbank.org/en/trade/chart-trucking-goods-across-africa"
-      },
-      {
-        "label": "World Bank — Integrating Africa: From Threads to Hubs",
-        "url": "https://www.worldbank.org/en/brief/2026/08/25/integrating-africa-from-threads-to-hubs"
-      },
-      {
-        "label": "World Bank — Transport Prices and Costs in Africa",
-        "url": "https://documents.worldbank.org/en/publication/documents-reports/documentdetail/278561468201609212"
-      }
     ]
   },
   {
@@ -589,16 +495,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "In agricultural supply chains, resilience may involve soil and water management, shade, improved crop practices, climate information or more diverse income sources. In other sectors, it may mean safer facilities, backup communication, flexible sourcing or less exposure to one vulnerable route. Adaptation is most useful when it responds to a real operational weakness rather than being treated as a generic checklist.",
           "A strong plan does not claim that every disruption can be prevented. It makes the business better prepared to absorb a shock, communicate clearly and resume critical activity. That can protect customers, staff, cash flow and supplier relationships—the same things the business is already responsible for protecting."
         ]
-      }
-    ],
-    "sources": [
-      {
-        "label": "African Development Bank — Flagship Climate Initiatives and the Africa Adaptation Acceleration Program",
-        "url": "https://www.afdb.org/en/cop26/flagship-climate-initiatives"
-      },
-      {
-        "label": "African Development Bank — Climate-Smart Innovation with Cocoa Farmers in Côte d’Ivoire",
-        "url": "https://www.afdb.org/en/success-stories/keep-farming-we-have-adapt-south-western-cote-94466"
       }
     ]
   },
@@ -654,20 +550,6 @@ export const BLOG_POSTS: BlogPost[] = [
           "A publishing house, film crew, fashion workshop or live-event business can support a network of suppliers and skilled workers. Those connections become stronger when training, payment practices and standards are reliable. The result is not simply more cultural output; it is a more capable ecosystem in which people can build careers, companies can plan and audiences can access a wider range of work.",
           "The useful question is not whether creativity is valuable. It is what needs to exist around creative talent for that value to be produced consistently and shared fairly. Better contracts, professional skills, dependable distribution and clearer routes to market help turn individual success into a business that can survive beyond one release, one performance or one viral moment."
         ]
-      }
-    ],
-    "sources": [
-      {
-        "label": "UNESCO — Culture Development: Regional Trends in Africa",
-        "url": "https://www.unesco.org/en/culture-development/regionaltrends/africa"
-      },
-      {
-        "label": "UNESCO — Skills and Employment in the Culture and Creative Industries",
-        "url": "https://www.unesco.org/en/articles/skills-and-employment-culture-and-creative-industries-strategic-frameworks-and-promising-initiatives?hub=343"
-      },
-      {
-        "label": "UNESCO — The African Book Industry: Trends, Challenges and Opportunities for Growth",
-        "url": "https://www.unesco.org/creativity/en/sector/publishing"
       }
     ]
   }

@@ -84,3 +84,8 @@ Pink-background actions now use white text across the Playbook bookshelf CTA, se
 ## TAP Journal — ten original articles (14 October 2026)
 
 The Blog now contains ten practical, fully written editorial explainers covering AfCFTA, local partnerships, mobile money, digital business, energy, food systems, SME finance, logistics, climate resilience and the creative economy. Each article has its own route, summary, reading time, tags, practical takeaway and links to public institutional research. The homepage preview remains limited to four cards while the Journal page displays all ten. Article routes are included in the sitemap and searchable through the header search. The articles are hard-coded editorial content for this stage; CMS authoring, editing, drafts and publication controls are not yet implemented.
+
+
+## Blog outbound-link cleanup (14 October 2026)
+
+Removed the per-article “Sources and further reading” block and the external source URL list from the local article data. Also removed generic LinkedIn, YouTube and Instagram placeholder links from the homepage blog strip. Blog cards and article navigation remain internal, and the ten stories are stored in `src/lib/blog-posts.ts` for later editing. Official email contact links remain email actions, not website links. Remote images and the existing intro-video embed remain media resources rather than clickable blog/source links.

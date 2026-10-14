@@ -60,14 +60,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             <p className="blog-page-eyebrow">THE TAP TAKEAWAY</p>
             <p>{post.takeaway}</p>
           </aside>
-          <section className="blog-article-sources" aria-labelledby="blog-article-sources-heading">
-            <h2 id="blog-article-sources-heading">Sources and further reading</h2>
-            <p>These articles draw on public research and institutional guidance. Rules, prices and requirements can differ by country and should be checked for the specific transaction or project.</p>
-            <ol>
-              {post.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} <span aria-hidden="true">↗</span></a></li>)}
-            </ol>
-          </section>
-          <div className="blog-article-end">
+<div className="blog-article-end">
             <span>END OF ARTICLE</span>
             <Link href="/blog">Explore more from The TAP Journal <span aria-hidden="true">→</span></Link>
           </div>

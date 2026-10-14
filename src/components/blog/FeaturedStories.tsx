@@ -64,14 +64,6 @@ export default function FeaturedStories({ variant = "home" }: FeaturedStoriesPro
             ))}
           </div>
         )}
-
-        {isHome ? (
-          <div className="featured-blog-social">
-            <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer"><b>in</b> Follow on LinkedIn</a>
-            <a href="https://www.youtube.com/" target="_blank" rel="noreferrer"><b>▶</b> Watch on YouTube</a>
-            <a href="https://www.instagram.com/" target="_blank" rel="noreferrer"><b>◎</b> Follow on Instagram</a>
-          </div>
-        ) : null}
       </div>
     </section>
   );
