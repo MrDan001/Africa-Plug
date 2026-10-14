@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main>Placeholder</main>;
+import { CookiePolicy } from "@/components/layout/LegalPages";
+
+export default function CookiesPage() {
+  return <CookiePolicy />;
 }
