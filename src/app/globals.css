@@ -469,3 +469,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+
+/* Keep desktop navigation clean; switch to the hamburger menu on tablet and mobile. */
+@media (max-width: 1000px) {
+  .desktop-nav { display: none; }
+  .mobile-menu-wrap { display: block; }
+}
