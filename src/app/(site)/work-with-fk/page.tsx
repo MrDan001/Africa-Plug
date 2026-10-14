@@ -13,8 +13,8 @@ export default function WorkWithFkPage() {
       eyebrow="AFRICA COMMERCIAL DEAL CONSULTANCY"
       title="WORK WITH FK."
       description="Commercial support for companies, investors, founders and institutions looking to assess, develop or progress opportunities connected to Africa."
-      actionLabel="START WITH AN ENQUIRY"
-      actionHref="/contact"
+      actionLabel="START YOUR ENQUIRY"
+      actionHref="/work-with-fk/apply"
     >
       <div className="standard-section-heading">
         <p className="standard-eyebrow">A CLEAR PROCESS</p>
@@ -35,7 +35,7 @@ export default function WorkWithFkPage() {
           <h2>Bring the brief. We’ll look at the next step.</h2>
           <p>Share a little context about your organisation, your goal and the support you are looking for.</p>
         </div>
-        <a className="standard-button" href="/contact">Contact the team <span aria-hidden="true">↗</span></a>
+        <a className="standard-button" href="/work-with-fk/apply">START YOUR ENQUIRY <span aria-hidden="true">↗</span></a>
       </div>
     </ContentPage>
   );
