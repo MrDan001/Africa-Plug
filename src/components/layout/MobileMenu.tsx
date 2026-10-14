@@ -24,13 +24,6 @@ export default function MobileMenu({ items }: { items: NavItem[] }) {
 
   return (
     <>
-      <Link
-        href="/work-with-fk"
-        className="border border-white px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white"
-      >
-        Work With FK
-      </Link>
-
       <button
         type="button"
         onClick={() => setOpen(true)}

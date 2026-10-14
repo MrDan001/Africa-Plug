@@ -40,7 +40,7 @@ export default function HomeSections() {
           <Eyebrow>COMMERCIAL DEAL CONSULTANCY</Eyebrow>
           <h2>WORK WITH FK</h2>
           <p>Get expert support to access, structure and close the right opportunities in Africa.</p>
-          <a className="button button-pink" href="mailto:connect@theafricaplug.com?subject=Work%20with%20FK">START YOUR APPLICATION <span>→</span></a>
+          <a className="button button-pink" href="#contact">START YOUR APPLICATION <span>→</span></a>
           <a className="text-link" href="#process">SEE HOW IT WORKS</a>
         </div>
         <div className="proof-area" id="process">
@@ -69,18 +69,18 @@ export default function HomeSections() {
           <Eyebrow>LIVE OPPORTUNITIES</Eyebrow>
           <h2>TAP IN</h2>
           <p>Discover vetted business and investment opportunities across Africa. From agriculture to infrastructure, energy to tech.</p>
-          <a className="button button-pink" href="mailto:connect@theafricaplug.com?subject=TAP%20IN%20opportunities">VIEW LATEST LISTINGS <span>→</span></a>
+          <a className="button button-pink" href="#tap-in">VIEW LATEST LISTINGS <span>→</span></a>
         </div>
         <div className="listing-stack">
-          <a className="listing-row" href="mailto:connect@theafricaplug.com?subject=Excavator%20Hire%20-%20Lagos">
+          <a className="listing-row" href="#contact">
             <span className="listing-thumb" style={{ backgroundImage: `url("${photos.excavator}")` }} />
             <span className="listing-info"><b>Excavator Hire — Lagos</b><small>Construction <i>•</i> Equipment</small></span><Arrow />
           </a>
-          <a className="listing-row" href="mailto:connect@theafricaplug.com?subject=Honey%20Supply%20-%20Plateau">
+          <a className="listing-row" href="#contact">
             <span className="listing-thumb" style={{ backgroundImage: `url("${photos.honey}")` }} />
             <span className="listing-info"><b>Honey Supply — Plateau</b><small>Agriculture <i>•</i> Export</small></span><Arrow />
           </a>
-          <a className="listing-row" href="mailto:connect@theafricaplug.com?subject=Solar%20Energy%20Project%20-%20Kenya">
+          <a className="listing-row" href="#contact">
             <span className="listing-thumb" style={{ backgroundImage: `url("${photos.solar}")` }} />
             <span className="listing-info"><b>Solar Energy Project — Kenya</b><small>Energy <i>•</i> Investment</small></span><Arrow />
           </a>
@@ -103,7 +103,7 @@ export default function HomeSections() {
           <Eyebrow>FEATURED PRODUCT</Eyebrow>
           <h2>THE AFRICA STARTER GUIDE</h2>
           <p>A practical guide to help you understand the landscape, find real opportunities and take the right steps.</p>
-          <strong className="product-price">Coming soon</strong>
+          <strong className="product-price">COMING SOON</strong>
           <a className="button button-pink" href="#contact">GET PRODUCT UPDATES <span>→</span></a>
         </div>
       </section>
@@ -113,7 +113,7 @@ export default function HomeSections() {
           <Eyebrow>PARTNER WITH TAP</Eyebrow>
           <h2>LET’S BUILD<br />TOGETHER</h2>
           <p>We work with forward-thinking brands, sponsors, events and guests who want to be part of Africa’s next chapter.</p>
-          <a className="button button-pink" href="mailto:connect@theafricaplug.com?subject=Partner%20with%20TAP">PARTNER WITH TAP <span>→</span></a>
+          <a className="button button-pink" href="#contact">PARTNER WITH TAP <span>→</span></a>
         </div>
       </section>
 
@@ -122,7 +122,7 @@ export default function HomeSections() {
           <Eyebrow>LATEST FROM THE BLOG</Eyebrow>
           <h2>IDEAS. INSIGHTS. REAL TALK.</h2>
           <p>Articles, analysis and stories on business, opportunity, innovation and life in Africa.</p>
-          <a className="button button-pink" href="mailto:connect@theafricaplug.com?subject=Blog%20updates">VISIT THE BLOG <span>→</span></a>
+          <a className="button button-pink" href="#blog">VISIT THE BLOG <span>→</span></a>
         </div>
         <div className="blog-cards">
           <a href="#contact" className="blog-card">
@@ -150,9 +150,9 @@ export default function HomeSections() {
         <h2>LET’S STAY PLUGGED IN</h2>
         <p>Have a question, a business idea or want to know more?<br className="desktop-only" /> We’re here to help.</p>
         <div className="closing-cards">
-          <a href="mailto:connect@theafricaplug.com?subject=Contact%20Africa%20Plug" className="closing-card"><span className="closing-icon">✉</span><b>CONTACT</b><small>Get in touch with our team.</small><Arrow /></a>
-          <a href="mailto:ask@theafricaplug.com?subject=Ask%20Africa%20Plug" className="closing-card"><span className="closing-icon">＋</span><b>ASK THE AFRICA PLUG</b><small>Questions, advice, guidance.</small><Arrow /></a>
-          <a href="mailto:connect@theafricaplug.com?subject=Stay%20Plugged%20In" className="closing-card"><span className="closing-icon">♧</span><b>STAY PLUGGED IN</b><small>Join our mailing list.</small><Arrow /></a>
+          <a href="#contact" className="closing-card"><span className="closing-icon">✉</span><b>CONTACT</b><small>Get in touch with our team.</small><Arrow /></a>
+          <a href="#contact" className="closing-card"><span className="closing-icon">＋</span><b>ASK THE AFRICA PLUG</b><small>Questions, advice, guidance.</small><Arrow /></a>
+          <a href="#contact" className="closing-card"><span className="closing-icon">♧</span><b>STAY PLUGGED IN</b><small>Join our mailing list.</small><Arrow /></a>
         </div>
       </section>
     </>
