@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main>Placeholder</main>;
+import Hero from "@/components/home/Hero";
+
+export default function HomePage() {
+  return <Hero />;
 }
