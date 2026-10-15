@@ -25,21 +25,16 @@ export default function HomeSections() {
     <>
       <section className="intro-section section-grid" id="about">
         <div className="intro-video-card" aria-label="Africa Plug intro video sample">
-          <div
-            className="intro-video-poster"
-            role="img"
-            aria-label="The Africa Plug introduction film preview"
-            style={{
-              backgroundImage: `linear-gradient(90deg, rgba(2,4,8,.9), rgba(2,4,8,.25)), linear-gradient(0deg, rgba(2,4,8,.75), transparent 65%), url("${photos.fk}")`,
-            }}
-          >
-            <div className="intro-video-poster-copy">
-              <p>THE AFRICA PLUG</p>
-              <strong>PEOPLE. PROGRESS. OPPORTUNITY.</strong>
-              <span>INTRODUCTION FILM</span>
-            </div>
-            <span className="intro-video-poster-mark" aria-hidden="true">TAP</span>
-          </div>
+          <iframe
+            className="intro-video-embed"
+            src="https://www.youtube-nocookie.com/embed/jTC26BkcY_M?rel=0&playsinline=1"
+            title="Africa — cinematic travel video (temporary sample for The Africa Plug introduction)"
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+          <span className="intro-video-sample-badge">TEMPORARY VIDEO SAMPLE</span>
         </div>
         <div className="intro-copy">
           <Eyebrow>MEET FK</Eyebrow>
