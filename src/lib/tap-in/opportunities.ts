@@ -35,15 +35,21 @@ function getConfig() {
 
 async function requestDatabase<T>(path: string, init: RequestInit = {}): Promise<T> {
   const { baseUrl, serviceKey } = getConfig();
+  // Legacy service_role keys are JWTs and can be used for both headers.
+  // New Supabase secret keys (sb_secret_...) are API keys, not JWTs, so
+  // send them as apikey only; putting one in Authorization: Bearer causes 401s.
+  const headers: Record<string, string> = {
+    apikey: serviceKey,
+    "Content-Type": "application/json",
+    ...(init.headers as Record<string, string> | undefined),
+  };
+  if (serviceKey.startsWith("eyJ")) {
+    headers.Authorization = `Bearer ${serviceKey}`;
+  }
   const response = await fetch(`${baseUrl}/rest/v1/${path}`, {
     ...init,
     cache: "no-store",
-    headers: {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      "Content-Type": "application/json",
-      ...(init.headers ?? {}),
-    },
+    headers,
   });
   const body = await response.text();
   if (!response.ok) {
