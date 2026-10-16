@@ -27,25 +27,25 @@ export type OpportunityInput = Omit<TapInOpportunity, "id" | "created_at" | "upd
 function getConfig() {
   const baseUrl = process.env.SUPABASE_URL?.replace(/\/+$/, "");
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const legacyServiceJwt = process.env.SUPABASE_SERVICE_ROLE_JWT;
   if (!baseUrl || !serviceKey) {
     throw new Error("TAP_IN_DATABASE_NOT_CONFIGURED: Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, then run the TAP IN database migration.");
   }
-  return { baseUrl, serviceKey };
+  const authorizationJwt = serviceKey.startsWith("eyJ") ? serviceKey : legacyServiceJwt;
+  if (!authorizationJwt) {
+    throw new Error("TAP_IN_DATABASE_NOT_CONFIGURED: Set SUPABASE_SERVICE_ROLE_JWT to the legacy service_role JWT in Vercel when using an sb_secret_ key.");
+  }
+  return { baseUrl, serviceKey, authorizationJwt };
 }
 
 async function requestDatabase<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const { baseUrl, serviceKey } = getConfig();
-  // Legacy service_role keys are JWTs and can be used for both headers.
-  // New Supabase secret keys (sb_secret_...) are API keys, not JWTs, so
-  // send them as apikey only; putting one in Authorization: Bearer causes 401s.
+  const { baseUrl, serviceKey, authorizationJwt } = getConfig();
   const headers: Record<string, string> = {
     apikey: serviceKey,
+    Authorization: `Bearer ${authorizationJwt}`,
     "Content-Type": "application/json",
     ...(init.headers as Record<string, string> | undefined),
   };
-  if (serviceKey.startsWith("eyJ")) {
-    headers.Authorization = `Bearer ${serviceKey}`;
-  }
   const response = await fetch(`${baseUrl}/rest/v1/${path}`, {
     ...init,
     cache: "no-store",
@@ -65,52 +65,38 @@ async function requestDatabase<T>(path: string, init: RequestInit = {}): Promise
 const TABLE = "tap_in_opportunities";
 
 export async function listAllOpportunities() {
-  return requestDatabase<TapInOpportunity[]>(
-    `${TABLE}?select=*&order=updated_at.desc,title.asc`,
-  );
+  return requestDatabase<TapInOpportunity[]>(`${TABLE}?select=*&order=updated_at.desc,title.asc`);
 }
 
 export async function listLiveOpportunities() {
-  return requestDatabase<TapInOpportunity[]>(
-    `${TABLE}?select=*&status=eq.live&order=updated_at.desc,title.asc`,
-  );
+  return requestDatabase<TapInOpportunity[]>(`${TABLE}?select=*&status=eq.live&order=updated_at.desc,title.asc`);
 }
 
 export async function findPublicOpportunityBySlug(slug: string) {
-  const rows = await requestDatabase<TapInOpportunity[]>(
-    `${TABLE}?select=*&slug=eq.${encodeURIComponent(slug)}&status=neq.draft&limit=1`,
-  );
+  const rows = await requestDatabase<TapInOpportunity[]>(`${TABLE}?select=*&slug=eq.${encodeURIComponent(slug)}&status=neq.draft&limit=1`);
   return rows[0] ?? null;
 }
 
 export async function findOpportunityBySlug(slug: string) {
-  const rows = await requestDatabase<TapInOpportunity[]>(
-    `${TABLE}?select=id,slug&slug=eq.${encodeURIComponent(slug)}&limit=1`,
-  );
+  const rows = await requestDatabase<TapInOpportunity[]>(`${TABLE}?select=id,slug&slug=eq.${encodeURIComponent(slug)}&limit=1`);
   return rows[0] ?? null;
 }
 
 export async function createOpportunity(input: OpportunityInput) {
-  const rows = await requestDatabase<TapInOpportunity[]>(
-    TABLE,
-    {
-      method: "POST",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify(input),
-    },
-  );
+  const rows = await requestDatabase<TapInOpportunity[]>(TABLE, {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(input),
+  });
   return rows[0];
 }
 
 export async function updateOpportunity(id: string, input: OpportunityInput) {
-  const rows = await requestDatabase<TapInOpportunity[]>(
-    `${TABLE}?id=eq.${encodeURIComponent(id)}`,
-    {
-      method: "PATCH",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify(input),
-    },
-  );
+  const rows = await requestDatabase<TapInOpportunity[]>(`${TABLE}?id=eq.${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(input),
+  });
   if (!rows[0]) return null;
   return rows[0];
 }
