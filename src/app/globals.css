@@ -1896,3 +1896,101 @@ body { -webkit-font-smoothing: antialiased; }
   .tap-admin-preview { aspect-ratio: 1.7 / 1; }
   .tap-admin-card-note { min-height: 0; margin: 11px 0; }
 }
+
+
+/* TAP IN admin: stable global layout styles, independent of CSS-module ordering */
+.tap-in-admin {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px clamp(14px, 4vw, 56px) 64px;
+  background: #f4f2ee !important;
+  color: #22242a !important;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+.tap-in-admin * { box-sizing: border-box; }
+.tap-in-admin-header {
+  max-width: 1240px; margin: 0 auto; padding: 0 0 18px;
+  display: flex !important; align-items: center; justify-content: space-between; gap: 16px;
+  border-bottom: 1px solid #dedbd4;
+}
+.tap-in-admin .brand { color: #22242a !important; font-size: 11px; font-weight: 900; letter-spacing: .12em; text-decoration: none; }
+.tap-in-admin .brand span { color: #e50070 !important; }
+.tap-in-admin .back { color: #54565a !important; font-size: 12px; font-weight: 700; }
+.tap-in-admin-intro, .tap-in-admin-panel { width: 100%; max-width: 1240px; margin-left: auto; margin-right: auto; }
+.tap-in-admin-intro { padding: 32px 0 20px; }
+.tap-in-admin-intro .kicker { margin: 0 0 8px; color: #d80068 !important; font-size: 10px; font-weight: 900; letter-spacing: .18em; }
+.tap-in-admin-intro h1 { margin: 0; color: #17181c; font-size: clamp(32px, 5vw, 52px); line-height: 1.05; letter-spacing: -.05em; font-weight: 900; }
+.tap-in-admin-intro > p:not(.kicker) { max-width: 720px; margin: 12px 0 0; color: #62646a; font-size: 13px; line-height: 1.75; }
+.tap-in-admin-summary { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+.tap-in-admin-summary > div { min-width: 0; display: grid !important; gap: 5px; padding: 17px; border: 1px solid #e1ded8; border-radius: 10px; background: #fff; box-shadow: 0 8px 24px rgba(25,25,25,.04); }
+.tap-in-admin-summary strong { display: block; color: #202126; font-size: 28px; line-height: 1.1; font-weight: 900; }
+.tap-in-admin-summary span { color: #777980; font-size: 11px; }
+.tap-in-admin-panel { margin-top: 18px; padding: clamp(16px, 3vw, 28px); border: 1px solid #e0ddd7; border-radius: 12px; background: #fff; box-shadow: 0 12px 34px rgba(25,25,25,.04); }
+.tap-in-admin-panel-heading { display: flex !important; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.tap-in-admin-panel-heading h2 { margin: 0; color: #202126; font-size: 21px; line-height: 1.25; letter-spacing: -.03em; font-weight: 850; }
+.tap-in-admin-panel-heading p { margin: 6px 0 0; color: #777980; font-size: 12px; line-height: 1.6; }
+.tap-in-admin .primary, .tap-in-admin .secondary, .tap-in-admin .remove { min-height: 42px; padding: 0 15px; border: 1px solid #d90068; border-radius: 7px; background: #d90068; color: #fff; font-size: 12px; font-weight: 800; cursor: pointer; }
+.tap-in-admin .primary:hover:not(:disabled) { background: #b80058; }
+.tap-in-admin .secondary { border-color: #d8d5ce; background: #fff; color: #303136; }
+.tap-in-admin .secondary:hover { border-color: #d90068; }
+.tap-in-admin .remove { min-height: 36px; border-color: #dedbd4; background: #fff; color: #62646a; }
+.tap-in-admin-filters { display: flex !important; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 16px; padding: 15px; border-radius: 9px; background: #f5f3ef; }
+.tap-in-admin-filters > label { min-width: 150px; display: grid !important; flex: 0 1 210px; gap: 7px; color: #383a40; font-size: 12px; font-weight: 800; }
+.tap-in-admin-filters .tap-in-admin-search-label { flex: 1 1 250px; }
+.tap-in-admin-form { display: grid !important; gap: 18px; }
+.tap-in-admin-form label { min-width: 0; display: grid !important; align-content: start; gap: 7px; color: #383a40; font-size: 12px; line-height: 1.45; font-weight: 800; }
+.tap-in-admin-form label small { color: #797b81; font-size: 11px; line-height: 1.5; font-weight: 400; }
+.tap-in-admin-form input, .tap-in-admin-form textarea, .tap-in-admin-form select,
+.tap-in-admin-filters input, .tap-in-admin-filters select {
+  display: block !important; width: 100% !important; min-width: 0; min-height: 45px;
+  margin: 0; padding: 11px 12px; border: 1px solid #d6d3cd; border-radius: 7px;
+  background: #fff !important; color: #23252a !important; font: 14px/1.45 Arial, Helvetica, sans-serif;
+  box-shadow: none; appearance: auto;
+}
+.tap-in-admin-form textarea { min-height: 115px; resize: vertical; }
+.tap-in-admin-form input:focus, .tap-in-admin-form textarea:focus, .tap-in-admin-form select:focus,
+.tap-in-admin-filters input:focus, .tap-in-admin-filters select:focus { outline: 2px solid rgba(217,0,104,.18); border-color: #d90068; }
+.tap-in-admin-form-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.tap-in-admin-questions { display: grid !important; gap: 13px; min-width: 0; margin: 0; padding: 17px; border: 1px solid #e3e0da; border-radius: 9px; }
+.tap-in-admin-questions legend { padding: 0 7px; color: #292b30; font-size: 13px; font-weight: 900; }
+.tap-in-admin-question-row { display: grid !important; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px; }
+.tap-in-admin-optional { padding: 16px; border: 1px solid #e3e0da; border-radius: 9px; }
+.tap-in-admin-optional summary { cursor: pointer; color: #292b30; font-size: 13px; font-weight: 850; }
+.tap-in-admin-optional .tap-in-admin-form-grid { margin-top: 16px; }
+.tap-in-admin-form-footer { display: flex !important; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
+.tap-in-admin-form-footer > label { min-width: 190px; }
+.tap-in-admin-form-footer .primary { min-width: 160px; }
+.tap-in-admin .privacyNote { margin: 0; color: #777980; font-size: 11px; line-height: 1.7; }
+.tap-in-admin-list { display: grid !important; border-top: 1px solid #e7e3dc; }
+.tap-in-admin-list-item { display: flex !important; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 0; border-bottom: 1px solid #e7e3dc; }
+.tap-in-admin-item-copy { min-width: 0; }
+.tap-in-admin-item-copy h3 { margin: 8px 0 5px; color: #22242a; font-size: 16px; line-height: 1.35; }
+.tap-in-admin-item-copy p { margin: 0; color: #686a70; font-size: 12px; }
+.tap-in-admin-item-copy small { display: block; margin-top: 7px; color: #898b90; font-size: 11px; overflow-wrap: anywhere; }
+.tap-in-admin-item-actions { display: flex !important; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.tap-in-admin .badge { display: inline-block; width: fit-content; padding: 5px 8px; border: 1px solid #dedbd4; border-radius: 5px; background: #f6f4f0; color: #57595c; font-size: 10px; font-weight: 800; }
+.tap-in-admin-empty { padding: 28px 14px; color: #777980; text-align: center; font-size: 13px; line-height: 1.7; }
+.tap-in-admin .notice { margin: 16px auto; max-width: 1240px; padding: 14px 16px; border: 1px solid #d8d5ce; border-radius: 8px; background: #fff; color: #45474a; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+.tap-in-admin .success { border-color: #a9c9b0; background: #f3faf4; }
+.tap-in-admin .error { border-color: #d9adb9; background: #fff5f8; }
+@media (max-width: 760px) {
+  .tap-in-admin { padding: 16px 13px 36px; }
+  .tap-in-admin-intro { padding-top: 26px; }
+  .tap-in-admin-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tap-in-admin-summary > div { padding: 14px; }
+  .tap-in-admin-summary strong { font-size: 25px; }
+  .tap-in-admin-panel-heading { flex-direction: column; align-items: stretch; }
+  .tap-in-admin-panel-heading > button { align-self: flex-start; }
+  .tap-in-admin-filters { align-items: stretch; flex-direction: column; }
+  .tap-in-admin-filters > label, .tap-in-admin-filters .tap-in-admin-search-label { width: 100%; min-width: 0; flex: 1 1 auto; }
+  .tap-in-admin-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .tap-in-admin-question-row { grid-template-columns: minmax(0, 1fr); }
+  .tap-in-admin-question-row .remove { justify-self: start; }
+  .tap-in-admin-form-footer { align-items: stretch; flex-direction: column; }
+  .tap-in-admin-form-footer > label, .tap-in-admin-form-footer .primary { width: 100%; }
+  .tap-in-admin-list-item { align-items: flex-start; flex-direction: column; }
+  .tap-in-admin-item-actions { justify-content: flex-start; }
+  .tap-in-admin-form input, .tap-in-admin-form textarea, .tap-in-admin-form select,
+  .tap-in-admin-filters input, .tap-in-admin-filters select { font-size: 16px; }
+}
