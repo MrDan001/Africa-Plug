@@ -393,6 +393,10 @@ Admin should be able to edit:
 - Robots settings, if exposed
 - Sitemap-related settings, where appropriate
 
+### Current implementation note (16 October 2026)
+
+The first media-admin slice is implemented at `/admin`: sign-in plus upload/replace controls for Hero 1, Hero 2 and Hero 3. It requires `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and a public-read Supabase Storage bucket (default name `africa-plug-media`). See [`HERO_IMAGE_ADMIN_SETUP.md`](./HERO_IMAGE_ADMIN_SETUP.md). This does not yet implement the complete media library described below.
+
 ## 17. Media Library
 
 Admin should have:
@@ -475,7 +479,7 @@ This mechanism lets the team build features now and launch them later.
 
 ### A. A real CMS needs a content/data backend
 
-The repo does not yet have the full CMS specified above. In the current inspected branch, `/admin` renders a placeholder and the admin layout does not implement authentication or content management. No homepage-video publishing workflow is present in the current route tree.
+The repo does not yet have the full CMS specified above. The current `/admin` route now has a password-protected hero-image manager with upload API and Supabase Storage integration. It can replace the three carousel images after the one-time environment and bucket setup. The wider content management system, opportunity/article/product editors, application review workflows, payments dashboard and other CMS areas are still not implemented.
 
 A persistent content/data system is needed for:
 
