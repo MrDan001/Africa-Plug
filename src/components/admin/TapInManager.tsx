@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import styles from "./TapInManager.module.css";
+import styles from "./TapInManager.v2.module.css";
 
 type Status = "draft" | "live" | "closed" | "archived";
 
