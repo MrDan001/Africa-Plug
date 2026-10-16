@@ -352,8 +352,8 @@ export default function TapInManager() {
         <form className={styles.form} onSubmit={save}>
           <div className={styles.formGrid}>
             <label>Title<input required minLength={2} maxLength={180} value={draft.title} onChange={(event) => updateDraft("title", event.target.value)} /></label>
-            <label>URL slug {editingId ? <small>(locked to preserve the shared URL)</small> : null}<input required value={draft.slug} readOnly={Boolean(editingId)} onChange={(event) => updateDraft("slug", event.target.value)} placeholder="Generated from title when blank" /></label>
-            <label>Country<input maxLength={120} value={draft.country} onChange={(event) => updateDraft("country", event.target.value)} /></label>
+            <label>URL slug {editingId ? <small>(locked to preserve the shared URL)</small> : null}<input value={draft.slug} readOnly={Boolean(editingId)} onChange={(event) => updateDraft("slug", event.target.value)} placeholder="Generated from title when blank" /></label>
+            <label>Country <small>(country or region is required)</small><input maxLength={120} value={draft.country} onChange={(event) => updateDraft("country", event.target.value)} /></label>
             <label>Region<input maxLength={120} value={draft.region} onChange={(event) => updateDraft("region", event.target.value)} /></label>
             <label>Sector<input required minLength={2} maxLength={120} value={draft.sector} onChange={(event) => updateDraft("sector", event.target.value)} /></label>
             <label>Opportunity type<input required minLength={2} maxLength={120} value={draft.opportunity_type} onChange={(event) => updateDraft("opportunity_type", event.target.value)} /></label>
