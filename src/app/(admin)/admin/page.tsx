@@ -32,23 +32,10 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    let cancelled = false;
-    async function checkSession() {
-      try {
-        const response = await fetch("/api/admin/session", { cache: "no-store" });
-        const data = await response.json() as { authenticated?: boolean };
-        if (cancelled) return;
-        setAuthenticated(Boolean(data.authenticated));
-        if (data.authenticated) await refreshImages();
-      } catch {
-        if (!cancelled) setNotice({ tone: "error", text: "Could not connect to the admin service. Refresh and try again." });
-      } finally {
-        if (!cancelled) setChecking(false);
-      }
-    }
     document.title = "Homepage Images | Africa Plug Admin";
-    void checkSession();
-    return () => { cancelled = true; };
+    setAuthenticated(true);
+    void refreshImages();
+    setChecking(false);
   }, []);
 
   async function login(event: FormEvent<HTMLFormElement>) {
@@ -118,12 +105,6 @@ export default function AdminPage() {
     }
   }
 
-  async function logout() {
-    await fetch("/api/admin/session", { method: "DELETE" });
-    setAuthenticated(false);
-    setNotice(null);
-  }
-
   if (checking) {
     return <main className="tap-admin-page"><div className="tap-admin-shell"><p className="tap-admin-muted">Checking secure admin session…</p></div></main>;
   }
@@ -133,7 +114,7 @@ export default function AdminPage() {
       <div className="tap-admin-shell">
         <header className="tap-admin-header">
           <a className="tap-admin-brand" href="/" aria-label="Africa Plug homepage"><span className="tap-admin-brand-mark">AP</span><span><small>THE</small><b>AFRICA PLUG</b></span></a>
-          {authenticated ? <button className="tap-admin-logout" type="button" onClick={logout}>Sign out</button> : <a className="tap-admin-back" href="/">Back to website ↗</a>}
+          <a className="tap-admin-back" href="/">Back to website ↗</a>
         </header>
 
         <section className="tap-admin-intro">
