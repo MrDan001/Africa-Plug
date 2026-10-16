@@ -31,11 +31,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     document.title = "Africa Plug Admin — Control Room";
-    fetch("/api/admin/session", { cache: "no-store" })
-      .then((response) => response.json())
-      .then((data: { authenticated?: boolean }) => setAuthenticated(data.authenticated === true))
-      .catch(() => setError("Could not verify the admin session. Refresh and try again."))
-      .finally(() => setReady(true));
+    setAuthenticated(true);
+    setReady(true);
   }, []);
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
@@ -83,7 +80,7 @@ export default function AdminDashboard() {
     <main className="ap-admin">
       <header className="ap-admin-topbar">
         <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
-        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><button onClick={signOut}>Sign out</button></div>
+        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><a href="/">View website ↗</a></div>
       </header>
       <section className="ap-admin-hero">
         <p className="ap-admin-eyebrow">THE AFRICA PLUG · CONTROL ROOM</p>
