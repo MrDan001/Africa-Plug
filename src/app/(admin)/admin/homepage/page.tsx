@@ -33,7 +33,9 @@ export default function AdminPage() {
 
   useEffect(() => {
     document.title = "Homepage Manager | Africa Plug Admin";
-    setAuthenticated(true);\n    void refreshImages();\n    setChecking(false);
+    setAuthenticated(true);
+    void refreshImages();
+    setChecking(false);
   }, []);
 
   async function login(event: FormEvent<HTMLFormElement>) {
