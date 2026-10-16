@@ -7,7 +7,7 @@ const areas = [
     { title: "Homepage", detail: "Hero slides, imagery and homepage modules", href: "/admin/homepage", mark: "01" },
     { title: "TAP IN opportunities", detail: "Create, review, publish, close and archive listings", href: "/admin/tap-in", mark: "02" },
     { title: "Blog & editorial", detail: "Articles, categories, SEO and sharing metadata", href: "/admin/blog", mark: "03" },
-    { title: "Store products", detail: "Products, images, prices and protected files", href: "/admin/store", mark: "04", status: "CMS setup required" },
+    { title: "Store products", detail: "Products, images, prices and protected files", href: "/admin/store", mark: "04" },
   ]},
   { group: "BUSINESS OPERATIONS", items: [
     { title: "Work With FK", detail: "Applications, review decisions and commercial settings", href: "/admin/work-with-fk", mark: "05" },
@@ -18,7 +18,7 @@ const areas = [
   { group: "SITE CONTROL", items: [
     { title: "Media library", detail: "Reusable image and document assets", href: "/admin/media", mark: "09" },
     { title: "Commercial settings", detail: "Fees, meeting length, terms and booking rules", href: "/admin/settings", mark: "10" },
-    { title: "Site & SEO settings", detail: "Navigation, contact links, metadata and optional modules", href: "/admin/site-settings", mark: "11", status: "Settings module required" },
+    { title: "Site & SEO settings", detail: "Navigation, contact links, metadata and optional modules", href: "/admin/site-settings", mark: "11" },
   ]},
 ];
 
