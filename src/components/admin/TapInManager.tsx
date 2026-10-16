@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./TapInManager.module.css";
 
 type Status = "draft" | "live" | "closed" | "archived";
@@ -85,10 +85,6 @@ function toDraft(item: Opportunity): Draft {
 }
 
 export default function TapInManager() {
-  const [checking, setChecking] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [loginBusy, setLoginBusy] = useState(false);
   const [items, setItems] = useState<Opportunity[]>([]);
   const [draft, setDraft] = useState<Draft>(BLANK);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -117,56 +113,8 @@ export default function TapInManager() {
   }, []);
 
   useEffect(() => {
-    let active = true;
-    async function checkSession() {
-      try {
-        const response = await fetch("/api/admin/session", { cache: "no-store" });
-        const data = await response.json() as { authenticated?: boolean };
-        if (!active) return;
-        const valid = response.ok && data.authenticated === true;
-        setAuthenticated(valid);
-        if (valid) void loadItems();
-      } catch {
-        if (active) setNotice({ tone: "error", text: "Could not check the admin session." });
-      } finally {
-        if (active) setChecking(false);
-      }
-    }
-    void checkSession();
-    return () => { active = false; };
+    void loadItems();
   }, [loadItems]);
-
-  async function signIn(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoginBusy(true);
-    setNotice(null);
-    try {
-      const response = await fetch("/api/admin/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await response.json() as { error?: string };
-      if (!response.ok) {
-        setNotice({ tone: "error", text: data.error || "Sign-in failed." });
-        return;
-      }
-      setPassword("");
-      setAuthenticated(true);
-      await loadItems();
-    } catch {
-      setNotice({ tone: "error", text: "Could not connect to admin sign-in." });
-    } finally {
-      setLoginBusy(false);
-    }
-  }
-
-  async function signOut() {
-    await fetch("/api/admin/session", { method: "DELETE" }).catch(() => undefined);
-    setAuthenticated(false);
-    setItems([]);
-    setNotice({ tone: "success", text: "You have signed out." });
-  }
 
   function updateDraft<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -262,39 +210,12 @@ export default function TapInManager() {
     return matchesSearch && (statusFilter === "all" || item.status === statusFilter);
   });
 
-  if (checking) {
-    return <main className={styles.page}><p className={styles.muted}>Checking admin session…</p></main>;
-  }
-
-  if (!authenticated) {
-    return (
-      <main className={styles.page}>
-        <div className={styles.header}>
-          <a className={styles.brand} href="/">THE AFRICA PLUG</a>
-          <a className={styles.back} href="/">Back to website ↗</a>
-        </div>
-        <section className={styles.login}>
-          <p className={styles.kicker}>TAP IN MANAGEMENT</p>
-          <h1>Sign in to manage opportunities.</h1>
-          <p>Use the website admin password to create, edit, publish, close or archive listings.</p>
-          {notice ? <p className={`${styles.notice} ${styles[notice.tone]}`} role="status">{notice.text}</p> : null}
-          <form onSubmit={signIn} className={styles.form}>
-            <label htmlFor="tap-in-admin-password">Admin password</label>
-            <input id="tap-in-admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
-            <button className={styles.primary} type="submit" disabled={loginBusy}>{loginBusy ? "Signing in…" : "Sign in"}</button>
-          </form>
-        </section>
-      </main>
-    );
-  }
-
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <a className={styles.brand} href="/">THE AFRICA PLUG <span>/ TAP IN</span></a>
         <div className={styles.headerActions}>
           <a className={styles.back} href="/tap-in" target="_blank" rel="noreferrer">View public page ↗</a>
-          <button className={styles.secondary} type="button" onClick={signOut}>Sign out</button>
         </div>
       </header>
 
