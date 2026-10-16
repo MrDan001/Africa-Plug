@@ -156,6 +156,25 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .hero-copy { margin: 17px 0 0; max-width: 400px; color: rgba(255,255,255,.88); font-size: 14px; line-height: 1.55; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 23px; }
 
+/* Hero carousel copy and accessible controls */
+.hero-brandline { margin: 0; color: #fff; font-size: clamp(12px,1.25vw,17px); font-weight: 950; letter-spacing: .055em; line-height: 1.35; }
+.hero-categories { margin: 7px 0 0; color: rgba(255,255,255,.88); font-size: 11px; font-weight: 700; letter-spacing: .045em; }
+.hero-categories span { color: var(--signal); padding: 0 4px; }
+.hero-question { margin: 26px 0 11px; color: #fff; font-size: 12px; font-weight: 750; }
+.hero h1 { max-width: 900px; font-size: clamp(35px,4.7vw,68px); line-height: 1.02; letter-spacing: -.045em; }
+.hero h1 span { max-width: 900px; }
+.hero-copy { max-width: 540px; }
+.hero-location { width: fit-content; margin: 12px 0 0; color: rgba(255,255,255,.74); font-size: 10px; line-height: 1.4; letter-spacing: .025em; }
+.hero-carousel-controls { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+.hero-carousel-arrow, .hero-carousel-toggle { min-width: 35px; min-height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.6); border-radius: 7px; background: rgba(4,5,8,.32); color: #fff; font-size: 13px; cursor: pointer; }
+.hero-carousel-toggle { min-width: 64px; padding: 0 10px; font-size: 10px; font-weight: 800; }
+.hero-carousel-arrow:hover, .hero-carousel-toggle:hover { border-color: var(--signal); background: var(--signal); }
+.hero-slide-count { min-width: 43px; color: rgba(255,255,255,.8); font-size: 9px; font-weight: 850; letter-spacing: .08em; }
+.hero-carousel-arrow:focus-visible, .hero-carousel-toggle:focus-visible, .hero-actions a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-photo, .hero-in, .hero-actions .button { animation: none !important; transition: none !important; }
+}
+
 .section-grid, .content-section, .closing-section, .work-section { border-bottom: 1px solid var(--line); }
 .intro-section {
   display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: clamp(28px,4vw,62px);
@@ -417,7 +436,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .hero-eyebrow { max-width: 275px; font-size: 9px; margin-bottom: 15px; }
   .hero h1 { font-size: clamp(37px,10.7vw,61px); letter-spacing: -.055em; }
   .hero-copy { max-width: 335px; font-size: 13px; }
-  .hero-actions { gap: 8px; margin-top: 22px; }
+  .hero-brandline { max-width: 300px; font-size: 12px; line-height: 1.45; }
+  .hero-categories { font-size: 10px; }
+  .hero-question { margin-top: 22px; font-size: 12px; }
+  .hero h1 { font-size: clamp(34px,9.3vw,52px); line-height: 1.05; }
+  .hero-copy { max-width: 335px; font-size: 12px; line-height: 1.55; }
+  .hero-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 19px; }
+  .hero-actions .button { width: min(100%, 280px); min-height: 40px; justify-content: space-between; }
+  .hero-carousel-controls { margin-top: 17px; gap: 8px; }
+  .hero-location { font-size: 9px; }
   .hero-actions .button { min-height: 40px; padding: 0 13px; font-size: 9px; }
   .intro-section { grid-template-columns: 1fr; gap: 21px; padding: 22px 16px 26px; }
   .video-poster { height: 235px; min-height: 235px; }
