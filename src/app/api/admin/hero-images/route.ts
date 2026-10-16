@@ -28,11 +28,17 @@ export async function POST(request: Request) {
   if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) return Response.json({ error: "The image must be smaller than 10 MB." }, { status: 413 });
 
   try {
+    // Give every replacement a new URL so edge/browser caches cannot keep serving the previous file.
     const blob = await put(`homepage/hero-slide-${slotValue}.${extension}`, file, {
-      access: "public", addRandomSuffix: false, allowOverwrite: true,
-      contentType: file.type, cacheControlMaxAge: 60 * 60,
+      access: "public",
+      addRandomSuffix: true,
+      contentType: file.type,
+      cacheControlMaxAge: 60 * 60,
     });
-    return Response.json({ ok: true, slot: Number(slotValue), imageUrl: blob.url }, { headers: { "Cache-Control": "no-store" } });
+    return Response.json(
+      { ok: true, slot: Number(slotValue), imageUrl: blob.url },
+      { headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } },
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown Blob upload error";
     console.error("Hero image Blob upload failed:", message);
@@ -41,6 +47,6 @@ export async function POST(request: Request) {
       error: privateStore
         ? "This Blob store is configured as Private. Homepage hero images need a Public Blob store. Change the tapin store access to Public in Vercel Storage, then retry."
         : `Vercel Blob could not save this image: ${message}`,
-    }, { status: 502, headers: { "Cache-Control": "no-store" } });
+    }, { status: 502, headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } });
   }
 }
