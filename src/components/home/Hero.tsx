@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const BUTTONS = [
   { label: "WORK WITH FK", href: "#work-with-fk" },
@@ -9,46 +9,34 @@ const BUTTONS = [
 ];
 
 type Slide = {
-  eyebrow: string;
-  lineOne: string;
-  lineTwo: string;
+  statement: string;
   body: string;
-  captionTitle: string;
-  captionText: string;
   activeButton: number;
   image: string;
+  location: string;
 };
 
 const SLIDES: Slide[] = [
   {
-    eyebrow: "AFRICA'S OPPORTUNITIES. REAL PEOPLE. LASTING IMPACT.",
-    lineOne: "BUSINESS. INVESTMENT.",
-    lineTwo: "REAL OPPORTUNITY.",
-    body: "The Africa Plug connects ambitious people and businesses to real opportunities across Africa.",
-    captionTitle: "Across Africa",
-    captionText: "People. Capital. Opportunity.",
+    statement: "I'M BUILDING BUSINESS IN AFRICA.",
+    body: "For businesses entering an African market, expanding into another African market, or already operating in Africa and facing a commercial challenge or opportunity.",
     activeButton: 0,
     image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2400&q=88",
+    location: "Lagos, Nigeria",
   },
   {
-    eyebrow: "LIVE OPPORTUNITIES ACROSS AFRICA",
-    lineOne: "FIND THE",
-    lineTwo: "RIGHT OPENING.",
-    body: "From agriculture to infrastructure, discover real opportunities worth your attention.",
-    captionTitle: "TAP IN",
-    captionText: "Discover. Connect. Act.",
+    statement: "I'M LOOKING FOR AN OPPORTUNITY.",
+    body: "Explore active business and investment opportunities that relevant people and organisations may be able to participate in.",
     activeButton: 1,
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=88",
+    location: "Across Africa",
   },
   {
-    eyebrow: "COMMERCIAL DEAL CONSULTANCY",
-    lineOne: "GOOD DEALS",
-    lineTwo: "MOVE PEOPLE.",
-    body: "Practical commercial support, thoughtful introductions and a clearer route from interest to action.",
-    captionTitle: "Work With FK",
-    captionText: "Simple. Clear. Focused.",
+    statement: "I HAVE A QUESTION.",
+    body: "Trying to understand something about Africa, a market, place, issue or opportunity? Start the conversation here.",
     activeButton: 2,
     image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2400&q=88",
+    location: "On the ground in Africa",
   },
 ];
 
@@ -57,13 +45,24 @@ const SLIDE_MS = 6500;
 export default function Hero() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const [customImages, setCustomImages] = useState<(string | null)[]>([null, null, null]);
+  const carouselRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setTimeout(() => setIndex((i) => (i + 1) % SLIDES.length), SLIDE_MS);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (paused || hovered || reducedMotion) return;
+    const timer = window.setTimeout(() => setIndex((current) => (current + 1) % SLIDES.length), SLIDE_MS);
     return () => window.clearTimeout(timer);
-  }, [index, paused]);
+  }, [index, paused, hovered, reducedMotion]);
 
   useEffect(() => {
     let active = true;
@@ -76,11 +75,26 @@ export default function Hero() {
           setCustomImages([data.images[0] ?? null, data.images[1] ?? null, data.images[2] ?? null]);
         }
       } catch {
-        // Keep the built-in images if custom image storage is not configured or available.
+        // Keep the existing image defaults if admin-managed images are unavailable.
       }
     }
     void loadCustomImages();
     return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (!carouselRef.current?.contains(document.activeElement)) return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setIndex((current) => (current - 1 + SLIDES.length) % SLIDES.length);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setIndex((current) => (current + 1) % SLIDES.length);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const displaySlides = SLIDES.map((item, i) => ({
@@ -91,29 +105,58 @@ export default function Hero() {
   const go = (next: number) => setIndex((next + SLIDES.length) % SLIDES.length);
 
   return (
-    <section id="top" className="hero" aria-roledescription="carousel" aria-label="Featured opportunities">
+    <section
+      ref={carouselRef}
+      id="top"
+      className="hero"
+      aria-roledescription="carousel"
+      aria-label="Where do you want to plug in?"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {displaySlides.map((item, i) => (
         <div
-          key={item.eyebrow}
+          key={item.statement}
           aria-hidden="true"
-          className={`hero-photo ${i === index ? "is-active" : ""}`}
+          className={`hero-photo ${i === index ? "is-active" : ""} hero-photo-slide-${i + 1}`}
           style={{ backgroundImage: `url("${item.image}")` }}
         />
       ))}
       <div className="hero-shade" aria-hidden="true" />
       <div key={index} className="hero-content hero-in" role="group" aria-roledescription="slide" aria-label={`Slide ${index + 1} of ${SLIDES.length}`}>
-        <p className="eyebrow hero-eyebrow">{slide.eyebrow}</p>
-        <h1><span>{slide.lineOne}</span><span className="pink-text">{slide.lineTwo}</span></h1>
+        <p className="hero-brandline">THE AFRICA PLUG: YOUR CONNECTION TO AFRICA</p>
+        <p className="hero-categories">Investment <span aria-hidden="true">•</span> Business <span aria-hidden="true">•</span> Entertainment</p>
+        <p className="hero-question">Where do you want to plug in?</p>
+        <h1><span>{slide.statement}</span></h1>
         <p className="hero-copy">{slide.body}</p>
-        <div className="hero-actions">
+        <p className="hero-location">{slide.location}</p>
+        <div className="hero-actions" aria-label="Choose a route">
           {BUTTONS.map((button, i) => (
-            <a key={button.label} href={button.href} className={`button ${i === slide.activeButton ? "button-pink" : "button-outline"}`}>
+            <a
+              key={button.label}
+              href={button.href}
+              aria-current={i === slide.activeButton ? "page" : undefined}
+              className={`button ${i === slide.activeButton ? "button-pink" : "button-outline"}`}
+            >
               {button.label}<span aria-hidden="true">→</span>
             </a>
           ))}
         </div>
+        <div className="hero-carousel-controls" aria-label="Carousel controls">
+          <button type="button" className="hero-carousel-arrow" onClick={() => go(index - 1)} aria-label="Previous slide">←</button>
+          <span className="hero-slide-count" aria-live="polite">{String(index + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}</span>
+          <button type="button" className="hero-carousel-arrow" onClick={() => go(index + 1)} aria-label="Next slide">→</button>
+          <button
+            type="button"
+            className="hero-carousel-toggle"
+            onClick={() => setPaused((value) => !value)}
+            aria-pressed={paused}
+            aria-label={paused ? "Play carousel" : "Pause carousel"}
+          >
+            {paused ? "Play" : "Pause"}
+          </button>
+        </div>
       </div>
-
     </section>
   );
 }
