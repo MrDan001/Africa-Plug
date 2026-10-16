@@ -65,6 +65,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
   ],
   "site-settings": [
     { key: "siteTitle", label: "Site title", type: "text" },
+    { key: "navigationText", label: "Navigation links (one per line: label | /path)", type: "textarea", rows: 6, help: "Use internal paths only, e.g. TAP IN | /tap-in. Leave blank to use the standard navigation." },
     { key: "siteDescription", label: "Default SEO description", type: "textarea", rows: 3 },
     { key: "contactEmail", label: "Public contact email", type: "text" },
     { key: "whatsappUrl", label: "WhatsApp URL", type: "url" },
@@ -121,6 +122,11 @@ function toDraft(record?: CmsRecord, moduleKey?: ModuleKey): Draft {
     data.publishedAt = /^\d{4}-\d{2}-\d{2}$/.test(publishedAt) ? publishedAt : publishedAt ? (Number.isNaN(Date.parse(publishedAt)) ? today() : new Date(publishedAt).toISOString().slice(0, 10)) : today();
   }
   if (moduleKey === "subscribers") data.email = text(source.email) || record?.title || "";
+  if (moduleKey === "site-settings") {
+    data.navigationText = Array.isArray(source.navigation)
+      ? source.navigation.map((item) => item && typeof item === "object" ? `${text((item as Record<string, unknown>).label)} | ${text((item as Record<string, unknown>).href)}` : "").filter(Boolean).join("\n")
+      : text(source.navigationText);
+  }
   return {
     ...(record?.id ? { id: record.id } : {}),
     title: record?.title ?? "",
@@ -143,6 +149,14 @@ function makeData(moduleKey: ModuleKey, draft: Draft) {
   if (moduleKey === "store") {
     const price = Number(data.price ?? 0);
     data.price = Number.isFinite(price) && price >= 0 ? price : 0;
+  }
+  if (moduleKey === "site-settings") {
+    const navigation = text(data.navigationText).split("\n").map((line) => {
+      const [label, href] = line.split("|").map((part) => part.trim());
+      return { label: (label ?? "").slice(0, 40), href: href ?? "" };
+    }).filter((item) => item.label && item.href.startsWith("/") && !item.href.startsWith("//") && !item.href.startsWith("/admin") && !item.href.startsWith("/api")).slice(0, 12);
+    data.navigation = navigation;
+    delete data.navigationText;
   }
   if (moduleKey === "subscribers") {
     data.email = text(data.email).trim().toLowerCase();
@@ -199,7 +213,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Digital resource", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
-    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", enableNewsletter: true, enableSearch: true, enableTestimonials: false, enableSelectedWork: false, enableProductOfMonth: false }; }
+    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: true, enableSearch: true, enableTestimonials: false, enableSelectedWork: false, enableProductOfMonth: false }; }
     setDraft(next);
     setEditing(false);
     setEditorOpen(true);

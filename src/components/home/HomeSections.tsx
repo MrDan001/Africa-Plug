@@ -1,21 +1,28 @@
 import FeaturedStories from "@/components/blog/FeaturedStories";
+import NewsletterSignup from "@/components/home/NewsletterSignup";
 import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
+import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
+import { getPublicSiteSettings as getSettings, getPublicCmsRecords } from "@/lib/cms-bridge";
 
 export default async function HomeSections() {
-  const opportunities = await listLiveOpportunities().catch(() => []);
+  const [opportunities, settings, productRecords] = await Promise.all([
+    listLiveOpportunities().catch(() => []),
+    getSettings(),
+    getPublicCmsRecords("products"),
+  ]);
+  const featuredProducts = productRecords
+    .map(cmsRecordToPublicProduct)
+    .filter((item): item is NonNullable<ReturnType<typeof cmsRecordToPublicProduct>> => item !== null);
+  const featuredProduct = featuredProducts.find((product) => product.featured) ?? featuredProducts[0] ?? null;
+  const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
+  const showSelectedWork = settings.enableSelectedWork !== false;
+  const showProductOfMonth = settings.enableProductOfMonth !== false;
+  const showNewsletter = settings.enableNewsletter !== false;
+
   return <>
     <section className="intro-section section-grid" id="about">
       <div className="intro-video-card" aria-label="The Africa Plug introduction video" style={{position:"relative",width:"100%",aspectRatio:"16 / 9",minHeight:260,overflow:"hidden",background:"#e9e5df"}}>
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/8QLMpUuav4w?rel=0"
-          title="The Africa Plug — Your connection to Africa"
-          aria-label="The Africa Plug introduction video"
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          style={{position:"absolute",inset:0,width:"100%",height:"100%",border:0}}
-        />
+        <iframe src="https://www.youtube-nocookie.com/embed/8QLMpUuav4w?rel=0" title="The Africa Plug — Your connection to Africa" aria-label="The Africa Plug introduction video" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen style={{position:"absolute",inset:0,width:"100%",height:"100%",border:0}} />
       </div>
       <div className="intro-copy"><p className="eyebrow">MEET FK</p><h2>A MORE CONNECTED WAY TO ENGAGE WITH AFRICA</h2><p>The Africa Plug connects commercial ambition with context, relationships and opportunities across African markets. We help people ask better questions, find relevant routes in and move with greater clarity.</p><a className="text-link" href="/about">ABOUT THE AFRICA PLUG <span>→</span></a></div>
     </section>
@@ -29,9 +36,9 @@ export default async function HomeSections() {
       </div>
     </section>
 
-    <section className="content-section" id="selected-work" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)",background:"#f1efeb",color:"#292a2c"}}>
+    {showSelectedWork ? <section className="content-section" id="selected-work" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)",background:"#f1efeb",color:"#292a2c"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}><p className="eyebrow">SELECTED WORK</p><h2 style={{fontSize:"clamp(32px,5vw,56px)",letterSpacing:"-.05em",margin:"0 0 14px"}}>Commercial work, shared responsibly.</h2><p style={{maxWidth:650,color:"#626469",lineHeight:1.75}}>This space is reserved for genuine, NDA-safe examples of work. Case studies will be added when approved for publication; no client names or placeholder testimonials are displayed.</p></div>
-    </section>
+    </section> : null}
 
     <section className="content-section" id="tap-in" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)"}}>
       <div style={{maxWidth:1200,margin:"0 auto"}}><div className="standard-section-heading"><p className="standard-eyebrow">TAP IN</p><h2>Current opportunities.</h2><p>Only genuinely approved live opportunities appear here. No demo listings or invented opportunities.</p></div>
@@ -39,14 +46,19 @@ export default async function HomeSections() {
       <a className="text-link" href="/tap-in">EXPLORE TAP IN <span>→</span></a></div>
     </section>
 
-    <section className="content-section" id="store" style={{padding:"clamp(42px,7vw,84px) clamp(20px,6vw,90px)",background:"#f7f5f1",color:"#292a2c"}}>
-      <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:30,alignItems:"center"}}><div><p className="eyebrow">THE STORE</p><h2 style={{fontSize:"clamp(32px,5vw,54px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>Useful resources.<br/>Thoughtful tools.</h2><p style={{maxWidth:500,color:"#626469",lineHeight:1.7}}>The Africa Starter Guide is the planned first release. The Store will open when the finished product and secure checkout and delivery are ready.</p><a className="button button-pink" href="/store">VISIT THE STORE <span>→</span></a></div><div style={{padding:28,background:"#e9e5df",border:"1px solid #d6d0c7"}}><p className="eyebrow">FIRST RELEASE</p><h3 style={{fontSize:30,lineHeight:1,letterSpacing:"-.04em",margin:"0 0 12px"}}>The Africa Starter Guide</h3><p style={{color:"#626469",lineHeight:1.6}}>Coming soon. No demo prices or checkout promises.</p></div></div>
-    </section>
+    {showProductOfMonth ? <section className="content-section" id="store" style={{padding:"clamp(42px,7vw,84px) clamp(20px,6vw,90px)",background:"#f7f5f1",color:"#292a2c"}}>
+      <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:30,alignItems:"center"}}>
+        <div><p className="eyebrow">PRODUCT OF THE MONTH</p><h2 style={{fontSize:"clamp(32px,5vw,54px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>{featuredProduct?.title || "Useful resources. Thoughtful tools."}</h2><p style={{maxWidth:500,color:"#626469",lineHeight:1.7}}>{featuredProduct?.summary || "The Africa Starter Guide is the planned first release. The Store will open when the finished product and secure checkout and delivery are ready."}</p>{featuredProduct && featuredProduct.price > 0 ? <p style={{fontWeight:800,color:"#292a2c"}}>{new Intl.NumberFormat("en-GB",{style:"currency",currency:featuredProduct.currency}).format(featuredProduct.price)}</p> : null}<a className="button button-pink" href={featuredProduct ? `/store/${featuredProduct.slug}` : "/store"}>{featuredProduct ? "VIEW FEATURED RESOURCE" : "VISIT THE STORE"} <span>→</span></a></div>
+        <div style={{padding:28,background:"#e9e5df",border:"1px solid #d6d0c7"}}>{featuredProduct?.imageUrl ? <img src={featuredProduct.imageUrl} alt="" style={{display:"block",width:"100%",maxHeight:340,objectFit:"cover",marginBottom:18}} /> : null}<p className="eyebrow">{featuredProduct?.productType || "FIRST RELEASE"}</p><h3 style={{fontSize:30,lineHeight:1,letterSpacing:"-.04em",margin:"0 0 12px"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h3><p style={{color:"#626469",lineHeight:1.6}}>{featuredProduct ? "Featured from The Africa Plug Store. Checkout and protected download delivery are not yet active." : "Coming soon. No demo prices or checkout promises."}</p></div>
+      </div>
+    </section> : null}
 
     <FeaturedStories variant="home" />
 
     <section className="content-section" id="partner-with-tap" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)"}}>
-      <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:32}}><div><p className="eyebrow">PARTNER WITH TAP</p><h2 style={{fontSize:"clamp(32px,5vw,52px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>Build something relevant.</h2><p style={{maxWidth:520,color:"#626469",lineHeight:1.7}}>For sponsorship, brand partnerships, interviews, events, tourism, institutional work and content collaborations.</p><a className="button button-outline" href="/contact?type=partner">EXPLORE PARTNERSHIPS <span>→</span></a></div><div id="contact"><p className="eyebrow">CONTACT & QUESTIONS</p><h2 style={{fontSize:30,letterSpacing:"-.04em",margin:"0 0 12px"}}>Start a conversation.</h2><p style={{color:"#626469",lineHeight:1.7}}>For general enquiries, questions or partnership proposals, contact the team.</p><a className="text-link" href="/contact">CONTACT THE AFRICA PLUG <span>→</span></a><p style={{marginTop:20}}><a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a></p></div></div>
+      <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:32}}><div><p className="eyebrow">PARTNER WITH TAP</p><h2 style={{fontSize:"clamp(32px,5vw,52px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>Build something relevant.</h2><p style={{maxWidth:520,color:"#626469",lineHeight:1.7}}>For sponsorship, brand partnerships, interviews, events, tourism, institutional work and content collaborations.</p><a className="button button-outline" href="/contact?type=partner">EXPLORE PARTNERSHIPS <span>→</span></a></div><div id="contact"><p className="eyebrow">CONTACT & QUESTIONS</p><h2 style={{fontSize:30,letterSpacing:"-.04em",margin:"0 0 12px"}}>Start a conversation.</h2><p style={{color:"#626469",lineHeight:1.7}}>For general enquiries, questions or partnership proposals, contact the team.</p><a className="text-link" href="/contact">CONTACT THE AFRICA PLUG <span>→</span></a><p style={{marginTop:20}}><a href={`mailto:${contactEmail}`}>{contactEmail}</a></p></div></div>
     </section>
+
+    {showNewsletter ? <NewsletterSignup /> : null}
   </>;
 }

@@ -60,3 +60,75 @@ export async function getPublicCmsRecord(module: "articles" | "products", slug: 
   const records = await getPublicCmsRecords(module);
   return records.find((record) => record.slug === slug) ?? null;
 }
+
+
+export type PublicSiteSettings = {
+  siteTitle?: string;
+  siteDescription?: string;
+  contactEmail?: string;
+  whatsappUrl?: string;
+  linkedinUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
+  enableNewsletter?: boolean;
+  enableSearch?: boolean;
+  enableTestimonials?: boolean;
+  enableSelectedWork?: boolean;
+  enableProductOfMonth?: boolean;
+  navigation?: { label: string; href: string }[];
+};
+
+const DEFAULT_PUBLIC_NAVIGATION = [
+  { label: "TAP IN", href: "/tap-in" },
+  { label: "WORK WITH FK", href: "/work-with-fk" },
+  { label: "STORE", href: "/store" },
+  { label: "BLOG", href: "/blog" },
+  { label: "CONTACT", href: "/contact" },
+  { label: "ABOUT", href: "/about" },
+];
+
+function safeNavigation(value: unknown): { label: string; href: string }[] {
+  if (!Array.isArray(value)) return DEFAULT_PUBLIC_NAVIGATION;
+  const items = value.flatMap((candidate) => {
+    if (!candidate || typeof candidate !== "object") return [];
+    const item = candidate as Record<string, unknown>;
+    const label = typeof item.label === "string" ? item.label.trim().slice(0, 40) : "";
+    const href = typeof item.href === "string" ? item.href.trim() : "";
+    if (!label || !href.startsWith("/") || href.startsWith("//") || href.startsWith("/admin") || href.startsWith("/api")) return [];
+    return [{ label, href: href.slice(0, 180) }];
+  });
+  return items.length ? items.slice(0, 12) : DEFAULT_PUBLIC_NAVIGATION;
+}
+
+export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
+  try {
+    const result = await cmsBridge<{ records?: CmsRecord[] }>({
+      action: "cms.list",
+      module: "site-settings",
+      status: "active",
+    });
+    const record = result.records?.find((item) => item.slug === "site-settings") ?? result.records?.[0];
+    if (!record) return { navigation: DEFAULT_PUBLIC_NAVIGATION };
+    const data = record.data ?? {};
+    const settingString = (key: string) => typeof data[key] === "string" ? (data[key] as string).trim().slice(0, 500) : undefined;
+    const settingBool = (key: string) => typeof data[key] === "boolean" ? data[key] as boolean : undefined;
+    return {
+      siteTitle: settingString("siteTitle"),
+      siteDescription: settingString("siteDescription"),
+      contactEmail: settingString("contactEmail"),
+      whatsappUrl: settingString("whatsappUrl"),
+      linkedinUrl: settingString("linkedinUrl"),
+      instagramUrl: settingString("instagramUrl"),
+      youtubeUrl: settingString("youtubeUrl"),
+      enableNewsletter: settingBool("enableNewsletter"),
+      enableSearch: settingBool("enableSearch"),
+      enableTestimonials: settingBool("enableTestimonials"),
+      enableSelectedWork: settingBool("enableSelectedWork"),
+      enableProductOfMonth: settingBool("enableProductOfMonth"),
+      navigation: safeNavigation(data.navigation),
+    };
+  } catch (error) {
+    console.error("Could not load public site settings:", error instanceof Error ? error.message : "Unknown error");
+    return { navigation: DEFAULT_PUBLIC_NAVIGATION };
+  }
+}

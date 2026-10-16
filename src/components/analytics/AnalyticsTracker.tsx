@@ -18,6 +18,7 @@ export default function AnalyticsTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if ((pathname || "").startsWith("/admin")) return;
     const params = new URLSearchParams(window.location.search);
     const body = JSON.stringify({
       eventName: "page_view",
