@@ -247,7 +247,7 @@ export default function TapInManager() {
         setNotice({ tone: "error", text: data.error || `Could not ${actionLabel} the listing.` });
         return;
       }
-      setNotice({ tone: "success", text: `Listing ${actionLabel === "return to draft" ? "returned to draft" : `${actionLabel}d`}.` });
+      const completed = status === "live" ? "published" : status === "closed" ? "closed" : status === "archived" ? "archived" : "returned to draft";\n      setNotice({ tone: "success", text: `Listing ${completed}.` });
       await loadItems();
     } catch {
       setNotice({ tone: "error", text: `Could not ${actionLabel} the listing.` });
