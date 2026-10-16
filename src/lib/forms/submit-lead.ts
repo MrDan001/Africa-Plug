@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { publicEnquirySchema } from "@/lib/validation/forms";
+import { cmsBridge } from "@/lib/cms-bridge";
 
 export type LeadKind = "contact" | "ask" | "partner" | "interest" | "work";
 
@@ -37,18 +38,14 @@ async function verifyTurnstile(token: string | undefined, ip: string | null) {
 
 export async function handleLeadSubmission(request: Request, kind: LeadKind) {
   let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "Please check the form and try again." }, { status: 400 });
-  }
+  try { body = await request.json(); }
+  catch { return Response.json({ error: "Please check the form and try again." }, { status: 400 }); }
 
   const parsed = publicEnquirySchema.safeParse(body);
   if (!parsed.success) {
     return Response.json({ error: parsed.error.issues[0]?.message ?? "Please check the information you entered." }, { status: 400 });
   }
   const lead = parsed.data;
-  // Honeypot: quietly accept likely bot submissions without sending an email.
   if (lead.website) return Response.json({ ok: true });
 
   const verified = await verifyTurnstile(
@@ -59,11 +56,43 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
     return Response.json({ error: "The security check could not be verified. Please refresh the page and try again." }, { status: 400 });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
-  const to = process.env.EMAIL_CONNECT || "connect@theafricaplug.com";
-  if (!apiKey || !from) {
-    return Response.json({ error: "Online email delivery is not configured yet. Please email connect@theafricaplug.com directly." }, { status: 503 });
+  const referer = request.headers.get("referer") ?? "";
+  const requestUrl = referer ? new URL(referer, "https://africa-plug.vercel.app") : null;
+  const module = kind === "work" ? "applications" : "enquiries";
+  const status = kind === "work" ? "review-required" : "new";
+  const title = `${labels[kind]} — ${lead.name}`.slice(0, 240);
+  try {
+    await cmsBridge({
+      action: "cms.save",
+      module,
+      record: {
+        title,
+        slug: null,
+        status,
+        data: {
+          kind,
+          enquiryType: lead.enquiryType || labels[kind],
+          name: lead.name,
+          email: lead.email,
+          organisation: lead.organisation || "",
+          phone: lead.phone || "",
+          opportunityName: lead.opportunityName || "",
+          message: lead.message,
+          sourcePath: requestUrl?.pathname || "",
+          utm: {
+            utm_source: requestUrl?.searchParams.get("utm_source") || "",
+            utm_medium: requestUrl?.searchParams.get("utm_medium") || "",
+            utm_campaign: requestUrl?.searchParams.get("utm_campaign") || "",
+            utm_content: requestUrl?.searchParams.get("utm_content") || "",
+            utm_term: requestUrl?.searchParams.get("utm_term") || "",
+          },
+          submittedAt: new Date().toISOString(),
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Persistent lead storage failed:", error instanceof Error ? error.message : "Unknown error");
+    return Response.json({ error: "We couldn't store your enquiry right now. Please try again shortly." }, { status: 503 });
   }
 
   const rows = [
@@ -80,6 +109,14 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
     `<tr><th align="left" style="padding:10px 12px;color:#a5a5ad;border-bottom:1px solid #2b2b31;font:600 12px Arial;vertical-align:top">${escapeHtml(key)}</th><td style="padding:10px 12px;color:#f5f5f7;border-bottom:1px solid #2b2b31;font:14px/1.6 Arial;white-space:pre-wrap">${escapeHtml(value)}</td></tr>`,
   ).join("");
 
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM;
+  const to = process.env.EMAIL_CONNECT || "connect@theafricaplug.com";
+  if (!apiKey || !from) {
+    // The submission is safely persisted in the admin inbox even if email delivery isn't configured yet.
+    return Response.json({ ok: true, emailNotification: "not-configured" });
+  }
+
   try {
     const resend = new Resend(apiKey);
     const result = await resend.emails.send({
@@ -90,13 +127,10 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
       text,
       html: `<div style="background:#08090c;padding:24px;font-family:Arial,sans-serif"><div style="max-width:680px;margin:0 auto;border:1px solid #2b2b31;background:#111217;padding:22px"><p style="color:#f50070;font-size:11px;font-weight:700;letter-spacing:2px">THE AFRICA PLUG</p><h1 style="font-size:22px;color:#fff;margin:0 0 20px">${escapeHtml(labels[kind])}</h1><table role="presentation" style="border-collapse:collapse;width:100%">${html}</table></div></div>`,
     });
-    if (result.error) {
-      console.error("Resend rejected a website enquiry:", result.error.message);
-      return Response.json({ error: "We couldn't send your enquiry just now. Please email connect@theafricaplug.com directly." }, { status: 502 });
-    }
-    return Response.json({ ok: true });
+    if (result.error) console.error("Resend rejected a website enquiry:", result.error.message);
   } catch (error) {
-    console.error("Failed to send website enquiry:", error instanceof Error ? error.message : "Unknown error");
-    return Response.json({ error: "We couldn't send your enquiry just now. Please email connect@theafricaplug.com directly." }, { status: 502 });
+    console.error("Email notification could not be sent:", error instanceof Error ? error.message : "Unknown error");
   }
+  // Persisted submissions are accepted even if the optional email notification fails.
+  return Response.json({ ok: true });
 }

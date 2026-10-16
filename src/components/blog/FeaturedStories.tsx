@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { BLOG_POSTS } from "@/lib/blog-posts";
+import { getBlogPosts } from "@/lib/public-cms-content";
 
 type FeaturedStoriesProps = { variant?: "home" | "page" };
 
-export default function FeaturedStories({ variant = "home" }: FeaturedStoriesProps) {
+export default async function FeaturedStories({ variant = "home" }: FeaturedStoriesProps) {
   const isHome = variant === "home";
-  const visiblePosts = isHome ? BLOG_POSTS.slice(0, 4) : BLOG_POSTS;
+  const posts = await getBlogPosts();
+  const visiblePosts = isHome ? posts.slice(0, 4) : posts;
 
   return (
     <section
@@ -20,11 +22,9 @@ export default function FeaturedStories({ variant = "home" }: FeaturedStoriesPro
             <h2 id={isHome ? "home-featured-stories-title" : "journal-featured-stories-title"}>
               {isHome ? "What’s happening in Africa" : "Practical ideas for a changing continent"}
             </h2>
-            {!isHome ? <p className="featured-blog-intro">Ten original explainers on trade, partnerships, finance, technology, infrastructure, food systems and culture.</p> : null}
+            {!isHome ? <p className="featured-blog-intro">Thoughtful perspectives and practical ideas for a changing continent.</p> : null}
           </div>
-          {isHome ? (
-            <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link>
-          ) : null}
+          {isHome ? <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link> : null}
         </header>
 
         {isHome ? (
@@ -33,9 +33,7 @@ export default function FeaturedStories({ variant = "home" }: FeaturedStoriesPro
               const layout = index === 0 ? "primary" : index === 3 ? "text" : "secondary";
               return (
                 <Link className={`featured-blog-card featured-blog-card--${layout}`} href={`/blog/${post.slug}`} key={post.slug} aria-label={`Read article: ${post.title}`}>
-                  {layout !== "text" ? (
-                    <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: `url("${post.image}")` }} />
-                  ) : null}
+                  {layout !== "text" ? <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: post.image ? `url("${post.image}")` : undefined }} /> : null}
                   <span className="featured-blog-card-copy">
                     <span className="featured-blog-card-category">{post.category}</span>
                     <span className="featured-blog-card-title">{post.title}</span>
@@ -50,7 +48,7 @@ export default function FeaturedStories({ variant = "home" }: FeaturedStoriesPro
           <div className="featured-blog-grid featured-blog-grid--journal">
             {visiblePosts.map((post) => (
               <Link className="featured-blog-card featured-blog-card--journal" href={`/blog/${post.slug}`} key={post.slug} aria-label={`Read article: ${post.title}`}>
-                <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: `url("${post.image}")` }} />
+                <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: post.image ? `url("${post.image}")` : undefined }} />
                 <span className="featured-blog-card-copy">
                   <span className="featured-blog-card-category">{post.category}</span>
                   <span className="featured-blog-card-title">{post.title}</span>

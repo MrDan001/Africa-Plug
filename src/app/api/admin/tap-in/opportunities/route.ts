@@ -4,15 +4,21 @@ import {
   listAllOpportunities,
 } from "@/lib/tap-in/opportunities";
 import { parseOpportunityInput, slugify } from "@/lib/tap-in/validation";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+function unauthorised() {
+  return Response.json({ error: "Please sign in to the admin workspace." }, { status: 401, headers: { "Cache-Control": "no-store" } });
+}
 
 function dbErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "The TAP IN database is unavailable.";
 }
 
 export async function GET() {
+  if (!await isAdminAuthenticated()) return unauthorised();
   try {
     const opportunities = await listAllOpportunities();
     return Response.json({ opportunities }, { headers: { "Cache-Control": "no-store" } });
@@ -22,7 +28,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-
+  if (!await isAdminAuthenticated()) return unauthorised();
   let input;
   try {
     input = parseOpportunityInput(await request.json());

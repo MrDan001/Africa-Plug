@@ -1,4 +1,5 @@
 import "server-only";
+import { cmsBridge } from "@/lib/cms-bridge";
 
 export type OpportunityStatus = "draft" | "live" | "closed" | "archived";
 
@@ -24,79 +25,32 @@ export type TapInOpportunity = {
 
 export type OpportunityInput = Omit<TapInOpportunity, "id" | "created_at" | "updated_at">;
 
-function getConfig() {
-  const baseUrl = process.env.SUPABASE_URL?.replace(/\/+$/, "");
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const legacyServiceJwt = process.env.SUPABASE_SERVICE_ROLE_JWT;
-  if (!baseUrl || !serviceKey) {
-    throw new Error("TAP_IN_DATABASE_NOT_CONFIGURED: Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, then run the TAP IN database migration.");
-  }
-  const authorizationJwt = serviceKey.startsWith("eyJ") ? serviceKey : legacyServiceJwt;
-  if (!authorizationJwt) {
-    throw new Error("TAP_IN_DATABASE_NOT_CONFIGURED: Set SUPABASE_SERVICE_ROLE_JWT to the legacy service_role JWT in Vercel when using an sb_secret_ key.");
-  }
-  return { baseUrl, serviceKey, authorizationJwt };
-}
-
-async function requestDatabase<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const { baseUrl, serviceKey, authorizationJwt } = getConfig();
-  const headers: Record<string, string> = {
-    apikey: serviceKey,
-    Authorization: `Bearer ${authorizationJwt}`,
-    "Content-Type": "application/json",
-    ...(init.headers as Record<string, string> | undefined),
-  };
-  const response = await fetch(`${baseUrl}/rest/v1/${path}`, {
-    ...init,
-    cache: "no-store",
-    headers,
-  });
-  const body = await response.text();
-  if (!response.ok) {
-    console.error("TAP IN database request failed:", response.status, body.slice(0, 500));
-    throw new Error(response.status === 404
-      ? "The TAP IN table is missing. Apply docs/supabase/migrations/202610160001_tap_in_opportunities.sql in Supabase."
-      : `TAP IN database request failed (${response.status}). Check the database migration and Supabase configuration.`);
-  }
-  if (!body) return undefined as T;
-  return JSON.parse(body) as T;
-}
-
-const TABLE = "tap_in_opportunities";
-
 export async function listAllOpportunities() {
-  return requestDatabase<TapInOpportunity[]>(`${TABLE}?select=*&order=updated_at.desc,title.asc`);
+  const result = await cmsBridge<{ opportunities?: TapInOpportunity[] }>({ action: "tap-in.listAll" });
+  return result.opportunities ?? [];
 }
 
 export async function listLiveOpportunities() {
-  return requestDatabase<TapInOpportunity[]>(`${TABLE}?select=*&status=eq.live&order=updated_at.desc,title.asc`);
+  const result = await cmsBridge<{ opportunities?: TapInOpportunity[] }>({ action: "tap-in.listLive" });
+  return result.opportunities ?? [];
 }
 
 export async function findPublicOpportunityBySlug(slug: string) {
-  const rows = await requestDatabase<TapInOpportunity[]>(`${TABLE}?select=*&slug=eq.${encodeURIComponent(slug)}&status=neq.draft&limit=1`);
-  return rows[0] ?? null;
+  const result = await cmsBridge<{ opportunity?: TapInOpportunity | null }>({ action: "tap-in.findPublicBySlug", slug });
+  return result.opportunity ?? null;
 }
 
 export async function findOpportunityBySlug(slug: string) {
-  const rows = await requestDatabase<TapInOpportunity[]>(`${TABLE}?select=id,slug&slug=eq.${encodeURIComponent(slug)}&limit=1`);
-  return rows[0] ?? null;
+  const result = await cmsBridge<{ opportunity?: Pick<TapInOpportunity, "id" | "slug"> | null }>({ action: "tap-in.findBySlug", slug });
+  return result.opportunity ?? null;
 }
 
 export async function createOpportunity(input: OpportunityInput) {
-  const rows = await requestDatabase<TapInOpportunity[]>(TABLE, {
-    method: "POST",
-    headers: { Prefer: "return=representation" },
-    body: JSON.stringify(input),
-  });
-  return rows[0];
+  const result = await cmsBridge<{ opportunity: TapInOpportunity }>({ action: "tap-in.create", opportunity: input as unknown as Record<string, unknown> });
+  return result.opportunity;
 }
 
 export async function updateOpportunity(id: string, input: OpportunityInput) {
-  const rows = await requestDatabase<TapInOpportunity[]>(`${TABLE}?id=eq.${encodeURIComponent(id)}`, {
-    method: "PATCH",
-    headers: { Prefer: "return=representation" },
-    body: JSON.stringify(input),
-  });
-  if (!rows[0]) return null;
-  return rows[0];
+  const result = await cmsBridge<{ opportunity: TapInOpportunity | null }>({ action: "tap-in.update", id, opportunity: input as unknown as Record<string, unknown> });
+  return result.opportunity;
 }

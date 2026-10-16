@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import FeaturedStories from "@/components/blog/FeaturedStories";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "The TAP Journal",
   description: "Original practical perspectives on business, trade, investment, culture, technology and opportunities across Africa.",

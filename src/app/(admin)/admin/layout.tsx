@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import AdminAuthGate from "@/components/admin/AdminAuthGate";
 
 export const metadata: Metadata = {
-  title: "Homepage Images | Africa Plug Admin",
+  title: "Admin Control Room | Africa Plug",
   robots: { index: false, follow: false },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <AdminAuthGate>{children}</AdminAuthGate>;
 }

@@ -1,4 +1,5 @@
 import { put } from "@vercel/blob";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,6 +13,9 @@ const ACCEPTED_IMAGE_TYPES = new Map([
 ]);
 
 export async function POST(request: Request) {
+  if (!await isAdminAuthenticated()) {
+    return Response.json({ error: "Please sign in to the admin workspace." }, { status: 401, headers: { "Cache-Control": "no-store" } });
+  }
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return Response.json({ error: "Vercel Blob is not connected to this deployment. Connect a Blob store and redeploy." }, { status: 503 });
   }
@@ -28,7 +32,6 @@ export async function POST(request: Request) {
   if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) return Response.json({ error: "The image must be smaller than 10 MB." }, { status: 413 });
 
   try {
-    // Give every replacement a new URL so edge/browser caches cannot keep serving the previous file.
     const blob = await put(`homepage/hero-slide-${slotValue}.${extension}`, file, {
       access: "public",
       addRandomSuffix: true,
