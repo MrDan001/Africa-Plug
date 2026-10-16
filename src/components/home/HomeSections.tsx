@@ -1,123 +1,43 @@
 import FeaturedStories from "@/components/blog/FeaturedStories";
-import BookstoreFeature from "@/components/home/BookstoreFeature";
+import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
 
-const photos = {
-  fk: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1200&q=85",
-  excavator: "https://images.unsplash.com/photo-1580901368919-7738efb0f87e?auto=format&fit=crop&w=1200&q=85",
-  honey: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=900&q=85",
-  solar: "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=900&q=85",
-  farm: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=85",
-  people: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1800&q=85",
-  city: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=850&q=85",
-  network: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=850&q=85",
-};
+export default async function HomeSections() {
+  const opportunities = await listLiveOpportunities().catch(() => []);
+  return <>
+    <section className="intro-section section-grid" id="about">
+      <div className="intro-video-card" role="img" aria-label="Africa Plug editorial introduction visual" style={{background:"linear-gradient(135deg,#e9e5df,#f7f5f1)",minHeight:300,display:"grid",placeItems:"center",padding:30,color:"#292a2c"}}>
+        <div><p className="eyebrow">THE AFRICA PLUG</p><h2 style={{fontSize:"clamp(28px,4vw,48px)",lineHeight:1,letterSpacing:"-.05em",margin:0}}>Your connection<br/>to Africa.</h2><p style={{color:"#626469",maxWidth:300,lineHeight:1.6}}>Investment • Business • Entertainment</p></div>
+      </div>
+      <div className="intro-copy"><p className="eyebrow">MEET FK</p><h2>A MORE CONNECTED WAY TO ENGAGE WITH AFRICA</h2><p>The Africa Plug connects commercial ambition with context, relationships and opportunities across African markets. We help people ask better questions, find relevant routes in and move with greater clarity.</p><a className="text-link" href="/about">ABOUT THE AFRICA PLUG <span>→</span></a></div>
+    </section>
 
-function Arrow() {
-  return <span className="arrow-mark" aria-hidden="true">↗</span>;
-}
+    <section className="work-section content-section" id="work-with-fk">
+      <div className="work-intro"><p className="eyebrow">AFRICA COMMERCIAL DEAL CONSULTANCY</p><h2>WORK WITH FK</h2><p>For businesses entering a market, expanding across Africa, or navigating a commercial challenge or opportunity.</p><a className="button button-pink" href="/work-with-fk/apply">START YOUR APPLICATION <span>→</span></a><a className="text-link" href="/work-with-fk">UNDERSTAND THE PROCESS</a></div>
+      <div className="proof-area" id="process">
+        <div className="proof-label"><span className="line-icon">01</span><div><b>APPLICATION</b><small>Share your commercial brief.</small></div></div>
+        <div className="proof-label"><span className="line-icon">02</span><div><b>REVIEW</b><small>We assess fit and readiness.</small></div></div>
+        <div className="proof-label"><span className="line-icon">03</span><div><b>APPROVAL & NEXT STEPS</b><small>Clear terms before payment.</small></div></div>
+      </div>
+    </section>
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="eyebrow">{children}</p>;
-}
+    <section className="content-section" id="selected-work" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)",background:"#f1efeb",color:"#292a2c"}}>
+      <div style={{maxWidth:1200,margin:"0 auto"}}><p className="eyebrow">SELECTED WORK</p><h2 style={{fontSize:"clamp(32px,5vw,56px)",letterSpacing:"-.05em",margin:"0 0 14px"}}>Commercial work, shared responsibly.</h2><p style={{maxWidth:650,color:"#626469",lineHeight:1.75}}>This space is reserved for genuine, NDA-safe examples of work. Case studies will be added when approved for publication; no client names or placeholder testimonials are displayed.</p></div>
+    </section>
 
-export default function HomeSections() {
-  return (
-    <>
-      <section className="intro-section section-grid" id="about">
-        <div className="intro-video-card" aria-label="Africa Plug introduction video">
-          <iframe
-            className="intro-video-embed"
-            src="https://www.youtube-nocookie.com/embed/8QLMpUuav4w?rel=0&playsinline=1"
-            title="The Africa Plug introduction video"
-            loading="lazy"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        </div>
-        <div className="intro-copy">
-          <Eyebrow>MEET FK</Eyebrow>
-          <h2>A FEW WORDS<br />ABOUT THE AFRICA PLUG</h2>
-          <p>I’m FK. I built Africa Plug to connect real people with real opportunities — across business, investment, partnerships and more. This isn’t just about opportunity; it’s about people, progress and a bigger Africa.</p>
-          <a className="text-link" href="#work-with-fk">EXPLORE THE STORY <span>→</span></a>
-        </div>
-      </section>
+    <section className="content-section" id="tap-in" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)"}}>
+      <div style={{maxWidth:1200,margin:"0 auto"}}><div className="standard-section-heading"><p className="standard-eyebrow">TAP IN</p><h2>Current opportunities.</h2><p>Only genuinely approved live opportunities appear here. No demo listings or invented opportunities.</p></div>
+      {opportunities.length ? <div className="standard-card-grid">{opportunities.slice(0,3).map((item)=><article className="standard-card" key={item.id}><p className="standard-card-category">{[item.sector,item.opportunity_type].filter(Boolean).join(" · ")}</p><h3>{item.title}</h3><p>{item.description}</p><p className="standard-card-category">{[item.country,item.region].filter(Boolean).join(" · ")}</p><a className="text-link" href={"/tap-in/"+item.slug}>VIEW OPPORTUNITY <span>→</span></a></article>)}</div> : <div className="standard-note"><div><h3>No current opportunities to display.</h3><p>Listings will appear here when genuine opportunities have been reviewed and approved for publication.</p></div><a href="/tap-in">ABOUT TAP IN <span>→</span></a></div>}
+      <a className="text-link" href="/tap-in">EXPLORE TAP IN <span>→</span></a></div>
+    </section>
 
-      <section className="work-section content-section" id="work-with-fk">
-        <div className="work-intro">
-          <Eyebrow>COMMERCIAL DEAL CONSULTANCY</Eyebrow>
-          <h2>WORK WITH FK</h2>
-          <p>Get expert support to access, structure and close the right opportunities in Africa.</p>
-          <a className="button button-pink" href="#contact">START YOUR APPLICATION <span>→</span></a>
-          <a className="text-link" href="#process">SEE HOW IT WORKS</a>
-        </div>
-        <div className="proof-area" id="process">
-          <div className="proof-label"><span className="line-icon">↗</span><div><b>THE PROCESS</b><small>Simple. Clear. Focused.</small></div></div>
-          <div className="proof-label"><span className="line-icon">◇</span><div><b>SELECTED WORK</b><small>Real deals. Real impact.</small></div></div>
-          <div className="proof-label"><span className="line-icon">“</span><div><b>TESTIMONIALS</b><small>What our clients say.</small></div></div>
-          <article className="proof-card">
-            <div className="card-photo" role="img" aria-label="Excavator on a construction site" style={{ backgroundImage: `url("${photos.excavator}")` }} />
-            <div className="proof-card-caption">Equipment Hire<br /><strong>Africa</strong></div>
-          </article>
-          <article className="proof-card">
-            <div className="card-photo" role="img" aria-label="Honey ready for supply" style={{ backgroundImage: `url("${photos.honey}")` }} />
-            <div className="proof-card-caption">Honey Supply<br /><strong>Partnerships</strong></div>
-          </article>
-          <article className="testimonial-card">
-            <span className="quote-mark">“</span>
-            <p>Working with FK gave us access to opportunities we couldn’t have found on our own.</p>
-            <small>— Client success story</small>
-          </article>
-        </div>
-      </section>
+    <section className="content-section" id="store" style={{padding:"clamp(42px,7vw,84px) clamp(20px,6vw,90px)",background:"#f7f5f1",color:"#292a2c"}}>
+      <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:30,alignItems:"center"}}><div><p className="eyebrow">THE STORE</p><h2 style={{fontSize:"clamp(32px,5vw,54px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>Useful resources.<br/>Thoughtful tools.</h2><p style={{maxWidth:500,color:"#626469",lineHeight:1.7}}>The Africa Starter Guide is the planned first release. The Store will open when the finished product and secure checkout and delivery are ready.</p><a className="button button-pink" href="/store">VISIT THE STORE <span>→</span></a></div><div style={{padding:28,background:"#e9e5df",border:"1px solid #d6d0c7"}}><p className="eyebrow">FIRST RELEASE</p><h3 style={{fontSize:30,lineHeight:1,letterSpacing:"-.04em",margin:"0 0 12px"}}>The Africa Starter Guide</h3><p style={{color:"#626469",lineHeight:1.6}}>Coming soon. No demo prices or checkout promises.</p></div></div>
+    </section>
 
-      <section className="tap-section" id="tap-in">
-        <div className="tap-image" role="img" aria-label="Heavy equipment on a construction site at sunset" style={{ backgroundImage: `url("${photos.excavator}")` }} />
-        <div className="tap-intro">
-          <Eyebrow>LIVE OPPORTUNITIES</Eyebrow>
-          <h2>TAP IN</h2>
-          <p>Discover vetted business and investment opportunities across Africa. From agriculture to infrastructure, energy to tech.</p>
-          <a className="button button-pink" href="#tap-in">VIEW LATEST LISTINGS <span>→</span></a>
-        </div>
-        <div className="listing-stack">
-          <a className="listing-row" href="#contact">
-            <span className="listing-thumb" style={{ backgroundImage: `url("${photos.excavator}")` }} />
-            <span className="listing-info"><b>Excavator Hire — Lagos</b><small>Construction <i>•</i> Equipment</small></span><Arrow />
-          </a>
-          <a className="listing-row" href="#contact">
-            <span className="listing-thumb" style={{ backgroundImage: `url("${photos.honey}")` }} />
-            <span className="listing-info"><b>Honey Supply — Plateau</b><small>Agriculture <i>•</i> Export</small></span><Arrow />
-          </a>
-          <a className="listing-row" href="#contact">
-            <span className="listing-thumb" style={{ backgroundImage: `url("${photos.solar}")` }} />
-            <span className="listing-info"><b>Solar Energy Project — Kenya</b><small>Energy <i>•</i> Investment</small></span><Arrow />
-          </a>
-        </div>
-      </section>
+    <FeaturedStories variant="home" />
 
-      <BookstoreFeature />
-
-      <section className="partner-banner" id="partner" style={{ backgroundImage: `linear-gradient(90deg,rgba(244,242,237,.98) 0%,rgba(244,242,237,.91) 36%,rgba(244,242,237,.48) 72%,rgba(244,242,237,.14) 100%),url("${photos.people}")` }}>
-        <div className="partner-copy">
-          <Eyebrow>PARTNER WITH TAP</Eyebrow>
-          <h2>LET’S BUILD<br />TOGETHER</h2>
-          <p>We work with forward-thinking brands, sponsors, events and guests who want to be part of Africa’s next chapter.</p>
-          <a className="button button-pink" href="#contact">PARTNER WITH TAP <span>→</span></a>
-        </div>
-      </section>
-
-      <FeaturedStories variant="home" />
-
-      <section className="closing-section" id="contact">
-        <Eyebrow>STAY CONNECTED</Eyebrow>
-        <h2>LET’S STAY PLUGGED IN</h2>
-        <p>Have a question, a business idea or want to know more?<br className="desktop-only" /> We’re here to help.</p>
-        <div className="closing-cards">
-          <a href="#contact" className="closing-card"><span className="closing-icon">✉</span><b>CONTACT</b><small>Get in touch with our team.</small><Arrow /></a>
-          <a href="#contact" className="closing-card"><span className="closing-icon">＋</span><b>ASK THE AFRICA PLUG</b><small>Questions, advice, guidance.</small><Arrow /></a>
-          <a href="#contact" className="closing-card"><span className="closing-icon">♧</span><b>STAY PLUGGED IN</b><small>Join our mailing list.</small><Arrow /></a>
-        </div>
-      </section>
-    </>
-  );
+    <section className="content-section" id="partner-with-tap" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)"}}>
+      <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:32}}><div><p className="eyebrow">PARTNER WITH TAP</p><h2 style={{fontSize:"clamp(32px,5vw,52px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>Build something relevant.</h2><p style={{maxWidth:520,color:"#626469",lineHeight:1.7}}>For sponsorship, brand partnerships, interviews, events, tourism, institutional work and content collaborations.</p><a className="button button-outline" href="/contact?type=partner">EXPLORE PARTNERSHIPS <span>→</span></a></div><div id="contact"><p className="eyebrow">CONTACT & QUESTIONS</p><h2 style={{fontSize:30,letterSpacing:"-.04em",margin:"0 0 12px"}}>Start a conversation.</h2><p style={{color:"#626469",lineHeight:1.7}}>For general enquiries, questions or partnership proposals, contact the team.</p><a className="text-link" href="/contact">CONTACT THE AFRICA PLUG <span>→</span></a><p style={{marginTop:20}}><a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a></p></div></div>
+    </section>
+  </>;
 }
