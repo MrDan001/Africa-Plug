@@ -5,8 +5,17 @@ export default async function HomeSections() {
   const opportunities = await listLiveOpportunities().catch(() => []);
   return <>
     <section className="intro-section section-grid" id="about">
-      <div className="intro-video-card" role="img" aria-label="Africa Plug editorial introduction visual" style={{background:"linear-gradient(135deg,#e9e5df,#f7f5f1)",minHeight:300,display:"grid",placeItems:"center",padding:30,color:"#292a2c"}}>
-        <div><p className="eyebrow">THE AFRICA PLUG</p><h2 style={{fontSize:"clamp(28px,4vw,48px)",lineHeight:1,letterSpacing:"-.05em",margin:0}}>Your connection<br/>to Africa.</h2><p style={{color:"#626469",maxWidth:300,lineHeight:1.6}}>Investment • Business • Entertainment</p></div>
+      <div className="intro-video-card" aria-label="The Africa Plug introduction video" style={{position:"relative",width:"100%",aspectRatio:"16 / 9",minHeight:260,overflow:"hidden",background:"#e9e5df"}}>
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/8QLMpUuav4w?rel=0"
+          title="The Africa Plug — Your connection to Africa"
+          aria-label="The Africa Plug introduction video"
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          style={{position:"absolute",inset:0,width:"100%",height:"100%",border:0}}
+        />
       </div>
       <div className="intro-copy"><p className="eyebrow">MEET FK</p><h2>A MORE CONNECTED WAY TO ENGAGE WITH AFRICA</h2><p>The Africa Plug connects commercial ambition with context, relationships and opportunities across African markets. We help people ask better questions, find relevant routes in and move with greater clarity.</p><a className="text-link" href="/about">ABOUT THE AFRICA PLUG <span>→</span></a></div>
     </section>
