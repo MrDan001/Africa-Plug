@@ -1,4 +1,3 @@
-import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { updateOpportunity } from "@/lib/tap-in/opportunities";
 import { parseOpportunityInput } from "@/lib/tap-in/validation";
 
@@ -6,10 +5,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
-  if (!(await isAdminAuthenticated())) {
-    return Response.json({ error: "Please sign in to manage TAP IN opportunities." }, { status: 401, headers: { "Cache-Control": "no-store" } });
-  }
-
   const { id } = await context.params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) {
     return Response.json({ error: "This opportunity ID is not valid." }, { status: 400 });
