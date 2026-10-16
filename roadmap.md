@@ -93,7 +93,9 @@ This section records what is present in the repository today. The stage descript
 - [ ] Test that only a verified payment—not a clicked button—unlocks the next step.
 
 ### Stage 5 — Admin dashboard and CMS
-- [ ] Build the secure admin login and protected routes; current /admin is a placeholder in the inspected branch.
+- [x] Add a password-protected `/admin` hero-image manager with authenticated upload API.
+- [~] Configure `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET` and Supabase Storage environment variables; create the public-read media bucket before image publishing works.
+- [ ] Build the wider admin dashboard, CMS workflows and management views for opportunities, articles, products, applications, payments and enquiries.
 - [ ] Set up and document persistent database tables/migrations for products, articles, opportunities, enquiries, applications and settings.
 - [ ] Build product, media, blog and opportunity management in the admin.
 - [ ] Test admin permissions, uploads, edits, archiving and auditability before relying on the CMS.
