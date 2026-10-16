@@ -153,7 +153,7 @@ export default function AdminPage() {
               <input id="tap-admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
               <button className="tap-admin-primary" type="submit" disabled={loginBusy}>{loginBusy ? "Signing in…" : "Sign in"}</button>
             </form>
-            <p className="tap-admin-small">If sign-in is not configured yet, the website owner must add the admin environment variables described in the setup guide.</p>
+            <p className="tap-admin-small">First time setting this up? The website owner must configure the admin and image-storage environment variables.</p><a className="tap-admin-setup-link" href="https://github.com/MrDan001/Africa-Plug/blob/main/docs/HERO_IMAGE_ADMIN_SETUP.md" target="_blank" rel="noreferrer">Open the one-time setup guide ↗</a>
           </section>
         ) : (
           <>
