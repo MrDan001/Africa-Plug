@@ -57,6 +57,7 @@ const SLIDE_MS = 6500;
 export default function Hero() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [customImages, setCustomImages] = useState<(string | null)[]>([null, null, null]);
 
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -64,12 +65,34 @@ export default function Hero() {
     return () => window.clearTimeout(timer);
   }, [index, paused]);
 
-  const slide = SLIDES[index];
+  useEffect(() => {
+    let active = true;
+    async function loadCustomImages() {
+      try {
+        const response = await fetch("/api/hero-images", { cache: "no-store" });
+        if (!response.ok) return;
+        const data = await response.json() as { images?: (string | null)[] };
+        if (active && Array.isArray(data.images)) {
+          setCustomImages([data.images[0] ?? null, data.images[1] ?? null, data.images[2] ?? null]);
+        }
+      } catch {
+        // Keep the built-in images if custom image storage is not configured or available.
+      }
+    }
+    void loadCustomImages();
+    return () => { active = false; };
+  }, []);
+
+  const displaySlides = SLIDES.map((item, i) => ({
+    ...item,
+    image: customImages[i] || item.image,
+  }));
+  const slide = displaySlides[index];
   const go = (next: number) => setIndex((next + SLIDES.length) % SLIDES.length);
 
   return (
     <section id="top" className="hero" aria-roledescription="carousel" aria-label="Featured opportunities">
-      {SLIDES.map((item, i) => (
+      {displaySlides.map((item, i) => (
         <div
           key={item.eyebrow}
           aria-hidden="true"
