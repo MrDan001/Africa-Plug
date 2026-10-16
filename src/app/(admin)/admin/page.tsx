@@ -2,46 +2,46 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
-const SLOTS = [
-  { slot: 1, title: "Hero 1 — Work With FK", note: "Wide image recommended: 2400 × 1200 px or larger." },
-  { slot: 2, title: "Hero 2 — TAP IN", note: "Choose a clear image that still works behind large headline text." },
-  { slot: 3, title: "Hero 3 — Ask The Africa Plug", note: "Use a landscape image; keep the main subject away from the left text area." },
+const areas = [
+  { group: "PUBLISHING", items: [
+    { title: "Homepage", detail: "Hero slides, imagery and homepage modules", href: "/admin/homepage", mark: "01" },
+    { title: "TAP IN opportunities", detail: "Create, review, publish, close and archive listings", href: "/admin/tap-in", mark: "02" },
+    { title: "Blog & editorial", detail: "Articles, categories, SEO and sharing metadata", href: "/admin/blog", mark: "03", status: "CMS setup required" },
+    { title: "Store products", detail: "Products, images, prices and protected files", href: "/admin/store", mark: "04", status: "CMS setup required" },
+  ]},
+  { group: "BUSINESS OPERATIONS", items: [
+    { title: "Work With FK", detail: "Applications, review decisions and commercial settings", href: "/admin/work-with-fk", mark: "05", status: "Workflow setup required" },
+    { title: "Enquiries & forms", detail: "Contact, partnership, Ask TAP and expressions of interest", href: "/admin/enquiries", mark: "06", status: "Persistent inbox setup required" },
+    { title: "Subscribers", detail: "Stay Plugged In audience and newsletter status", href: "/admin/subscribers", mark: "07", status: "Email platform setup required" },
+    { title: "Analytics & funnel", detail: "Sources, UTM data and conversion events", href: "/admin/analytics", mark: "08", status: "Tracking setup required" },
+  ]},
+  { group: "SITE CONTROL", items: [
+    { title: "Media library", detail: "Reusable image and document assets", href: "/admin/media", mark: "09", status: "Media library setup required" },
+    { title: "Commercial settings", detail: "Fees, meeting length, terms and booking rules", href: "/admin/settings", mark: "10", status: "Settings module required" },
+    { title: "Site & SEO settings", detail: "Navigation, contact links, metadata and optional modules", href: "/admin/site-settings", mark: "11", status: "Settings module required" },
+  ]},
 ];
 
-type Notice = { tone: "success" | "error"; text: string };
-
-export default function AdminPage() {
-  const [checking, setChecking] = useState(true);
+export default function AdminDashboard() {
+  const [ready, setReady] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
-  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
-  const [files, setFiles] = useState<(File | null)[]>([null, null, null]);
-  const [previews, setPreviews] = useState<(string | null)[]>([null, null, null]);
-  const [busySlot, setBusySlot] = useState<number | null>(null);
-  const [loginBusy, setLoginBusy] = useState(false);
-  const [notice, setNotice] = useState<Notice | null>(null);
-
-  async function refreshImages() {
-    try {
-      const response = await fetch("/api/hero-images", { cache: "no-store" });
-      const data = await response.json() as { images?: (string | null)[] };
-      if (Array.isArray(data.images)) setImages([data.images[0] ?? null, data.images[1] ?? null, data.images[2] ?? null]);
-    } catch {
-      setNotice({ tone: "error", text: "Could not load the current hero images. Check your connection and refresh." });
-    }
-  }
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    document.title = "Homepage Images | Africa Plug Admin";
-    setAuthenticated(true);
-    void refreshImages();
-    setChecking(false);
+    document.title = "Africa Plug Admin — Control Room";
+    fetch("/api/admin/session", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((data: { authenticated?: boolean }) => setAuthenticated(data.authenticated === true))
+      .catch(() => setError("Could not verify the admin session. Refresh and try again."))
+      .finally(() => setReady(true));
   }, []);
 
-  async function login(event: FormEvent<HTMLFormElement>) {
+  async function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setLoginBusy(true);
-    setNotice(null);
+    setBusy(true);
+    setError("");
     try {
       const response = await fetch("/api/admin/session", {
         method: "POST",
@@ -49,130 +49,67 @@ export default function AdminPage() {
         body: JSON.stringify({ password }),
       });
       const data = await response.json() as { error?: string };
-      if (!response.ok) {
-        setNotice({ tone: "error", text: data.error || "Sign-in failed. Please try again." });
-        return;
-      }
+      if (!response.ok) { setError(data.error || "Sign-in failed."); return; }
       setPassword("");
       setAuthenticated(true);
-      setNotice({ tone: "success", text: "You are signed in. Upload a new image to replace a hero slide." });
-      await refreshImages();
-    } catch {
-      setNotice({ tone: "error", text: "Could not connect to the admin service. Please try again." });
-    } finally {
-      setLoginBusy(false);
-    }
+    } catch { setError("Could not connect to the admin service."); }
+    finally { setBusy(false); }
   }
 
-  function chooseFile(slot: number, file: File | null) {
-    setFiles((current) => current.map((existing, index) => index === slot - 1 ? file : existing));
-    setPreviews((current) => current.map((existing, index) => {
-      if (index !== slot - 1) return existing;
-      return file ? URL.createObjectURL(file) : null;
-    }));
-    setNotice(null);
+  async function signOut() {
+    await fetch("/api/admin/session", { method: "DELETE" });
+    setAuthenticated(false);
   }
 
-  async function upload(slot: number) {
-    const file = files[slot - 1];
-    if (!file) {
-      setNotice({ tone: "error", text: "Choose an image first." });
-      return;
-    }
-
-    setBusySlot(slot);
-    setNotice(null);
-    try {
-      const formData = new FormData();
-      formData.set("slot", String(slot));
-      formData.set("image", file);
-      const response = await fetch("/api/admin/hero-images", { method: "POST", body: formData });
-      const data = await response.json() as { ok?: boolean; error?: string; slot?: number; imageUrl?: string };
-      if (!response.ok || !data.ok || !data.imageUrl) {
-        setNotice({ tone: "error", text: data.error || "Upload failed. Please try again." });
-        return;
-      }
-      setImages((current) => current.map((url, index) => index === slot - 1 ? data.imageUrl! : url));
-      setFiles((current) => current.map((fileValue, index) => index === slot - 1 ? null : fileValue));
-      setPreviews((current) => current.map((preview, index) => index === slot - 1 ? null : preview));
-      const input = document.getElementById(`hero-image-${slot}`) as HTMLInputElement | null;
-      if (input) input.value = "";
-      setNotice({ tone: "success", text: `Hero ${slot} image uploaded. The homepage will use it automatically; refresh the homepage to verify the crop.` });
-    } catch {
-      setNotice({ tone: "error", text: "Could not connect to image storage. Please try again." });
-    } finally {
-      setBusySlot(null);
-    }
-  }
-
-  if (checking) {
-    return <main className="tap-admin-page"><div className="tap-admin-shell"><p className="tap-admin-muted">Checking secure admin session…</p></div></main>;
-  }
+  if (!ready) return <main className="ap-admin"><p>Loading your control room…</p></main>;
+  if (!authenticated) return (
+    <main className="ap-admin ap-admin-login">
+      <div className="ap-admin-login-card">
+        <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
+        <p className="ap-admin-eyebrow">PRIVATE WORKSPACE</p>
+        <h1>Welcome back.</h1>
+        <p>Sign in to manage the website, opportunities and business enquiries.</p>
+        <form onSubmit={signIn}>
+          <label htmlFor="admin-password">Admin password</label>
+          <input id="admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+          {error && <p className="ap-admin-error" role="alert">{error}</p>}
+          <button type="submit" disabled={busy}>{busy ? "Signing in…" : "SIGN IN →"}</button>
+        </form>
+      </div>
+    </main>
+  );
 
   return (
-    <main className="tap-admin-page">
-      <div className="tap-admin-shell">
-        <header className="tap-admin-header">
-          <a className="tap-admin-brand" href="/" aria-label="Africa Plug homepage"><span className="tap-admin-brand-mark">AP</span><span><small>THE</small><b>AFRICA PLUG</b></span></a>
-          <a className="tap-admin-back" href="/">Back to website ↗</a>
-        </header>
-
-        <section className="tap-admin-intro">
-          <p className="tap-admin-eyebrow">HOMEPAGE CONTROL</p>
-          <h1>Hero image manager.</h1>
-          <p>Upload or replace the image for each carousel slide. You do not need to edit code. Images are saved to the media bucket and picked up by the homepage automatically.</p>
-          <p><a className="tap-admin-primary" href="/admin/tap-in">Manage TAP IN opportunities →</a></p>
+    <main className="ap-admin">
+      <header className="ap-admin-topbar">
+        <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
+        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><button onClick={signOut}>Sign out</button></div>
+      </header>
+      <section className="ap-admin-hero">
+        <p className="ap-admin-eyebrow">THE AFRICA PLUG · CONTROL ROOM</p>
+        <h1>Everything in<br/><em>one place.</em></h1>
+        <p className="ap-admin-lede">Manage the parts of the business that change. Publish only real content, keep enquiries traceable and control the customer journey from one workspace.</p>
+        <div className="ap-admin-shortcuts">
+          <a href="/admin/homepage">Edit homepage <span>↗</span></a>
+          <a href="/admin/tap-in">Manage TAP IN <span>↗</span></a>
+          <a href="/admin/enquiries">Review enquiries <span>↗</span></a>
+        </div>
+      </section>
+      {areas.map((area) => (
+        <section className="ap-admin-area" key={area.group}>
+          <div className="ap-admin-area-heading"><p>{area.group}</p><span>{String(area.items.length).padStart(2, "0")} MODULES</span></div>
+          <div className="ap-admin-grid">
+            {area.items.map((item) => (
+              <a className="ap-admin-card" href={item.status ? undefined : item.href} aria-disabled={item.status ? true : undefined} key={item.title}>
+                <span className="ap-admin-card-number">{item.mark}</span>
+                <div><h2>{item.title}<span aria-hidden="true">↗</span></h2><p>{item.detail}</p></div>
+                <small className={item.status ? "ap-admin-status ap-admin-status-pending" : "ap-admin-status"}>{item.status || "OPEN MODULE"}</small>
+              </a>
+            ))}
+          </div>
         </section>
-
-        {notice ? <p className={`tap-admin-notice tap-admin-notice--${notice.tone}`} role="status">{notice.text}</p> : null}
-
-        {!authenticated ? (
-          <section className="tap-admin-login">
-            <h2>Admin sign-in</h2>
-            <p>Sign in with the admin password configured for this website.</p>
-            <form onSubmit={login}>
-              <label htmlFor="tap-admin-password">Admin password</label>
-              <input id="tap-admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
-              <button className="tap-admin-primary" type="submit" disabled={loginBusy}>{loginBusy ? "Signing in…" : "Sign in"}</button>
-            </form>
-            <p className="tap-admin-small">First time setting this up? The website owner must configure the admin and image-storage environment variables.</p><a className="tap-admin-setup-link" href="https://github.com/MrDan001/Africa-Plug/blob/main/docs/HERO_IMAGE_ADMIN_SETUP.md" target="_blank" rel="noreferrer">Open the one-time setup guide ↗</a>
-          </section>
-        ) : (
-          <>
-            <div className="tap-admin-toolbar">
-              <div><strong>Three carousel slides</strong><span>JPG, PNG, WebP or AVIF · Maximum 10 MB per image</span></div>
-              <button className="tap-admin-secondary" type="button" onClick={() => void refreshImages()}>Refresh images</button>
-            </div>
-            <div className="tap-admin-grid">
-              {SLOTS.map(({ slot, title, note }) => (
-                <section className="tap-admin-card" key={slot}>
-                  <div className="tap-admin-card-heading"><span>0{slot}</span><h2>{title}</h2></div>
-                  <div className="tap-admin-preview">
-                    {previews[slot - 1] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={previews[slot - 1]!} alt={`Selected preview for hero slide ${slot}`} />
-                    ) : images[slot - 1] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={images[slot - 1]!} alt={`Current homepage image for hero slide ${slot}`} />
-                    ) : (
-                      <div className="tap-admin-empty"><span>0{slot}</span><p>Built-in hero image is currently active.</p></div>
-                    )}
-                    <span className="tap-admin-preview-badge">{previews[slot - 1] ? "Selected preview" : images[slot - 1] ? "Custom image active" : "Default image"}</span>
-                  </div>
-                  <p className="tap-admin-card-note">{note}</p>
-                  <label className="tap-admin-file-label" htmlFor={`hero-image-${slot}`}>Choose image</label>
-                  <input className="tap-admin-file-input" id={`hero-image-${slot}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => chooseFile(slot, event.target.files?.[0] ?? null)} />
-                  {files[slot - 1] ? <p className="tap-admin-filename">{files[slot - 1]!.name}</p> : <p className="tap-admin-filename">No new image selected</p>}
-                  <button className="tap-admin-primary" type="button" disabled={!files[slot - 1] || busySlot !== null} onClick={() => void upload(slot)}>{busySlot === slot ? "Uploading…" : `Publish Hero ${slot} image`}</button>
-                </section>
-              ))}
-            </div>
-            <p className="tap-admin-footnote">Publishing replaces the custom image for that slide only. The headline, carousel order, and button destinations are unchanged.</p>
-          </>
-        )}
-
-        <footer className="tap-admin-footer">Africa Plug Admin · Homepage images</footer>
-      </div>
+      ))}
+      <footer className="ap-admin-footer"><span>THE AFRICA PLUG · ADMIN</span><a href="/">View public website ↗</a><span>Light, clear, accountable.</span></footer>
     </main>
   );
 }
