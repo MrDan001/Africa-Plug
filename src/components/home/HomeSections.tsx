@@ -24,17 +24,16 @@ export default function HomeSections() {
   return (
     <>
       <section className="intro-section section-grid" id="about">
-        <div className="intro-video-card" aria-label="Africa Plug intro video sample">
+        <div className="intro-video-card" aria-label="Africa Plug introduction video">
           <iframe
             className="intro-video-embed"
-            src="https://www.youtube-nocookie.com/embed/jTC26BkcY_M?rel=0&playsinline=1"
-            title="Africa — cinematic travel video (temporary sample for The Africa Plug introduction)"
+            src="https://www.youtube-nocookie.com/embed/8QLMpUuav4w?rel=0&playsinline=1"
+            title="The Africa Plug introduction video"
             loading="lazy"
             referrerPolicy="strict-origin-when-cross-origin"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
           />
-          <span className="intro-video-sample-badge">TEMPORARY VIDEO SAMPLE</span>
         </div>
         <div className="intro-copy">
           <Eyebrow>MEET FK</Eyebrow>
