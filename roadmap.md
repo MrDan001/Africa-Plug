@@ -9,7 +9,7 @@ Last updated: 14 Oct 2026
 
 ## 1. Current implementation status
 
-**Last reviewed:** 14 October 2026  
+**Last reviewed:** 16 October 2026  
 **Repository checked:** [`MrDan001/Africa-Plug`](https://github.com/MrDan001/Africa-Plug), branch `main`  
 **Storefront update:** the Store uses a warm, photo-led bookstore hero and two levels of wooden shelves, with ten designed covers shared with individual book details and a browser-persisted cart. The shared header has more readable desktop menu spacing; inline navigation is intended for widths above 800px and the hamburger for 800px and below. The Store wrapper's forced 100vh minimum height has been removed to prevent a large blank block below the catalogue. The cart can prepare an email order enquiry but is not payment checkout; secure payment and digital delivery remain launch dependencies. The latest header/store spacing change still requires production visual verification after deployment.
 
@@ -21,12 +21,12 @@ This section records what is present in the repository today. The stage descript
 | Framework and styling | **Present** | Next.js 16, React 19, TypeScript and Tailwind CSS 4 are in `package.json`. Site layout, shared styling, header, mobile menu and footer are present. |
 | Homepage and visual shell | **Presentational prototype** | The three-slide carousel and major homepage sections are present. The intro-video slot embeds a temporary external YouTube sample. Homepage content and proof points are hard-coded; there is no verified live-opportunity feed, CMS-driven content, official FK video/captions, or separate homepage featured-product block. The sample video’s visual behaviour still needs browser/device review. |
 | Logo | **Needs brand verification** | `public/images/logo.svg` and `logo-mark.svg` exist. Header/footer code uses the mark plus an HTML/CSS wordmark; verify against the approved full supplied lockup before calling this exact-logo work complete. |
-| Public routes | **Mixed prototype / demo / placeholders** | Homepage, About, Contact, Work With FK and legal routes render front-end content. Store has ten hard-coded demo books, individual details, a photo-led bookshelf layout and a browser-local cart with quantity changes/removal. Demo titles/prices are not connected to a database, and the cart's email order enquiry does not take payment. The TAP Journal now contains ten original static explainers with dedicated article routes and institutional source links; the content is not yet CMS-managed. TAP IN detail route is a placeholder and TAP IN landing content is a static focus-area list, not a live feed. |
+| Public routes | **Mixed prototype / demo / data-driven TAP IN slice** | Homepage, About, Contact, Work With FK and legal routes render front-end content. Store still has hard-coded demo books, illustrative prices and a browser-local email-enquiry cart. Blog articles are static, not CMS-managed. TAP IN now has database-backed public listing/detail routes and only requests Live records for the listing index; the one-time Supabase migration and listing-bound Expression of Interest workflow still need setup/verification. |
 | Initial enquiry forms | **Implemented in code; delivery unverified** | Contact, Partner With TAP and Work With FK pages render the reusable enquiry form. Shared Zod validation, a honeypot, Resend email sending and optional Cloudflare Turnstile support are implemented. API route files also exist for Ask and TAP IN interest. The handler currently routes submissions to `EMAIL_CONNECT` (default `connect@theafricaplug.com`), not separate `ask@` and private `fk@` routing. |
 | Newsletter | **Not implemented** | `/api/forms/subscribe` returns HTTP 501, “Not implemented”. |
 | Payments and commercial funnel | **Not implemented** | Stripe is installed and a helper exists, but checkout, Stripe webhook, Work With FK approval and scheduling routes return HTTP 501. The current application form is only an initial enquiry; it takes no payment. |
-| Database / CMS | **Not implemented as a connected content system** | Supabase packages and client/server helpers exist. The current pages are not backed by a finished content schema or a working content-management workflow; no migration/schema files are present in the current repository tree. |
-| Admin dashboard | **Not implemented** | `/admin` currently renders `Placeholder`, and its layout only renders children. The current branch does not show the promised secure CMS/admin workflow. |
+| Database / CMS | **Partial: TAP IN schema and data layer added** | A Supabase migration, server-side data access, validation and protected TAP IN listing endpoints are now in the repository. Apply the migration to the connected Supabase project and verify persistence before treating it as operational. The broader Blog, Store and Work With FK CMS/data workflows remain unimplemented; generic Supabase helper stubs remain. |
+| Admin dashboard | **Partial: TAP IN manager added** | `/admin/tap-in` provides sign-in-gated listing management for create/edit/publish/close/archive. It depends on the TAP IN Supabase migration and the existing admin environment settings. The full CMS dashboard for Blog, Store, applications, payments and enquiries is still outstanding; the separate hero-image manager also needs its own production-access review. |
 | SEO and legal | **Partly implemented; launch work remains** | Root metadata, robots rules and a sitemap of core static pages exist. Sitemap coverage omits dynamic book pages and other relevant detail/flow routes; `JsonLd.tsx` returns `null` and is not a structured-data implementation. Policy pages contain substantive drafts but need confirmed business/controller details and legal review. No cookie-consent banner was found in the active implementation. |
 | Configuration | **Example file present; live values unknown** | `.env.example` documents Resend sender/delivery and optional Turnstile variables. Repository inspection cannot confirm whether Vercel environment variables or Resend domain verification are correctly configured. Never put real secrets in Git. |
 | Build and production verification | **Not verified in this review** | No build, lint, end-to-end form delivery, or live production test was run as part of this GitHub-only inspection. Do not treat the latest commit as proof that the deployed site is healthy or that emails reach the inbox. |
@@ -37,14 +37,14 @@ This section records what is present in the repository today. The stage descript
 |---|---|---|
 | 1. Foundation and design shell | **Built, review pending** | Confirm exact logo, final visual/reference decisions, keyboard/mobile behavior and brand guidelines. |
 | 2. Homepage sections | **Presentational build exists** | Replace the temporary Africa-themed video sample with the approved FK video and captions; finalize copy, hero assets, real proof points and verified social links. Keep large video files in media storage rather than the Git/deployment bundle. |
-| 3. TAP IN, Blog and Store | **Front-end demo in progress** | Homepage Playbook feature now links directly to the shelf and no longer shows a duplicate “COMING SOON” book block. Ten demo covers are displayed on visual shelf boards, each with a dedicated detail route. Replace demo content with approved real products, connect persistent product records, implement secure checkout and digital delivery, and complete TAP IN workflows. |
+| 3. TAP IN, Blog and Store | **Partial; TAP IN management code added, setup and EOI pending** | TAP IN now has an admin manager, four internal statuses, persistent-record access, live-only public listing cards and individual slugs that remain available after closure. Apply the Supabase migration, test the full create/edit/publish/close/archive lifecycle, and add the listing-specific Expression of Interest workflow in Section 5. Store demo content, real launch products/checkout/delivery and Blog CMS are still outstanding. |
 | 4. Forms and Work With FK funnel | **Initial enquiries partly implemented** | Verify live email delivery, implement distinct routing, newsletter, full application review/approval, verified payments and scheduling. |
 | 5. Admin dashboard | **Not started in this branch** | Build secure login and CMS workflows against persistent content/data. |
 | 6. SEO, QA and launch | **Partial scaffold** | Review the existing core-page sitemap and add dynamic product URLs as appropriate; finalize policy drafts and cookie/analytics setup, run build and device checks, and verify the exact production deployment and domain. |
 
 ## 1A. Working delivery checklist
 
-**Current position (14 October 2026):** The project is a functioning front-end prototype with a homepage, a Store demo and some enquiry-form code. We are between the end of the initial visual build and the early content/store integration stage. The site is **not launch-ready yet**: secure checkout, a connected CMS/admin, final product content, legal pages and end-to-end production QA remain open.
+**Current position (16 October 2026):** The project remains **not launch-ready**. The Section 3 TAP IN opportunity-management slice has been added to the repository, including its Supabase migration and `/admin/tap-in` manager, but the migration and persistent create/edit/status lifecycle still require verification. The listing-specific Expression of Interest form belongs to Section 5. Store launch content/checkout/delivery, Blog CMS, wider admin workflows, legal completion and production QA remain open.
 
 **Legend:** [x] present in repository / implemented in code · [~] partial, demo-only or not yet verified in production · [ ] not done
 
@@ -78,8 +78,10 @@ This section records what is present in the repository today. The stage descript
 - [ ] Confirm actual books, covers, descriptions, prices, product files and selling terms.
 - [ ] Connect Store products to persistent data/CMS records.
 - [ ] Implement secure checkout, payment confirmation, receipts and protected digital delivery.
-- [ ] Implement the TAP IN slug/detail page, which currently renders `Placeholder`.
-- [ ] Replace sample TAP IN listings with approved opportunities and finish listing-specific enquiries.
+- [x] Implement data-driven TAP IN listing detail URLs; draft records are hidden, and closed/archived URLs remain available without public status labels.
+- [x] Remove the static example/focus-area cards; the public index now queries Live records only and shows no fictional opportunities.
+- [ ] Apply the TAP IN Supabase migration and test create, edit, publish, close, archive, and stable closed URLs against the connected database.
+- [ ] Add the listing-specific Expression of Interest form and durable enquiry retention under working-brief Section 5.
 - [~] Ten original Blog articles and working static detail routes are now present, with reading times, tags and source notes.
 - [ ] Connect Blog articles to the CMS/database and add editor workflows for drafts, revisions, publishing, tags and social-share metadata.
 
@@ -137,7 +139,7 @@ This section records implementation facts found in source. “Present” means s
 | Launch blocker | No secure Store checkout or delivery | `/api/checkout` returns HTTP 501; `/api/webhooks/stripe` returns HTTP 501; Pay links open email only. | Build and test verified payment, order records, receipts, refunds and protected digital delivery before taking payment. |
 | Launch blocker | Admin/CMS not implemented | `/admin` returns `Placeholder`; admin layout does not authenticate users; no persistent schema/migrations or connected content workflow exists in the tree. | Agree data model and build secure protected admin and CMS before promising self-service management. |
 | Launch blocker | Work With FK paid funnel not implemented | Approval and scheduling endpoints return HTTP 501; deposit/balance payment is not collected or verified. | Implement the reviewed workflow only after fees, payment provider, refund/cancellation/no-show rules and terms are agreed. |
-| High | TAP IN detail route is a placeholder | `src/app/(site)/tap-in/[slug]/page.tsx` returns `Placeholder`; landing page is a static list of focus areas, explicitly not verified live listings. | Build data-driven opportunity details, verified/live state, individual enquiry forms and share metadata. |
+| High | TAP IN live data and enquiry workflow | Data-backed public listing/detail routes and an admin manager are in code; the Supabase migration must be applied and verified. The full listing-specific EOI submission and durable enquiry record are not yet implemented. | Apply migration; test status lifecycle and persistent slugs; complete Section 5 EOI capture/retention before treating TAP IN as launch-ready. |
 | High | Home calls-to-action contain dead/self-targets | “START YOUR APPLICATION” and homepage listing rows route to `#contact`; several closing cards all link back to `#contact`. “VIEW LATEST LISTINGS” points back to the same `#tap-in` section. | Point each CTA to its intended real form, page or listing, then exercise every CTA on desktop and mobile. |
 | High | Footer/search contain anchors that do not exist | Homepage IDs currently include `about`, `work-with-fk`, `process`, `tap-in`, `partner` and `contact`; footer/search destinations such as `/#discover`, `/#understand` and `/#access` have no matching target. | Replace stale links with existing sections/pages or add the intended target sections. |
 | High | Desktop navigation falls back to hamburger too early | The previous navigation media query hid `.desktop-nav` at widths up to 1000px. Some mobile browsers in desktop-site mode still have an effective viewport below that breakpoint. The shared header itself is fixed by a later CSS rule. | Revised to keep desktop links visible above 800px and reserve the hamburger for narrower screens; verify across 801–1000px widths after deployment. |
@@ -346,9 +348,9 @@ Working rule: each stage is walked through first, and we start only after your g
 
 **Needs from client:** FK video, hero photography and mobile crops, copy, testimonials, Selected Work cards.
 
-### Stage 3: TAP IN, Blog and Store — PARTIAL FRONT-END / HARD-CODED DEMO
+### Stage 3: TAP IN, Blog and Store — PARTIAL; TAP IN DATA LAYER ADDED
 
-**Current status:** Store has ten hard-coded demo titles, photo-led cover designs, a rebuilt two-level wooden bookshelf layout, individual book-detail routes, and a browser-local cart with quantity updates/removal and an email order-enquiry action. Prices and descriptions remain illustrative; the cart does not take payment and digital delivery is not implemented. `src/app/(site)/tap-in/[slug]/page.tsx` is still `Placeholder`; TAP IN landing cards are static focus areas, not live opportunities. Blog entries in `src/lib/blog-posts.ts` are marked preview-only and article pages show an “article is being prepared” message rather than full stories. The Supabase client/server helper files contain only `export {}`; no database schema/migrations or connected content API exist.
+**Current status:** Store still has demo titles, illustrative prices, a browser-local cart and no secure payment/digital delivery. TAP IN now has a dedicated Supabase migration, server-side data access, authenticated admin CRUD/status routes, a `/admin/tap-in` manager and dynamic public detail routes. Only Live records appear on the TAP IN index; drafts are hidden, closed/archived detail URLs remain available without a public status label, and no posting dates or principal field are exposed. The Supabase migration still must be applied and the lifecycle tested. The Section 5 listing-specific EOI form and durable enquiry storage remain open. Blog entries are still static and CMS management remains outstanding.
 
 **Planned deliverables**
 - TAP IN listing page and one page per listing, with share image and Express Interest form (listing name attached automatically)
@@ -358,7 +360,7 @@ Working rule: each stage is walked through first, and we start only after your g
 
 **Review point:** a sample listing, article and product each open on their own URL and preview correctly when shared; a test checkout delivers the file.
 
-**Needs from client:** first listings (excavator hire, honey), first articles, Africa Starter Guide file and price.
+**Needs from client:** genuine opportunities approved for public disclosure, launch editorial content, and the Africa Starter Guide file and price. Do not create fictional opportunity listings to fill the page.
 
 ### Stage 4: Forms and Work With FK funnel — INITIAL ENQUIRIES ONLY
 
@@ -375,9 +377,9 @@ Working rule: each stage is walked through first, and we start only after your g
 
 **Needs from client:** final deposit amount and meeting fee, refund rule for cancellations more than 24 hours ahead, no-show balance rule, legal review of all terms.
 
-### Stage 5: Admin dashboard — NOT IMPLEMENTED
+### Stage 5: Admin dashboard — PARTIAL (TAP IN MANAGER ONLY)
 
-**Current status:** `/admin` renders `Placeholder`; its layout only renders children and adds no authentication or access control. The CMS requirements below are target specifications, not working functionality in this branch.
+**Current status:** `/admin/tap-in` provides a sign-in-gated opportunity manager, but it depends on applying the TAP IN migration and verifying environment configuration and persistence. The wider CMS dashboard for Blog, Store, applications, payments, enquiries and settings is still not implemented. The CMS requirements below remain target scope for those areas.
 
 **Planned deliverables**
 - Secure login
@@ -515,7 +517,7 @@ EMAIL_FK=fk@
 2. **Prove the current enquiry forms work end to end.** Set the Resend key and sender/from details in the correct deployment environment, verify the `theafricaplug.com` sending domain with Resend, and submit test enquiries from Contact, Partner With TAP and Work With FK. Confirm the messages arrive, replies work, and errors are clear. Repository source alone cannot prove delivery.
 3. **Set the email-routing rules.** At present, the shared handler sends to `EMAIL_CONNECT` (default `connect@theafricaplug.com`). Decide and implement the intended routing to `connect@`, `ask@`, and the private `fk@` address before calling Stage 4 complete. Keep `fk@` hidden from the public UI.
 4. **Finish the public enquiry paths.** Put the Ask The Africa Plug form and TAP IN expression-of-interest form on the correct public pages, attach the chosen listing automatically when relevant, and implement the newsletter signup endpoint (currently HTTP 501). Only enable Turnstile once the site key and secret key are configured together.
-5. **Build the real content layer.** Define the Supabase schema and storage model, then connect TAP IN listings, Blog articles, Store products, slugs, detail pages, search/tags and featured content to real records. Replace the current placeholder detail pages.
+5. **Finish the content layer.** Apply and test the TAP IN migration and status lifecycle; add the Section 5 listing-specific EOI form and durable submission retention; then connect Blog articles and Store products to managed records, search/tags, share metadata and checkout/delivery.
 6. **Build and secure the admin/CMS.** Implement protected login and content editing for opportunities, enquiries, articles, products, media, homepage modules, settings and feature flags. Treat the admin specification as planned scope until these features exist and are tested in this repository.
 7. **Implement the commercial funnel only after decisions/legal review.** Finalise fees, deposit, refund, cancellation, no-show and rescheduling rules; obtain legal review; then implement verified Stripe payments/webhooks, approval messages and scheduling unlocks. The current checkout, webhook, approval and scheduling endpoints are stubs.
 8. **Complete launch QA.** Finalize and review the existing legal policy drafts, implement and verify cookie consent, review the existing sitemap and add dynamic product URLs where needed, set metadata/structured data/analytics, verify all links and forms on phone and desktop, run build/lint and accessibility/performance checks, then confirm the production domain and post-deploy behaviour.
