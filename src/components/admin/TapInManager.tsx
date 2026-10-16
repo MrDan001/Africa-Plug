@@ -108,7 +108,7 @@ export default function TapInManager() {
         return;
       }
       setItems(Array.isArray(data.opportunities) ? data.opportunities : []);
-      setNotice(null);
+      setNotice((current) => current?.tone === "error" ? null : current);
     } catch {
       setNotice({ tone: "error", text: "Could not connect to the TAP IN manager. Please try again." });
     } finally {
