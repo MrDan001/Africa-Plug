@@ -44,6 +44,8 @@ Avoid large pink backgrounds. Do not replace pink with another dominant colour s
 
 The current static hero must be a three-slide carousel, following the original brief. The carousel is the main routing point for the website.
 
+**Hero imagery reference supplied with these notes:** [Google Drive folder](https://drive.google.com/drive/folders/1aMTzESXnbHW-lFGvYRLm41EuYsrl6De2?usp=sharing). Please verify the link if it does not open; the URL in the pasted notes appeared to contain a line-break/space in the folder ID.
+
 ### Fixed on every slide
 
 At the top:
