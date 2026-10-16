@@ -1,5 +1,3 @@
-import { isAdminAuthenticated } from "@/lib/admin-auth";
-
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -12,10 +10,6 @@ function publicObjectUrl(baseUrl: string, bucket: string, path: string, version:
 }
 
 export async function POST(request: Request) {
-  if (!(await isAdminAuthenticated())) {
-    return Response.json({ error: "Please sign in to the admin page again." }, { status: 401 });
-  }
-
   const baseUrl = process.env.SUPABASE_URL?.replace(/\/+$/, "");
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const bucket = process.env.SUPABASE_STORAGE_BUCKET || "africa-plug-media";
