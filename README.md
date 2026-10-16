@@ -1,6 +1,7 @@
 # Africa Plug — Current Working Requirements
 
 **Current requirements baseline:** [docs/WORKING_BRIEF.md](./docs/WORKING_BRIEF.md)
+**TAP IN manager setup:** [docs/TAP_IN_SETUP.md](./docs/TAP_IN_SETUP.md) — includes the one-time Supabase migration and admin workflow notes.
 
 Use this document alongside the original brief dated 30 September. Work through its 21 numbered sections in order. Requirements not changed or clarified in the working document still follow the original brief. This is a requirements baseline, not a claim that every item is implemented; track verified completion in [roadmap.md](./roadmap.md). Do not invent listings, products, prices, testimonials or other factual content to fill gaps.
 

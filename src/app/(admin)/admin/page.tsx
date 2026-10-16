@@ -121,6 +121,7 @@ export default function AdminPage() {
           <p className="tap-admin-eyebrow">HOMEPAGE CONTROL</p>
           <h1>Hero image manager.</h1>
           <p>Upload or replace the image for each carousel slide. You do not need to edit code. Images are saved to the media bucket and picked up by the homepage automatically.</p>
+          <p><a className="tap-admin-primary" href="/admin/tap-in">Manage TAP IN opportunities →</a></p>
         </section>
 
         {notice ? <p className={`tap-admin-notice tap-admin-notice--${notice.tone}`} role="status">{notice.text}</p> : null}
