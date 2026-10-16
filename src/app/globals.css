@@ -1994,3 +1994,94 @@ body { -webkit-font-smoothing: antialiased; }
   .tap-in-admin-form input, .tap-in-admin-form textarea, .tap-in-admin-form select,
   .tap-in-admin-filters input, .tap-in-admin-filters select { font-size: 16px; }
 }
+
+
+/* Africa Plug light editorial system — working requirements 16 Oct 2026 */
+:root {
+  --navy: #f5f3ef;
+  --charcoal: #292a2c;
+  --panel: #ffffff;
+  --line: #dedbd4;
+  --signal: #d51f6d;
+  --foreground: #292a2c;
+  --muted: #66686c;
+  --stone: #f5f3ef;
+  --off-white: #fbfaf8;
+}
+html, body { background: #fbfaf8; color: #292a2c; }
+.site-header { position: relative; background: rgba(251,250,248,.97); border-bottom: 1px solid #dedbd4; }
+.brand-the, .brand-africa { color: #292a2c; }
+.desktop-nav a, .footer-nav a { color: #292a2c; }
+.search-button, .mobile-menu-trigger { color: #292a2c; }
+.mobile-menu-panel { background: #fff; border-color: #dedbd4; box-shadow: 0 18px 24px rgba(20,20,20,.08); }
+.mobile-menu-link { color: #292a2c; }
+.button-outline { border-color: #77797d; background: transparent; color: #292a2c; }
+.button-outline:hover { background: #292a2c; border-color: #292a2c; color: #fff; }
+.site-footer { background: #f1efeb; color: #292a2c; border-top: 1px solid #dedbd4; }
+.site-footer a, .tap-footer-description, .tap-footer-contact-note, .tap-footer-copyright, .tap-footer-motto { color: #56585c; }
+.tap-footer-column h2, .tap-footer-kicker { color: #292a2c; }
+.tap-footer-column a { color: #56585c; }
+.standard-card, .standard-note, .standard-cta-band, .contact-official-email, .application-steps > div {
+  background: #fff; color: #292a2c; border-color: #dedbd4; box-shadow: 0 8px 24px rgba(40,35,30,.035);
+}
+.standard-card p, .standard-note p, .standard-cta-band p, .contact-official-email p, .application-steps p { color: #626469; }
+.standard-section-heading h2, .standard-card h3, .standard-note h3, .standard-cta-band h2 { color: #292a2c; }
+.standard-button { background: #d51f6d; color: #fff; }
+.standard-button:hover { background: #b81759; color: #fff; }
+.standard-process-step { border-color: #dedbd4; }
+.standard-process-step h3, .standard-process-step p { color: #292a2c; }
+.tap-store-page { background: #fbfaf8; color: #292a2c; }
+.tap-store-hero { background: #f1efeb; color: #292a2c; }
+.tap-store-hero h1, .tap-store-hero-description, .tap-store-hero-aside p { color: #292a2c; }
+.tap-store-benefits { background: #f5f3ef; color: #292a2c; }
+.tap-store-benefit h2, .tap-store-benefit p { color: #292a2c; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* Unified admin control room */
+.ap-admin { min-height: 100vh; background: #f7f5f1; color: #292a2c; padding: 0 clamp(18px, 4vw, 64px) 40px; font-family: Arial, Helvetica, sans-serif; }
+.ap-admin-topbar { max-width: 1360px; height: 76px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #dedbd4; gap: 20px; }
+.ap-admin-brand { display: inline-flex; align-items: center; gap: 10px; color: #292a2c; text-decoration: none; font-size: 11px; letter-spacing: .12em; font-weight: 900; }
+.ap-admin-brand > span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #d51f6d; color: #fff; letter-spacing: -.04em; font-size: 12px; }
+.ap-admin-top-actions { display: flex; align-items: center; gap: 22px; font-size: 10px; color: #77797d; letter-spacing: .08em; }
+.ap-admin-top-actions > span { display: flex; align-items: center; gap: 8px; }
+.ap-admin-top-actions i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #25835b; }
+.ap-admin-top-actions button { border: 1px solid #dedbd4; border-radius: 6px; background: #fff; padding: 9px 13px; color: #292a2c; cursor: pointer; }
+.ap-admin-hero { max-width: 1360px; margin: 0 auto; padding: clamp(44px, 7vw, 88px) 0 48px; }
+.ap-admin-eyebrow { margin: 0 0 15px; color: #d51f6d; font-size: 10px; letter-spacing: .16em; font-weight: 900; }
+.ap-admin-hero h1 { margin: 0; max-width: 850px; font-size: clamp(46px, 7vw, 88px); line-height: .96; letter-spacing: -.065em; font-weight: 850; }
+.ap-admin-hero h1 em { color: #77716a; font-style: normal; }
+.ap-admin-lede { max-width: 620px; margin: 22px 0 0; color: #66686c; font-size: 15px; line-height: 1.75; }
+.ap-admin-shortcuts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.ap-admin-shortcuts a { display: inline-flex; align-items: center; gap: 18px; padding: 13px 16px; border: 1px solid #dedbd4; border-radius: 6px; background: #fff; color: #292a2c; font-size: 12px; font-weight: 800; }
+.ap-admin-shortcuts a:first-child { background: #d51f6d; color: #fff; border-color: #d51f6d; }
+.ap-admin-shortcuts span { font-size: 16px; }
+.ap-admin-area { max-width: 1360px; margin: 0 auto 40px; }
+.ap-admin-area-heading { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #dedbd4; padding-bottom: 12px; margin-bottom: 13px; }
+.ap-admin-area-heading p { margin: 0; font-size: 10px; font-weight: 900; letter-spacing: .15em; }
+.ap-admin-area-heading span { color: #8a8b8d; font-size: 9px; letter-spacing: .12em; }
+.ap-admin-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ap-admin-card { display: flex; flex-direction: column; align-items: flex-start; gap: 25px; min-height: 180px; padding: 21px; border: 1px solid #dedbd4; border-radius: 8px; background: #fff; color: #292a2c; text-decoration: none; transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+.ap-admin-card[href]:hover { border-color: #d51f6d; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(40,35,30,.06); }
+.ap-admin-card[aria-disabled="true"] { opacity: .78; cursor: default; }
+.ap-admin-card-number { color: #d51f6d; font-size: 10px; font-weight: 900; letter-spacing: .1em; }
+.ap-admin-card h2 { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; font-size: 19px; letter-spacing: -.035em; }
+.ap-admin-card h2 span { color: #d51f6d; font-size: 15px; }
+.ap-admin-card p { margin: 8px 0 0; color: #66686c; font-size: 12px; line-height: 1.55; }
+.ap-admin-status { margin-top: auto; color: #25835b; font-size: 9px; font-weight: 900; letter-spacing: .1em; }
+.ap-admin-status-pending { color: #77716a; }
+.ap-admin-footer { max-width: 1360px; margin: 50px auto 0; padding-top: 17px; border-top: 1px solid #dedbd4; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 15px; color: #77797d; font-size: 10px; letter-spacing: .06em; }
+.ap-admin-footer a { color: #292a2c; text-decoration: underline; text-underline-offset: 4px; }
+.ap-admin-login { display: grid; place-items: center; padding-top: 40px; padding-bottom: 40px; }
+.ap-admin-login-card { width: min(100%, 440px); padding: clamp(24px, 5vw, 42px); border: 1px solid #dedbd4; border-radius: 10px; background: #fff; box-shadow: 0 18px 55px rgba(40,35,30,.06); }
+.ap-admin-login-card .ap-admin-eyebrow { margin-top: 38px; }
+.ap-admin-login-card h1 { margin: 0; font-size: 42px; letter-spacing: -.06em; }
+.ap-admin-login-card > p:not(.ap-admin-eyebrow) { color: #66686c; font-size: 13px; line-height: 1.65; }
+.ap-admin-login-card form { display: grid; gap: 10px; margin-top: 25px; }
+.ap-admin-login-card label { font-size: 11px; font-weight: 800; }
+.ap-admin-login-card input { width: 100%; padding: 13px; border: 1px solid #dedbd4; border-radius: 6px; background: #fff; color: #292a2c; }
+.ap-admin-login-card button { min-height: 45px; margin-top: 8px; border: 0; border-radius: 6px; background: #d51f6d; color: #fff; font-size: 11px; font-weight: 900; letter-spacing: .08em; cursor: pointer; }
+.ap-admin-error { color: #b42335; font-size: 12px; }
+@media (max-width: 900px) { .ap-admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .ap-admin { padding-left: 16px; padding-right: 16px; } .ap-admin-topbar { height: 66px; } .ap-admin-top-actions > span { display: none; } .ap-admin-grid { grid-template-columns: 1fr; } .ap-admin-card { min-height: 150px; } .ap-admin-footer { flex-direction: column; } }
