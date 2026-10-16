@@ -93,7 +93,6 @@ const LABEL_STYLE: React.CSSProperties = { display: "block", fontSize: 12, fontW
 function text(value: unknown) {
   if (value === null || value === undefined) return "";
   if (typeof value === "string" || typeof value === "number") return String(value);
-  if (typeof value === "boolean") return value;
   return "";
 }
 
