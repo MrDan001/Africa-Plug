@@ -12,11 +12,23 @@ function publicObjectUrl(baseUrl: string, bucket: string, path: string, version:
 export async function POST(request: Request) {
   const baseUrl = process.env.SUPABASE_URL?.replace(/\/+$/, "");
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const legacyServiceJwt = process.env.SUPABASE_SERVICE_ROLE_JWT;
   const bucket = process.env.SUPABASE_STORAGE_BUCKET || "africa-plug-media";
 
   if (!baseUrl || !serviceKey) {
     return Response.json(
       { error: "Image storage is not configured yet. Follow docs/HERO_IMAGE_ADMIN_SETUP.md to connect the storage bucket." },
+      { status: 503 },
+    );
+  }
+
+  // Supabase's newer sb_secret_ API keys belong in apikey. The Storage
+  // REST endpoint also requires Authorization, which must be a JWT. Keep
+  // the legacy service_role JWT in a separate server-only environment var.
+  const authorizationJwt = serviceKey.startsWith("eyJ") ? serviceKey : legacyServiceJwt;
+  if (!authorizationJwt) {
+    return Response.json(
+      { error: "Image storage needs SUPABASE_SERVICE_ROLE_JWT in Vercel: add the legacy service_role JWT separately, then redeploy." },
       { status: 503 },
     );
   }
@@ -46,18 +58,13 @@ export async function POST(request: Request) {
 
   const path = `homepage/hero-slide-${slotValue}`;
   const encodedPath = path.split("/").map(encodeURIComponent).join("/");
-  // Supabase legacy service_role keys are JWTs and belong in Authorization.
-  // New sb_secret_ keys are not JWTs: use them as apikey only, otherwise
-  // Storage rejects the Bearer token as an invalid JWT/API key.
   const headers: Record<string, string> = {
     apikey: serviceKey,
+    Authorization: `Bearer ${authorizationJwt}`,
     "Content-Type": file.type,
     "Cache-Control": "max-age=3600",
     "x-upsert": "true",
   };
-  if (serviceKey.startsWith("eyJ")) {
-    headers.Authorization = `Bearer ${serviceKey}`;
-  }
 
   let storageResponse: Response;
   try {
@@ -77,11 +84,11 @@ export async function POST(request: Request) {
     const normalized = detail.toLowerCase();
     let message = "The upload failed. Check that the storage bucket exists and that the storage credentials are correct.";
     if (normalized.includes("invalid api key") || normalized.includes("invalid jwt")) {
-      message = "Supabase rejected the storage API key. Check SUPABASE_SERVICE_ROLE_KEY in Vercel and redeploy.";
+      message = "Supabase rejected the storage credentials. Check SUPABASE_SERVICE_ROLE_KEY and SUPABASE_SERVICE_ROLE_JWT in Vercel.";
     } else if (normalized.includes("bucket") && (normalized.includes("not found") || normalized.includes("does not exist"))) {
       message = `The Supabase storage bucket "${bucket}" does not exist. Create it in Supabase Storage and make it public.`;
     } else if (normalized.includes("row-level security") || normalized.includes("permission denied")) {
-      message = "Supabase denied the upload. Check that Vercel uses the server-side service/secret key, not the publishable key.";
+      message = "Supabase denied the upload. Check that Vercel uses the server-side secret key and service_role JWT, not the publishable key.";
     }
     return Response.json({ error: message }, { status: 502 });
   }
