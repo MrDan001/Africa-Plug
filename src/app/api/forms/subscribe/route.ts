@@ -32,6 +32,26 @@ export async function POST(request: Request) {
         },
       },
     });
+    try {
+      await cmsBridge({
+        action: "cms.save",
+        module: "analytics",
+        record: {
+          title: "form_submit · newsletter",
+          slug: null,
+          status: "recorded",
+          data: {
+            eventName: "form_submit",
+            path: "/",
+            source: typeof input.source === "string" ? input.source.slice(0, 100) : "Stay Plugged In",
+            label: "Newsletter signup",
+            recordedAt: new Date().toISOString(),
+          },
+        },
+      });
+    } catch (analyticsError) {
+      console.error("Newsletter conversion could not be recorded:", analyticsError instanceof Error ? analyticsError.message : "Unknown error");
+    }
     return Response.json({ ok: true });
   } catch (error) {
     console.error("Newsletter signup could not be stored:", error instanceof Error ? error.message : "Unknown error");

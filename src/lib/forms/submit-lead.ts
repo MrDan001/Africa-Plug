@@ -95,6 +95,35 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
     return Response.json({ error: "We couldn't store your enquiry right now. Please try again shortly." }, { status: 503 });
   }
 
+  try {
+    await cmsBridge({
+      action: "cms.save",
+      module: "analytics",
+      record: {
+        title: `form_submit · ${requestUrl?.pathname || "/contact"}`,
+        slug: null,
+        status: "recorded",
+        data: {
+          eventName: "form_submit",
+          path: requestUrl?.pathname || "/contact",
+          source: requestUrl?.searchParams.get("utm_source") || referer || "direct",
+          referrer: referer,
+          label: labels[kind],
+          utm: {
+            utm_source: requestUrl?.searchParams.get("utm_source") || "",
+            utm_medium: requestUrl?.searchParams.get("utm_medium") || "",
+            utm_campaign: requestUrl?.searchParams.get("utm_campaign") || "",
+            utm_content: requestUrl?.searchParams.get("utm_content") || "",
+            utm_term: requestUrl?.searchParams.get("utm_term") || "",
+          },
+          recordedAt: new Date().toISOString(),
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Form conversion could not be recorded:", error instanceof Error ? error.message : "Unknown error");
+  }
+
   const rows = [
     ["Enquiry type", lead.enquiryType || labels[kind]],
     ["Name", lead.name],

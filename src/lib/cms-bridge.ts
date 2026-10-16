@@ -72,7 +72,6 @@ export type PublicSiteSettings = {
   youtubeUrl?: string;
   enableNewsletter?: boolean;
   enableSearch?: boolean;
-  enableTestimonials?: boolean;
   enableSelectedWork?: boolean;
   enableProductOfMonth?: boolean;
   navigation?: { label: string; href: string }[];
@@ -122,7 +121,6 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       youtubeUrl: settingString("youtubeUrl"),
       enableNewsletter: settingBool("enableNewsletter"),
       enableSearch: settingBool("enableSearch"),
-      enableTestimonials: settingBool("enableTestimonials"),
       enableSelectedWork: settingBool("enableSelectedWork"),
       enableProductOfMonth: settingBool("enableProductOfMonth"),
       navigation: safeNavigation(data.navigation),

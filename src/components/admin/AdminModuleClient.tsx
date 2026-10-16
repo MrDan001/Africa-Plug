@@ -74,7 +74,6 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "youtubeUrl", label: "YouTube URL", type: "url" },
     { key: "enableNewsletter", label: "Show newsletter signup", type: "checkbox" },
     { key: "enableSearch", label: "Enable site search", type: "checkbox" },
-    { key: "enableTestimonials", label: "Show testimonials", type: "checkbox" },
     { key: "enableSelectedWork", label: "Show selected work", type: "checkbox" },
     { key: "enableProductOfMonth", label: "Show product of the month", type: "checkbox" },
   ],
@@ -213,7 +212,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Digital resource", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
-    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: true, enableSearch: true, enableTestimonials: false, enableSelectedWork: false, enableProductOfMonth: false }; }
+    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: true, enableSearch: true, enableSelectedWork: false, enableProductOfMonth: false }; }
     setDraft(next);
     setEditing(false);
     setEditorOpen(true);

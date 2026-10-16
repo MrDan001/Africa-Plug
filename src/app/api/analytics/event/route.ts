@@ -16,6 +16,7 @@ export async function POST(request: Request) {
   const query = typeof body.query === "string" ? body.query.slice(0, 1000) : "";
   const referrer = typeof body.referrer === "string" ? body.referrer.slice(0, 500) : "";
   const source = typeof body.source === "string" ? body.source.slice(0, 100) : "";
+  const label = typeof body.label === "string" ? body.label.slice(0, 160) : "";
   const utm = body.utm && typeof body.utm === "object" && !Array.isArray(body.utm) ? body.utm : {};
   try {
     await cmsBridge({
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
         title: `${eventName} · ${path}`.slice(0, 240),
         slug: null,
         status: "recorded",
-        data: { eventName, path, query, referrer, source, utm, recordedAt: new Date().toISOString() },
+        data: { eventName, path, query, referrer, source, label, utm, recordedAt: new Date().toISOString() },
       },
     });
   } catch (error) {
