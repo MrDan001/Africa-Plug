@@ -1,23 +1,20 @@
 import Link from "next/link";
-import {books,slugify} from "./books";
-import StoreAddToCartButton from "./StoreAddToCartButton";
-function BookIcon(){return <svg viewBox="0 0 40 40" width="39" height="39" fill="none" aria-hidden="true"><path d="M5 8.5c5-2 10-1.4 15 2v22c-5-3.4-10-4-15-2v-22ZM35 8.5c-5-2-10-1.4-15 2v22c5-3.4 10-4 15-2v-22Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/><path d="M9 13h7M9 17h7M24 13h7M24 17h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>}
-function BookCard({book,index}:{book:(typeof books)[number];index:number}){
- const slug=slugify(book.title);
- return <article className="tap-store-product" id={"book-"+slug}>
- <Link className="tap-store-product-cover-link" href={"/store/"+slug} aria-label={"View "+book.title+" details"}><div className={"tap-store-cover tap-store-cover--"+book.cover}><span className="tap-store-cover-brand">THE AFRICA PLUG</span><span className="tap-store-cover-number">{String(index+1).padStart(2,"0")}</span><span className="tap-store-cover-kicker">{book.label}</span><h3>{book.title}</h3><span className="tap-store-cover-mark" aria-hidden="true"/><span className="tap-store-cover-footer">PRACTICAL KNOWLEDGE<br/>FOR REAL-WORLD MOVES</span></div></Link>
- <div className="tap-store-shelf-plank" aria-hidden="true"/>
- <div className="tap-store-product-info"><Link href={"/store/"+slug} className="tap-store-product-title">{book.title}</Link><p className="tap-store-product-price">{book.price}</p><div className="tap-store-product-actions"><Link className="tap-store-details-button" href={"/store/"+slug}>VIEW DETAILS <span aria-hidden="true">→</span></Link><StoreAddToCartButton compact slug={slug} title={book.title} price={book.price} cover={book.cover}/></div></div></article>;
-}
-export default function BookShelf(){
- const shelves=[books.slice(0,5),books.slice(5,10)];
- return <div className="tap-store-page">
- <section className="tap-store-hero" aria-labelledby="tap-store-heading"><div className="tap-store-hero-copy"><p className="tap-store-eyebrow">THE AFRICA PLUG</p><h1 id="tap-store-heading">BOOKSTORE</h1><p className="tap-store-hero-description">Practical guides, real stories and valuable insights<br className="tap-store-desktop-break"/> for a bigger, bolder future.</p></div><aside className="tap-store-hero-aside"><BookIcon/><p>Better decisions.<br/>Bigger opportunities.<br/>A stronger you.</p></aside></section>
- <section className="tap-store-catalogue" aria-label="Africa Plug books"><div className="tap-store-shelves-frame">{shelves.map((shelf,shelfIndex)=><div className="tap-store-shelf-row" key={shelfIndex}>{shelf.map((book,index)=><BookCard key={book.title} book={book} index={shelfIndex*5+index}/>)}</div>)}</div></section>
- <section className="tap-store-benefits" aria-label="What the bookshelf offers">
- <div className="tap-store-benefit"><span className="tap-store-benefit-icon" aria-hidden="true"><BookIcon/></span><div><h2>PRACTICAL GUIDANCE</h2><p>Tools for clearer decisions.</p></div></div>
- <div className="tap-store-benefit"><span className="tap-store-benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="31" height="31" fill="none"><path d="M16 3 27 7v8c0 7-4.7 11.7-11 14C9.7 26.7 5 22 5 15V7l11-4Z" stroke="currentColor" strokeWidth="1.7"/><path d="m11 16 3.3 3.3L21 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span><div><h2>AFRICA-FOCUSED CONTEXT</h2><p>Useful questions to ask.</p></div></div>
- <div className="tap-store-benefit"><span className="tap-store-benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="31" height="31" fill="none"><path d="M4 7h24v19H4zM9 12h14M9 17h10M9 22h7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span><div><h2>KNOW WHAT'S INSIDE</h2><p>Read each book's details.</p></div></div>
- <div className="tap-store-benefit"><span className="tap-store-benefit-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="31" height="31" fill="none"><path d="M4 25V7m0 18h24M8 21l6-7 5 4 8-11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 7h6v6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg></span><div><h2>BUILT FOR NEXT STEPS</h2><p>From interest to informed action.</p></div></div>
- </section><p className="tap-store-demo-note">Demo catalogue: titles and prices are placeholders. The cart can collect selections, but online checkout and digital delivery are not connected yet.</p></div>;
+
+export default function BookShelf() {
+  return <div className="tap-store-page">
+    <section className="tap-store-hero" aria-labelledby="tap-store-heading">
+      <div className="tap-store-hero-copy"><p className="tap-store-eyebrow">THE AFRICA PLUG</p><h1 id="tap-store-heading">THE STORE</h1><p className="tap-store-hero-description">Practical resources for clearer decisions and better-informed moves across Africa.</p></div>
+      <aside className="tap-store-hero-aside"><span aria-hidden="true" style={{fontSize:42,fontWeight:300}}>↗</span><p>Knowledge.<br/>Tools.<br/>Possibility.</p></aside>
+    </section>
+    <section className="tap-store-catalogue" aria-label="Store products" style={{paddingTop:48,paddingBottom:64}}>
+      <article className="standard-card" style={{maxWidth:980,margin:"0 auto",display:"grid",gridTemplateColumns:"minmax(0,1fr) minmax(0,1.2fr)",gap:32,alignItems:"center",padding:"clamp(24px,5vw,56px)"}}>
+        <div aria-hidden="true" style={{aspectRatio:"4/5",maxWidth:270,width:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:24,background:"#e9e5df",color:"#292a2c",border:"1px solid #d6d0c7"}}>
+          <span style={{fontSize:10,fontWeight:900,letterSpacing:".14em"}}>THE AFRICA PLUG</span>
+          <div><span style={{fontSize:10,fontWeight:800,letterSpacing:".12em",color:"#d51f6d"}}>FIELD GUIDE · 01</span><h2 style={{fontSize:"clamp(30px,4vw,44px)",lineHeight:.98,letterSpacing:"-.06em",margin:"12px 0"}}>THE AFRICA<br/>STARTER GUIDE</h2><span style={{display:"block",width:48,height:3,background:"#d51f6d"}}/></div>
+          <span style={{fontSize:9,fontWeight:800,letterSpacing:".1em"}}>INVESTMENT • BUSINESS • ENTERTAINMENT</span>
+        </div>
+        <div><p className="standard-eyebrow">FIRST RELEASE</p><h2 style={{fontSize:"clamp(30px,4vw,48px)",lineHeight:1,letterSpacing:"-.05em",margin:"0 0 16px",color:"#292a2c"}}>The Africa Starter Guide</h2><p style={{color:"#626469",lineHeight:1.75}}>Our first Store release is being prepared. The Store will open when the finished guide, payment, receipt and secure delivery are ready. No placeholder catalogue or demo prices are being shown.</p><p style={{fontSize:11,fontWeight:800,letterSpacing:".08em",color:"#d51f6d",marginTop:24}}>COMING SOON</p><Link className="text-link" href="/contact">ASK ABOUT THE GUIDE <span aria-hidden="true">→</span></Link></div>
+      </article>
+    </section>
+  </div>;
 }
