@@ -29,6 +29,7 @@ export function parseOpportunityInput(value: unknown): OpportunityInput {
   const slug = slugify(typeof data.slug === "string" && data.slug.trim() ? data.slug : title);
   const country = text(data.country ?? "", "Country", 120);
   const region = text(data.region ?? "", "Region", 120);
+  if (!country && !region) throw new Error("Provide a country and/or region.");
   const sector = text(data.sector, "Sector", 120, 2);
   const opportunityType = text(data.opportunity_type ?? data.opportunityType, "Opportunity type", 120, 2);
   const description = text(data.description, "Description", 12000, 10);
