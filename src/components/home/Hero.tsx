@@ -42,12 +42,12 @@ const SLIDES: Slide[] = [
 
 const SLIDE_MS = 6500;
 
-export default function Hero() {
+export default function Hero({ initialImages = [null, null, null] }: { initialImages?: (string | null)[] }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [customImages, setCustomImages] = useState<(string | null)[]>([null, null, null]);
+  const [customImages, setCustomImages] = useState<(string | null)[]>(initialImages);
   const carouselRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
