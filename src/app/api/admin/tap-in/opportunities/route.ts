@@ -1,4 +1,3 @@
-import { isAdminAuthenticated } from "@/lib/admin-auth";
 import {
   createOpportunity,
   findOpportunityBySlug,
@@ -14,9 +13,6 @@ function dbErrorMessage(error: unknown) {
 }
 
 export async function GET() {
-  if (!(await isAdminAuthenticated())) {
-    return Response.json({ error: "Please sign in to manage TAP IN opportunities." }, { status: 401, headers: { "Cache-Control": "no-store" } });
-  }
   try {
     const opportunities = await listAllOpportunities();
     return Response.json({ opportunities }, { headers: { "Cache-Control": "no-store" } });
@@ -26,9 +22,6 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  if (!(await isAdminAuthenticated())) {
-    return Response.json({ error: "Please sign in to manage TAP IN opportunities." }, { status: 401, headers: { "Cache-Control": "no-store" } });
-  }
 
   let input;
   try {
