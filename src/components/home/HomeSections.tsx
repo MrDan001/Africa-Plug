@@ -97,7 +97,7 @@ export default function HomeSections() {
 
       <BookstoreFeature />
 
-      <section className="partner-banner" id="partner" style={{ backgroundImage: `linear-gradient(90deg,rgba(2,4,8,.98) 0%,rgba(2,4,8,.91) 30%,rgba(2,4,8,.36) 100%),url("${photos.people}")` }}>
+      <section className="partner-banner" id="partner" style={{ backgroundImage: `linear-gradient(90deg,rgba(244,242,237,.98) 0%,rgba(244,242,237,.91) 36%,rgba(244,242,237,.48) 72%,rgba(244,242,237,.14) 100%),url("${photos.people}")` }}>
         <div className="partner-copy">
           <Eyebrow>PARTNER WITH TAP</Eyebrow>
           <h2>LET’S BUILD<br />TOGETHER</h2>
