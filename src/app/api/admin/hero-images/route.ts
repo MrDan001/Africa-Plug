@@ -46,17 +46,24 @@ export async function POST(request: Request) {
 
   const path = `homepage/hero-slide-${slotValue}`;
   const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+  // Supabase legacy service_role keys are JWTs and belong in Authorization.
+  // New sb_secret_ keys are not JWTs: use them as apikey only, otherwise
+  // Storage rejects the Bearer token as an invalid JWT/API key.
+  const headers: Record<string, string> = {
+    apikey: serviceKey,
+    "Content-Type": file.type,
+    "Cache-Control": "max-age=3600",
+    "x-upsert": "true",
+  };
+  if (serviceKey.startsWith("eyJ")) {
+    headers.Authorization = `Bearer ${serviceKey}`;
+  }
+
   let storageResponse: Response;
   try {
     storageResponse = await fetch(`${baseUrl}/storage/v1/object/${encodeURIComponent(bucket)}/${encodedPath}`, {
       method: "POST",
-      headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-        "Content-Type": file.type,
-        "Cache-Control": "max-age=3600",
-        "x-upsert": "true",
-      },
+      headers,
       body: Buffer.from(await file.arrayBuffer()),
       cache: "no-store",
     });
@@ -65,10 +72,18 @@ export async function POST(request: Request) {
   }
 
   if (!storageResponse.ok) {
-    return Response.json(
-      { error: "The upload failed. Check that the storage bucket exists and that the storage credentials are correct." },
-      { status: 502 },
-    );
+    const detail = await storageResponse.text();
+    console.error("Hero image upload failed:", storageResponse.status, detail.slice(0, 500));
+    const normalized = detail.toLowerCase();
+    let message = "The upload failed. Check that the storage bucket exists and that the storage credentials are correct.";
+    if (normalized.includes("invalid api key") || normalized.includes("invalid jwt")) {
+      message = "Supabase rejected the storage API key. Check SUPABASE_SERVICE_ROLE_KEY in Vercel and redeploy.";
+    } else if (normalized.includes("bucket") && (normalized.includes("not found") || normalized.includes("does not exist"))) {
+      message = `The Supabase storage bucket "${bucket}" does not exist. Create it in Supabase Storage and make it public.`;
+    } else if (normalized.includes("row-level security") || normalized.includes("permission denied")) {
+      message = "Supabase denied the upload. Check that Vercel uses the server-side service/secret key, not the publishable key.";
+    }
+    return Response.json({ error: message }, { status: 502 });
   }
 
   return Response.json({
