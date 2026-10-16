@@ -1498,3 +1498,290 @@ html { scroll-padding-top: 92px; }
   .blog-article-byline span + span::before { margin-right: 12px; }
   .blog-article-takeaway { padding: 18px 16px 19px; }
 }
+
+
+/* October 2026 visual direction: light, warm-stone editorial theme.
+   Pink is reserved for actions, active states, and small emphasis. */
+:root {
+  --navy: #f4f2ed;
+  --charcoal: #292a2c;
+  --panel: #ffffff;
+  --line: rgba(41, 42, 44, .14);
+  --signal: #d51f6d;
+  --foreground: #292a2c;
+  --muted: #686965;
+}
+html, body { background: #f4f2ed; color: var(--foreground); }
+body { -webkit-font-smoothing: antialiased; }
+::selection { color: #fff; background: var(--signal); }
+
+/* Shared navigation */
+.site-header, .site-header--store {
+  background: rgba(255,255,255,.97);
+  border-bottom: 1px solid rgba(41,42,44,.13);
+  box-shadow: 0 4px 18px rgba(41,42,44,.035);
+}
+.brand-logo { padding: 4px; border-radius: 50%; background: #292a2c; }
+.brand-the, .brand-africa, .footer-wordmark-the, .footer-wordmark-name span { color: #292a2c; }
+.brand-plug, .footer-wordmark-name b { color: var(--signal); }
+.desktop-nav a, .footer-nav a { color: #3a3b3c; }
+.desktop-nav a:hover, .footer-nav a:hover { color: var(--signal); }
+.search-button, .site-search .search-button { color: #303133; }
+.mobile-menu-trigger { color: #303133; }
+.mobile-menu-panel { background: #fff; border-color: rgba(41,42,44,.14); box-shadow: 0 18px 24px rgba(41,42,44,.12); }
+.mobile-menu-link { color: #303133; }
+.mobile-menu-link:hover, .mobile-menu-link:focus-visible { color: var(--signal); }
+.desktop-nav a.is-active:after { background: var(--signal); }
+
+/* Buttons: keep TAP pink as a signal, not a surface colour. */
+.button-pink, .standard-button, .africa-playbook-cta, .blog-page-contact-link,
+.tap-product-pay-button, .tap-book-purchase a, .tap-store-details-button,
+.tap-store-add-button, .tap-store-cart-checkout {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #fff;
+}
+.button-pink:hover, .standard-button:hover, .africa-playbook-cta:hover,
+.blog-page-contact-link:hover, .tap-product-pay-button:hover,
+.tap-book-purchase a:hover, .tap-store-details-button:hover,
+.tap-store-add-button:hover, .tap-store-cart-checkout:hover {
+  background: #b8175b;
+  border-color: #b8175b;
+  color: #fff;
+}
+.button-outline { border-color: #777873; background: rgba(255,255,255,.72); color: #292a2c; }
+.button-outline:hover { border-color: var(--signal); background: #fbedf3; color: #292a2c; }
+.text-link, .standard-text-link, .standard-social-row a:hover { color: var(--signal); }
+
+/* Homepage hero: retain photography, but let warm light and charcoal typography lead. */
+.hero { background: #e8e4dc; border-color: var(--line); }
+.hero-photo { filter: saturate(.78); }
+.hero-shade {
+  background: linear-gradient(90deg, rgba(244,242,237,.98) 0%, rgba(244,242,237,.91) 38%, rgba(244,242,237,.60) 62%, rgba(244,242,237,.10) 100%),
+              linear-gradient(0deg, rgba(244,242,237,.56) 0%, transparent 30%, rgba(244,242,237,.18) 100%);
+}
+.hero h1 { color: #292a2c; }
+.hero-copy { color: #48494a; }
+.hero .button-outline { border-color: #6d6e6d; background: rgba(255,255,255,.64); color: #292a2c; }
+.hero .button-outline:hover { border-color: var(--signal); background: #fbedf3; }
+.hero .button-pink:hover { background: #b8175b; border-color: #b8175b; color: #fff; }
+.hero-eyebrow { color: var(--signal); }
+
+/* Homepage sections */
+.section-grid, .content-section, .closing-section, .work-section { border-bottom-color: var(--line); }
+.intro-section { background: linear-gradient(120deg, #fff 0%, #f4f2ed 100%); }
+.intro-copy p, .work-intro p, .tap-intro p, .product-copy p, .partner-copy p,
+.blog-intro p, .closing-section > p { color: #5f6061; }
+.work-section { background: #ebe8e1; }
+.proof-label b { color: #47484a; }
+.proof-label small { color: #6b6c6d; }
+.proof-card, .testimonial-card { background: #fff; border-color: rgba(41,42,44,.14); }
+.proof-card-caption { color: #555658; }
+.proof-card-caption strong, .testimonial-card p { color: #292a2c; }
+.testimonial-card small { color: #777875; }
+.line-icon { color: var(--signal); border-color: rgba(213,31,109,.45); }
+.tap-section { background: #f7f5f1; border-bottom-color: var(--line); }
+.tap-intro h2, .work-intro h2, .intro-copy h2, .closing-section h2 { color: #292a2c; }
+.listing-row { background: #fff; border-color: rgba(41,42,44,.13); }
+.listing-row:hover { border-color: var(--signal); }
+.listing-info b { color: #292a2c; }
+.listing-info small { color: #696a6b; }
+.product-section { background: #f4f2ed; border-color: var(--line); }
+.product-art { background: radial-gradient(ellipse at 50% 65%, #e3dfd7 0%, #f1eee8 48%, #f8f7f4 82%); }
+.guide-book { border-color: #d4d0c8; background: linear-gradient(95deg,#353639,#242528 86%,#1e1f21); box-shadow: 8px 12px 22px rgba(41,42,44,.18); }
+.guide-phone { background: #343538; border-color: #9d9b96; box-shadow: 5px 8px 18px rgba(41,42,44,.14); }
+.blog-section, .closing-section { background: #fff; }
+.blog-card { background: #fff; border-color: rgba(41,42,44,.14); }
+.blog-card h3 { color: #292a2c; }
+.social-strip a { color: #555658; }
+.closing-card { background: #fff; border-color: rgba(41,42,44,.16); }
+.closing-card small { color: #68696a; }
+.closing-card:hover { border-color: var(--signal); background: #fff9fc; }
+.partner-banner { color: #292a2c; border-color: var(--line); }
+.partner-copy h2 { color: #292a2c; }
+.partner-copy p { color: #454648; }
+
+/* Homepage journal cards: image first, clean white editorial card below. */
+.featured-blog-section, .featured-blog-section-page { background: #f4f2ed; border-bottom-color: var(--line); }
+.featured-blog-eyebrow { color: #555658; }
+.featured-blog-header h2 { color: #292a2c; }
+.featured-blog-view-all { color: var(--signal); }
+.featured-blog-view-all:hover { color: #a91553; }
+.featured-blog-card {
+  background: #fff;
+  color: #292a2c;
+  border-color: rgba(41,42,44,.14);
+  box-shadow: 0 5px 18px rgba(41,42,44,.045);
+}
+.featured-blog-card::after { display: none; }
+.featured-blog-card-image { position: relative; inset: auto; z-index: 0; width: 100%; height: 175px; background-size: cover; }
+.featured-blog-card-copy { height: auto; min-height: 0; justify-content: flex-start; padding: 17px 17px 42px; background: #fff; }
+.featured-blog-card--primary .featured-blog-card-copy { height: auto; min-height: 0; padding: 19px 19px 44px; }
+.featured-blog-card--text { background: #fff; border-color: rgba(41,42,44,.14); }
+.featured-blog-card--text::after { display: none; }
+.featured-blog-card-title { color: #292a2c; }
+.featured-blog-card-excerpt { color: #5e6060; }
+.featured-blog-card-arrow { color: #292a2c; border-color: rgba(41,42,44,.35); }
+.featured-blog-grid--journal .featured-blog-card--journal .featured-blog-card-image { position: relative; inset: auto; height: 185px; flex-basis: 185px; }
+.featured-blog-grid--journal .featured-blog-card--journal .featured-blog-card-copy { min-height: 0; padding: 16px 15px 42px; background: #fff; }
+.featured-blog-grid--journal .featured-blog-card--journal .featured-blog-card-title { color: #292a2c; }
+.featured-blog-grid--journal .featured-blog-card--journal .featured-blog-card-excerpt { color: #5e6060; }
+.featured-blog-grid--journal .featured-blog-card--journal .featured-blog-card-meta { color: #777875; }
+
+/* Interior pages and editorial reading surfaces */
+.standard-page { color: #292a2c; background: linear-gradient(180deg, #f7f5f1 0%, #efede7 100%); }
+.standard-page-hero { border-bottom-color: var(--line); }
+.standard-page-hero h1, .standard-section-heading h2, .about-statement h2,
+.standard-cta-band h2, .standard-process-step h3, .application-steps h2,
+.enquiry-panel-heading h2, .contact-option-card h2 { color: #292a2c; }
+.standard-page-lede, .standard-section-heading > p:last-child,
+.about-statement > p:last-child, .standard-cta-band > div > p:last-child,
+.standard-card > p:not(.standard-card-category), .standard-process-step p,
+.application-steps p, .standard-disclaimer, .store-feature-copy > p:not(.standard-eyebrow):not(.store-status),
+.enquiry-panel-heading > p:last-child, .enquiry-submit-row > p, .enquiry-privacy-note,
+.contact-option-card > p:not(.standard-eyebrow), .contact-official-email div > p:last-child {
+  color: #5d5f60;
+}
+.standard-card, .standard-note, .store-feature, .contact-option-card,
+.application-steps > div, .enquiry-panel, .contact-official-email,
+.legal-page-contact, .blog-article-preview {
+  background: #fff;
+  border-color: rgba(41,42,44,.14);
+}
+.standard-card { border-top: 2px solid rgba(213,31,109,.62); }
+.standard-card h3, .standard-button + h2, .contact-official-email a { color: #292a2c; }
+.standard-card-category, .standard-social-row > span { color: #777875; }
+.standard-section-heading, .about-statement { color: #292a2c; }
+.standard-cta-band { background: #ebe8e1; border-color: rgba(41,42,44,.14); }
+.standard-process-list, .standard-process-step { border-color: var(--line); }
+.enquiry-panel { border-top-color: var(--signal); }
+.enquiry-form-grid label > span { color: #343537; }
+.enquiry-form-grid label > span small { color: #777875; }
+.enquiry-form-grid input, .enquiry-form-grid select, .enquiry-form-grid textarea {
+  background: #fff;
+  color: #292a2c;
+  border-color: #d4d1ca;
+}
+.enquiry-form-grid input::placeholder, .enquiry-form-grid textarea::placeholder { color: #888982; }
+.enquiry-submit-row > p a, .enquiry-status a { color: #292a2c; }
+.contact-official-email a { color: #292a2c; }
+.contact-email-mark { border-color: rgba(213,31,109,.5); }
+.legal-page { color: #292a2c; background: #f7f5f1; }
+.legal-page h1, .legal-page-section h2 { color: #292a2c; }
+.legal-page-back, .legal-page-intro, .legal-page-section p, .legal-page-section li,
+.legal-page-contact p { color: #57595a; }
+.legal-page-meta { color: #777875; }
+.legal-page-sections, .legal-page-section, .legal-page-contact { border-color: var(--line); }
+.legal-page-notice { color: #4e4f50; background: #fff4f8; }
+.blog-page { background: #f4f2ed; }
+.blog-page-hero { background: #f7f5f1; border-bottom-color: var(--line); }
+.blog-page-hero-copy h1, .blog-page-invitation h2 { color: #292a2c; }
+.blog-page-hero-summary > p, .blog-page-invitation > div > p:last-child { color: #5d5f60; }
+.blog-page-topic-list span { color: #555658; border-color: #d6d2cb; background: rgba(255,255,255,.6); }
+.blog-page-invitation { background: #ebe8e1; border-color: var(--line); }
+.blog-article-page { color: #292a2c; background: #f7f5f1; }
+.blog-article-heading h1, .blog-article-preview h2 { color: #292a2c; }
+.blog-article-back, .blog-article-heading > p:last-child, .blog-article-preview > p:not(.blog-page-eyebrow),
+.blog-article-content-section p, .blog-article-content-section li, .blog-article-byline { color: #555759; }
+.blog-article-preview { border-top-color: var(--signal); }
+.blog-article-content-section h2, .blog-article-content-section h3 { color: #292a2c; }
+.blog-article-takeaway { background: #fff4f8; border-color: rgba(213,31,109,.2); }
+.blog-article-checklist li { background: #fff; border-color: var(--line); }
+
+/* Search and cart panels use the same light interface as the rest of the site. */
+.site-search-panel { background: #fff; border-color: #d6d2cb; box-shadow: 0 18px 45px rgba(41,42,44,.16); }
+.site-search-form input { color: #292a2c; background: #fff; border-color: #d6d2cb; }
+.site-search-results > a { border-color: var(--line); }
+.site-search-results > a b { color: #292a2c; }
+.site-search-results > a small, .site-search-empty { color: #5d5f60; }
+.site-search-arrow { color: #777875; }
+.site-search-shortcuts a { background: #f1eee8; color: #4f5051; }
+.site-search-shortcuts a:hover { background: #fbedf3; color: #292a2c; }
+.tap-store-cart-panel { background: #fff; color: #292a2c; border-left-color: #d6d2cb; box-shadow: -22px 0 60px rgba(41,42,44,.2); }
+.tap-store-cart-heading { border-color: var(--line); }
+.tap-store-cart-heading h2, .tap-store-cart-item-copy h3, .tap-store-cart-item > strong,
+.tap-store-cart-subtotal strong { color: #292a2c; }
+.tap-store-cart-heading h2 span, .tap-store-cart-item-copy p,
+.tap-store-cart-subtotal span, .tap-store-cart-demo-note, .tap-store-cart-empty p { color: #68696a; }
+.tap-store-cart-close, .tap-store-cart-quantity > button:not(.tap-store-cart-remove) { background: #f3f1ec; color: #292a2c; border-color: #d6d2cb; }
+.tap-store-cart-quantity > span { color: #292a2c; }
+.tap-store-cart-item, .tap-store-cart-subtotal { border-color: var(--line); }
+.tap-store-cart-continue { color: #292a2c; border-color: #d0ccc5; }
+.tap-store-cart-continue:hover { color: #292a2c; border-color: var(--signal); }
+.tap-store-cart-overlay { background: rgba(41,42,44,.34); }
+
+/* Storefront: stone shelves, neutral timber-free surfaces, dark readable type.
+   The individual book covers remain product artwork rather than site backgrounds. */
+.tap-store-page { background: #f4f2ed; color: #292a2c; }
+.tap-store-hero { background-color: #e6e2da; }
+.tap-store-hero:before {
+  background: linear-gradient(90deg, rgba(244,242,237,.98) 0%, rgba(244,242,237,.91) 42%, rgba(244,242,237,.60) 75%, rgba(244,242,237,.20) 100%);
+}
+.tap-store-hero h1 { color: #292a2c; }
+.tap-store-eyebrow { color: var(--signal); }
+.tap-store-hero-description, .tap-store-hero-aside p { color: #4e5051; }
+.tap-store-hero-aside { color: var(--signal); }
+.tap-store-catalogue { background: #eeeae3; }
+.tap-store-shelves-frame {
+  background: linear-gradient(90deg, #e2ded6, #f4f2ed 4%, #f4f2ed 96%, #e2ded6);
+  border-left-color: #d0cbc2; border-right-color: #d0cbc2;
+}
+.tap-store-shelf-row { background: linear-gradient(180deg, rgba(255,255,255,.45), transparent 67%); border-bottom-color: rgba(41,42,44,.12); }
+.tap-store-shelf-plank { background: linear-gradient(180deg, #d7d3cc 0%, #bcb8b0 35%, #a5a19a 100%); box-shadow: 0 7px 9px rgba(41,42,44,.10), inset 0 2px 1px rgba(255,255,255,.5); }
+.tap-store-benefits, .tap-store-demo-note { background: #f7f5f1; color: #292a2c; }
+.tap-store-benefit { border-color: var(--line); }
+.tap-store-benefit h2 { color: #292a2c; }
+.tap-store-benefit p, .tap-store-demo-note p { color: #616263; }
+.tap-store-details-button, .tap-store-add-button { color: #fff; }
+.tap-store-add-button--compact { background: rgba(41,42,44,.82); }
+.tap-product-detail-page { color: #292a2c; }
+.tap-product-detail-topline { border-color: var(--line); }
+.tap-product-detail-topline > span, .tap-product-detail-art-caption,
+.tap-product-detail-summary, .tap-product-checkout-note, .tap-product-detail-description p,
+.tap-product-detail-description li, .tap-product-back-link { color: #5d5f60; }
+.tap-product-detail-copy > h1, .tap-product-detail-description h2 { color: #292a2c; }
+.tap-product-demo-tag { border-color: rgba(213,31,109,.35); color: var(--signal); }
+.tap-product-detail-description { border-color: var(--line); }
+
+/* Bookshelf and Africa Playbook sections */
+.africa-playbook-feature { color: #292a2c; background: #fff; border-color: var(--line); }
+.africa-playbook-feature:before { background: radial-gradient(ellipse at 78% 40%, rgba(213,31,109,.045), transparent 42%); }
+.africa-playbook-eyebrow { color: var(--signal); }
+.africa-playbook-copy h2 { color: #292a2c; }
+.africa-playbook-description { color: #57595a; }
+.africa-playbook-footnote { color: #777875; }
+.africa-playbook-glow { background: rgba(213,31,109,.055); }
+.tap-shelf-section { background: #f4f2ed; color: #292a2c; }
+.tap-shelf-heading h2 { color: #292a2c; }
+.tap-shelf-intro, .tap-shelf-footnote { color: #5d5f60; }
+.tap-shelf-notice { background: #fff; border-color: rgba(213,31,109,.18); }
+.tap-shelf-notice p { color: #555759; }
+.tap-shelf-notice strong { color: #292a2c; }
+.tap-book-card { background: #fff; border-color: rgba(41,42,44,.14); }
+.tap-book-details, .tap-book-product-copy { background: #fff; color: #292a2c; }
+.tap-book-details h3, .tap-book-product-copy h3 { color: #292a2c; }
+.tap-book-details p, .tap-book-product-copy p { color: #5d5f60; }
+.tap-product-detail-page { background: #f7f5f1; }
+.tap-product-detail-topline a { color: var(--signal); }
+
+/* Footer completes the light editorial system. */
+.site-footer { background: #eeece6; border-top-color: var(--line); }
+.footer-wordmark-the { color: #292a2c; }
+.tap-footer-tagline { color: #292a2c; }
+.tap-footer-description { color: #5d5f60; }
+.tap-footer-primary-link { color: #292a2c; }
+.tap-footer-column h2, .tap-footer-kicker { color: var(--signal); }
+.tap-footer-column a { color: #555759; }
+.tap-footer-column a:hover { color: #292a2c; }
+.tap-footer-contact { background: #f8f7f4; border-color: rgba(41,42,44,.13); }
+.tap-footer-contact h2 { color: #292a2c; }
+.tap-footer-contact > p:not(.tap-footer-kicker) { color: #5d5f60; }
+.tap-footer-contact-row { border-color: var(--line); }
+.tap-footer-contact-row small { color: #777875; }
+.tap-footer-contact-row b { color: #404143; }
+.tap-footer-bottom { border-color: var(--line); }
+.tap-footer-bottom p, .tap-footer-bottom nav a { color: #777875; }
+.tap-footer-bottom .tap-footer-motto { color: #555759; }
+.tap-footer-bottom nav a:hover { color: #292a2c; }
+
+/* No yellow or gold is used in the new site colour system. */
