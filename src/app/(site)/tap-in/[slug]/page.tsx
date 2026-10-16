@@ -41,11 +41,23 @@ export default async function TapInOpportunityPage({ params }: Props) {
       actionHref="/tap-in"
     >
       {opportunity.image_url ? (
-        <div className="standard-note" style={{ display: "block", padding: 0, overflow: "hidden" }}>
-          {/* The image is a replaceable content field; no copy is baked into it. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={opportunity.image_url} alt="" style={{ display: "block", width: "100%", maxHeight: 460, objectFit: "cover" }} />
-        </div>
+        <div
+          role="img"
+          aria-label={`${opportunity.title} opportunity image`}
+          className="standard-note"
+          style={{
+            display: "block",
+            padding: 0,
+            minHeight: 180,
+            maxHeight: 460,
+            aspectRatio: "16 / 7",
+            overflow: "hidden",
+            backgroundImage: `url("${opportunity.image_url}")`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
       ) : null}
 
       <div className="standard-section-heading">
