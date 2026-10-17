@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BLOG_POSTS } from "@/lib/blog-posts";
 import { getPublicBlogPost } from "@/lib/public-cms-content";
 
 type BlogArticlePageProps = { params: Promise<{ slug: string }> };
 
 export const dynamic = "force-dynamic";
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({ slug: post.slug }));
-}
+export async function generateStaticParams() { return []; }
 
 export async function generateMetadata({ params }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -18,11 +15,11 @@ export async function generateMetadata({ params }: BlogArticlePageProps): Promis
   if (!post) return { title: "Article not found" };
 
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: post.seoTitle || post.title,
+    description: post.seoDescription || post.excerpt,
     authors: [{ name: post.author }],
     keywords: post.tags,
-    openGraph: { type: "article", title: post.title, description: post.excerpt, images: post.image ? [post.image] : [] },
+    openGraph: { type: "article", title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, images: (post.shareImage || post.image) ? [post.shareImage || post.image] : [] },
   };
 }
 
