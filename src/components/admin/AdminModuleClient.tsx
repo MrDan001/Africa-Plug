@@ -75,7 +75,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "enableNewsletter", label: "Show newsletter signup", type: "checkbox" },
     { key: "enableSearch", label: "Enable site search", type: "checkbox" },
     { key: "enableSelectedWork", label: "Show selected work", type: "checkbox" },
-    { key: "enableProductOfMonth", label: "Show product of the month", type: "checkbox" },
+    { key: "enableProductOfMonth", label: "Enable Product of the Month (Phase 2)", type: "checkbox" },
+    { key: "tapInFilterThreshold", label: "Show TAP IN filters at this many live listings", type: "number", help: "Filters remain hidden below this count. Enter a whole number from 1 to 100." },
   ],
 };
 
@@ -212,7 +213,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Digital resource", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
-    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: true, enableSearch: true, enableSelectedWork: false, enableProductOfMonth: false }; }
+    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: true, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 }; }
     setDraft(next);
     setEditing(false);
     setEditorOpen(true);
