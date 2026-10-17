@@ -36,8 +36,8 @@ export default async function ProductPage({ params }: Props) {
         <div className="tap-product-detail-copy">
           <p className="tap-book-category">{product.productType}</p><h1 id="tap-product-title">{product.title}</h1><p className="tap-product-detail-summary">{product.summary}</p>
           <p>{product.price > 0 ? new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price) : "Price to be confirmed"}</p>
-          {product.price > 0 ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" /> : <p className="tap-product-checkout-note">Pricing will be confirmed before this product can be purchased.</p>}
-          <p className="tap-product-checkout-note">Secure checkout will verify this product’s current price before payment.</p>
+          {product.price > 0 && product.downloadReady ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" /> : <p className="tap-product-checkout-note">{product.price > 0 ? "Digital delivery is being prepared for this product." : "Pricing will be confirmed before this product can be purchased."}</p>}
+          {product.price > 0 && product.downloadReady ? <p className="tap-product-checkout-note">Secure checkout verifies payment and protected delivery before completing an order.</p> : null}
           <Link className="tap-product-back-link" href="/contact">ASK ABOUT THIS PRODUCT</Link>
         </div>
       </section>
