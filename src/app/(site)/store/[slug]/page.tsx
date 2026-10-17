@@ -30,13 +30,13 @@ export default async function ProductPage({ params }: Props) {
       <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span></div>
       <section className="tap-product-detail-layout" aria-labelledby="tap-product-title">
         <div className="tap-product-detail-art">
-          {product.imageUrl ? <img src={product.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">INVESTMENT • BUSINESS • ENTERTAINMENT</span></div>}
+          {product.imageUrl ? <img src={product.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">KNOWLEDGE • TOOLS • RESEARCH</span></div>}
         </div>
         <div className="tap-product-detail-copy">
           <p className="tap-book-category">{product.productType}</p><h1 id="tap-product-title">{product.title}</h1><p className="tap-product-detail-summary">{product.summary}</p>
-          <p>{product.price > 0 ? new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price) : "Price to be confirmed"}</p>
-          <p className="tap-product-checkout-note">This resource will be available to purchase once the finished product, card payment and protected digital delivery are ready.</p>
-          <Link className="tap-product-back-link" href="/contact">ASK ABOUT THIS RESOURCE</Link>
+          <p>{product.price > 0 ? new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price) : "Free / price to be confirmed"}</p>
+          <p className="tap-product-checkout-note">Checkout and protected digital delivery are being prepared. No payment is taken on this page yet.</p>
+          <Link className="tap-product-back-link" href="/contact">ASK ABOUT THIS PRODUCT</Link>
         </div>
       </section>
     </div>;
