@@ -2234,3 +2234,9 @@ html, body { background: #f7f5f1; color: #292a2c; }
   .site-search { display: none; }
   .mobile-menu-trigger { width: 27px; }
 }
+
+.featured-blog-filter-note { margin: 12px 0 0; color: #626469; font-size: 12px; }
+.featured-blog-filter-note a { color: #a91b58; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.blog-article-category-link { display: inline-block; text-decoration: underline; text-underline-offset: 3px; }
+.blog-article-tags a { display: inline-flex; padding: 5px 9px; border: 1px solid #dedbd4; border-radius: 3px; background: #f1efeb; color: #292a2c; font-size: 11px; text-decoration: none; }
+.blog-article-tags a:hover { border-color: var(--signal); color: #a91b58; }
