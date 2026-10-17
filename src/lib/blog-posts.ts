@@ -3,6 +3,7 @@ export type BlogSection = { heading: string; paragraphs: string[]; checklist?: B
 export type BlogPost = {
   slug: string; category: string; title: string; excerpt: string; image: string; imageAlt: string;
   publishedAt: string; readingTime: string; author: string; tags: string[]; takeaway: string; sections: BlogSection[];
+  seoTitle?: string; seoDescription?: string; shareImage?: string;
 };
 
 export const BLOG_POSTS: BlogPost[] = [
