@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ContentPage from "@/components/layout/ContentPage";
 import { findPublicOpportunityBySlug, listLiveOpportunities } from "@/lib/tap-in/opportunities";
+import ExpressionOfInterestForm from "@/components/tap-in/ExpressionOfInterestForm";
 
 export const dynamic = "force-dynamic";
 
@@ -85,6 +86,14 @@ export default async function TapInOpportunityPage({ params }: Props) {
           <a href={`mailto:connect@theafricaplug.com?subject=${encodeURIComponent(`TAP IN enquiry: ${opportunity.title}`)}`}>Contact TAP <span aria-hidden="true">→</span></a>
         </div>
       )}
+
+      {acceptingInterest ? (
+        <ExpressionOfInterestForm
+          slug={opportunity.slug}
+          listingTitle={opportunity.title}
+          questions={opportunity.enquiry_questions}
+        />
+      ) : null}
 
       {otherOpportunities.length ? (
         <>
