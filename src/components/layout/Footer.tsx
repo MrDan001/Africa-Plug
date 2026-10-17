@@ -27,7 +27,6 @@ export default async function Footer() {
     settings.whatsappUrl ? { label: "WhatsApp", href: settings.whatsappUrl } : null,
     settings.linkedinUrl ? { label: "LinkedIn", href: settings.linkedinUrl } : null,
     settings.instagramUrl ? { label: "Instagram", href: settings.instagramUrl } : null,
-    settings.youtubeUrl ? { label: "YouTube", href: settings.youtubeUrl } : null,
   ].filter((item): item is { label: string; href: string } => item !== null && /^https:\/\//i.test(item.href));
   return <footer className="site-footer">
     <div className="footer-accent" aria-hidden="true"/>
