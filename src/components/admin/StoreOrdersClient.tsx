@@ -63,6 +63,7 @@ export default function StoreOrdersClient() {
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -83,7 +84,7 @@ export default function StoreOrdersClient() {
     }
     void load();
     return () => { cancelled = true; };
-  }, [status]);
+  }, [status, refreshKey]);
 
   const filteredOrders = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -127,7 +128,7 @@ export default function StoreOrdersClient() {
         <div style={{ display: "flex", alignItems: "end", gap: 8, flexWrap: "wrap" }}>
           <label style={{ fontSize: 12, fontWeight: 700 }}>Search orders<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Email, product or session…" style={{ display: "block", width: "min(80vw,280px)", marginTop: 6, padding: "11px 12px", border: "1px solid #d6d3cf", borderRadius: 4, font: "inherit" }}/></label>
           <label style={{ fontSize: 12, fontWeight: 700 }}>Status<select value={status} onChange={(event) => setStatus(event.target.value)} style={{ display: "block", marginTop: 6, padding: "11px 12px", border: "1px solid #d6d3cf", borderRadius: 4, background: "#fff", font: "inherit" }}>{FILTERS.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
-          <button type="button" onClick={() => setStatus((value) => value)} style={{ padding: "12px 14px", border: "1px solid #c9c7c2", background: "#fff", cursor: "pointer" }}>Refresh</button>
+          <button type="button" onClick={() => setRefreshKey((value) => value + 1)} style={{ padding: "12px 14px", border: "1px solid #c9c7c2", background: "#fff", cursor: "pointer" }}>Refresh</button>
         </div>
       </div>
 
