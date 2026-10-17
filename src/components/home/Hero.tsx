@@ -135,16 +135,18 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
         <p className="hero-copy">{slide.body}</p>
         <p className="hero-location">{slide.location}</p>
         <div className="hero-actions" aria-label="Choose a route">
-          {BUTTONS.map((button, i) => (
-            <a
-              key={button.label}
-              href={button.href}
-              aria-current={i === slide.activeButton ? "page" : undefined}
-              className={`button ${i === slide.activeButton ? "button-pink" : "button-outline"}`}
-            >
-              {button.label}<span aria-hidden="true">→</span>
-            </a>
-          ))}
+          {(() => {
+            const button = BUTTONS[slide.activeButton];
+            return (
+              <a
+                key={button.label}
+                href={button.href}
+                className="button button-pink"
+              >
+                {button.label}<span aria-hidden="true">→</span>
+              </a>
+            );
+          })()}
         </div>
         <div className="hero-carousel-controls" aria-label="Carousel controls">
           <button type="button" className="hero-carousel-arrow" onClick={() => go(index - 1)} aria-label="Previous slide">←</button>
