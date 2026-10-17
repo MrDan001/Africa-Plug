@@ -356,6 +356,33 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     } finally { setUploading(false); }
   }
 
+  async function uploadStoreProductFile(event: ChangeEvent<HTMLInputElement>, record: CmsRecord) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!record.slug) {
+      setNotice({ tone: "error", text: "Save this product with a URL slug before uploading its protected file." });
+      input.value = "";
+      return;
+    }
+    setUploading(true);
+    setNotice(null);
+    try {
+      const form = new FormData();
+      form.set("file", file);
+      form.set("slug", record.slug);
+      const response = await fetch("/api/admin/store-files", { method: "POST", body: form });
+      const data = await response.json() as { error?: string; path?: string; message?: string };
+      if (!response.ok) throw new Error(data.error || "Protected upload failed.");
+      setNotice({ tone: "success", text: data.message || "Protected product file uploaded." });
+      await loadRecords();
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Protected upload failed." });
+    } finally {
+      input.value = "";
+      setUploading(false);
+    }
+  }
   function recordSummary(record: CmsRecord) {
     const data = record.data ?? {};
     const fields = [data.email, data.organisation, data.organization, data.opportunityName, data.category, data.excerpt, data.summary, data.path, data.eventName];
@@ -422,6 +449,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {recordSummary(record) ? <p style={{ margin: "0 0 8px", color: "#5e6066", lineHeight: 1.5, overflowWrap: "anywhere" }}>{recordSummary(record)}</p> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <p style={{ margin: "0 0 8px", color: "#5e6066", fontSize: 13 }}>Scheduler: {record.data?.meetingBookedAt ? "meeting booked" : record.data?.schedulerIssuedAt ? "private link sent" : record.data?.paymentStatus === "confirmed" ? "payment confirmed, link not sent yet" : "waiting for payment confirmation"}</p> : null}
               {moduleKey === "blog" || moduleKey === "store" ? <small style={{ color: "#777" }}>URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
+              {moduleKey === "store" ? <small style={{ display: "block", marginTop: 7, color: record.data?.productFileReference ? "#176447" : "#8a5b12" }}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a href={record.data.url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 6, color: "#a91b58", overflowWrap: "anywhere" }}>Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details style={{ marginTop: 10 }}><summary style={{ cursor: "pointer", fontWeight: 700 }}>Read submission details</summary><dl style={{ display: "grid", gridTemplateColumns: "minmax(85px,130px) minmax(0,1fr)", gap: "6px 12px", fontSize: 13, marginTop: 12 }}>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} style={{ display: "contents" }}><dt style={{ color: "#777", overflowWrap: "anywhere" }}>{key.replace(/([A-Z])/g, " $1")}</dt><dd style={{ margin: 0, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{String(value)}</dd></div>)}</dl></details> : null}
               {moduleKey === "analytics" ? <details style={{ marginTop: 8 }}><summary style={{ cursor: "pointer" }}>View source and UTM details</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontSize: 12, padding: 10, background: "#f7f7f5" }}>{JSON.stringify(record.data, null, 2)}</pre></details> : null}
@@ -429,6 +457,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7, justifyContent: "end", maxWidth: 260 }}>
               {editable ? <button type="button" onClick={() => editRecord(record)} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Edit</button> : null}
+              {moduleKey === "store" ? <label style={{ padding: "9px 12px", cursor: uploading ? "wait" : "pointer", border: "1px solid #a91b58", background: "#fff", color: "#a91b58", fontWeight: 700, fontSize: 12, opacity: uploading ? 0.65 : 1 }}>{uploading ? "UPLOADING…" : "UPLOAD PROTECTED FILE"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" onClick={() => void setStatus(record, "approved")} style={{ padding: "9px 12px", cursor: "pointer", border: 0, background: "#1f7658", color: "white" }}>Approve</button><button type="button" onClick={() => void setStatus(record, "declined")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #b33a42", background: "white", color: "#9f2933" }}>Decline</button></> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <>{record.data?.paymentStatus !== "confirmed" ? <button type="button" onClick={() => void schedulerAction(record, "confirm-payment")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Confirm payment received</button> : null}{record.data?.paymentStatus === "confirmed" && !record.data?.meetingBookedAt ? <button type="button" onClick={() => void schedulerAction(record, "send-link")} style={{ padding: "9px 12px", cursor: "pointer", border: 0, background: "#1f7658", color: "white" }}>{record.data?.schedulerIssuedAt ? "Resend scheduler link" : "Send scheduler link"}</button> : null}</> : null}
               {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
