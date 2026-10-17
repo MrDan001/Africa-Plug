@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { BLOG_POSTS } from "@/lib/blog-posts";
 import { getBlogPosts } from "@/lib/public-cms-content";
 
-type FeaturedStoriesProps = { variant?: "home" | "page" };
+type FeaturedStoriesProps = { variant?: "home" | "page"; filterTag?: string; filterCategory?: string };
 
-export default async function FeaturedStories({ variant = "home" }: FeaturedStoriesProps) {
+export default async function FeaturedStories({ variant = "home", filterTag = "", filterCategory = "" }: FeaturedStoriesProps) {
   const isHome = variant === "home";
   const posts = await getBlogPosts();
-  const visiblePosts = isHome ? posts.slice(0, 4) : posts;
+  const tag = filterTag.trim().toLowerCase();
+  const category = filterCategory.trim().toLowerCase();
+  const filteredPosts = posts.filter((post) => (!tag || post.tags.some((item) => item.toLowerCase() === tag)) && (!category || post.category.toLowerCase() === category));
+  const visiblePosts = isHome ? posts.slice(0, 4) : filteredPosts;
 
   return (
     <section
@@ -27,7 +29,8 @@ export default async function FeaturedStories({ variant = "home" }: FeaturedStor
           {isHome ? <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link> : null}
         </header>
 
-        {isHome ? (
+        {!visiblePosts.length ? <div className="featured-blog-empty"><h3>{filterTag || filterCategory ? "No articles match this filter." : "The TAP Journal is being prepared."}</h3><p>{filterTag || filterCategory ? "Try a different tag or category, or clear the filter." : "Approved articles will appear here when they are published."}</p></div> : null}
+        {visiblePosts.length && isHome ? (
           <div className="featured-blog-grid">
             {visiblePosts.map((post, index) => {
               const layout = index === 0 ? "primary" : index === 3 ? "text" : "secondary";
@@ -44,7 +47,7 @@ export default async function FeaturedStories({ variant = "home" }: FeaturedStor
               );
             })}
           </div>
-        ) : (
+        ) : visiblePosts.length ? (
           <div className="featured-blog-grid featured-blog-grid--journal">
             {visiblePosts.map((post) => (
               <Link className="featured-blog-card featured-blog-card--journal" href={`/blog/${post.slug}`} key={post.slug} aria-label={`Read article: ${post.title}`}>
@@ -59,7 +62,7 @@ export default async function FeaturedStories({ variant = "home" }: FeaturedStor
               </Link>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
     </section>
   );

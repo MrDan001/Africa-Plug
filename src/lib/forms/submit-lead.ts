@@ -77,6 +77,11 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
           organisation: lead.organisation || "",
           phone: lead.phone || "",
           opportunityName: lead.opportunityName || "",
+          countryMarket: lead.countryMarket || "",
+          role: lead.role || "",
+          projectMandate: lead.projectMandate || "",
+          timeframe: lead.timeframe || "",
+          budgetRange: lead.budgetRange || "",
           message: lead.message,
           sourcePath: requestUrl?.pathname || "",
           utm: {
@@ -104,7 +109,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
         slug: null,
         status: "recorded",
         data: {
-          eventName: "form_submit",
+          eventName: kind === "work" ? "application_submitted" : kind === "partner" ? "partner_enquiry" : kind === "ask" ? "ask_submission" : kind === "interest" ? "interest_submitted" : "form_submit",
           path: requestUrl?.pathname || "/contact",
           source: requestUrl?.searchParams.get("utm_source") || referer || "direct",
           referrer: referer,
@@ -140,7 +145,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
-  const to = process.env.EMAIL_CONNECT || "connect@theafricaplug.com";
+  const to = kind === "ask" ? (process.env.EMAIL_ASK || "ask@theafricaplug.com") : kind === "work" ? (process.env.EMAIL_FK || "fk@theafricaplug.com") : (process.env.EMAIL_CONNECT || "connect@theafricaplug.com");
   if (!apiKey || !from) {
     // The submission is safely persisted in the admin inbox even if email delivery isn't configured yet.
     return Response.json({ ok: true, emailNotification: "not-configured" });

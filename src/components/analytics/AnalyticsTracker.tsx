@@ -14,7 +14,12 @@ function getUtm() {
   };
 }
 
+function hasAnalyticsConsent() {
+  try { return localStorage.getItem("tap-consent-v1") === "analytics"; } catch { return false; }
+}
+
 function record(eventName: string, extras: Record<string, unknown> = {}) {
+  if (!hasAnalyticsConsent()) return;
   const params = new URLSearchParams(window.location.search);
   const body = JSON.stringify({
     eventName,
@@ -43,6 +48,10 @@ export default function AnalyticsTracker() {
   useEffect(() => {
     if ((pathname || "").startsWith("/admin")) return;
     record("page_view");
+    const path = pathname || "/";
+    if (path.startsWith("/blog/")) record("article_view", { label: path.split("/").filter(Boolean).at(-1) || "" });
+    if (path.startsWith("/store/")) record("product_view", { label: path.split("/").filter(Boolean).at(-1) || "" });
+    if (path.startsWith("/tap-in/")) record("listing_viewed", { label: path.split("/").filter(Boolean).at(-1) || "" });
 
     const onClick = (event: MouseEvent) => {
       const target = event.target;
@@ -50,10 +59,14 @@ export default function AnalyticsTracker() {
       const cta = target.closest("a.button, a.text-link, a.header-cta, a.tap-footer-primary-link, a.blog-page-contact-link, a.featured-blog-view-all, button[type='submit']");
       if (!cta) return;
       const label = (cta.textContent || cta.getAttribute("aria-label") || "CTA").replace(/\s+/g, " ").trim().slice(0, 160);
-      record("cta_click", { label });
+      const href = cta instanceof HTMLAnchorElement ? cta.getAttribute("href") || "" : "";
+      if (href.startsWith("/work-with-fk")) record("work_with_fk_click", { label, href });
+      else record("cta_click", { label, href });
     };
     document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    const consentChanged = () => { if (hasAnalyticsConsent()) record("page_view"); };
+    window.addEventListener("tap:consent-changed", consentChanged);
+    return () => { document.removeEventListener("click", onClick); window.removeEventListener("tap:consent-changed", consentChanged); };
   }, [pathname]);
 
   return null;

@@ -4,9 +4,9 @@ The `/admin` page lets the site owner sign in and replace the three homepage car
 
 ## One-time configuration
 
-### 1. Create the image bucket
+### 1. Confirm the Vercel Blob store
 
-In Supabase, open **Storage** and create a bucket named `africa-plug-media`. Set it to **Public** so the homepage can display the saved hero images. Do not add a public upload policy. Uploads are made by the server using the service-role key.
+The deployed hero image manager uses the connected **public Vercel Blob store** named `africa-plug-hero-media`. The project must have a valid `BLOB_READ_WRITE_TOKEN` scoped to that public store. Do not use a private Blob token for public hero assets.
 
 ### 2. Add server-only environment variables
 
@@ -14,9 +14,9 @@ Add these to Vercel Project Settings → Environment Variables for Production (a
 
 - `ADMIN_PASSWORD`: a strong, unique password for the single admin.
 - `ADMIN_SESSION_SECRET`: a long random secret (at least 32 random characters) used to sign the admin session.
-- `SUPABASE_URL`: the Supabase project URL.
-- `SUPABASE_SERVICE_ROLE_KEY`: the project's service-role key. **Never use a `NEXT_PUBLIC_` prefix or expose this key in client code.**
-- `SUPABASE_STORAGE_BUCKET`: `africa-plug-media` (optional because this is the default).
+- `BLOB_READ_WRITE_TOKEN`: provided by the connected public Blob store. Do not expose it in client code.
+
+The hero manager does not require Supabase Storage. Supabase remains the database behind TAP IN and the CMS.
 
 Redeploy after configuring the variables. Use the service-role key only on the server. Keep it out of Git, browser code, screenshots, and messages.
 

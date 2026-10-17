@@ -76,7 +76,7 @@ export function PrivacyPolicy() {
         "Opportunity or service enquiry details: the market, project, requirements, experience, timing, budget range or other answers you include in a form.",
         "Communications: information in emails and follow-up correspondence so that we can understand and respond to a request.",
         "Technical information: information that hosting, security and delivery services may record, such as IP address, browser/device information, requested pages, timestamps, referrer information and diagnostic logs.",
-        "Preference information: choices you make about cookies or other optional technologies if and when a consent control is introduced."
+        "Preference information: your choice to accept or reject optional analytics storage through the site privacy banner."
       ]
     },
     {
@@ -144,7 +144,7 @@ export function PrivacyPolicy() {
       eyebrow="YOUR INFORMATION"
       title="PRIVACY POLICY"
       intro="A clear explanation of the personal information that may be handled when you visit The Africa Plug, contact us or explore our services."
-      notice="This policy describes the site as currently reviewed on 14 October 2026. The store is a demo and does not currently take online payments. Update this policy before adding new analytics, advertising, payment or customer-account features."
+      notice="This policy is a working draft. The Store is not currently taking online payments. Optional analytics are sent only after a visitor accepts analytics in the privacy banner. Review this policy against the final data providers and business details before launch."
       sections={sections}
     />
   );
@@ -263,7 +263,7 @@ export function CookiePolicy() {
       heading: "5. Managing preferences",
       paragraphs: [
         "Your browser settings usually allow you to view, block or delete cookies. Blocking all cookies may affect features or how some pages work. Browser controls are not always a substitute for a consent mechanism where one is legally required.",
-        "At the policy date, a dedicated cookie-preference banner or settings panel has not been verified as implemented. Do not assume that a consent banner is already active. A consent-management feature should be added before non-essential cookies or similar technologies are introduced where consent is required."
+        "A privacy banner is provided on public pages so you can accept or reject optional analytics. Essential site functions remain available regardless of that choice. Your selection is stored in this browser and can be changed by clearing the site’s local storage. This banner is a basic preference control; this policy and the site’s technology inventory must still be reviewed before launch."
       ]
     },
     {

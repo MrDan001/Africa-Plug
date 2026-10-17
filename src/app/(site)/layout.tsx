@@ -1,5 +1,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import CookieConsent from "@/components/layout/CookieConsent";
+import JsonLd from "@/components/seo/JsonLd";
 
 export default function SiteLayout({
   children,
@@ -14,11 +16,13 @@ export default function SiteLayout({
       >
         Skip to content
       </a>
+      <JsonLd />
       <Header />
       <main id="main" className="flex-1">
         {children}
       </main>
       <Footer />
+      <CookieConsent />
     </>
   );
 }

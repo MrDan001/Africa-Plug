@@ -9,6 +9,11 @@ export async function POST(request: Request) {
   catch { return Response.json({ error: "Enter a valid email address and try again." }, { status: 400 }); }
 
   if (typeof input.website === "string" && input.website) return Response.json({ ok: true });
+
+  // Do not tell visitors they have subscribed until a real newsletter provider is installed and synchronised.
+  if (process.env.MAILERLITE_INTEGRATION_READY !== "true") {
+    return Response.json({ error: "Stay Plugged In is being connected to its newsletter service. Please try again later." }, { status: 503, headers: { "Cache-Control": "no-store" } });
+  }
   const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return Response.json({ error: "Enter a valid email address." }, { status: 400 });
