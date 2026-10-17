@@ -38,7 +38,7 @@ export default async function StoreCatalogue() {
           {product.imageUrl ? <div style={{width:"100%",aspectRatio:"4/3",background:"#e9e5df"}}><img src={product.imageUrl} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} /></div> : <div aria-hidden="true" style={{aspectRatio:"4/3",display:"grid",placeItems:"center",background:"#e9e5df",color:"#292a2c",padding:20,fontWeight:800,textAlign:"center"}}>THE AFRICA PLUG<br/>{product.productType}</div>}
           <div style={{padding:24,display:"flex",flexDirection:"column",alignItems:"start",flex:1}}>
             <p className="standard-eyebrow">{product.productType}</p><h2 style={{fontSize:28,letterSpacing:"-.04em",lineHeight:1.05,margin:"0 0 12px",color:"#292a2c"}}>{product.title}</h2><p style={{color:"#626469",lineHeight:1.7,flex:1}}>{product.summary}</p>
-            <strong style={{marginTop:8,color:"#292a2c"}}>{product.price > 0 ? formatter(product.price, product.currency) : "Free / price to be confirmed"}</strong>
+            <strong style={{marginTop:8,color:"#292a2c"}}>{product.price > 0 ? formatter(product.price, product.currency) : "Price to be confirmed"}</strong>
             <div style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap",marginTop:20}}><StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" compact={false} /><Link href={`/store/${product.slug}`} className="text-link">VIEW PRODUCT <span aria-hidden="true">→</span></Link></div>
           </div>
         </article>)}
