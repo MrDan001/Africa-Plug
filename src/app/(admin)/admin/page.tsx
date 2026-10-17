@@ -26,6 +26,7 @@ export default function AdminDashboard() {
   const [ready, setReady] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -75,7 +76,10 @@ export default function AdminDashboard() {
         <p>Sign in to manage the website, opportunities and business enquiries.</p>
         <form onSubmit={signIn}>
           <label htmlFor="admin-password">Admin password</label>
-          <input id="admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+          <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <input id="admin-password" type={showPassword ? "text" : "password"} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required style={{ width: "100%", paddingRight: 76 }} />
+              <button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", border: "1px solid currentColor", borderRadius: 6, background: "transparent", padding: "5px 8px", fontSize: 12, lineHeight: 1.2, cursor: "pointer" }}>{showPassword ? "Hide" : "Show"}</button>
+            </div>
           {error && <p className="ap-admin-error" role="alert">{error}</p>}
           <button type="submit" disabled={busy}>{busy ? "Signing in…" : "SIGN IN →"}</button>
         </form>
