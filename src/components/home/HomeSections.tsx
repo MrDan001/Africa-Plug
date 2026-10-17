@@ -16,7 +16,6 @@ export default async function HomeSections() {
   const featuredProduct = featuredProducts.find((product) => product.featured) ?? featuredProducts[0] ?? null;
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
   const showSelectedWork = settings.enableSelectedWork !== false;
-  const showProductOfMonth = settings.enableProductOfMonth === true;
   const showFeaturedResource = true;
   const showNewsletter = settings.enableNewsletter !== false;
 
