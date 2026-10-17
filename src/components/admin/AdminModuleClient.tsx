@@ -77,7 +77,15 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "enableNewsletter", label: "Show newsletter signup", type: "checkbox" },
     { key: "enableSearch", label: "Enable site search", type: "checkbox" },
     { key: "enableSelectedWork", label: "Show selected work", type: "checkbox" },
-    { key: "enableProductOfMonth", label: "Enable Product of the Month (Phase 2)", type: "checkbox" },
+    { key: "enableProductOfMonth", label: "Show Product of the Month on the Store page", type: "checkbox", help: "Needs the product name, TAP write-up and external link below. Leave off until you are ready to feature a product." },
+    { key: "potmName", label: "Product of the Month: product name", type: "text" },
+    { key: "potmPartner", label: "Product of the Month: partner / brand", type: "text" },
+    { key: "potmMonthLabel", label: "Product of the Month: month label", type: "text", placeholder: "November 2026" },
+    { key: "potmWriteUp", label: "Product of the Month: TAP write-up", type: "textarea", rows: 6, help: "Separate paragraphs with a blank line." },
+    { key: "potmImageUrl", label: "Product of the Month: image URL", type: "url", help: "Upload in Media library and paste the public https:// URL." },
+    { key: "potmUrl", label: "Product of the Month: external link (https://)", type: "url", help: "Your affiliate or partner link. Shown with the disclosure “TAP may earn a commission.”" },
+    { key: "potmDiscountCode", label: "Product of the Month: discount code (optional)", type: "text" },
+    { key: "potmDiscountNote", label: "Product of the Month: discount note (optional)", type: "text", placeholder: "10% off until 30 November" },
     { key: "tapInFilterThreshold", label: "Show TAP IN filters at this many live listings", type: "number", help: "Filters remain hidden below this count. Enter a whole number from 1 to 100." },
   ],
 };
@@ -296,6 +304,26 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     }
   }
 
+  async function schedulerAction(record: CmsRecord, action: "confirm-payment" | "send-link") {
+    if (action === "confirm-payment" && !window.confirm(`Confirm that the deposit or invoice payment for “${record.title}” has been received?`)) return;
+    if (action === "send-link" && record.data?.schedulerIssuedAt && !window.confirm("A scheduler link was already sent. Sending again deactivates the old link. Continue?")) return;
+    setNotice(null);
+    try {
+      const response = await fetch("/api/work-with-fk/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: record.id, action }),
+      });
+      const data = await response.json() as { error?: string; message?: string; link?: string; emailNotification?: string };
+      if (!response.ok) throw new Error(data.error || "Could not update the scheduler.");
+      if (data.link && data.emailNotification !== "sent") window.prompt("The email was not sent automatically. Copy this private link and send it to the applicant:", data.link);
+      setNotice({ tone: "success", text: data.message || "Scheduler updated." });
+      await loadRecords();
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not update the scheduler." });
+    }
+  }
+
   async function removeRecord(record: CmsRecord) {
     if (!window.confirm(`Delete “${record.title}”? This cannot be undone.`)) return;
     try {
@@ -392,6 +420,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               </div>
               <h3 style={{ margin: "10px 0 6px", fontSize: 19, overflowWrap: "anywhere" }}>{record.title || "Untitled record"}</h3>
               {recordSummary(record) ? <p style={{ margin: "0 0 8px", color: "#5e6066", lineHeight: 1.5, overflowWrap: "anywhere" }}>{recordSummary(record)}</p> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <p style={{ margin: "0 0 8px", color: "#5e6066", fontSize: 13 }}>Scheduler: {record.data?.meetingBookedAt ? "meeting booked" : record.data?.schedulerIssuedAt ? "private link sent" : record.data?.paymentStatus === "confirmed" ? "payment confirmed, link not sent yet" : "waiting for payment confirmation"}</p> : null}
               {moduleKey === "blog" || moduleKey === "store" ? <small style={{ color: "#777" }}>URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a href={record.data.url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 6, color: "#a91b58", overflowWrap: "anywhere" }}>Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details style={{ marginTop: 10 }}><summary style={{ cursor: "pointer", fontWeight: 700 }}>Read submission details</summary><dl style={{ display: "grid", gridTemplateColumns: "minmax(85px,130px) minmax(0,1fr)", gap: "6px 12px", fontSize: 13, marginTop: 12 }}>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} style={{ display: "contents" }}><dt style={{ color: "#777", overflowWrap: "anywhere" }}>{key.replace(/([A-Z])/g, " $1")}</dt><dd style={{ margin: 0, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{String(value)}</dd></div>)}</dl></details> : null}
@@ -401,6 +430,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7, justifyContent: "end", maxWidth: 260 }}>
               {editable ? <button type="button" onClick={() => editRecord(record)} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Edit</button> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" onClick={() => void setStatus(record, "approved")} style={{ padding: "9px 12px", cursor: "pointer", border: 0, background: "#1f7658", color: "white" }}>Approve</button><button type="button" onClick={() => void setStatus(record, "declined")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #b33a42", background: "white", color: "#9f2933" }}>Decline</button></> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <>{record.data?.paymentStatus !== "confirmed" ? <button type="button" onClick={() => void schedulerAction(record, "confirm-payment")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Confirm payment received</button> : null}{record.data?.paymentStatus === "confirmed" && !record.data?.meetingBookedAt ? <button type="button" onClick={() => void schedulerAction(record, "send-link")} style={{ padding: "9px 12px", cursor: "pointer", border: 0, background: "#1f7658", color: "white" }}>{record.data?.schedulerIssuedAt ? "Resend scheduler link" : "Send scheduler link"}</button> : null}</> : null}
               {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
               {moduleKey === "subscribers" ? <button type="button" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
               {(moduleKey === "blog" || moduleKey === "store" || moduleKey === "media") ? <button type="button" onClick={() => void removeRecord(record)} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #b33a42", color: "#9f2933", background: "white" }}>Delete</button> : null}

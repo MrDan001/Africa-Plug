@@ -1,3 +1,4 @@
+// FILE PATH: src/components/analytics/AnalyticsTracker.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -46,7 +47,8 @@ export default function AnalyticsTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if ((pathname || "").startsWith("/admin")) return;
+    // Private scheduler links carry a secret token in the URL, so they are never recorded.
+    if ((pathname || "").startsWith("/admin") || (pathname || "").startsWith("/work-with-fk/schedule/")) return;
     record("page_view");
     const path = pathname || "/";
     if (path.startsWith("/blog/")) record("article_view", { label: path.split("/").filter(Boolean).at(-1) || "" });

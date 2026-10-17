@@ -2,9 +2,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export default function AdminAuthGate({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [checking, setChecking] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -84,6 +86,9 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
       </main>
     );
   }
+
+  // The dashboard home has its own sidebar, top bar and sign-out, so the thin session bar is hidden there.
+  if (pathname === "/admin") return <>{children}</>;
 
   return (
     <>

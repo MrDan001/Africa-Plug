@@ -64,6 +64,17 @@ export async function getPublicCmsRecord(module: "articles" | "products", slug: 
   return records.find((record) => record.slug === slug) ?? null;
 }
 
+export type ProductOfMonth = {
+  name: string;
+  partner: string;
+  monthLabel: string;
+  writeUp: string;
+  imageUrl: string;
+  discountCode: string;
+  discountNote: string;
+  url: string;
+};
+
 export type PublicSiteSettings = {
   siteTitle?: string;
   siteDescription?: string;
@@ -79,6 +90,7 @@ export type PublicSiteSettings = {
   enableSearch?: boolean;
   enableSelectedWork?: boolean;
   enableProductOfMonth?: boolean;
+  productOfMonth?: ProductOfMonth;
   tapInFilterThreshold?: number;
   navigation?: { label: string; href: string }[];
 };
@@ -141,6 +153,19 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     // Prefer the dedicated intro link; fall back to the YouTube link, then the default film.
     const introVideoId = parseYouTubeId(introVideoVal) ?? parseYouTubeId(youtubeVal) ?? parseYouTubeId(DEFAULT_VIDEO_URL) ?? undefined;
 
+    const longString = (key: string, max: number) => typeof data[key] === "string" ? (data[key] as string).trim().slice(0, max) : "";
+    const httpsUrl = (key: string) => { const value = longString(key, 1000); return /^https:\/\//i.test(value) ? value : ""; };
+    const potm: ProductOfMonth = {
+      name: longString("potmName", 160),
+      partner: longString("potmPartner", 160),
+      monthLabel: longString("potmMonthLabel", 60),
+      writeUp: longString("potmWriteUp", 3000),
+      imageUrl: httpsUrl("potmImageUrl"),
+      discountCode: longString("potmDiscountCode", 60),
+      discountNote: longString("potmDiscountNote", 200),
+      url: httpsUrl("potmUrl"),
+    };
+
     return {
       siteTitle: settingString("siteTitle"),
       siteDescription: settingString("siteDescription"),
@@ -156,6 +181,8 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       enableSearch: settingBool("enableSearch"),
       enableSelectedWork: settingBool("enableSelectedWork"),
       enableProductOfMonth: settingBool("enableProductOfMonth"),
+      // Only a complete record is exposed: name, TAP write-up and a valid https external link are required.
+      productOfMonth: potm.name && potm.writeUp && potm.url ? potm : undefined,
       tapInFilterThreshold: settingNumber("tapInFilterThreshold"),
       navigation: safeNavigation(data.navigation),
     };
