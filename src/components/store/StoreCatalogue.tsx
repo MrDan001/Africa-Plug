@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
 import ProductOfTheMonth from "@/components/store/ProductOfTheMonth";
 import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
+import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 
 export const dynamic = "force-dynamic";
