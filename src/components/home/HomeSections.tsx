@@ -17,6 +17,7 @@ export default async function HomeSections() {
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
   const showSelectedWork = settings.enableSelectedWork !== false;
   const showProductOfMonth = settings.enableProductOfMonth === true;
+  const showFeaturedResource = true;
   const showNewsletter = settings.enableNewsletter !== false;
 
   return <>
@@ -46,7 +47,7 @@ export default async function HomeSections() {
       <a className="text-link" href="/tap-in">EXPLORE TAP IN <span>→</span></a></div>
     </section>
 
-    {showProductOfMonth ? <section className="content-section" id="store" style={{padding:"clamp(42px,7vw,84px) clamp(20px,6vw,90px)",background:"#f7f5f1",color:"#292a2c"}}>
+    {showFeaturedResource ? <section className="content-section" id="store" style={{padding:"clamp(42px,7vw,84px) clamp(20px,6vw,90px)",background:"#f7f5f1",color:"#292a2c"}}>
       <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:30,alignItems:"center"}}>
         <div><p className="eyebrow">THE STORE · FIRST RELEASE</p><h2 style={{fontSize:"clamp(32px,5vw,54px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h2><p style={{maxWidth:500,color:"#626469",lineHeight:1.7}}>{featuredProduct?.summary || "The Store’s first release is being prepared. The Africa Starter Guide will be published when the finished product and delivery setup are ready."}</p>{featuredProduct && featuredProduct.price > 0 ? <p style={{fontWeight:800,color:"#292a2c"}}>{new Intl.NumberFormat("en-GB",{style:"currency",currency:featuredProduct.currency}).format(featuredProduct.price)}</p> : null}<a className="button button-pink" href={featuredProduct ? `/store/${featuredProduct.slug}` : "/store"}>{featuredProduct ? "VIEW FEATURED RESOURCE" : "VISIT THE STORE"} <span>→</span></a></div>
         <div style={{padding:28,background:"#e9e5df",border:"1px solid #d6d0c7"}}>{featuredProduct?.imageUrl ? <img src={featuredProduct.imageUrl} alt="" style={{display:"block",width:"100%",maxHeight:340,objectFit:"cover",marginBottom:18}} /> : null}<p className="eyebrow">{featuredProduct?.productType || "FIRST RELEASE"}</p><h3 style={{fontSize:30,lineHeight:1,letterSpacing:"-.04em",margin:"0 0 12px"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h3><p style={{color:"#626469",lineHeight:1.6}}>{featuredProduct ? "A resource from The Africa Plug Store." : "The first release is in preparation. Product details and availability will be confirmed before launch."}</p></div>
