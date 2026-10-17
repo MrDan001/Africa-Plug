@@ -24,10 +24,13 @@ export async function POST(request: Request) {
     if (session.payment_status !== "paid") return NextResponse.json({ received: true, pending: true });
     const orderSlug = `stripe-${session.id}`.toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 180);
     try {
+      const previous = await cmsBridge<{ records?: Array<{ id: string; slug: string | null }> }>({ action: "cms.list", module: "enquiries", slug: orderSlug });
+      const existing = previous.records?.find((record) => record.slug === orderSlug);
       await cmsBridge({
         action: "cms.save",
         module: "enquiries",
         record: {
+          ...(existing ? { id: existing.id } : {}),
           title: `Store order — ${session.customer_details?.email || session.customer_email || session.id}`.slice(0, 240),
           slug: orderSlug,
           status: "paid",
