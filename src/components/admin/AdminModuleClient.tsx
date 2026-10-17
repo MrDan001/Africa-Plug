@@ -11,7 +11,7 @@ type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | 
 
 const DETAILS: Record<ModuleKey, { title: string; description: string; db: string }> = {
   blog: { title: "Blog & editorial", description: "Write articles, add imagery, manage categories and tags, and control SEO metadata. Publishing an article makes it eligible for the public journal.", db: "articles" },
-  store: { title: "Store products", description: "Manage product descriptions, imagery, prices and catalogue status. Product checkout and protected download delivery remain separate launch integrations.", db: "products" },
+  store: { title: "Store products", description: "Manage product descriptions, imagery, prices and catalogue status. Paid digital checkout is only available when a private download file is configured and Stripe is set up in production.", db: "products" },
   "work-with-fk": { title: "Work With FK", description: "Review incoming applications and keep every decision recorded in the admin inbox.", db: "applications" },
   "review-required": { title: "Review required", description: "Applications waiting for a decision. Approve or decline each one to keep the queue current.", db: "applications" },
   enquiries: { title: "Enquiries & forms", description: "Track Contact, Partner With TAP, Ask TAP and TAP IN expressions of interest in one persistent inbox.", db: "enquiries" },
@@ -45,7 +45,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
     { key: "imageUrl", label: "Product cover image URL", type: "url" },
     { key: "productType", label: "Product type", type: "text", placeholder: "Digital guide" },
-    { key: "productFileReference", label: "Protected file reference (internal note)", type: "text", help: "Record a storage key or delivery note only. Do not paste a public download link for a paid file." },
+    { key: "productFileReference", label: "Private download file path", type: "text", help: "Upload the file to the private Supabase Storage bucket named store-downloads, inside a folder matching this product slug. Enter its relative path, e.g. product-slug/guide.pdf. Never use a public URL." },
     { key: "seoTitle", label: "SEO title", type: "text" },
     { key: "seoDescription", label: "SEO description", type: "textarea", rows: 3 },
     { key: "featured", label: "Feature this product", type: "checkbox" },
@@ -457,7 +457,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {field.help ? <small style={{ display: "block", color: "#777", marginTop: 5, lineHeight: 1.4 }}>{field.help}</small> : null}
             </label>)}
           </div>
-          {moduleKey === "store" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>Publishing a product only updates the catalogue. Checkout, payment confirmation and protected file delivery remain disabled until their integrations are finished and verified.</p> : null}
+          {moduleKey === "store" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>Before charging for a digital product, upload its file to the private store-downloads bucket and enter the exact path above. Checkout verifies the product file is available first. Stripe live keys and the production webhook secret must also be configured in Vercel.</p> : null}
           {moduleKey === "settings" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>These values are saved for operational reference. Payment and scheduling automation must not go live until the legal and commercial rules are approved.</p> : null}
           <div style={{ display: "flex", gap: 10, justifyContent: "end", flexWrap: "wrap", marginTop: 28 }}>
             <button type="button" onClick={() => setEditorOpen(false)} style={{ padding: "13px 16px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Cancel</button>
