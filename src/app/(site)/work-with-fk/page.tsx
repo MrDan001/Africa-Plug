@@ -1,10 +1,13 @@
 import ContentPage from "@/components/layout/ContentPage";
 
 const process = [
-  { number: "01", title: "Tell us the brief", copy: "Share your business goal, the opportunity you are pursuing and the kind of support you need." },
-  { number: "02", title: "Qualification & review", copy: "The brief is reviewed to understand fit, readiness, scope and the next sensible step." },
-  { number: "03", title: "Agree the scope", copy: "Where there is a fit, the working scope, expectations, fees and terms are set out clearly." },
-  { number: "04", title: "Move forward", copy: "Work begins once the scope and required arrangements have been agreed." },
+  { number: "01", title: "Application", copy: "Share your organisation, target market, mandate, requirements and timeframe." },
+  { number: "02", title: "Review", copy: "The team reviews the application for fit, scope, readiness and relevant next steps." },
+  { number: "03", title: "Approval or decline", copy: "You receive a decision. Approval means the application can proceed to the commercial stage; it is not yet a booked meeting." },
+  { number: "04", title: "Deposit or invoice", copy: "After fees and terms are confirmed, the approved applicant receives the agreed payment or company-invoice instructions." },
+  { number: "05", title: "Private scheduler", copy: "Scheduling access is released only after the required deposit or invoiced payment is verified." },
+  { number: "06", title: "Balance payment", copy: "Any remaining agreed meeting fee is settled under the confirmed payment and cancellation terms." },
+  { number: "07", title: "Meeting", copy: "The meeting is confirmed after the required payment and scheduling steps are complete." },
 ];
 
 export default function WorkWithFkPage() {
@@ -18,8 +21,8 @@ export default function WorkWithFkPage() {
     >
       <div className="standard-section-heading">
         <p className="standard-eyebrow">A CLEAR PROCESS</p>
-        <h2>From the first conversation to the next step.</h2>
-        <p>Each engagement begins with a clear brief and a review of what is needed. Work, fees and terms are confirmed before an engagement proceeds.</p>
+        <h2>From application to meeting.</h2>
+        <p>The intended journey is application, review, approval, deposit or invoice, private scheduler, balance payment and meeting. The paid booking and scheduler stages are not active until payment, scheduling and commercial terms have been configured and tested.</p>
       </div>
       <div className="standard-process-list">
         {process.map((step) => (
@@ -32,8 +35,8 @@ export default function WorkWithFkPage() {
       <div className="standard-cta-band">
         <div>
           <p className="standard-eyebrow">READY TO TALK?</p>
-          <h2>Bring the brief. We’ll look at the next step.</h2>
-          <p>Share a little context about your organisation, your goal and the support you are looking for.</p>
+          <h2>Start with the brief.</h2>
+          <p>Share your organisation, target market and commercial objectives. Submitting the form does not approve an engagement or trigger a payment.</p>
         </div>
         <a className="standard-button" href="/work-with-fk/apply">START YOUR ENQUIRY <span aria-hidden="true">↗</span></a>
       </div>
