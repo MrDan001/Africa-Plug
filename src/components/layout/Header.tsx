@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import MobileMenu from "./MobileMenu";
 import SiteSearch from "./SiteSearch";
-import StoreCartButton from "@/components/store/StoreCartButton";
 
 const NAV_ITEMS = [
   { label: "TAP IN", href: "/tap-in" },
@@ -45,7 +44,6 @@ export default function Header() {
       .catch(() => undefined);
     return () => { active = false; };
   }, []);
-  const isStoreExperience = pathname === "/store" || pathname.startsWith("/store/");
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -60,9 +58,8 @@ export default function Header() {
           })}
         </nav>
         <div className="header-actions">
-          {!isStoreExperience ? <Link href="/work-with-fk" className="button button-pink header-cta">WORK WITH FK</Link> : null}
+          <Link href="/work-with-fk" className="button button-pink header-cta">WORK WITH FK</Link>
           {enableSearch ? <SiteSearch /> : null}
-          {isStoreExperience ? <StoreCartButton /> : null}
           <div className="mobile-menu-wrap"><MobileMenu items={navigationItems} /></div>
         </div>
       </div>
