@@ -277,10 +277,11 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if ((status === "declined" || status === "archived") && !window.confirm(`Are you sure you want to ${actionLabel} “${record.title}”?`)) return;
     setNotice(null);
     try {
-      const response = await fetch(`/api/admin/cms/${moduleKey}`, {
-        method: "PATCH",
+      const isApplicationDecision = (moduleKey === "work-with-fk" || moduleKey === "review-required") && (status === "approved" || status === "declined");
+      const response = await fetch(isApplicationDecision ? "/api/work-with-fk/approve" : `/api/admin/cms/${moduleKey}`, {
+        method: "PATCH" === "PATCH" && isApplicationDecision ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: record.id, status }),
+        body: JSON.stringify(isApplicationDecision ? { id: record.id, decision: status } : { id: record.id, status }),
       });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error || "Could not update status.");
