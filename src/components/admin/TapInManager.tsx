@@ -215,6 +215,7 @@ export default function TapInManager() {
       <header className={`${styles.header} tap-in-admin-header`}>
         <a className={styles.brand} href="/">THE AFRICA PLUG <span>/ TAP IN</span></a>
         <div className={styles.headerActions}>
+          <a className={styles.back} href="/admin" aria-label="Back to the main admin home">← Admin home</a>
           <a className={styles.back} href="/tap-in" target="_blank" rel="noreferrer">View public page ↗</a>
         </div>
       </header>
