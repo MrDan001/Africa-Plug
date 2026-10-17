@@ -1,5 +1,4 @@
 import type { BlogPost, BlogSection } from "@/lib/blog-posts";
-import { BLOG_POSTS } from "@/lib/blog-posts";
 import { getPublicCmsRecords, type CmsRecord } from "@/lib/cms-bridge";
 
 function stringValue(value: unknown, fallback = ""): string {
@@ -65,7 +64,6 @@ export function cmsRecordToBlogPost(record: CmsRecord): BlogPost | null {
 export async function getBlogPosts(): Promise<BlogPost[]> {
   const records = await getPublicCmsRecords("articles");
   const cmsPosts = records.map(cmsRecordToBlogPost).filter((post): post is BlogPost => post !== null);
-  const cmsSlugs = new Set(cmsPosts.map((post) => post.slug));
   return cmsPosts;
 }
 
@@ -90,6 +88,7 @@ export function cmsRecordToPublicProduct(record: CmsRecord) {
     price: Number.isFinite(rawPrice) && rawPrice >= 0 ? rawPrice : 0,
     seoTitle: stringValue(data.seoTitle),
     seoDescription: stringValue(data.seoDescription),
+    shareImageUrl: stringValue(data.shareImage || data.shareImageUrl),
     featured: data.featured === true,
   };
 }
