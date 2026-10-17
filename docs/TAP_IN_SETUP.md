@@ -14,12 +14,14 @@ The migration creates persistent records, constrained status values, 2–4 enqui
 ## Vercel environment
 
 The server environment must contain:
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_URL` — `https://<project-ref>.supabase.co`
+- `SUPABASE_ANON_KEY` — the project legacy anon JWT used to invoke the JWT-protected Edge Function
+- `CMS_BRIDGE_SECRET` — a random server-to-server secret of at least 32 characters; its SHA-256 digest must match `cms_private_config.bridge_secret_sha256` in the connected Supabase project
 - `ADMIN_PASSWORD`
 - `ADMIN_SESSION_SECRET`
+- `BLOB_READ_WRITE_TOKEN` — supplied by the connected public Vercel Blob store for the hero image manager
 
-The Supabase URL and service-role key are also used by the existing hero-image manager. Do not put secret values into the repository. If these environment variables are already configured for the hero manager, verify they point to the same Supabase project where the migration was applied.
+The CMS bridge uses `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `CMS_BRIDGE_SECRET` in Vercel. The deployed Supabase Edge Function uses `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in Supabase Function Secrets. The hero-image manager uses Vercel Blob, not Supabase Storage. Keep all secret values out of GitHub and public/client environment variables.
 
 ## Usage
 
