@@ -6,7 +6,7 @@ export default function StoreCartButton(){
  const [items,setItems]=useState<StoreCartItem[]>([]);const [open,setOpen]=useState(false);const [checkingOut,setCheckingOut]=useState(false);const [checkoutError,setCheckoutError]=useState("");
  useEffect(()=>{const refresh=()=>setItems(readStoreCart());refresh();window.addEventListener(STORE_CART_EVENT,refresh);window.addEventListener("storage",refresh);return()=>{window.removeEventListener(STORE_CART_EVENT,refresh);window.removeEventListener("storage",refresh);};},[]);
  useEffect(()=>{if(!open)return;const closeOnEscape=(event:KeyboardEvent)=>{if(event.key==="Escape")setOpen(false);};window.addEventListener("keydown",closeOnEscape);return()=>window.removeEventListener("keydown",closeOnEscape);},[open]);
- const quantity=items.reduce((sum,item)=>sum+item.quantity,0);const subtotal=items.reduce((sum,item)=>sum+item.price*item.quantity,0);
+ const quantity=items.reduce((sum,item)=>sum+item.quantity,0);const currencies=new Set(items.map(item=>item.currency||"GBP"));const mixedCurrencies=currencies.size>1;const basketCurrency=items[0]?.currency||"GBP";const subtotal=items.reduce((sum,item)=>sum+item.price*item.quantity,0);
  async function beginCheckout(){
   setCheckingOut(true);setCheckoutError("");
   try{
