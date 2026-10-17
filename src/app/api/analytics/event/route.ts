@@ -3,7 +3,7 @@ import { cmsBridge } from "@/lib/cms-bridge";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ALLOWED_EVENTS = new Set(["page_view", "article_view", "product_view", "tap_in_view", "form_submit", "cta_click"]);
+const ALLOWED_EVENTS = new Set(["page_view", "article_view", "product_view", "listing_viewed", "tap_in_view", "form_submit", "application_started", "application_submitted", "deposit_paid", "meeting_booked", "interest_submitted", "product_purchased", "partner_enquiry", "ask_submission", "newsletter_signup", "work_with_fk_click", "cta_click"]);
 
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
