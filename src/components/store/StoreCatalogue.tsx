@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
 import ProductOfTheMonth from "@/components/store/ProductOfTheMonth";
+import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ export default async function StoreCatalogue() {
         { title: "Ebooks & Playbooks", detail: "Guides and practical frameworks." },
         { title: "Reports & Research", detail: "Insights to inform your next move." },
         { title: "TAP Products", detail: "Useful products from The Africa Plug." },
-        { title: "Stay Finder", detail: "Free accommodation discovery, with bookings handled by providers." },
+        { title: "Stay Finder", detail: "Discover places to stay, with bookings handled by accommodation providers." },
       ].map((item) => <article key={item.title} style={{border:"1px solid #e2ddd5",background:"#fff",padding:"18px 20px",borderRadius:4}}>
         <h2 style={{fontSize:15,margin:"0 0 7px",color:"#292a2c",letterSpacing:"-.02em"}}>{item.title}</h2>
         <p style={{fontSize:13,lineHeight:1.6,color:"#626469",margin:0}}>{item.detail}</p>
@@ -38,7 +39,7 @@ export default async function StoreCatalogue() {
           <div style={{padding:24,display:"flex",flexDirection:"column",alignItems:"start",flex:1}}>
             <p className="standard-eyebrow">{product.productType}</p><h2 style={{fontSize:28,letterSpacing:"-.04em",lineHeight:1.05,margin:"0 0 12px",color:"#292a2c"}}>{product.title}</h2><p style={{color:"#626469",lineHeight:1.7,flex:1}}>{product.summary}</p>
             <strong style={{marginTop:8,color:"#292a2c"}}>{product.price > 0 ? formatter(product.price, product.currency) : "Free / price to be confirmed"}</strong>
-            <Link href={`/store/${product.slug}`} className="text-link" style={{marginTop:20}}>VIEW PRODUCT <span aria-hidden="true">→</span></Link>
+            <div style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap",marginTop:20}}><StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" compact={false} /><Link href={`/store/${product.slug}`} className="text-link">VIEW PRODUCT <span aria-hidden="true">→</span></Link></div>
           </div>
         </article>)}
       </div> : <article className="standard-card" style={{maxWidth:980,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,250px),1fr))",gap:32,alignItems:"center",padding:"clamp(24px,5vw,56px)"}}>
