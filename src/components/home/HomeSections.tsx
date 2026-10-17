@@ -17,7 +17,7 @@ export default async function HomeSections() {
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
   const showSelectedWork = settings.enableSelectedWork !== false;
   const showFeaturedResource = true;
-  const showNewsletter = settings.enableNewsletter !== false;
+  const showNewsletter = settings.enableNewsletter === true;
 
   return <>
     <section className="intro-section section-grid" id="about">
