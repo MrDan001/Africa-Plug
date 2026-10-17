@@ -74,6 +74,7 @@ export type PublicSiteSettings = {
   enableSearch?: boolean;
   enableSelectedWork?: boolean;
   enableProductOfMonth?: boolean;
+  tapInFilterThreshold?: number;
   navigation?: { label: string; href: string }[];
 };
 
@@ -111,6 +112,7 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     const data = record.data ?? {};
     const settingString = (key: string) => typeof data[key] === "string" ? (data[key] as string).trim().slice(0, 500) : undefined;
     const settingBool = (key: string) => typeof data[key] === "boolean" ? data[key] as boolean : undefined;
+    const settingNumber = (key: string) => { const value = Number(data[key]); return Number.isFinite(value) && value >= 1 && value <= 100 ? Math.floor(value) : undefined; };
     return {
       siteTitle: settingString("siteTitle"),
       siteDescription: settingString("siteDescription"),
@@ -123,6 +125,7 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       enableSearch: settingBool("enableSearch"),
       enableSelectedWork: settingBool("enableSelectedWork"),
       enableProductOfMonth: settingBool("enableProductOfMonth"),
+      tapInFilterThreshold: settingNumber("tapInFilterThreshold"),
       navigation: safeNavigation(data.navigation),
     };
   } catch (error) {
