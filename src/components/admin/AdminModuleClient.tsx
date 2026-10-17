@@ -45,7 +45,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
     { key: "imageUrl", label: "Product cover image URL", type: "url" },
     { key: "productType", label: "Product type", type: "text", placeholder: "Digital guide" },
-    { key: "productFileReference", label: "Private download file path", type: "text", help: "Upload the file to the private Supabase Storage bucket named store-downloads, inside a folder matching this product slug. Enter its relative path, e.g. product-slug/guide.pdf. Never use a public URL." },
+    { key: "productFileReference", label: "Private download file path", type: "text", help: "Use Upload Protected File on the saved product row below. Files are stored privately. Never paste a public download URL here." },
     { key: "seoTitle", label: "SEO title", type: "text" },
     { key: "seoDescription", label: "SEO description", type: "textarea", rows: 3 },
     { key: "featured", label: "Feature this product", type: "checkbox" },
@@ -486,7 +486,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {field.help ? <small style={{ display: "block", color: "#777", marginTop: 5, lineHeight: 1.4 }}>{field.help}</small> : null}
             </label>)}
           </div>
-          {moduleKey === "store" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>Before charging for a digital product, upload its file to the private store-downloads bucket and enter the exact path above. Checkout verifies the product file is available first. Stripe live keys and the production webhook secret must also be configured in Vercel.</p> : null}
+          {moduleKey === "store" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>Upload the product file using Upload Protected File on its saved product row. Checkout verifies a private file exists before charging. Stripe live keys and the production webhook secret must also be configured in Vercel.</p> : null}
           {moduleKey === "settings" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>These values are saved for operational reference. Payment and scheduling automation must not go live until the legal and commercial rules are approved.</p> : null}
           <div style={{ display: "flex", gap: 10, justifyContent: "end", flexWrap: "wrap", marginTop: 28 }}>
             <button type="button" onClick={() => setEditorOpen(false)} style={{ padding: "13px 16px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Cancel</button>
