@@ -25,6 +25,7 @@ export async function POST(request: Request) {
 
   const slotValue = formData.get("slot");
   const file = formData.get("image");
+  const variantValue = formData.get("variant") === "mobile" ? "mobile" : formData.get("variant") === "desktop" ? "desktop" : "desktop";
   if (slotValue !== "1" && slotValue !== "2" && slotValue !== "3") return Response.json({ error: "Choose Hero 1, Hero 2, or Hero 3." }, { status: 400 });
   if (!(file instanceof File)) return Response.json({ error: "Select an image to upload." }, { status: 400 });
   const extension = ACCEPTED_IMAGE_TYPES.get(file.type);
@@ -32,14 +33,14 @@ export async function POST(request: Request) {
   if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) return Response.json({ error: "The image must be smaller than 10 MB." }, { status: 413 });
 
   try {
-    const blob = await put(`homepage/hero-slide-${slotValue}.${extension}`, file, {
+    const blob = await put(`homepage/hero-slide-${slotValue}-${variantValue}.${extension}`, file, {
       access: "public",
       addRandomSuffix: true,
       contentType: file.type,
       cacheControlMaxAge: 60 * 60,
     });
     return Response.json(
-      { ok: true, slot: Number(slotValue), imageUrl: blob.url },
+      { ok: true, slot: Number(slotValue), variant: variantValue, imageUrl: blob.url },
       { headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } },
     );
   } catch (error) {
