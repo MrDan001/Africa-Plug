@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPublicCmsRecord, getPublicCmsRecords } from "@/lib/cms-bridge";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
+import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ slug: string }> };
@@ -34,8 +35,9 @@ export default async function ProductPage({ params }: Props) {
         </div>
         <div className="tap-product-detail-copy">
           <p className="tap-book-category">{product.productType}</p><h1 id="tap-product-title">{product.title}</h1><p className="tap-product-detail-summary">{product.summary}</p>
-          <p>{product.price > 0 ? new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price) : "Free / price to be confirmed"}</p>
-          <p className="tap-product-checkout-note">Checkout and protected digital delivery are being prepared. No payment is taken on this page yet.</p>
+          <p>{product.price > 0 ? new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price) : "Price to be confirmed"}</p>
+          {product.price > 0 ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" /> : <p className="tap-product-checkout-note">Pricing will be confirmed before this product can be purchased.</p>}
+          <p className="tap-product-checkout-note">Secure checkout will verify this product’s current price before payment.</p>
           <Link className="tap-product-back-link" href="/contact">ASK ABOUT THIS PRODUCT</Link>
         </div>
       </section>
