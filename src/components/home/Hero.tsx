@@ -13,7 +13,7 @@ type Slide = {
   body: string;
   activeButton: number;
   image: string;
-  mobileImage: string | null;
+  mobileImage?: string | null;
   location: string;
 };
 
