@@ -6,7 +6,7 @@ export type HeroImageState = {
   storage: "not-configured" | "vercel-blob" | "error";
 };
 
-function versionedUrl(blob: { url: string; uploadedAt: string }) {
+function versionedUrl(blob: { url: string; uploadedAt: string | Date }) {
   const version = new Date(blob.uploadedAt).getTime();
   return `${blob.url}${blob.url.includes("?") ? "&" : "?"}v=${version}`;
 }
