@@ -30,12 +30,17 @@ export async function POST(request: Request) {
       if (!/^[A-Z]{3}$/.test(product.currency)) throw new Error("A product currency is invalid.");
       // Verify a private delivery file exists before accepting payment. The short-lived
       // URL is discarded here; customers receive a fresh, session-verified link after payment.
-      const delivery = await cmsBridge<{ url?: string }>({
-        action: "store.createSignedDownload",
-        module: "products",
-        slug: product.slug,
-      });
-      if (!delivery.url) throw new Error("This product is not ready for secure delivery yet.");
+      let delivery: { url?: string };
+      try {
+        delivery = await cmsBridge<{ url?: string }>({
+          action: "store.createSignedDownload",
+          module: "products",
+          slug: product.slug,
+        });
+      } catch {
+        throw new Error("This product is not ready for secure delivery yet. Please try another product or come back later.");
+      }
+      if (!delivery.url) throw new Error("This product is not ready for secure delivery yet. Please try another product or come back later.");
       return { product, quantity: item.quantity };
     }));
     const currencies = new Set(items.map(({ product }) => product.currency.toLowerCase()));
