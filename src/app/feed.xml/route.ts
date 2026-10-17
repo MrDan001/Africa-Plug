@@ -20,7 +20,7 @@ export async function GET() {
     <guid isPermaLink="true">${SITE_URL}/blog/${encodeURIComponent(post.slug)}</guid>
     <description>${escapeXml(post.excerpt)}</description>
     <pubDate>${pubDate(post.publishedAt)}</pubDate>
-    <author>editorial@theafricaplug.com (${escapeXml(post.author)})</author>
+    <author>connect@theafricaplug.com (${escapeXml(post.author)})</author>
     ${post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join("\n    ")}
   </item>`).join("\n");
 
