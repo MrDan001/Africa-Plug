@@ -13,6 +13,7 @@ type Slide = {
   body: string;
   activeButton: number;
   image: string;
+  mobileImage: string | null;
   location: string;
 };
 
@@ -42,12 +43,13 @@ const SLIDES: Slide[] = [
 
 const SLIDE_MS = 6500;
 
-export default function Hero({ initialImages = [null, null, null] }: { initialImages?: (string | null)[] }) {
+export default function Hero({ initialImages = [null, null, null], initialMobileImages = [null, null, null] }: { initialImages?: (string | null)[]; initialMobileImages?: (string | null)[] }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [customImages, setCustomImages] = useState<(string | null)[]>(initialImages);
+  const [customMobileImages, setCustomMobileImages] = useState<(string | null)[]>(initialMobileImages);
   const carouselRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -70,9 +72,10 @@ export default function Hero({ initialImages = [null, null, null] }: { initialIm
       try {
         const response = await fetch("/api/hero-images", { cache: "no-store" });
         if (!response.ok) return;
-        const data = await response.json() as { images?: (string | null)[] };
+        const data = await response.json() as { images?: (string | null)[]; mobileImages?: (string | null)[] };
         if (active && Array.isArray(data.images)) {
           setCustomImages([data.images[0] ?? null, data.images[1] ?? null, data.images[2] ?? null]);
+          if (Array.isArray(data.mobileImages)) setCustomMobileImages([data.mobileImages[0] ?? null, data.mobileImages[1] ?? null, data.mobileImages[2] ?? null]);
         }
       } catch {
         // Keep the existing image defaults if admin-managed images are unavailable.
@@ -100,6 +103,7 @@ export default function Hero({ initialImages = [null, null, null] }: { initialIm
   const displaySlides = SLIDES.map((item, i) => ({
     ...item,
     image: customImages[i] || item.image,
+    mobileImage: customMobileImages[i] || customImages[i] || item.image,
   }));
   const slide = displaySlides[index];
   const go = (next: number) => setIndex((next + SLIDES.length) % SLIDES.length);
@@ -119,7 +123,7 @@ export default function Hero({ initialImages = [null, null, null] }: { initialIm
           key={item.statement}
           aria-hidden="true"
           className={`hero-photo ${i === index ? "is-active" : ""} hero-photo-slide-${i + 1}`}
-          style={{ backgroundImage: `url("${item.image}")` }}
+          style={{ backgroundImage: `url("${item.image}")`, "--hero-mobile-image": `url("${item.mobileImage || item.image}")` } as React.CSSProperties & { "--hero-mobile-image": string }}
         />
       ))}
       <div className="hero-shade" aria-hidden="true" />
