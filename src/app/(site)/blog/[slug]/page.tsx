@@ -14,13 +14,15 @@ export async function generateMetadata({ params }: BlogArticlePageProps): Promis
   const post = await getPublicBlogPost(slug);
   if (!post) return { title: "Article not found" };
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://africa-plug.vercel.app";
+  const siteUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
   return {
     title: post.seoTitle || post.title,
     description: post.seoDescription || post.excerpt,
     authors: [{ name: post.author }],
     keywords: post.tags,
     alternates: { canonical: `/blog/${encodeURIComponent(post.slug)}` },
-    openGraph: { type: "article", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://africa-plug.vercel.app").replace(/\\/$/, "")}/blog/${encodeURIComponent(post.slug)}`, title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, images: (post.shareImage || post.image) ? [post.shareImage || post.image] : [] },
+    openGraph: { type: "article", url: `${siteUrl}/blog/${encodeURIComponent(post.slug)}`, title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, images: (post.shareImage || post.image) ? [post.shareImage || post.image] : [] },
   };
 }
 
