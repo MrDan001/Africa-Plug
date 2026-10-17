@@ -3,20 +3,26 @@
 import { useEffect, useState, type FormEvent } from "react";
 
 const SLOTS = [
-  { slot: 1, title: "Hero 1 — Work With FK", note: "Wide image recommended: 2400 × 1200 px or larger." },
-  { slot: 2, title: "Hero 2 — TAP IN", note: "Choose a clear image that still works behind large headline text." },
-  { slot: 3, title: "Hero 3 — Ask The Africa Plug", note: "Use a landscape image; keep the main subject away from the left text area." },
-];
+  { slot: 1, variant: "desktop", index: 0, title: "Slide 1 — Desktop / Work With FK", note: "Landscape crop recommended: 2400 × 1200 px or larger." },
+  { slot: 1, variant: "mobile", index: 1, title: "Slide 1 — Mobile / Work With FK", note: "Portrait/tall mobile crop. Keep FK or the main commercial subject visible behind the copy." },
+  { slot: 2, variant: "desktop", index: 2, title: "Slide 2 — Desktop / TAP IN", note: "Show a real commercial asset, industry or opportunity at scale." },
+  { slot: 2, variant: "mobile", index: 3, title: "Slide 2 — Mobile / TAP IN", note: "Use a dedicated portrait crop; do not rely on a resized desktop image." },
+  { slot: 3, variant: "desktop", index: 4, title: "Slide 3 — Desktop / Ask The Africa Plug", note: "People, place and on-the-ground context from Africa." },
+  { slot: 3, variant: "mobile", index: 5, title: "Slide 3 — Mobile / Ask The Africa Plug", note: "Use a separate mobile crop with the key subject clear of the text." },
+] as const;
 
+type Variant = "desktop" | "mobile";
 type Notice = { tone: "success" | "error"; text: string };
+
+function blankImages() { return Array.from({ length: 6 }, () => null as string | null); }
 
 export default function AdminPage() {
   const [checking, setChecking] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
-  const [images, setImages] = useState<(string | null)[]>([null, null, null]);
-  const [files, setFiles] = useState<(File | null)[]>([null, null, null]);
-  const [previews, setPreviews] = useState<(string | null)[]>([null, null, null]);
+  const [images, setImages] = useState<(string | null)[]>(blankImages());
+  const [files, setFiles] = useState<(File | null)[]>(blankImages());
+  const [previews, setPreviews] = useState<(string | null)[]>(blankImages());
   const [busySlot, setBusySlot] = useState<number | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -24,15 +30,17 @@ export default function AdminPage() {
   async function refreshImages() {
     try {
       const response = await fetch("/api/hero-images", { cache: "no-store" });
-      const data = await response.json() as { images?: (string | null)[] };
-      if (Array.isArray(data.images)) setImages([data.images[0] ?? null, data.images[1] ?? null, data.images[2] ?? null]);
+      const data = await response.json() as { images?: (string | null)[]; mobileImages?: (string | null)[] };
+      const desktop = Array.isArray(data.images) ? data.images : [null, null, null];
+      const mobile = Array.isArray(data.mobileImages) ? data.mobileImages : [null, null, null];
+      setImages(SLOTS.map(({ slot, variant }) => variant === "desktop" ? desktop[slot - 1] ?? null : mobile[slot - 1] ?? null));
     } catch {
       setNotice({ tone: "error", text: "Could not load the current hero images. Check your connection and refresh." });
     }
   }
 
   useEffect(() => {
-    document.title = "Homepage Manager | Africa Plug Admin";
+    document.title = "Homepage Manager | Africa Plug";
     setAuthenticated(true);
     void refreshImages();
     setChecking(false);
@@ -48,14 +56,14 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-      const data = await response.json() as { error?: string };
-      if (!response.ok) {
+      const data = await response.json() as { error?: string; ok?: boolean };
+      if (!response.ok || !data.ok) {
         setNotice({ tone: "error", text: data.error || "Sign-in failed. Please try again." });
         return;
       }
       setPassword("");
       setAuthenticated(true);
-      setNotice({ tone: "success", text: "You are signed in. Upload a new image to replace a hero slide." });
+      setNotice({ tone: "success", text: "You are signed in. Upload a desktop and a mobile crop for each slide." });
       await refreshImages();
     } catch {
       setNotice({ tone: "error", text: "Could not connect to the admin service. Please try again." });
@@ -64,40 +72,39 @@ export default function AdminPage() {
     }
   }
 
-  function chooseFile(slot: number, file: File | null) {
-    setFiles((current) => current.map((existing, index) => index === slot - 1 ? file : existing));
-    setPreviews((current) => current.map((existing, index) => {
-      if (index !== slot - 1) return existing;
-      return file ? URL.createObjectURL(file) : null;
-    }));
+  function chooseFile(index: number, file: File | null) {
+    setFiles((current) => current.map((existing, currentIndex) => currentIndex === index ? file : existing));
+    setPreviews((current) => current.map((existing, currentIndex) => currentIndex === index ? (file ? URL.createObjectURL(file) : null) : existing));
     setNotice(null);
   }
 
-  async function upload(slot: number) {
-    const file = files[slot - 1];
+  async function upload(index: number) {
+    const slot = SLOTS[index];
+    const file = files[index];
     if (!file) {
       setNotice({ tone: "error", text: "Choose an image first." });
       return;
     }
 
-    setBusySlot(slot);
+    setBusySlot(index);
     setNotice(null);
     try {
       const formData = new FormData();
-      formData.set("slot", String(slot));
+      formData.set("slot", String(slot.slot));
+      formData.set("variant", slot.variant);
       formData.set("image", file);
       const response = await fetch("/api/admin/hero-images", { method: "POST", body: formData });
-      const data = await response.json() as { ok?: boolean; error?: string; slot?: number; imageUrl?: string };
+      const data = await response.json() as { ok?: boolean; error?: string; slot?: number; variant?: Variant; imageUrl?: string };
       if (!response.ok || !data.ok || !data.imageUrl) {
         setNotice({ tone: "error", text: data.error || "Upload failed. Please try again." });
         return;
       }
-      setImages((current) => current.map((url, index) => index === slot - 1 ? data.imageUrl! : url));
-      setFiles((current) => current.map((fileValue, index) => index === slot - 1 ? null : fileValue));
-      setPreviews((current) => current.map((preview, index) => index === slot - 1 ? null : preview));
-      const input = document.getElementById(`hero-image-${slot}`) as HTMLInputElement | null;
+      setImages((current) => current.map((url, currentIndex) => currentIndex === index ? data.imageUrl! : url));
+      setFiles((current) => current.map((fileValue, currentIndex) => currentIndex === index ? null : fileValue));
+      setPreviews((current) => current.map((preview, currentIndex) => currentIndex === index ? null : preview));
+      const input = document.getElementById(`hero-image-${slot.slot}-${slot.variant}`) as HTMLInputElement | null;
       if (input) input.value = "";
-      setNotice({ tone: "success", text: `Hero ${slot} image uploaded. The homepage will use it automatically; refresh the homepage to verify the crop.` });
+      setNotice({ tone: "success", text: `Hero ${slot.slot} ${slot.variant} crop uploaded. The homepage will use it automatically.` });
     } catch {
       setNotice({ tone: "error", text: "Could not connect to image storage. Please try again." });
     } finally {
@@ -105,9 +112,7 @@ export default function AdminPage() {
     }
   }
 
-  if (checking) {
-    return <main className="tap-admin-page"><div className="tap-admin-shell"><p className="tap-admin-muted">Checking secure admin session…</p></div></main>;
-  }
+  if (checking) return <main className="tap-admin-page"><div className="tap-admin-shell"><p className="tap-admin-muted">Checking secure admin session…</p></div></main>;
 
   return (
     <main className="tap-admin-page">
@@ -120,7 +125,7 @@ export default function AdminPage() {
         <section className="tap-admin-intro">
           <p className="tap-admin-eyebrow">HOMEPAGE CONTROL</p>
           <h1>Hero image manager.</h1>
-          <p>Upload or replace the image for each carousel slide. You do not need to edit code. Images are saved to the media bucket and picked up by the homepage automatically.</p>
+          <p>Replace the desktop and mobile photo for each slide without editing code. Hero copy remains live website text; no words are baked into these images.</p>
           <p><a className="tap-admin-primary" href="/admin/tap-in">Manage TAP IN opportunities →</a></p>
         </section>
 
@@ -135,39 +140,39 @@ export default function AdminPage() {
               <input id="tap-admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
               <button className="tap-admin-primary" type="submit" disabled={loginBusy}>{loginBusy ? "Signing in…" : "Sign in"}</button>
             </form>
-            <p className="tap-admin-small">First time setting this up? The website owner must configure the admin and image-storage environment variables.</p><a className="tap-admin-setup-link" href="https://github.com/MrDan001/Africa-Plug/blob/main/docs/HERO_IMAGE_ADMIN_SETUP.md" target="_blank" rel="noreferrer">Open the one-time setup guide ↗</a>
+            <p className="tap-admin-small">The website owner must configure the admin and media-storage environment variables.</p><a className="tap-admin-setup-link" href="https://github.com/MrDan001/Africa-Plug/blob/main/docs/HERO_IMAGE_ADMIN_SETUP.md" target="_blank" rel="noreferrer">Open the one-time setup guide ↗</a>
           </section>
         ) : (
           <>
             <div className="tap-admin-toolbar">
-              <div><strong>Three carousel slides</strong><span>JPG, PNG, WebP or AVIF · Maximum 10 MB per image</span></div>
+              <div><strong>Three slides · six image crops</strong><span>JPG, PNG, WebP or AVIF · Maximum 10 MB per image</span></div>
               <button className="tap-admin-secondary" type="button" onClick={() => void refreshImages()}>Refresh images</button>
             </div>
             <div className="tap-admin-grid">
-              {SLOTS.map(({ slot, title, note }) => (
-                <section className="tap-admin-card" key={slot}>
+              {SLOTS.map(({ slot, variant, index, title, note }) => (
+                <section className="tap-admin-card" key={`${slot}-${variant}`}>
                   <div className="tap-admin-card-heading"><span>0{slot}</span><h2>{title}</h2></div>
                   <div className="tap-admin-preview">
-                    {previews[slot - 1] ? (
+                    {previews[index] ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={previews[slot - 1]!} alt={`Selected preview for hero slide ${slot}`} />
-                    ) : images[slot - 1] ? (
+                      <img src={previews[index]!} alt={`Selected preview for hero slide ${slot} ${variant} crop`} />
+                    ) : images[index] ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={images[slot - 1]!} alt={`Current homepage image for hero slide ${slot}`} />
+                      <img src={images[index]!} alt={`Current homepage image for hero slide ${slot} ${variant} crop`} />
                     ) : (
-                      <div className="tap-admin-empty"><span>0{slot}</span><p>Built-in hero image is currently active.</p></div>
+                      <div className="tap-admin-empty"><span>0{slot}</span><p>{variant === "desktop" ? "Built-in desktop image is currently active." : "Mobile uses the desktop image until a mobile crop is uploaded."}</p></div>
                     )}
-                    <span className="tap-admin-preview-badge">{previews[slot - 1] ? "Selected preview" : images[slot - 1] ? "Custom image active" : "Default image"}</span>
+                    <span className="tap-admin-preview-badge">{previews[index] ? "Selected preview" : images[index] ? "Custom image active" : "Default image"}</span>
                   </div>
                   <p className="tap-admin-card-note">{note}</p>
-                  <label className="tap-admin-file-label" htmlFor={`hero-image-${slot}`}>Choose image</label>
-                  <input className="tap-admin-file-input" id={`hero-image-${slot}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => chooseFile(slot, event.target.files?.[0] ?? null)} />
-                  {files[slot - 1] ? <p className="tap-admin-filename">{files[slot - 1]!.name}</p> : <p className="tap-admin-filename">No new image selected</p>}
-                  <button className="tap-admin-primary" type="button" disabled={!files[slot - 1] || busySlot !== null} onClick={() => void upload(slot)}>{busySlot === slot ? "Uploading…" : `Publish Hero ${slot} image`}</button>
+                  <label className="tap-admin-file-label" htmlFor={`hero-image-${slot}-${variant}`}>Choose {variant} image</label>
+                  <input className="tap-admin-file-input" id={`hero-image-${slot}-${variant}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => chooseFile(index, event.target.files?.[0] ?? null)} />
+                  {files[index] ? <p className="tap-admin-filename">{files[index]!.name}</p> : <p className="tap-admin-filename">No new image selected</p>}
+                  <button className="tap-admin-primary" type="button" disabled={!files[index] || busySlot !== null} onClick={() => void upload(index)}>{busySlot === index ? "Uploading…" : `Publish slide ${slot} ${variant} crop`}</button>
                 </section>
               ))}
             </div>
-            <p className="tap-admin-footnote">Publishing replaces the custom image for that slide only. The headline, carousel order, and button destinations are unchanged.</p>
+            <p className="tap-admin-footnote">Replace one crop at a time. Headline, supporting line, caption and route buttons remain live and are not baked into the photos.</p>
           </>
         )}
 
