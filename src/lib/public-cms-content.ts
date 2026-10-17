@@ -86,6 +86,10 @@ export function cmsRecordToPublicProduct(record: CmsRecord) {
     productType: stringValue(data.productType, "Digital resource"),
     currency: stringValue(data.currency, "GBP").toUpperCase(),
     price: Number.isFinite(rawPrice) && rawPrice >= 0 ? rawPrice : 0,
+    downloadReady: typeof data.productFileReference === "string"
+      && data.productFileReference.startsWith(record.slug + "/")
+      && typeof data.productFileUploadedAt === "string"
+      && Boolean(data.productFileUploadedAt),
     seoTitle: stringValue(data.seoTitle),
     seoDescription: stringValue(data.seoDescription),
     shareImageUrl: stringValue(data.shareImage || data.shareImageUrl),
