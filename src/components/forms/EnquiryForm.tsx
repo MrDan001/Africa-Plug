@@ -34,6 +34,13 @@ export default function EnquiryForm({ kind = "contact", opportunityName }: { kin
   const [token, setToken] = useState("");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
+  const applicationStarted = useRef(false);
+
+  function markStarted() {
+    if (kind !== "work" || applicationStarted.current) return;
+    applicationStarted.current = true;
+    void fetch("/api/analytics/event", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ eventName: "application_started", path: window.location.pathname, source: new URLSearchParams(window.location.search).get("utm_source") || document.referrer || "direct", referrer: document.referrer, utm: Object.fromEntries(["utm_source","utm_medium","utm_campaign","utm_content","utm_term"].map((key) => [key, new URLSearchParams(window.location.search).get(key) || ""])) }) }).catch(() => undefined);
+  }
 
   useEffect(() => {
     if (!siteKey || !widgetRef.current) return;
@@ -92,7 +99,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName }: { kin
       }
       currentForm.reset();
       setToken("");
-      setNotice({ ok: true, text: "Thank you. Your enquiry has been sent to The Africa Plug." });
+      setNotice({ ok: true, text: kind === "ask" ? "Thanks, we review every question and may select yours for research, content or follow up." : kind === "interest" && opportunityName ? `Thanks, The Africa Plug has received your expression of interest in ${opportunityName}.` : kind === "work" ? "Thanks. Your application has been received for review. This is not an approval or payment confirmation." : "Thank you. Your enquiry has been sent to The Africa Plug." });
     } catch {
       setNotice({ ok: false, text: "We couldn't connect to the form service. Please email connect@theafricaplug.com directly." });
     } finally {
@@ -107,24 +114,42 @@ export default function EnquiryForm({ kind = "contact", opportunityName }: { kin
         <h2>{form.title}</h2>
         <p>{form.description}</p>
       </header>
-      <form className="enquiry-form" onSubmit={submit}>
+      <form className="enquiry-form" onSubmit={submit} onFocusCapture={markStarted}>
         <div className="enquiry-form-grid">
           <label><span>Your name <b>*</b></span><input name="name" autoComplete="name" required minLength={2} maxLength={120} /></label>
           <label><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           <label><span>Organisation <small>Optional</small></span><input name="organisation" autoComplete="organization" maxLength={160} /></label>
           <label><span>Phone <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={50} /></label>
-          <label className="enquiry-full-width">
+          {kind === "partner" ? <label className="enquiry-full-width">
+            <span>Partnership area <b>*</b></span>
+            <select name="enquiryType" defaultValue="" required>
+              <option value="" disabled>Select a partnership area</option>
+              <option>Sponsorship</option>
+              <option>Brand partnership</option>
+              <option>Interview / guest</option>
+              <option>Event</option>
+              <option>Hosting / moderation</option>
+              <option>Tourism</option>
+              <option>Institutional</option>
+              <option>Content collaboration</option>
+              <option>Put Us On</option>
+              <option>Other</option>
+            </select>
+          </label> : kind === "work" ? <>
+            <label><span>Country / market <b>*</b></span><input name="countryMarket" required maxLength={200} placeholder="Which market or markets?" /></label>
+            <label><span>Your role <b>*</b></span><input name="role" required maxLength={120} placeholder="Your role in the organisation" /></label>
+            <label className="enquiry-full-width"><span>Project / mandate <b>*</b></span><textarea name="projectMandate" required minLength={10} maxLength={2000} rows={4} placeholder="What are you trying to assess, develop or progress?" /></label>
+            <label><span>Timeframe <b>*</b></span><input name="timeframe" required maxLength={120} placeholder="e.g. next quarter" /></label>
+            <label><span>Budget range <small>Optional at this stage</small></span><input name="budgetRange" maxLength={120} placeholder="Range and currency, if known" /></label>
+          </> : <label className="enquiry-full-width">
             <span>What is this about? <b>*</b></span>
-            <select name="enquiryType" defaultValue={kind === "work" ? "Commercial consultancy — Work With FK" : kind === "partner" ? "Partnership" : kind === "ask" ? "Question for The Africa Plug" : kind === "interest" ? "TAP IN opportunity" : "General enquiry"} required>
+            <select name="enquiryType" defaultValue={kind === "ask" ? "Question for The Africa Plug" : kind === "interest" ? "TAP IN opportunity" : "General enquiry"} required>
               <option>General enquiry</option>
-              <option>Commercial consultancy — Work With FK</option>
-              <option>Business or investment opportunity</option>
-              <option>Partnership</option>
               <option>Question for The Africa Plug</option>
               <option>Store or Africa Starter Guide</option>
               <option>TAP IN opportunity</option>
             </select>
-          </label>
+          </label>}
           {opportunityName ? <input type="hidden" name="opportunityName" value={opportunityName} /> : null}
           <label className="enquiry-full-width"><span>Your message <b>*</b></span><textarea name="message" rows={5} required minLength={10} maxLength={5000} placeholder="Tell us a little about your enquiry…" /></label>
         </div>
