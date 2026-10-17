@@ -56,6 +56,9 @@ export function cmsRecordToBlogPost(record: CmsRecord): BlogPost | null {
     tags: stringArray(data.tags),
     takeaway: stringValue(data.takeaway),
     sections: sectionsFromData(data),
+    seoTitle: stringValue(data.seoTitle),
+    seoDescription: stringValue(data.seoDescription),
+    shareImage: stringValue(data.shareImage),
   };
 }
 
@@ -63,12 +66,12 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   const records = await getPublicCmsRecords("articles");
   const cmsPosts = records.map(cmsRecordToBlogPost).filter((post): post is BlogPost => post !== null);
   const cmsSlugs = new Set(cmsPosts.map((post) => post.slug));
-  return [...cmsPosts, ...BLOG_POSTS.filter((post) => !cmsSlugs.has(post.slug))];
+  return cmsPosts;
 }
 
 export async function getPublicBlogPost(slug: string): Promise<BlogPost | null> {
   const cmsPosts = (await getPublicCmsRecords("articles")).map(cmsRecordToBlogPost).filter((post): post is BlogPost => post !== null);
-  return cmsPosts.find((post) => post.slug === slug) ?? BLOG_POSTS.find((post) => post.slug === slug) ?? null;
+  return cmsPosts.find((post) => post.slug === slug) ?? null;
 }
 
 export function cmsRecordToPublicProduct(record: CmsRecord) {
