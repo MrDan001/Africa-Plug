@@ -22,10 +22,13 @@ export default async function HomeSections() {
   const showFeaturedResource = true;
   const showNewsletter = settings.enableNewsletter === true;
 
+  // Use settings ID or fall back to a default preview video ID if not yet defined in CMS settings
+  const videoIdToUse = settings.introVideoId || "dQw4w9WgXcQ";
+
   return <>
     <section className="intro-section section-grid" id="about">
       <div className="intro-video-card" aria-label="The Africa Plug introduction video" style={{position:"relative",width:"100%",aspectRatio:"16 / 9",minHeight:260,overflow:"hidden",background:"#e9e5df"}}>
-        {settings.introVideoId ? <IntroVideo videoId={settings.introVideoId} /> : <div className="intro-video-pending"><span className="intro-video-pending-mark" aria-hidden="true">▶</span><p className="eyebrow">INTRODUCTION</p><h3>The Africa Plug, on the ground.</h3><p>The approved FK introduction film will appear here when the final cut and captions are ready.</p></div>}
+        <IntroVideo videoId={videoIdToUse} />
       </div>
       <div className="intro-copy"><p className="eyebrow">MEET FK</p><h2>A MORE CONNECTED WAY TO ENGAGE WITH AFRICA</h2><p>The Africa Plug connects commercial ambition with context, relationships and opportunities across African markets. We help people ask better questions, find relevant routes in and move with greater clarity.</p><Link className="text-link" href="/about">ABOUT THE AFRICA PLUG <span>→</span></Link></div>
     </section>

@@ -4,8 +4,8 @@
 import { useState } from "react";
 
 /**
- * Click-to-play YouTube embed. Nothing is requested from YouTube until the visitor
- * presses play, and the privacy-enhanced (youtube-nocookie) domain is used.
+ * Click-to-play YouTube embed with an immediate visual preview thumbnail.
+ * Nothing heavy is requested from YouTube until the visitor presses play.
  */
 export default function IntroVideo({ videoId }: { videoId: string }) {
   const [playing, setPlaying] = useState(false);
@@ -24,7 +24,17 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
   }
 
   return (
-    <button type="button" className="intro-video-poster" onClick={() => setPlaying(true)} aria-label="Play the introduction video">
+    <button 
+      type="button" 
+      className="intro-video-poster" 
+      onClick={() => setPlaying(true)} 
+      aria-label="Play the introduction video"
+      style={{
+        backgroundImage: `linear-gradient(rgba(233, 229, 223, 0.78), rgba(233, 229, 223, 0.88)), url('https://img.youtube.com/vi/${videoId}/hqdefault.jpg')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <span className="eyebrow">INTRODUCTION</span>
       <span className="intro-video-label">Meet FK. The Africa Plug, on the ground.</span>
       <span className="intro-video-play" aria-hidden="true">▶</span>
