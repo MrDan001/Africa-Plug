@@ -19,7 +19,8 @@ export async function generateMetadata({ params }: BlogArticlePageProps): Promis
     description: post.seoDescription || post.excerpt,
     authors: [{ name: post.author }],
     keywords: post.tags,
-    openGraph: { type: "article", title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, images: (post.shareImage || post.image) ? [post.shareImage || post.image] : [] },
+    alternates: { canonical: `/blog/${encodeURIComponent(post.slug)}` },
+    openGraph: { type: "article", url: `${(process.env.NEXT_PUBLIC_SITE_URL || "https://africa-plug.vercel.app").replace(/\\/$/, "")}/blog/${encodeURIComponent(post.slug)}`, title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, images: (post.shareImage || post.image) ? [post.shareImage || post.image] : [] },
   };
 }
 
@@ -33,13 +34,13 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
       <div className="blog-article-shell">
         <Link href="/blog" className="blog-article-back"><span aria-hidden="true">←</span> THE TAP JOURNAL</Link>
         <header className="blog-article-heading">
-          <p className="blog-page-eyebrow">{post.category}</p>
+          <Link className="blog-page-eyebrow blog-article-category-link" href={`/blog?category=${encodeURIComponent(post.category)}`}>{post.category}</Link>
           <h1>{post.title}</h1>
           <p>{post.excerpt}</p>
           <div className="blog-article-byline">
             <span>{post.author}</span><span>{post.publishedAt}</span><span>{post.readingTime}</span>
           </div>
-          {post.tags.length ? <div className="blog-article-tags" aria-label="Article topics">{post.tags.map((tag) => <span key={tag}>{tag}</span>)}</div> : null}
+          {post.tags.length ? <div className="blog-article-tags" aria-label="Article topics">{post.tags.map((tag) => <Link href={`/blog?tag=${encodeURIComponent(tag)}`} key={tag}>{tag}</Link>)}</div> : null}
         </header>
         {post.image ? <div className="blog-article-cover" role="img" aria-label={post.imageAlt} style={{ backgroundImage: `url("${post.image}")` }} /> : null}
         <div className="blog-article-content">
