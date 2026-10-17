@@ -42,9 +42,18 @@ export default function AdminPage() {
 
   useEffect(() => {
     document.title = "Homepage Manager | Africa Plug";
-    setAuthenticated(true);
-    void refreshImages();
-    setChecking(false);
+    let active = true;
+    fetch("/api/admin/session", { cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json() as { authenticated?: boolean };
+        if (!active) return;
+        const signedIn = response.ok && data.authenticated === true;
+        setAuthenticated(signedIn);
+        if (signedIn) void refreshImages();
+      })
+      .catch(() => { if (active) setAuthenticated(false); })
+      .finally(() => { if (active) setChecking(false); });
+    return () => { active = false; };
   }, []);
 
   async function login(event: FormEvent<HTMLFormElement>) {
