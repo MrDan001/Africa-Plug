@@ -2201,6 +2201,7 @@ html, body { background: #f7f5f1; color: #292a2c; }
   .tap-in-opportunity-image { margin: -20px -20px 18px; width: calc(100% + 40px); max-width: calc(100% + 40px); }
 }
 @media (max-width: 520px) {
-  .header-cta { display: none; }
   .tap-in-filter-panel { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 760px) { .hero-photo { background-image: var(--hero-mobile-image) !important; } }
