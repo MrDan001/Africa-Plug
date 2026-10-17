@@ -31,8 +31,15 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     document.title = "Africa Plug Admin — Control Room";
-    setAuthenticated(true);
-    setReady(true);
+    let active = true;
+    fetch("/api/admin/session", { cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json() as { authenticated?: boolean };
+        if (active) setAuthenticated(response.ok && data.authenticated === true);
+      })
+      .catch(() => { if (active) setAuthenticated(false); })
+      .finally(() => { if (active) setReady(true); });
+    return () => { active = false; };
   }, []);
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
@@ -45,8 +52,8 @@ export default function AdminDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       });
-      const data = await response.json() as { error?: string };
-      if (!response.ok) { setError(data.error || "Sign-in failed."); return; }
+      const data = await response.json() as { error?: string; ok?: boolean };
+      if (!response.ok || !data.ok) { setError(data.error || "Sign-in failed."); return; }
       setPassword("");
       setAuthenticated(true);
     } catch { setError("Could not connect to the admin service."); }
@@ -80,7 +87,7 @@ export default function AdminDashboard() {
     <main className="ap-admin">
       <header className="ap-admin-topbar">
         <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
-        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><a href="/">View website ↗</a></div>
+        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><a href="/">View website ↗</a><button type="button" onClick={() => void signOut()} className="ap-admin-signout">Sign out</button></div>
       </header>
       <section className="ap-admin-hero">
         <p className="ap-admin-eyebrow">THE AFRICA PLUG · CONTROL ROOM</p>
