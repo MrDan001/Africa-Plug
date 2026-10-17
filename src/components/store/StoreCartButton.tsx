@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
-import {changeStoreCartQuantity,formatGBP,readStoreCart,removeStoreCartItem,STORE_CART_EVENT,type StoreCartItem} from "./cart";
+import {changeStoreCartQuantity,formatMoney,readStoreCart,removeStoreCartItem,STORE_CART_EVENT,type StoreCartItem} from "./cart";
 function BasketIcon(){return <svg viewBox="0 0 28 28" width="27" height="27" fill="none" aria-hidden="true"><path d="M4 10h20l-2.1 11.2a2 2 0 0 1-2 1.6H8.1a2 2 0 0 1-2-1.6L4 10Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="m9 10 5-6 5 6M10 14v5M14 14v5M18 14v5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="8.5" cy="25" r="1.2" fill="currentColor"/><circle cx="19.5" cy="25" r="1.2" fill="currentColor"/></svg>}
 export default function StoreCartButton(){
  const [items,setItems]=useState<StoreCartItem[]>([]);const [open,setOpen]=useState(false);const [checkingOut,setCheckingOut]=useState(false);const [checkoutError,setCheckoutError]=useState("");
