@@ -15,13 +15,14 @@ type Variant = "desktop" | "mobile";
 type Notice = { tone: "success" | "error"; text: string };
 
 function blankImages() { return Array.from({ length: 6 }, () => null as string | null); }
+function blankFiles() { return Array.from({ length: 6 }, () => null as File | null); }
 
 export default function AdminPage() {
   const [checking, setChecking] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [images, setImages] = useState<(string | null)[]>(blankImages());
-  const [files, setFiles] = useState<(File | null)[]>(blankImages());
+  const [files, setFiles] = useState<(File | null)[]>(blankFiles());
   const [previews, setPreviews] = useState<(string | null)[]>(blankImages());
   const [busySlot, setBusySlot] = useState<number | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
