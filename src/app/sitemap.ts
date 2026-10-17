@@ -3,6 +3,8 @@ import { getBlogPosts, cmsRecordToPublicProduct } from "@/lib/public-cms-content
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
 import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
 
+export const dynamic = "force-dynamic";
+
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app").replace(/\/$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
