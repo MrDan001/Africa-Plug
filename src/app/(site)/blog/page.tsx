@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   description: "Original practical perspectives on business, trade, investment, culture, technology and opportunities across Africa.",
 };
 
-export default function BlogPage() {
+type Props = { searchParams: Promise<{ tag?: string; category?: string }> };
+
+export default async function BlogPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const filterTag = (params.tag || "").slice(0, 100);
+  const filterCategory = (params.category || "").slice(0, 100);
   return (
     <div className="blog-page">
       <section className="blog-page-hero">
@@ -26,7 +31,7 @@ export default function BlogPage() {
           </div>
         </div>
       </section>
-      <FeaturedStories variant="page" />
+      <FeaturedStories variant="page" filterTag={filterTag} filterCategory={filterCategory} />
       <section className="blog-page-invitation">
         <div>
           <p className="blog-page-eyebrow">KEEP THE CONVERSATION GOING</p>
