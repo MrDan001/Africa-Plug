@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getPublicCmsRecords } from "@/lib/cms-bridge";
+import { cmsBridge, getPublicCmsRecords } from "@/lib/cms-bridge";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import { getPublicSiteUrl, getStripe } from "@/lib/payments/stripe";
 
@@ -21,15 +21,23 @@ export async function POST(request: Request) {
 
   try {
     const records = await getPublicCmsRecords("products");
-    const products = records.map(cmsRecordToPublicProduct).filter((product): product is NonNullable<ReturnType<typeof cmsRecordToPublicProduct>> => product !== null);
-    const items = parsed.data.items.map((item) => {
-      const product = products.find((candidate) => candidate.slug === item.slug);
+    const items = await Promise.all(parsed.data.items.map(async (item) => {
+      const record = records.find((candidate) => candidate.slug === item.slug);
+      const product = record ? cmsRecordToPublicProduct(record) : null;
       if (!product) throw new Error("One of the products is no longer available. Please refresh the Store.");
-      if (product.price <= 0) throw new Error("Free or unpublished-price products cannot be purchased through checkout.");
+      if (product.price <= 0) throw new Error("This product has no confirmed purchase price yet.");
       if (!Number.isSafeInteger(Math.round(product.price * 100))) throw new Error("A product price is invalid.");
       if (!/^[A-Z]{3}$/.test(product.currency)) throw new Error("A product currency is invalid.");
+      // Verify a private delivery file exists before accepting payment. The short-lived
+      // URL is discarded here; customers receive a fresh, session-verified link after payment.
+      const delivery = await cmsBridge<{ url?: string }>({
+        action: "store.createSignedDownload",
+        module: "products",
+        slug: product.slug,
+      });
+      if (!delivery.url) throw new Error("This product is not ready for secure delivery yet.");
       return { product, quantity: item.quantity };
-    });
+    }));
     const currencies = new Set(items.map(({ product }) => product.currency.toLowerCase()));
     if (currencies.size !== 1) return NextResponse.json({ error: "Please check out products in the same currency together." }, { status: 400 });
 
@@ -62,7 +70,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Checkout is temporarily unavailable.";
-    const status = /no longer available|Free or unpublished|currency is invalid|price is invalid/i.test(message) ? 400 : /not configured/i.test(message) ? 503 : 500;
+    const status = /no longer available|no confirmed purchase price|currency is invalid|price is invalid|protected download|secure delivery|available for delivery/i.test(message) ? 400 : /not configured/i.test(message) ? 503 : 500;
     if (status >= 500) console.error("Store checkout could not be created:", message);
     return NextResponse.json({ error: status === 500 ? "We couldn't start checkout right now. Please try again shortly." : message }, { status });
   }
