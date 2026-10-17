@@ -1,5 +1,7 @@
+// FILE PATH: src/app/(admin)/admin/page.tsx
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 
 const areas = [
@@ -70,7 +72,7 @@ export default function AdminDashboard() {
   if (!authenticated) return (
     <main className="ap-admin ap-admin-login">
       <div className="ap-admin-login-card">
-        <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
+        <Link className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></Link>
         <p className="ap-admin-eyebrow">PRIVATE WORKSPACE</p>
         <h1>Welcome back.</h1>
         <p>Sign in to manage the website, opportunities and business enquiries.</p>
@@ -94,17 +96,17 @@ export default function AdminDashboard() {
   return (
     <main className="ap-admin">
       <header className="ap-admin-topbar">
-        <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
-        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><a href="/">View website ↗</a><button type="button" onClick={() => void signOut()} className="ap-admin-signout">Sign out</button></div>
+        <Link className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></Link>
+        <div className="ap-admin-top-actions"><span><i /> ADMIN WORKSPACE</span><Link href="/">View website ↗</Link><button type="button" onClick={() => void signOut()} className="ap-admin-signout">Sign out</button></div>
       </header>
       <section className="ap-admin-hero">
         <p className="ap-admin-eyebrow">THE AFRICA PLUG · CONTROL ROOM</p>
         <h1>Everything in<br/><em>one place.</em></h1>
         <p className="ap-admin-lede">Manage the parts of the business that change. Publish only real content, keep enquiries traceable and control the customer journey from one workspace.</p>
         <div className="ap-admin-shortcuts">
-          <a href="/admin/homepage">Edit homepage <span>↗</span></a>
-          <a href="/admin/tap-in">Manage TAP IN <span>↗</span></a>
-          <a href="/admin/review-required">Review required <span>↗</span></a>
+          <Link href="/admin/homepage">Edit homepage <span>↗</span></Link>
+          <Link href="/admin/tap-in">Manage TAP IN <span>↗</span></Link>
+          <Link href="/admin/review-required">Review required <span>↗</span></Link>
         </div>
       </section>
       {areas.map((area) => (
@@ -121,7 +123,7 @@ export default function AdminDashboard() {
           </div>
         </section>
       ))}
-      <footer className="ap-admin-footer"><span>THE AFRICA PLUG · ADMIN</span><a href="/">View public website ↗</a><span>Light, clear, accountable.</span></footer>
+      <footer className="ap-admin-footer"><span>THE AFRICA PLUG · ADMIN</span><Link href="/">View public website ↗</Link><span>Light, clear, accountable.</span></footer>
     </main>
   );
 }

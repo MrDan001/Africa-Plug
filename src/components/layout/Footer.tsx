@@ -1,3 +1,5 @@
+// FILE PATH: src/components/layout/Footer.tsx
+import Link from "next/link";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
 
 const FOOTER_LINKS = [
@@ -15,7 +17,7 @@ const FOOTER_LEGAL = [
   { label: "Refunds", href: "/refunds" },
 ];
 function FooterBrand() {
-  return <a href="/#top" aria-label="The Africa Plug — go to homepage top" className="footer-logo-lockup"><img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="footer-logo-mark"/><span className="footer-wordmark" aria-hidden="true"><span className="footer-wordmark-the">THE</span><span className="footer-wordmark-name"><span>AFRICA</span><b>PLUG</b></span></span></a>;
+  return <Link href="/#top" aria-label="The Africa Plug — go to homepage top" className="footer-logo-lockup"><img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="footer-logo-mark"/><span className="footer-wordmark" aria-hidden="true"><span className="footer-wordmark-the">THE</span><span className="footer-wordmark-name"><span>AFRICA</span><b>PLUG</b></span></span></Link>;
 }
 export default async function Footer() {
   const settings = await getPublicSiteSettings();
@@ -32,7 +34,7 @@ export default async function Footer() {
     <div className="tap-footer-grid">
       <div className="tap-footer-brand"><FooterBrand/><p className="tap-footer-tagline">Your connection to Africa.</p><a className="tap-footer-email" href={`mailto:${contactEmail}`}>{contactEmail}</a></div>
       <nav className="tap-footer-column" aria-label="Explore links"><h2>EXPLORE</h2>{exploreLinks.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}</nav>
-      <div className="tap-footer-contact"><p className="tap-footer-kicker">THE AFRICA PLUG</p><p className="tap-footer-description">Investment • Business • Entertainment</p><a className="tap-footer-primary-link" href="/contact">Start a conversation <span aria-hidden="true" className="footer-arrow">→</span></a><p className="tap-footer-contact-note">For general, business and partnership enquiries, write to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>{socialLinks.length ? <nav aria-label="Social links" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 16 }}>{socialLinks.map((item) => <a key={item.label} href={item.href} target="_blank" rel="noreferrer">{item.label} ↗</a>)}</nav> : null}</div>
+      <div className="tap-footer-contact"><p className="tap-footer-kicker">THE AFRICA PLUG</p><p className="tap-footer-description">Investment • Business • Entertainment</p><Link className="tap-footer-primary-link" href="/contact">Start a conversation <span aria-hidden="true" className="footer-arrow">→</span></Link><p className="tap-footer-contact-note">For general, business and partnership enquiries, write to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>{socialLinks.length ? <nav aria-label="Social links" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 16 }}>{socialLinks.map((item) => <a key={item.label} href={item.href} target="_blank" rel="noreferrer">{item.label} ↗</a>)}</nav> : null}</div>
     </div>
     <div className="tap-footer-bottom"><p className="tap-footer-copyright">© {new Date().getFullYear()} The Africa Plug. All rights reserved.</p><p className="tap-footer-motto">INVESTMENT • BUSINESS • ENTERTAINMENT</p><nav aria-label="Legal information">{FOOTER_LEGAL.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}</nav></div>
   </footer>;

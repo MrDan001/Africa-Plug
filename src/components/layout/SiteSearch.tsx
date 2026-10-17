@@ -1,3 +1,4 @@
+// FILE PATH: src/components/layout/SiteSearch.tsx
 "use client";
 
 import Link from "next/link";
@@ -16,8 +17,8 @@ const SHORTCUTS = [
 export default function SiteSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [rawResults, setResults] = useState<SearchItem[]>([]);
+  const [loadingState, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function SiteSearch() {
 
   useEffect(() => {
     const term = query.trim();
-    if (!term) { setResults([]); setLoading(false); return; }
+    if (!term) return;
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       setLoading(true);
@@ -50,6 +51,10 @@ export default function SiteSearch() {
     }, 180);
     return () => { window.clearTimeout(timer); controller.abort(); };
   }, [query]);
+
+  const hasQuery = query.trim().length > 0;
+  const results = hasQuery ? rawResults : [];
+  const loading = hasQuery && loadingState;
 
   return (
     <div className="site-search">

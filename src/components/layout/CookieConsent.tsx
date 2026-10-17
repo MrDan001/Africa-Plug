@@ -1,31 +1,42 @@
+// FILE PATH: src/components/layout/CookieConsent.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 type Consent = "analytics" | "necessary";
 
 const CONSENT_KEY = "tap-consent-v1";
 
-export default function CookieConsent() {
-  const [visible, setVisible] = useState(false);
+function subscribe(onChange: () => void) {
+  window.addEventListener("tap:consent-changed", onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener("tap:consent-changed", onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
 
-  useEffect(() => {
-    if (window.location.pathname.startsWith("/admin")) return;
-    try {
-      const saved = localStorage.getItem(CONSENT_KEY);
-      if (saved !== "analytics" && saved !== "necessary") setVisible(true);
-    } catch {
-      setVisible(true);
-    }
-  }, []);
+function getSnapshot(): "needed" | "saved" | "hidden" {
+  if (window.location.pathname.startsWith("/admin")) return "hidden";
+  try {
+    const saved = localStorage.getItem(CONSENT_KEY);
+    return saved === "analytics" || saved === "necessary" ? "saved" : "needed";
+  } catch {
+    return "needed";
+  }
+}
+
+export default function CookieConsent() {
+  const state = useSyncExternalStore(subscribe, getSnapshot, () => "hidden" as const);
+  const [dismissed, setDismissed] = useState(false);
 
   function save(value: Consent) {
     try { localStorage.setItem(CONSENT_KEY, value); } catch { /* Continue with the current page if storage is unavailable. */ }
-    setVisible(false);
+    setDismissed(true);
     window.dispatchEvent(new Event("tap:consent-changed"));
   }
 
-  if (!visible) return null;
+  if (state !== "needed" || dismissed) return null;
 
   return (
     <aside className="tap-cookie-consent" role="dialog" aria-modal="false" aria-labelledby="tap-cookie-heading">

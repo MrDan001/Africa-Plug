@@ -1,3 +1,4 @@
+// FILE PATH: src/app/(site)/tap-in/page.tsx
 import ContentPage from "@/components/layout/ContentPage";
 import TapInListings from "@/components/tap-in/TapInListings";
 import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
@@ -21,7 +22,7 @@ export default async function TapInPage() {
       <div className="standard-section-heading">
         <p className="standard-eyebrow">CURRENT OPPORTUNITIES</p>
         <h2>Where business meets possibility.</h2>
-        <p>Only approved live opportunities appear here. Public listing cards do not display posting dates or internal status labels.</p>
+        <p>Each opportunity is shared only once its details have been approved for publication.</p>
       </div>
       <TapInListings opportunities={opportunities} filterThreshold={threshold} />
       <div className="standard-note">

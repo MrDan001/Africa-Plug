@@ -1,6 +1,9 @@
+// FILE PATH: src/app/(admin)/admin/homepage/page.tsx
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
+import { parseYouTubeId } from "@/lib/youtube";
 
 const SLOTS = [
   { slot: 1, variant: "desktop", index: 0, title: "Slide 1 — Desktop / Work With FK", note: "Landscape crop recommended: 2400 × 1200 px or larger." },
@@ -27,6 +30,10 @@ export default function AdminPage() {
   const [busySlot, setBusySlot] = useState<number | null>(null);
   const [loginBusy, setLoginBusy] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [savedVideoUrl, setSavedVideoUrl] = useState("");
+  const [videoBusy, setVideoBusy] = useState(false);
+  const [settingsRecord, setSettingsRecord] = useState<{ id?: string; title?: string; slug?: string; status?: string; data?: Record<string, unknown> } | null>(null);
 
   async function refreshImages() {
     try {
@@ -40,6 +47,54 @@ export default function AdminPage() {
     }
   }
 
+  async function loadVideo() {
+    try {
+      const response = await fetch("/api/admin/cms/site-settings", { cache: "no-store" });
+      const data = await response.json() as { records?: { id?: string; title?: string; slug?: string; status?: string; data?: Record<string, unknown> }[] };
+      const record = data.records?.find((item) => item.slug === "site-settings") ?? data.records?.[0] ?? null;
+      setSettingsRecord(record);
+      const current = typeof record?.data?.introVideoUrl === "string" ? record.data.introVideoUrl : "";
+      setVideoUrl(current);
+      setSavedVideoUrl(current);
+    } catch {
+      setNotice({ tone: "error", text: "Could not load the current introduction video link." });
+    }
+  }
+
+  async function saveVideo(remove = false) {
+    const next = remove ? "" : videoUrl.trim();
+    if (!remove && !parseYouTubeId(next)) {
+      setNotice({ tone: "error", text: "That does not look like a YouTube link. Paste a link such as https://www.youtube.com/watch?v=… or https://youtu.be/…" });
+      return;
+    }
+    setVideoBusy(true);
+    setNotice(null);
+    try {
+      const record = {
+        title: settingsRecord?.title || "Site settings",
+        slug: "site-settings",
+        status: settingsRecord?.status || "active",
+        data: { ...(settingsRecord?.data ?? {}), introVideoUrl: next },
+      };
+      const response = await fetch("/api/admin/cms/site-settings", {
+        method: settingsRecord?.id ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settingsRecord?.id ? { id: settingsRecord.id, record } : { record }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({})) as { error?: string };
+        throw new Error(body.error || "save failed");
+      }
+      await loadVideo();
+      setNotice({ tone: "success", text: remove ? "Introduction video removed. The homepage shows the placeholder again." : "Introduction video saved. The homepage will play it on click." });
+    } catch (error) {
+      const reason = error instanceof Error && error.message !== "save failed" ? ` Reason: ${error.message}` : "";
+      setNotice({ tone: "error", text: `Could not save the video link.${reason}` });
+    } finally {
+      setVideoBusy(false);
+    }
+  }
+
   useEffect(() => {
     document.title = "Homepage Manager | Africa Plug";
     let active = true;
@@ -49,7 +104,7 @@ export default function AdminPage() {
         if (!active) return;
         const signedIn = response.ok && data.authenticated === true;
         setAuthenticated(signedIn);
-        if (signedIn) void refreshImages();
+        if (signedIn) { void refreshImages(); void loadVideo(); }
       })
       .catch(() => { if (active) setAuthenticated(false); })
       .finally(() => { if (active) setChecking(false); });
@@ -75,6 +130,7 @@ export default function AdminPage() {
       setAuthenticated(true);
       setNotice({ tone: "success", text: "You are signed in. Upload a desktop and a mobile crop for each slide." });
       await refreshImages();
+      await loadVideo();
     } catch {
       setNotice({ tone: "error", text: "Could not connect to the admin service. Please try again." });
     } finally {
@@ -128,15 +184,15 @@ export default function AdminPage() {
     <main className="tap-admin-page">
       <div className="tap-admin-shell">
         <header className="tap-admin-header">
-          <a className="tap-admin-brand" href="/" aria-label="Africa Plug homepage"><span className="tap-admin-brand-mark">AP</span><span><small>THE</small><b>AFRICA PLUG</b></span></a>
-          <a className="tap-admin-back" href="/">Back to website ↗</a>
+          <Link className="tap-admin-brand" href="/" aria-label="Africa Plug homepage"><span className="tap-admin-brand-mark">AP</span><span><small>THE</small><b>AFRICA PLUG</b></span></Link>
+          <Link className="tap-admin-back" href="/">Back to website ↗</Link>
         </header>
 
         <section className="tap-admin-intro">
           <p className="tap-admin-eyebrow">HOMEPAGE CONTROL</p>
           <h1>Hero image manager.</h1>
           <p>Replace the desktop and mobile photo for each slide without editing code. Hero copy remains live website text; no words are baked into these images.</p>
-          <p><a className="tap-admin-primary" href="/admin/tap-in">Manage TAP IN opportunities →</a></p>
+          <p><Link className="tap-admin-primary" href="/admin/tap-in">Manage TAP IN opportunities →</Link></p>
         </section>
 
         {notice ? <p className={`tap-admin-notice tap-admin-notice--${notice.tone}`} role="status">{notice.text}</p> : null}
@@ -154,6 +210,20 @@ export default function AdminPage() {
           </section>
         ) : (
           <>
+            <section className="tap-admin-card" style={{ marginBottom: 24 }}>
+              <div className="tap-admin-card-heading"><span>▶</span><h2>Introduction video (homepage)</h2></div>
+              <p className="tap-admin-card-note">Paste the YouTube link for the FK introduction film. Visitors see a play button and nothing loads from YouTube until they press it. Add captions in YouTube Studio before publishing.</p>
+              {parseYouTubeId(savedVideoUrl) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`https://img.youtube.com/vi/${parseYouTubeId(savedVideoUrl)}/hqdefault.jpg`} alt="Current introduction video thumbnail" style={{ width: "100%", maxWidth: 360, borderRadius: 6, marginBottom: 12 }} />
+              ) : <p className="tap-admin-filename">No video set. The homepage shows the placeholder.</p>}
+              <label className="tap-admin-file-label" htmlFor="intro-video-url">YouTube link</label>
+              <input id="intro-video-url" type="url" inputMode="url" placeholder="https://www.youtube.com/watch?v=…" value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} style={{ width: "100%", padding: 10, marginBottom: 12 }} />
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button className="tap-admin-primary" type="button" disabled={videoBusy || !videoUrl.trim() || videoUrl.trim() === savedVideoUrl} onClick={() => void saveVideo()}>{videoBusy ? "Saving…" : "Save video link"}</button>
+                {savedVideoUrl ? <button className="tap-admin-secondary" type="button" disabled={videoBusy} onClick={() => void saveVideo(true)}>Remove video</button> : null}
+              </div>
+            </section>
             <div className="tap-admin-toolbar">
               <div><strong>Three slides · six image crops</strong><span>JPG, PNG, WebP or AVIF · Maximum 10 MB per image</span></div>
               <button className="tap-admin-secondary" type="button" onClick={() => void refreshImages()}>Refresh images</button>

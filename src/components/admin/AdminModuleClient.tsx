@@ -1,5 +1,7 @@
+// FILE PATH: src/components/admin/AdminModuleClient.tsx
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
 type ModuleKey = "blog" | "store" | "work-with-fk" | "review-required" | "enquiries" | "subscribers" | "analytics" | "media" | "settings" | "site-settings";
@@ -195,6 +197,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     } finally { setLoading(false); }
   }, [moduleKey, search, statusFilter]);
 
+  // Fetch-on-mount: loadRecords updates loading state before the request starts.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { document.title = `${meta.title} | Africa Plug Admin`; void loadRecords(); }, [loadRecords, meta.title]);
 
   const stats = useMemo(() => ({
@@ -333,15 +337,15 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   return (
     <main className="ap-admin" style={{ minHeight: "100vh", paddingBottom: 48 }}>
       <header className="ap-admin-topbar">
-        <a className="ap-admin-brand" href="/admin"><span>AP</span><b>THE AFRICA PLUG</b></a>
-        <div className="ap-admin-top-actions"><a href="/">View website ↗</a><a href="/admin">Control room ↗</a></div>
+        <Link className="ap-admin-brand" href="/admin"><span>AP</span><b>THE AFRICA PLUG</b></Link>
+        <div className="ap-admin-top-actions"><Link href="/">View website ↗</Link><Link href="/admin">Control room ↗</Link></div>
       </header>
 
       <section className="ap-admin-hero" style={{ paddingBottom: 30 }}>
         <p className="ap-admin-eyebrow">THE AFRICA PLUG · CMS</p>
         <h1>{meta.title}<br /><em>control.</em></h1>
         <p className="ap-admin-lede">{meta.description}</p>
-        <div className="ap-admin-shortcuts"><a href="/admin">← All modules</a>{moduleKey === "review-required" ? <a href="/admin/work-with-fk">All applications ↗</a> : null}{moduleKey === "blog" ? <a href="/blog" target="_blank" rel="noreferrer">View journal ↗</a> : null}{moduleKey === "store" ? <a href="/store" target="_blank" rel="noreferrer">View store ↗</a> : null}</div>
+        <div className="ap-admin-shortcuts"><Link href="/admin">← All modules</Link>{moduleKey === "review-required" ? <Link href="/admin/work-with-fk">All applications ↗</Link> : null}{moduleKey === "blog" ? <Link href="/blog" target="_blank" rel="noreferrer">View journal ↗</Link> : null}{moduleKey === "store" ? <Link href="/store" target="_blank" rel="noreferrer">View store ↗</Link> : null}</div>
       </section>
 
       <section style={{ padding: "0 clamp(16px, 4vw, 48px) 26px" }}>
@@ -432,7 +436,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         </form>
       </div> : null}
 
-      <footer className="ap-admin-footer"><span>THE AFRICA PLUG · ADMIN</span><a href="/admin">Back to control room ↗</a><span>Save, review, publish.</span></footer>
+      <footer className="ap-admin-footer"><span>THE AFRICA PLUG · ADMIN</span><Link href="/admin">Back to control room ↗</Link><span>Save, review, publish.</span></footer>
     </main>
   );
 }

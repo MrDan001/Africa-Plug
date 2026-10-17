@@ -1,5 +1,7 @@
+// FILE PATH: src/components/admin/TapInManager.tsx
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import styles from "./TapInManager.v2.module.css";
 
@@ -168,7 +170,7 @@ export default function TapInManager() {
       }
       setNotice({
         tone: "success",
-        text: editingId ? "Opportunity updated." : "Opportunity created.",
+        text: editingId ? "✨ Opportunity updated successfully." : "🚀 New opportunity created successfully.",
       });
       setEditingId(null);
       setDraft(BLANK);
@@ -196,7 +198,7 @@ export default function TapInManager() {
         return;
       }
       const completed = status === "live" ? "published" : status === "closed" ? "closed" : status === "archived" ? "archived" : "returned to draft";
-      setNotice({ tone: "success", text: `Listing ${completed}.` });
+      setNotice({ tone: "success", text: `Listing successfully ${completed}.` });
       await loadItems();
     } catch {
       setNotice({ tone: "error", text: `Could not ${actionLabel} the listing.` });
@@ -213,100 +215,216 @@ export default function TapInManager() {
   return (
     <main className={`${styles.page} tap-in-admin`}>
       <header className={`${styles.header} tap-in-admin-header`}>
-        <a className={styles.brand} href="/">THE AFRICA PLUG <span>/ TAP IN</span></a>
+        <div className={styles.brandWrapper}>
+          <Link className={styles.brand} href="/">THE AFRICA PLUG</Link>
+          <span className={styles.brandSub}>/ TAP IN MANAGER</span>
+        </div>
         <div className={styles.headerActions}>
+<<<<<<< HEAD
           <a className={styles.back} href="/admin" aria-label="Back to the main admin home">← Admin home</a>
           <a className={styles.back} href="/tap-in" target="_blank" rel="noreferrer">View public page ↗</a>
+=======
+          <Link className={styles.backButton} href="/tap-in" target="_blank" rel="noreferrer">
+            View public page <span>↗</span>
+          </Link>
+>>>>>>> b79d4d0 (new update)
         </div>
       </header>
 
       <section className={`${styles.intro} tap-in-admin-intro`}>
-        <p className={styles.kicker}>OPPORTUNITY CONTROL</p>
-        <h1>Manage TAP IN.</h1>
-        <p>Create and manage opportunity records. Only listings marked Live appear on the public TAP IN page. Draft / Live / Closed / Archived statuses are internal and never shown as public status labels.</p>
+        <div className={styles.introContent}>
+          <span className={styles.kicker}>ADMIN CONTROL ROOM</span>
+          <h1>Manage TAP IN Opportunities.</h1>
+          <p>Create, edit, and control opportunity records. Only listings marked as <strong>Live</strong> appear on the public TAP IN directory.</p>
+        </div>
         <div className={`${styles.summary} tap-in-admin-summary`}>
-          <div><strong>{items.length}</strong><span>Total listings</span></div>
-          <div><strong>{items.filter((item) => item.status === "live").length}</strong><span>Live</span></div>
-          <div><strong>{items.filter((item) => item.status === "draft").length}</strong><span>Drafts</span></div>
-          <div><strong>{items.filter((item) => item.status === "closed").length}</strong><span>Closed</span></div>
+          <div className={styles.summaryCard}><strong>{items.length}</strong><span>Total Listings</span></div>
+          <div className={`${styles.summaryCard} ${styles.sumLive}`}><strong>{items.filter((item) => item.status === "live").length}</strong><span>Live</span></div>
+          <div className={styles.summaryCard}><strong>{items.filter((item) => item.status === "draft").length}</strong><span>Drafts</span></div>
+          <div className={styles.summaryCard}><strong>{items.filter((item) => item.status === "closed").length}</strong><span>Closed</span></div>
         </div>
       </section>
 
-      {notice ? <p className={`${styles.notice} ${styles[notice.tone]}`} role="status">{notice.text}</p> : null}
+      {notice ? (
+        <div className={`${styles.notice} ${styles[notice.tone]}`} role="status">
+          <span>{notice.tone === "success" ? "✓" : "⚠"}</span> {notice.text}
+        </div>
+      ) : null}
 
       <section className={`${styles.panel} tap-in-admin-panel`} aria-labelledby="tap-in-listings-heading">
         <div className={`${styles.panelHeading} tap-in-admin-panel-heading`}>
-          <div><h2 id="tap-in-listings-heading">Opportunity listings</h2><p>Manage all statuses. Public posting dates are not displayed.</p></div>
-          <button className={styles.primary} type="button" onClick={startNew}>+ Add listing</button>
+          <div>
+            <h2 id="tap-in-listings-heading">Opportunity Directory</h2>
+            <p>Filter, search, and manage statuses across all listings.</p>
+          </div>
+          <button className={styles.primaryBtn} type="button" onClick={startNew}>
+            + Add New Opportunity
+          </button>
         </div>
+
         <div className={`${styles.filters} tap-in-admin-filters`}>
-          <label className={`${styles.searchLabel} tap-in-admin-search-label`}>Search listings<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Title, location, sector…" /></label>
-          <label>Status filter<select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as Status | "all")}><option value="all">All statuses</option><option value="draft">Draft</option><option value="live">Live</option><option value="closed">Closed</option><option value="archived">Archived</option></select></label>
-          <button className={styles.secondary} type="button" onClick={() => void loadItems()} disabled={loading}>{loading ? "Refreshing…" : "Refresh"}</button>
+          <div className={styles.searchBox}>
+            <label className={styles.srOnly}>Search listings</label>
+            <input 
+              value={search} 
+              onChange={(event) => setSearch(event.target.value)} 
+              placeholder="🔍 Search by title, country, sector..." 
+            />
+          </div>
+          <div className={styles.filterGroup}>
+            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as Status | "all")}>
+              <option value="all">All Statuses</option>
+              <option value="draft">Drafts</option>
+              <option value="live">Live</option>
+              <option value="closed">Closed</option>
+              <option value="archived">Archived</option>
+            </select>
+            <button className={styles.secondaryBtn} type="button" onClick={() => void loadItems()} disabled={loading}>
+              {loading ? "Refreshing..." : "↻ Refresh"}
+            </button>
+          </div>
         </div>
+
         {filteredItems.length ? (
           <div className={`${styles.list} tap-in-admin-list`}>
             {filteredItems.map((item) => (
               <article className={`${styles.listItem} tap-in-admin-list-item`} key={item.id}>
                 <div className={`${styles.itemCopy} tap-in-admin-item-copy`}>
-                  <span className={`${styles.badge} ${styles[`status_${item.status}`]}`}>{STATUS_LABEL[item.status]}</span>
+                  <div className={styles.itemMetaRow}>
+                    <span className={`${styles.badge} ${styles[`status_${item.status}`]}`}>
+                      {STATUS_LABEL[item.status]}
+                    </span>
+                    <span className={styles.itemSector}>{item.sector}</span>
+                  </div>
                   <h3>{item.title}</h3>
-                  <p>{[item.country, item.region, item.sector, item.opportunity_type].filter(Boolean).join(" · ")}</p>
-                  <small>URL: /tap-in/{item.slug}</small>
+                  <p>{[item.country, item.region, item.opportunity_type].filter(Boolean).join(" · ")}</p>
+                  <small className={styles.itemSlug}>Slug: /tap-in/{item.slug}</small>
                 </div>
                 <div className={`${styles.itemActions} tap-in-admin-item-actions`}>
-                  <button type="button" className={styles.secondary} onClick={() => startEdit(item)}>Edit</button>
-                  {item.status !== "live" ? <button type="button" className={styles.secondary} onClick={() => void changeStatus(item, "live")}>Publish</button> : null}
-                  {item.status === "live" ? <button type="button" className={styles.secondary} onClick={() => void changeStatus(item, "closed")}>Close</button> : null}
-                  {item.status !== "archived" ? <button type="button" className={styles.secondary} onClick={() => void changeStatus(item, "archived")}>Archive</button> : null}
-                  {item.status === "archived" ? <button type="button" className={styles.secondary} onClick={() => void changeStatus(item, "draft")}>Restore to draft</button> : null}
+                  <button type="button" className={styles.actionEdit} onClick={() => startEdit(item)}>Edit</button>
+                  {item.status !== "live" ? <button type="button" className={styles.actionPublish} onClick={() => void changeStatus(item, "live")}>Publish</button> : null}
+                  {item.status === "live" ? <button type="button" className={styles.actionClose} onClick={() => void changeStatus(item, "closed")}>Close</button> : null}
+                  {item.status !== "archived" ? <button type="button" className={styles.actionArchive} onClick={() => void changeStatus(item, "archived")}>Archive</button> : null}
+                  {item.status === "archived" ? <button type="button" className={styles.actionRestore} onClick={() => void changeStatus(item, "draft")}>Restore</button> : null}
                 </div>
               </article>
             ))}
           </div>
-        ) : <div className={`${styles.empty} tap-in-admin-empty`}>{loading ? "Loading opportunity records…" : items.length ? "No listings match these filters." : "No opportunity records yet. Add a real, verified opportunity when one is ready to publish."}</div>}
+        ) : (
+          <div className={`${styles.empty} tap-in-admin-empty`}>
+            <p>{loading ? "Loading opportunity records..." : items.length ? "No listings match your search criteria." : "No opportunities created yet. Add your first verified listing above!"}</p>
+          </div>
+        )}
       </section>
 
       <section className={`${styles.panel} tap-in-admin-panel`} id="tap-in-editor" aria-labelledby="tap-in-editor-heading">
-        <div className={`${styles.panelHeading} tap-in-admin-panel-heading`}>
-          <div><h2 id="tap-in-editor-heading">{editingId ? "Edit opportunity" : "Add an opportunity"}</h2><p>Only enter confirmed information that is approved to be shared publicly.</p></div>
-          {editingId ? <button className={styles.secondary} type="button" onClick={startNew}>Cancel edit</button> : null}
+        <div className={`${styles.panelHeading} tap-in-editor-heading`}>
+          <div>
+            <h2 id="tap-in-editor-heading">{editingId ? "✏️ Edit Opportunity" : "✨ Create New Opportunity"}</h2>
+            <p>Ensure all information is verified and authorized for public release.</p>
+          </div>
+          {editingId ? <button className={styles.secondaryBtn} type="button" onClick={startNew}>Cancel Edit</button> : null}
         </div>
+
         <form className={`${styles.form} tap-in-admin-form`} onSubmit={save}>
           <div className={`${styles.formGrid} tap-in-admin-form-grid`}>
-            <label>Title<input required minLength={2} maxLength={180} value={draft.title} onChange={(event) => updateDraft("title", event.target.value)} /></label>
-            <label>URL slug {editingId ? <small>(locked to preserve the shared URL)</small> : null}<input value={draft.slug} readOnly={Boolean(editingId)} onChange={(event) => updateDraft("slug", event.target.value)} placeholder="Generated from title when blank" /></label>
-            <label>Country <small>(country or region is required)</small><input maxLength={120} value={draft.country} onChange={(event) => updateDraft("country", event.target.value)} /></label>
-            <label>Region<input maxLength={120} value={draft.region} onChange={(event) => updateDraft("region", event.target.value)} /></label>
-            <label>Sector<input required minLength={2} maxLength={120} value={draft.sector} onChange={(event) => updateDraft("sector", event.target.value)} /></label>
-            <label>Opportunity type<input required minLength={2} maxLength={120} value={draft.opportunity_type} onChange={(event) => updateDraft("opportunity_type", event.target.value)} /></label>
+            <label>
+              <span>Opportunity Title *</span>
+              <input required minLength={2} maxLength={180} value={draft.title} onChange={(event) => updateDraft("title", event.target.value)} placeholder="e.g. Pan-African Fintech Growth Grant" />
+            </label>
+            <label>
+              <span>URL Slug {editingId ? <small className={styles.lockedNote}>(Locked)</small> : null}</span>
+              <input value={draft.slug} readOnly={Boolean(editingId)} onChange={(event) => updateDraft("slug", event.target.value)} placeholder="auto-generated-from-title" />
+            </label>
+            <label>
+              <span>Country</span>
+              <input maxLength={120} value={draft.country} onChange={(event) => updateDraft("country", event.target.value)} placeholder="e.g. Nigeria / Kenya" />
+            </label>
+            <label>
+              <span>Region</span>
+              <input maxLength={120} value={draft.region} onChange={(event) => updateDraft("region", event.target.value)} placeholder="e.g. West Africa / East Africa" />
+            </label>
+            <label>
+              <span>Sector *</span>
+              <input required minLength={2} maxLength={120} value={draft.sector} onChange={(event) => updateDraft("sector", event.target.value)} placeholder="e.g. Fintech, Energy, Media" />
+            </label>
+            <label>
+              <span>Opportunity Type *</span>
+              <input required minLength={2} maxLength={120} value={draft.opportunity_type} onChange={(event) => updateDraft("opportunity_type", event.target.value)} placeholder="e.g. Grant, Investment, Accelerator" />
+            </label>
           </div>
-          <label>Description<textarea required minLength={10} maxLength={12000} rows={6} value={draft.description} onChange={(event) => updateDraft("description", event.target.value)} /></label>
-          <label>Who this is for<textarea required minLength={5} maxLength={3000} rows={3} value={draft.who_this_is_for} onChange={(event) => updateDraft("who_this_is_for", event.target.value)} /><small>Describe relevant participants without naming the principal unless specifically approved.</small></label>
-          <fieldset className={`${styles.questions} tap-in-admin-questions`}>
-            <legend>Custom enquiry questions (2–4)</legend>
+
+          <label className={styles.fullWidthLabel}>
+            <span>Description *</span>
+            <textarea required minLength={10} maxLength={12000} rows={5} value={draft.description} onChange={(event) => updateDraft("description", event.target.value)} placeholder="Provide full details about the opportunity, criteria, and benefits..." />
+          </label>
+
+          <label className={styles.fullWidthLabel}>
+            <span>Who This Is For *</span>
+            <textarea required minLength={5} maxLength={3000} rows={3} value={draft.who_this_is_for} onChange={(event) => updateDraft("who_this_is_for", event.target.value)} placeholder="Describe eligible profiles or founders..." />
+            <small className={styles.fieldHint}>Outline target participants without disclosing unapproved principals.</small>
+          </label>
+
+          <fieldset className={`${styles.questionsSection} tap-in-admin-questions`}>
+            <legend>Custom Enquiry Questions (2–4)</legend>
             {draft.enquiry_questions.map((question, index) => (
               <div className={`${styles.questionRow} tap-in-admin-question-row`} key={index}>
-                <label>Question {index + 1}<input required minLength={3} maxLength={500} value={question} onChange={(event) => changeQuestion(index, event.target.value)} /></label>
-                {draft.enquiry_questions.length > 2 ? <button type="button" className={styles.remove} onClick={() => removeQuestion(index)} aria-label={`Remove question ${index + 1}`}>Remove</button> : null}
+                <label className={styles.questionInputLabel}>
+                  <span>Question {index + 1}</span>
+                  <input required minLength={3} maxLength={500} value={question} onChange={(event) => changeQuestion(index, event.target.value)} placeholder={`Enter question ${index + 1} for applicants...`} />
+                </label>
+                {draft.enquiry_questions.length > 2 ? (
+                  <button type="button" className={styles.removeQuestionBtn} onClick={() => removeQuestion(index)} aria-label={`Remove question ${index + 1}`}>
+                    ✕ Remove
+                  </button>
+                ) : null}
               </div>
             ))}
-            {draft.enquiry_questions.length < 4 ? <button type="button" className={styles.secondary} onClick={addQuestion}>+ Add question</button> : null}
+            {draft.enquiry_questions.length < 4 ? (
+              <button type="button" className={styles.secondaryBtn} onClick={addQuestion}>
+                + Add Another Question
+              </button>
+            ) : null}
           </fieldset>
+
           <details className={`${styles.optional} tap-in-admin-optional`}>
-            <summary>Images and SEO (optional)</summary>
+            <summary>🖼️ Images & SEO Metadata (Optional)</summary>
             <div className={`${styles.formGrid} tap-in-admin-form-grid`}>
-              <label>Opportunity image URL<input type="url" value={draft.image_url} onChange={(event) => updateDraft("image_url", event.target.value)} placeholder="https://…" /></label>
-              <label>Share image URL<input type="url" value={draft.share_image_url} onChange={(event) => updateDraft("share_image_url", event.target.value)} placeholder="https://…" /></label>
-              <label>SEO title<input maxLength={180} value={draft.seo_title} onChange={(event) => updateDraft("seo_title", event.target.value)} /></label>
-              <label>SEO description<textarea rows={2} maxLength={320} value={draft.seo_description} onChange={(event) => updateDraft("seo_description", event.target.value)} /></label>
+              <label>
+                <span>Opportunity Image URL</span>
+                <input type="url" value={draft.image_url} onChange={(event) => updateDraft("image_url", event.target.value)} placeholder="https://..." />
+              </label>
+              <label>
+                <span>Share Image URL (OG Image)</span>
+                <input type="url" value={draft.share_image_url} onChange={(event) => updateDraft("share_image_url", event.target.value)} placeholder="https://..." />
+              </label>
+              <label>
+                <span>SEO Title</span>
+                <input maxLength={180} value={draft.seo_title} onChange={(event) => updateDraft("seo_title", event.target.value)} placeholder="Optimized title for search engines" />
+              </label>
+              <label className={styles.fullWidthLabel}>
+                <span>SEO Description</span>
+                <textarea rows={2} maxLength={320} value={draft.seo_description} onChange={(event) => updateDraft("seo_description", event.target.value)} placeholder="Short meta description..." />
+              </label>
             </div>
           </details>
+
           <div className={`${styles.formFooter} tap-in-admin-form-footer`}>
-            <label>Status<select value={draft.status} onChange={(event) => updateDraft("status", event.target.value as Status)}><option value="draft">Draft</option><option value="live">Live</option><option value="closed">Closed</option><option value="archived">Archived</option></select><small>Status is internal and is not displayed publicly.</small></label>
-            <button className={styles.primary} type="submit" disabled={saving}>{saving ? "Saving…" : editingId ? "Save changes" : "Create listing"}</button>
+            <label className={styles.statusSelectLabel}>
+              <span>Status</span>
+              <select value={draft.status} onChange={(event) => updateDraft("status", event.target.value as Status)}>
+                <option value="draft">Draft</option>
+                <option value="live">Live</option>
+                <option value="closed">Closed</option>
+                <option value="archived">Archived</option>
+              </select>
+            </label>
+            <button className={styles.primaryBtn} type="submit" disabled={saving}>
+              {saving ? "Saving..." : editingId ? "Save Changes" : "Create Opportunity"}
+            </button>
           </div>
-          <p className={styles.privacyNote}>Do not add public posting dates or disclose the opportunity principal. Closing a listing keeps its URL available, removes public expressions of interest when that form is enabled, and directs visitors towards current opportunities.</p>
+          
+          <p className={styles.privacyNote}>🔒 Note: Closing a listing keeps its URL active while gracefully directing potential applicants toward current live opportunities.</p>
         </form>
       </section>
     </main>

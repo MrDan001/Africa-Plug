@@ -8,7 +8,6 @@ import SiteSearch from "./SiteSearch";
 
 const NAV_ITEMS = [
   { label: "TAP IN", href: "/tap-in" },
-  { label: "WORK WITH FK", href: "/work-with-fk" },
   { label: "STORE", href: "/store" },
   { label: "BLOG", href: "/blog" },
   { label: "CONTACT", href: "/contact" },

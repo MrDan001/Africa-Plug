@@ -1,5 +1,7 @@
+// FILE PATH: src/components/admin/AdminAuthGate.tsx
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export default function AdminAuthGate({ children }: { children: ReactNode }) {
@@ -60,7 +62,7 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
     return (
       <main className="ap-admin ap-admin-login" style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
         <section className="ap-admin-login-card" style={{ width: "min(100%, 480px)" }}>
-          <a className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></a>
+          <Link className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></Link>
           <p className="ap-admin-eyebrow" style={{ marginTop: 32 }}>PRIVATE WORKSPACE</p>
           <h1>Welcome back.</h1>
           <p>Sign in to manage the website, content, media and business enquiries.</p>
@@ -86,7 +88,7 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
   return (
     <>
       <div style={{ position: "sticky", top: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "9px clamp(16px, 4vw, 48px)", background: "#17181d", color: "#f7f7f7", fontSize: 12 }}>
-        <a href="/admin" style={{ color: "inherit", textDecoration: "none", fontWeight: 800, letterSpacing: ".08em" }}>AFRICA PLUG · ADMIN</a>
+        <Link href="/admin" style={{ color: "inherit", textDecoration: "none", fontWeight: 800, letterSpacing: ".08em" }}>AFRICA PLUG · ADMIN</Link>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}><span>Secure session</span><button type="button" onClick={signOut} style={{ background: "transparent", color: "inherit", border: "1px solid #60616a", padding: "7px 12px", cursor: "pointer" }}>Sign out</button></div>
       </div>
       {children}

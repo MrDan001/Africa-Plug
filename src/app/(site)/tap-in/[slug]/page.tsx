@@ -1,4 +1,6 @@
+// FILE PATH: src/app/(site)/tap-in/[slug]/page.tsx
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import ContentPage from "@/components/layout/ContentPage";
 import { findPublicOpportunityBySlug, listLiveOpportunities } from "@/lib/tap-in/opportunities";
@@ -71,21 +73,12 @@ export default async function TapInOpportunityPage({ params }: Props) {
         <div className="standard-note">
           <span className="standard-note-mark" aria-hidden="true">↗</span>
           <div>
-            <h3>This opportunity is no longer accepting expressions of interest.</h3>
-            <p>Explore current opportunities to find another suitable opening.</p>
+            <h3>Explore current opportunities</h3>
+            <p>This opportunity is no longer taking new responses. The current opportunities below may be a better fit.</p>
           </div>
-          <a href="/tap-in">Current opportunities <span aria-hidden="true">→</span></a>
+          <Link href="/tap-in">Current opportunities <span aria-hidden="true">→</span></Link>
         </div>
-      ) : (
-        <div className="standard-note">
-          <span className="standard-note-mark" aria-hidden="true">↗</span>
-          <div>
-            <h3>Interested in this opportunity?</h3>
-            <p>Contact the team with the listing title so your enquiry can be directed to the right opportunity.</p>
-          </div>
-          <a href={`mailto:connect@theafricaplug.com?subject=${encodeURIComponent(`TAP IN enquiry: ${opportunity.title}`)}`}>Contact TAP <span aria-hidden="true">→</span></a>
-        </div>
-      )}
+      ) : null}
 
       {acceptingInterest ? (
         <ExpressionOfInterestForm
@@ -107,7 +100,7 @@ export default async function TapInOpportunityPage({ params }: Props) {
                 <p className="standard-card-category">{[item.sector, item.opportunity_type].filter(Boolean).join(" · ")}</p>
                 <h3>{item.title}</h3>
                 <p>{item.who_this_is_for}</p>
-                <a className="text-link" href={`/tap-in/${item.slug}`}>View opportunity <span aria-hidden="true">→</span></a>
+                <Link className="text-link" href={`/tap-in/${item.slug}`}>View opportunity <span aria-hidden="true">→</span></Link>
               </article>
             ))}
           </div>

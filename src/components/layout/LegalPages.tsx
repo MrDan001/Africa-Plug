@@ -1,3 +1,4 @@
+// FILE PATH: src/components/layout/LegalPages.tsx
 import Link from "next/link";
 
 type LegalSection = {
@@ -95,7 +96,7 @@ export function PrivacyPolicy() {
         "Website hosting and deployment providers, including Vercel, for delivering the site and related technical operations.",
         "Email delivery providers, including Resend where configured, so that enquiries can be received and answered.",
         "Anti-spam or security services, including Cloudflare Turnstile if enabled, to help distinguish genuine submissions from automated abuse.",
-        "Payment or digital-delivery providers only if those functions are introduced and activated in the future. The current demo store does not take online payments.",
+        "Payment or digital-delivery providers only if those functions are introduced and activated in the future. The Store does not currently take online payments.",
         "Professional advisers, regulators, courts or law-enforcement bodies when disclosure is lawful or necessary to protect rights, safety or comply with law."
       ]
     },
@@ -190,7 +191,7 @@ export function TermsOfUse() {
     {
       heading: "6. Store catalogue and product information",
       paragraphs: [
-        "At the effective date of these terms, the bookshelf is a demonstration catalogue. The displayed product names, descriptions and prices are illustrative placeholders, and the Pay buttons open an email enquiry; they do not initiate a payment or create a completed order. Do not send card or bank details by email.",
+        "At the effective date of these terms, online sales are not yet enabled. Any product shown in the Store is for information only until checkout and delivery are live, and no order can be placed or paid for through the site. Do not send card or bank details by email.",
         "If online sales are enabled later, each product page, checkout and order confirmation will set out the actual product, price, currency, delivery method, applicable taxes and any product-specific terms. A separate order is accepted only when the checkout and confirmation process says it is accepted."
       ]
     },
@@ -225,7 +226,7 @@ export function TermsOfUse() {
     <LegalPage
       eyebrow="USING THIS WEBSITE"
       title="TERMS OF USE"
-      intro="The ground rules for browsing The Africa Plug, reading its information and using the website's enquiry and store demonstration features."
+      intro="The ground rules for browsing The Africa Plug, reading its information and using the website's enquiry forms and Store."
       notice="These terms are an editable first draft based on the current website. The legal operator identity and any future paid-service or checkout terms should be confirmed before commercial launch."
       sections={sections}
     />
@@ -290,7 +291,7 @@ export function RefundPolicy() {
     {
       heading: "1. Current store status",
       paragraphs: [
-        "The Africa Plug Bookshelf is currently a demonstration catalogue. Product names, descriptions and prices are layout placeholders. The Pay buttons open an email enquiry to connect@theafricaplug.com; they do not process a transaction, request card details or place a paid order. No payment should be sent in response to a demo button."
+        "Online sales in The Africa Plug Store are not yet enabled. Until checkout is live, no payment is taken on this site and no order can be placed. Please do not send card or bank details by email."
       ]
     },
     {
@@ -339,7 +340,7 @@ export function RefundPolicy() {
       eyebrow="ORDERS AND CANCELLATIONS"
       title="REFUNDS POLICY"
       intro="How cancellation and refund requests will be handled for guides, downloads, consulting services and any future store products."
-      notice="The online bookshelf is currently a demo and does not take payments. This policy is an editable framework, not a statement that a live checkout, order system or booking-payment workflow is already active."
+      notice="Online checkout is not yet enabled and the site does not take payments. This policy is an editable framework, not a statement that a live checkout, order system or booking-payment workflow is already active."
       sections={sections}
     />
   );

@@ -1,3 +1,4 @@
+// FILE PATH: src/app/layout.tsx
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -33,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-GB" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col"><AnalyticsTracker />{children}</body>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning><AnalyticsTracker />{children}</body>
     </html>
   );
 }

@@ -1,4 +1,6 @@
+// FILE PATH: src/lib/cms-bridge.ts
 import "server-only";
+import { parseYouTubeId } from "@/lib/youtube";
 
 export type CmsModule = "articles" | "products" | "applications" | "enquiries" | "subscribers" | "analytics" | "media" | "commercial-settings" | "site-settings";
 export type CmsRecord = {
@@ -39,18 +41,19 @@ export async function cmsBridge<T = Record<string, unknown>>(payload: Record<str
   try { body = await response.json() as Record<string, unknown>; }
   catch { throw new Error("The CMS database returned an unreadable response."); }
   if (!response.ok) {
-    const message = typeof body.error === "string" ? body.error : "The CMS database operation failed.";
-    throw new Error(message);
+    const detail = [body.error, body.message, body.msg, body.error_description].find((value) => typeof value === "string") as string | undefined;
+    throw new Error(detail ? `The CMS database operation failed (HTTP ${response.status}): ${detail}` : `The CMS database operation failed (HTTP ${response.status}).`);
   }
   return body as T;
 }
 
 export async function getPublicCmsRecords(module: "articles" | "products"): Promise<CmsRecord[]> {
   try {
-    const result = await cmsBridge<{ records?: CmsRecord[] }>({ action: "cms.publicList", module });
+    const result = await cmsBridge<{ records?: CmsRecord[] }>({ action: "cms.publicList", module })
+      .catch(() => ({ records: [] }));
     return Array.isArray(result.records) ? result.records : [];
   } catch (error) {
-    console.error("Could not load published CMS records:", error instanceof Error ? error.message : "Unknown error");
+    console.error("Could not load published CMS records safely:", error instanceof Error ? error.message : "Unknown error");
     return [];
   }
 }
@@ -61,7 +64,6 @@ export async function getPublicCmsRecord(module: "articles" | "products", slug: 
   return records.find((record) => record.slug === slug) ?? null;
 }
 
-
 export type PublicSiteSettings = {
   siteTitle?: string;
   siteDescription?: string;
@@ -70,6 +72,9 @@ export type PublicSiteSettings = {
   linkedinUrl?: string;
   instagramUrl?: string;
   youtubeUrl?: string;
+  introVideoUrl?: string;
+  intro_video_url?: string;
+  introVideoId?: string;
   enableNewsletter?: boolean;
   enableSearch?: boolean;
   enableSelectedWork?: boolean;
@@ -78,9 +83,21 @@ export type PublicSiteSettings = {
   navigation?: { label: string; href: string }[];
 };
 
+const DEFAULT_VIDEO_URL = "https://www.youtube.com/watch?v=KnY5dnnuLc4";
+
+function fallbackSettings(navigation: { label: string; href: string }[]): PublicSiteSettings {
+  return {
+    navigation,
+    youtubeUrl: DEFAULT_VIDEO_URL,
+    introVideoUrl: DEFAULT_VIDEO_URL,
+    intro_video_url: DEFAULT_VIDEO_URL,
+    introVideoId: parseYouTubeId(DEFAULT_VIDEO_URL) ?? undefined,
+    contactEmail: "connect@theafricaplug.com",
+  };
+}
+
 const DEFAULT_PUBLIC_NAVIGATION = [
   { label: "TAP IN", href: "/tap-in" },
-  { label: "WORK WITH FK", href: "/work-with-fk" },
   { label: "STORE", href: "/store" },
   { label: "BLOG", href: "/blog" },
   { label: "CONTACT", href: "/contact" },
@@ -106,21 +123,35 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       action: "cms.list",
       module: "site-settings",
       status: "active",
-    });
+    }).catch(() => ({ records: [] }));
+
     const record = result.records?.find((item) => item.slug === "site-settings") ?? result.records?.[0];
-    if (!record) return { navigation: DEFAULT_PUBLIC_NAVIGATION };
+    
+    if (!record) {
+      return fallbackSettings(DEFAULT_PUBLIC_NAVIGATION);
+    }
+
     const data = record.data ?? {};
     const settingString = (key: string) => typeof data[key] === "string" ? (data[key] as string).trim().slice(0, 500) : undefined;
     const settingBool = (key: string) => typeof data[key] === "boolean" ? data[key] as boolean : undefined;
     const settingNumber = (key: string) => { const value = Number(data[key]); return Number.isFinite(value) && value >= 1 && value <= 100 ? Math.floor(value) : undefined; };
+    
+    const youtubeVal = settingString("youtubeUrl") || settingString("youtube_url") || DEFAULT_VIDEO_URL;
+    const introVideoVal = settingString("introVideoUrl") || settingString("intro_video_url") || youtubeVal;
+    // Prefer the dedicated intro link; fall back to the YouTube link, then the default film.
+    const introVideoId = parseYouTubeId(introVideoVal) ?? parseYouTubeId(youtubeVal) ?? parseYouTubeId(DEFAULT_VIDEO_URL) ?? undefined;
+
     return {
       siteTitle: settingString("siteTitle"),
       siteDescription: settingString("siteDescription"),
-      contactEmail: settingString("contactEmail"),
+      contactEmail: settingString("contactEmail") || "connect@theafricaplug.com",
       whatsappUrl: settingString("whatsappUrl"),
       linkedinUrl: settingString("linkedinUrl"),
       instagramUrl: settingString("instagramUrl"),
-      youtubeUrl: settingString("youtubeUrl"),
+      youtubeUrl: youtubeVal,
+      introVideoUrl: introVideoVal,
+      intro_video_url: introVideoVal,
+      introVideoId,
       enableNewsletter: settingBool("enableNewsletter"),
       enableSearch: settingBool("enableSearch"),
       enableSelectedWork: settingBool("enableSelectedWork"),
@@ -130,6 +161,6 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     };
   } catch (error) {
     console.error("Could not load public site settings:", error instanceof Error ? error.message : "Unknown error");
-    return { navigation: DEFAULT_PUBLIC_NAVIGATION };
+    return fallbackSettings(DEFAULT_PUBLIC_NAVIGATION);
   }
 }
