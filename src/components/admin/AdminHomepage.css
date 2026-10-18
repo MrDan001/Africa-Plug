@@ -1,0 +1,85 @@
+/* FILE PATH: src/components/admin/AdminHomepage.css */
+/* Restyles the Homepage manager (/admin/homepage) to match the shared admin pages. The page's own header, footer and sign-in box are not needed inside the shell. */
+
+.apd-content .tap-admin-page { min-height: 0; padding: 0; background: transparent; }
+.apd-content .tap-admin-shell { width: 100%; max-width: 1180px; margin: 0; font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif; color: #1d1e24; }
+.apd-content .tap-admin-header,
+.apd-content .tap-admin-footer { display: none; }
+
+/* ---------- Intro ---------- */
+.apd-content .tap-admin-intro { display: grid; justify-items: start; max-width: 70ch; padding: 0 0 22px; }
+.apd-content .tap-admin-eyebrow { margin: 0 0 8px; color: #d51f6d; font-size: 11px; font-weight: 900; letter-spacing: .16em; }
+.apd-content .tap-admin-intro h1 { font-size: clamp(26px, 3.2vw, 34px); font-weight: 850; line-height: 1.1; letter-spacing: -.04em; }
+.apd-content .tap-admin-intro > p:not(.tap-admin-eyebrow) { margin: 10px 0 0; color: #666a74; font-size: 14px; line-height: 1.7; }
+
+/* ---------- Buttons ---------- */
+.apd-content .tap-admin-primary,
+.apd-content .tap-admin-secondary,
+.apd-content .tap-admin-file-label { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 20px; border-radius: 12px; font-size: 13px; font-weight: 800; line-height: 1.2; text-align: center; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+.apd-content .tap-admin-primary { border: 0; background: linear-gradient(90deg, #ff2d87, #e01d72); color: #fff; box-shadow: 0 8px 20px rgba(240,40,127,.28); }
+.apd-content .tap-admin-primary:hover:not(:disabled) { border: 0; background: linear-gradient(90deg, #ff2d87, #e01d72); box-shadow: 0 10px 24px rgba(240,40,127,.38); transform: translateY(-1px); }
+.apd-content .tap-admin-primary:disabled { opacity: .5; box-shadow: none; }
+.apd-content .tap-admin-secondary { border: 1px solid #d8d5df; background: #fff; color: #1d1e24; }
+.apd-content .tap-admin-secondary:hover:not(:disabled) { border-color: #f0287f; box-shadow: 0 4px 14px rgba(240,40,127,.12); }
+.apd-content .tap-admin-secondary:disabled { opacity: .55; cursor: not-allowed; }
+.apd-content .tap-admin-file-label { width: 100%; border: 1.5px dashed #e8a9c6; background: #fff4f8; color: #b8175b; }
+.apd-content .tap-admin-file-label:hover { border-color: #f0287f; background: #fde8f1; }
+.apd-content .tap-admin-primary:focus-visible,
+.apd-content .tap-admin-secondary:focus-visible,
+.apd-content .tap-admin-file-label:focus-visible,
+.apd-content .tap-admin-file-input:focus-visible + .tap-admin-filename { outline: 3px solid rgba(29,30,36,.85); outline-offset: 2px; }
+
+/* ---------- Notices ---------- */
+.apd-content .tap-admin-notice { margin: 0 0 18px; padding: 14px 18px; border: 0; border-radius: 14px; font-size: 13.5px; font-weight: 650; line-height: 1.5; }
+.apd-content .tap-admin-notice--success { background: #dcf4e6; color: #0f6b3c; }
+.apd-content .tap-admin-notice--error { background: #fde1e5; color: #a3212f; }
+
+/* ---------- Cards ---------- */
+.apd-content .tap-admin-card { padding: 22px; border: 1px solid #ebe9f0; border-radius: 18px; background: #fff; box-shadow: 0 6px 24px rgba(20,21,26,.045); }
+.apd-content .tap-admin-card-heading { align-items: center; gap: 12px; min-height: 0; margin-bottom: 14px; }
+.apd-content .tap-admin-card-heading > span { display: grid; place-items: center; flex: none; min-width: 36px; height: 36px; padding: 0 8px; border-radius: 12px; background: linear-gradient(135deg, #ff2d87, #e01d72); color: #fff; font-size: 12px; font-weight: 900; letter-spacing: .04em; }
+.apd-content .tap-admin-card-heading h2 { margin: 0; font-size: 17px; font-weight: 850; letter-spacing: -.02em; }
+.apd-content .tap-admin-card-note { min-height: 0; margin: 14px 0; color: #666a74; font-size: 13px; line-height: 1.6; }
+.apd-content .tap-admin-filename { min-height: 0; margin: 10px 0 14px; color: #666a74; font-size: 12.5px; line-height: 1.5; }
+
+/* ---------- Introduction video card (a direct child of the page shell) ---------- */
+.apd-content .tap-admin-shell > .tap-admin-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 24px !important; }
+.apd-content .tap-admin-shell > .tap-admin-card img { width: 100% !important; max-width: 340px !important; margin: 0 0 16px !important; border-radius: 14px !important; box-shadow: 0 6px 20px rgba(20,21,26,.12); }
+.apd-content .tap-admin-shell > .tap-admin-card input[type="url"] { display: block; width: 100% !important; min-height: 46px; margin: 0 0 14px !important; padding: 11px 14px !important; border: 1px solid #d8d5df; border-radius: 12px; background: #fff; color: #1d1e24; font: 500 14px/1.4 inherit; transition: border-color .15s ease, box-shadow .15s ease; }
+.apd-content .tap-admin-shell > .tap-admin-card input[type="url"]:focus { border-color: #f0287f; box-shadow: 0 0 0 4px rgba(240,40,127,.12); outline: none; }
+.apd-content .tap-admin-shell > .tap-admin-card .tap-admin-file-label { width: auto; min-height: 0; padding: 0; border: 0; background: transparent; color: #34353c; font-size: 12.5px; font-weight: 800; justify-content: flex-start; margin-bottom: 7px; }
+@media (min-width: 900px) {
+  .apd-content .tap-admin-shell > .tap-admin-card { grid-template-columns: 340px minmax(0, 1fr); column-gap: 28px; }
+  .apd-content .tap-admin-shell > .tap-admin-card > .tap-admin-card-heading,
+  .apd-content .tap-admin-shell > .tap-admin-card > .tap-admin-card-note { grid-column: 1 / -1; }
+  .apd-content .tap-admin-shell > .tap-admin-card > img,
+  .apd-content .tap-admin-shell > .tap-admin-card > .tap-admin-filename { grid-column: 1; grid-row: 3 / span 4; align-self: start; }
+  .apd-content .tap-admin-shell > .tap-admin-card > .tap-admin-file-label,
+  .apd-content .tap-admin-shell > .tap-admin-card > input,
+  .apd-content .tap-admin-shell > .tap-admin-card > div:last-child { grid-column: 2; }
+}
+
+/* ---------- Toolbar and image grid ---------- */
+.apd-content .tap-admin-toolbar { margin: 0 0 16px; padding: 16px 20px; border: 1px solid #ebe9f0; border-radius: 16px; background: #fff; box-shadow: 0 6px 24px rgba(20,21,26,.045); }
+.apd-content .tap-admin-toolbar strong { font-size: 16px; font-weight: 850; }
+.apd-content .tap-admin-toolbar span { color: #666a74; font-size: 12.5px; }
+.apd-content .tap-admin-grid { gap: 18px; }
+.apd-content .tap-admin-preview { margin-top: 0; border: 1px solid #ebe9f0; border-radius: 14px; background: linear-gradient(135deg, #fde8f1, #eceffd); }
+.apd-content .tap-admin-empty span { color: #d9a3bd; }
+.apd-content .tap-admin-empty p { color: #666a74; font-size: 12px; line-height: 1.5; }
+.apd-content .tap-admin-preview-badge { right: 10px; bottom: 10px; padding: 5px 10px; border: 0; border-radius: 999px; font-size: 11px; font-weight: 800; box-shadow: 0 2px 8px rgba(20,21,26,.12); }
+.apd-content .tap-admin-card .tap-admin-primary { width: 100%; }
+.apd-content .tap-admin-footnote { margin: 22px 0 0; color: #666a74; font-size: 13px; line-height: 1.7; }
+
+@media (max-width: 1100px) {
+  .apd-content .tap-admin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .apd-content .tap-admin-grid { grid-template-columns: minmax(0, 1fr); }
+  .apd-content .tap-admin-toolbar { flex-direction: column; align-items: stretch; }
+  .apd-content .tap-admin-card { display: block; padding: 18px; }
+  .apd-content .tap-admin-preview { grid-column: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .apd-content .tap-admin-primary, .apd-content .tap-admin-secondary, .apd-content .tap-admin-file-label { transition: none; }
+}

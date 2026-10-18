@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import "./AdminDashboard.css";
 import "./AdminPages.css";
 import "./AdminTapIn.css";
+import "./AdminHomepage.css";
 
 /* ---------- Module registry: single source for desktop sidebar + mobile "More" sheet ---------- */
 export type IconName =
