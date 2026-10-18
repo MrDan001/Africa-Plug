@@ -2,11 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import AdminShell from "@/components/admin/AdminShell";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export default function AdminAuthGate({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
   const [checking, setChecking] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -50,14 +49,6 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
     }
   }
 
-  async function signOut() {
-    try { await fetch("/api/admin/session", { method: "DELETE" }); }
-    finally {
-      setAuthenticated(false);
-      window.location.assign("/admin");
-    }
-  }
-
   if (checking) return <main className="ap-admin"><p>Checking secure admin session…</p></main>;
 
   if (!authenticated) {
@@ -87,16 +78,6 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
     );
   }
 
-  // The dashboard home has its own sidebar, top bar and sign-out, so the thin session bar is hidden there.
-  if (pathname === "/admin") return <>{children}</>;
-
-  return (
-    <>
-      <div style={{ position: "sticky", top: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "9px clamp(16px, 4vw, 48px)", background: "#17181d", color: "#f7f7f7", fontSize: 12 }}>
-        <Link href="/admin" style={{ color: "inherit", textDecoration: "none", fontWeight: 800, letterSpacing: ".08em" }}>AFRICA PLUG · ADMIN</Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}><span>Secure session</span><button type="button" onClick={signOut} style={{ background: "transparent", color: "inherit", border: "1px solid #60616a", padding: "7px 12px", cursor: "pointer" }}>Sign out</button></div>
-      </div>
-      {children}
-    </>
-  );
+  // Every admin page shares the sidebar, top bar and mobile navigation.
+  return <AdminShell>{children}</AdminShell>;
 }

@@ -19,7 +19,7 @@ const DETAILS: Record<ModuleKey, { title: string; description: string; db: strin
   analytics: { title: "Analytics & funnel", description: "Review page views, content views, form-related events and UTM/source information captured by the website.", db: "analytics" },
   media: { title: "Media library", description: "Upload reusable public images and PDFs and copy their asset URLs into articles and product records. Do not upload confidential or paid-download files here.", db: "media" },
   settings: { title: "Commercial settings", description: "Keep the current fees, meeting length, booking rules and draft commercial terms together. Payment automation should only be enabled after terms are approved.", db: "commercial-settings" },
-  "site-settings": { title: "Site & SEO settings", description: "Store the site's title, description, contact/social destinations and feature switches in one place.", db: "site-settings" },
+  "site-settings": { title: "Site & SEO Settings", description: "Site identity, navigation, search-engine details, store features and switches in one place.", db: "site-settings" },
 };
 
 const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
@@ -90,6 +90,15 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
   ],
 };
 
+/** Which Site & SEO fields appear on which tab. */
+const SETTINGS_TABS: { id: string; label: string; blurb: string; keys: string[] }[] = [
+  { id: "info", label: "Site information", blurb: "Your brand name and public contact and social links.", keys: ["siteTitle", "contactEmail", "whatsappUrl", "linkedinUrl", "instagramUrl", "youtubeUrl"] },
+  { id: "navigation", label: "Navigation", blurb: "The links shown in the main site menu.", keys: ["navigationText"] },
+  { id: "seo", label: "SEO", blurb: "What search engines and link previews show by default.", keys: ["siteDescription"] },
+  { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the Store page.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmImageUrl", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
+  { id: "switches", label: "Features & switches", blurb: "Turn site features on or off.", keys: ["enableNewsletter", "enableSearch", "enableSelectedWork", "tapInFilterThreshold"] },
+];
+
 const STATUS_OPTIONS: Partial<Record<ModuleKey, { value: string; label: string }[]>> = {
   blog: [{ value: "draft", label: "Draft" }, { value: "published", label: "Published" }, { value: "archived", label: "Archived" }],
   store: [{ value: "draft", label: "Draft" }, { value: "active", label: "Visible in catalogue" }, { value: "archived", label: "Archived" }],
@@ -98,13 +107,17 @@ const STATUS_OPTIONS: Partial<Record<ModuleKey, { value: string; label: string }
   "site-settings": [{ value: "active", label: "Current settings" }],
 };
 
-const INPUT_STYLE: React.CSSProperties = { width: "100%", padding: "12px 13px", border: "1px solid #d6d3cf", borderRadius: 4, background: "#fff", color: "#222", font: "inherit", boxSizing: "border-box" };
-const LABEL_STYLE: React.CSSProperties = { display: "block", fontSize: 12, fontWeight: 700, color: "#404146", marginBottom: 7 };
-
 function text(value: unknown) {
   if (value === null || value === undefined) return "";
   if (typeof value === "string" || typeof value === "number") return String(value);
   return "";
+}
+
+function tone(status: string) {
+  if (["published", "active", "approved", "resolved", "recorded"].includes(status)) return "ok";
+  if (["declined", "unsubscribed", "archived"].includes(status)) return "bad";
+  if (["review-required", "pending", "submitted", "new", "draft", "in-progress"].includes(status)) return "warn";
+  return "neutral";
 }
 
 function slugify(value: string) {
@@ -113,6 +126,15 @@ function slugify(value: string) {
 
 function today() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function defaultSiteSettings(): Draft {
+  return {
+    title: "Site settings",
+    slug: "site-settings",
+    status: "active",
+    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
+  };
 }
 
 function toDraft(record?: CmsRecord, moduleKey?: ModuleKey): Draft {
@@ -181,12 +203,14 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   const fields = FIELDS[moduleKey] ?? [];
   const editable = Boolean(FIELDS[moduleKey]);
   const [records, setRecords] = useState<CmsRecord[]>([]);
-  const [draft, setDraft] = useState<Draft>(() => toDraft(undefined, moduleKey));
+  const [draft, setDraft] = useState<Draft>(() => moduleKey === "site-settings" ? defaultSiteSettings() : toDraft(undefined, moduleKey));
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [tab, setTab] = useState(SETTINGS_TABS[0].id);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string } | null>(null);
@@ -198,7 +222,13 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       const response = await fetch(`/api/admin/cms/${moduleKey}?${query.toString()}`, { cache: "no-store" });
       const data = await response.json() as { records?: CmsRecord[]; error?: string };
       if (!response.ok) throw new Error(data.error || "Could not load this module.");
-      setRecords(Array.isArray(data.records) ? data.records : []);
+      const loaded = Array.isArray(data.records) ? data.records : [];
+      setRecords(loaded);
+      if (moduleKey === "site-settings") {
+        // The Site & SEO page edits the saved record in place, so keep the form in step with what is saved.
+        setDraft(loaded[0] ? toDraft(loaded[0], moduleKey) : defaultSiteSettings());
+        setDirty(false);
+      }
       setNotice((current) => current?.tone === "error" ? null : current);
     } catch (error) {
       setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not load this module." });
@@ -216,6 +246,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   }), [records]);
 
   function updateField(key: string, value: unknown) {
+    setDirty(true);
     setDraft((current) => ({ ...current, data: { ...current.data, [key]: value } }));
   }
 
@@ -225,7 +256,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Digital resource", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
-    if (moduleKey === "site-settings") { next.title = "Site settings"; next.slug = "site-settings"; next.data = { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 }; }
     setDraft(next);
     setEditing(false);
     setEditorOpen(true);
@@ -275,7 +305,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       });
       const result = await response.json() as { record?: CmsRecord; error?: string };
       if (!response.ok) throw new Error(result.error || "Could not save changes.");
-      setNotice({ tone: "success", text: editing ? "Changes saved." : "Record created and saved." });
+      setNotice({ tone: "success", text: moduleKey === "site-settings" ? "Settings saved. The site will use them on the next page load." : editing ? "Changes saved." : "Record created and saved." });
       setEditorOpen(false);
       setEditing(false);
       await loadRecords();
@@ -291,7 +321,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     try {
       const isApplicationDecision = (moduleKey === "work-with-fk" || moduleKey === "review-required") && (status === "approved" || status === "declined");
       const response = await fetch(isApplicationDecision ? "/api/work-with-fk/approve" : `/api/admin/cms/${moduleKey}`, {
-        method: "PATCH" === "PATCH" && isApplicationDecision ? "POST" : "PATCH",
+        method: isApplicationDecision ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(isApplicationDecision ? { id: record.id, decision: status } : { id: record.id, status }),
       });
@@ -383,119 +413,213 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       setUploading(false);
     }
   }
+
   function recordSummary(record: CmsRecord) {
     const data = record.data ?? {};
     const fields = [data.email, data.organisation, data.organization, data.opportunityName, data.category, data.excerpt, data.summary, data.path, data.eventName];
     return fields.map(text).filter(Boolean).join(" · ");
   }
 
-  return (
-    <main className="ap-admin" style={{ minHeight: "100vh", paddingBottom: 48 }}>
-      <header className="ap-admin-topbar">
-        <Link className="ap-admin-brand" href="/admin"><span>AP</span><b>THE AFRICA PLUG</b></Link>
-        <div className="ap-admin-top-actions"><Link href="/">View website ↗</Link><Link href="/admin">Control room ↗</Link></div>
-      </header>
+  /** One form control, used by both the modal editor and the inline Site & SEO form. */
+  function renderField(field: Field) {
+    const value = draft.data[field.key];
+    return (
+      <label key={field.key} className={field.type === "textarea" ? "is-wide" : undefined}>
+        {field.type === "checkbox" ? (
+          <span className="apm-check"><input type="checkbox" checked={Boolean(value)} onChange={(event) => updateField(field.key, event.target.checked)} /><span>{field.label}</span></span>
+        ) : (
+          <>
+            <span className="apm-label">{field.label}</span>
+            {field.type === "textarea"
+              ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
+              : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
+          </>
+        )}
+        {field.help ? <small className="apm-help">{field.help}</small> : null}
+      </label>
+    );
+  }
 
-      <section className="ap-admin-hero" style={{ paddingBottom: 30 }}>
-        <p className="ap-admin-eyebrow">THE AFRICA PLUG · CMS</p>
-        <h1>{meta.title}<br /><em>control.</em></h1>
-        <p className="ap-admin-lede">{meta.description}</p>
-        <div className="ap-admin-shortcuts"><Link href="/admin">← All modules</Link>{moduleKey === "review-required" ? <Link href="/admin/work-with-fk">All applications ↗</Link> : null}{moduleKey === "blog" ? <Link href="/blog" target="_blank" rel="noreferrer">View journal ↗</Link> : null}{moduleKey === "store" ? <Link href="/store" target="_blank" rel="noreferrer">View store ↗</Link> : null}</div>
-      </section>
+  // ---------- Site & SEO settings: edited inline, saved as one record ----------
+  if (moduleKey === "site-settings") {
+    const saved = records[0];
+    const data = draft.data;
+    const filled = (key: string) => text(data[key]).trim().length > 0;
+    const profileKeys = ["siteTitle", "siteDescription", "contactEmail", "whatsappUrl", "linkedinUrl"];
+    const profilePercent = Math.round((profileKeys.filter(filled).length / profileKeys.length) * 100);
+    const switches = ["enableNewsletter", "enableSearch", "enableSelectedWork", "enableProductOfMonth"];
+    const switchesOn = switches.filter((key) => Boolean(data[key])).length;
+    const potmReady = filled("potmName") && filled("potmWriteUp") && /^https:\/\//i.test(text(data.potmUrl).trim());
+    const activeTab = SETTINGS_TABS.find((item) => item.id === tab) ?? SETTINGS_TABS[0];
+    const tabFields = activeTab.keys.map((key) => fields.find((field) => field.key === key)).filter((field): field is Field => Boolean(field));
+    const checklist = [
+      { ok: filled("siteTitle"), label: "Site title is set" },
+      { ok: text(data.siteDescription).trim().length >= 50, label: "SEO description is 50+ characters" },
+      { ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text(data.contactEmail).trim()), label: "Public contact email is valid" },
+      { ok: /^https:\/\//i.test(text(data.whatsappUrl).trim()), label: "WhatsApp link is set (https://)" },
+      { ok: filled("navigationText"), label: "Navigation links are set" },
+      { ok: !data.enableProductOfMonth || potmReady, label: data.enableProductOfMonth ? "Product of the Month is complete" : "Product of the Month is off" },
+    ];
 
-      <section style={{ padding: "0 clamp(16px, 4vw, 48px) 26px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 10, maxWidth: 900 }}>
-          <div className="ap-admin-card" style={{ minHeight: 80 }}><small>RECORDS IN VIEW</small><h2>{stats.total}</h2></div>
-          <div className="ap-admin-card" style={{ minHeight: 80 }}><small>NEED ATTENTION</small><h2>{stats.waiting}</h2></div>
-          <div className="ap-admin-card" style={{ minHeight: 80 }}><small>LIVE / ACTIVE</small><h2>{stats.published}</h2></div>
-        </div>
-      </section>
-
-      {notice ? <p role="status" style={{ margin: "0 clamp(16px, 4vw, 48px) 18px", padding: "14px 16px", border: `1px solid ${notice.tone === "error" ? "#b33a42" : "#2c8063"}`, background: notice.tone === "error" ? "#fff1f1" : "#effaf5", color: notice.tone === "error" ? "#8d2028" : "#176447" }}>{notice.text}</p> : null}
-
-      <section style={{ padding: "0 clamp(16px, 4vw, 48px)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 14, flexWrap: "wrap", marginBottom: 18 }}>
-          <div><h2 style={{ fontSize: 24, margin: 0 }}>Records</h2><p style={{ margin: "6px 0 0", color: "#696a70" }}>{loading ? "Loading…" : `${records.length} record${records.length === 1 ? "" : "s"}`}</p></div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "end" }}>
-            <label style={{ fontSize: 12, fontWeight: 700 }}>Search<input style={{ ...INPUT_STYLE, minWidth: 180, marginTop: 6 }} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search records…" /></label>
-            {STATUS_OPTIONS[moduleKey] ? <label style={{ fontSize: 12, fontWeight: 700 }}>Status<select style={{ ...INPUT_STYLE, marginTop: 6 }} value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option value="all">All statuses</option>{STATUS_OPTIONS[moduleKey]!.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label> : null}
-            <button type="button" onClick={() => void loadRecords()} style={{ padding: "12px 14px", border: "1px solid #c9c7c2", background: "#fff", cursor: "pointer" }}>Refresh</button>
-            {editable && moduleKey !== "settings" && moduleKey !== "site-settings" ? <button type="button" className="ap-admin-shortcuts" onClick={newRecord} style={{ padding: "12px 14px", cursor: "pointer", background: "#d51f6d", color: "#fff", border: 0 }}>+ Add {moduleKey === "blog" ? "article" : moduleKey === "store" ? "product" : "subscriber"}</button> : null}
-            {moduleKey === "settings" || moduleKey === "site-settings" ? <button type="button" onClick={editSettings} style={{ padding: "12px 14px", cursor: "pointer", background: "#d51f6d", color: "#fff", border: 0 }}>{records.length ? "Edit settings" : "Set up settings"}</button> : null}
+    return (
+      <div className="apm">
+        <div className="apm-head">
+          <div>
+            <p className="apm-eyebrow">SITE CONTROL</p>
+            <h1>{meta.title}</h1>
+            <p>{meta.description}</p>
+          </div>
+          <div className="apm-head-actions">
+            <Link className="apm-btn" href="/" target="_blank" rel="noreferrer">Preview site ↗</Link>
+            <button type="submit" form="site-settings-form" className="apm-btn apm-btn-primary" disabled={saving || loading}>{saving ? "Saving…" : dirty ? "Save changes" : "Save"}</button>
           </div>
         </div>
 
-        {moduleKey === "media" ? <section className="ap-admin-card" style={{ marginBottom: 18 }}>
-          <h3 style={{ marginTop: 0 }}>Upload a reusable asset</h3>
-          <p style={{ color: "#696a70", lineHeight: 1.6 }}>Images and PDFs up to 20 MB. Uploaded library assets are public URLs for use on the website.</p>
-          <label style={{ display: "inline-block", cursor: "pointer", padding: "12px 16px", background: "#d51f6d", color: "white", fontWeight: 700 }}>
+        {notice ? <p role="status" className={`apm-notice is-${notice.tone}`}>{notice.text}</p> : null}
+
+        <div className="apm-stats">
+          <div className="apm-stat"><small>Settings record</small><strong className={saved ? "is-ok" : undefined}>{loading ? "…" : saved ? "Saved" : "Not set up"}</strong></div>
+          <div className="apm-stat"><small>Profile complete</small><strong>{profilePercent}%</strong></div>
+          <div className="apm-stat"><small>Features on</small><strong>{switchesOn} of {switches.length}</strong></div>
+          <div className="apm-stat"><small>Last updated</small><strong>{saved?.updated_at ? new Date(saved.updated_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "–"}</strong></div>
+        </div>
+
+        <div className="apm-tabs" role="tablist" aria-label="Settings sections">
+          {SETTINGS_TABS.map((item) => (
+            <button key={item.id} type="button" role="tab" id={`tab-${item.id}`} aria-selected={item.id === activeTab.id} aria-controls="site-settings-form" className={`apm-tab${item.id === activeTab.id ? " is-on" : ""}`} onClick={() => setTab(item.id)}>{item.label}</button>
+          ))}
+        </div>
+
+        <div className="apm-set-grid">
+          <form id="site-settings-form" onSubmit={save} className="apm-card apm-panel" role="tabpanel" aria-labelledby={`tab-${activeTab.id}`}>
+            <div className="apm-panel-head">
+              <div><h2>{activeTab.label}</h2><p className="apm-muted">{activeTab.blurb}</p></div>
+              {dirty ? <span className="apm-tag is-warn">Unsaved changes</span> : <span className="apm-tag is-ok">Up to date</span>}
+            </div>
+            {loading ? <p className="apm-muted">Loading your settings…</p> : <div className="apm-form-grid">{tabFields.map(renderField)}</div>}
+            <div className="apm-panel-foot">
+              <button type="button" className="apm-btn" disabled={!dirty || loading} onClick={() => void loadRecords()}>Discard changes</button>
+              <button type="submit" className="apm-btn apm-btn-primary" disabled={saving || loading}>{saving ? "Saving…" : "Save changes"}</button>
+            </div>
+          </form>
+
+          <aside className="apm-side">
+            <section className="apm-card apm-quick">
+              <h2>Quick actions</h2>
+              <Link className="apm-btn" href="/" target="_blank" rel="noreferrer">View live site ↗</Link>
+              <Link className="apm-btn" href="/store" target="_blank" rel="noreferrer">View store ↗</Link>
+              <button type="button" className="apm-btn" onClick={() => void loadRecords()}>Reload saved settings</button>
+            </section>
+            <section className="apm-card apm-quick">
+              <h2>Readiness check</h2>
+              <ul className="apm-checklist">
+                {checklist.map((item) => <li key={item.label} className={item.ok ? "is-ok" : "is-todo"}><span aria-hidden="true">{item.ok ? "✓" : "○"}</span><span>{item.label}<span className="apm-sr"> {item.ok ? "(done)" : "(to do)"}</span></span></li>)}
+              </ul>
+            </section>
+          </aside>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------- All other modules ----------
+  return (
+    <div className="apm">
+      <div className="apm-head">
+        <div>
+          <h1>{meta.title}</h1>
+          <p>{meta.description}</p>
+        </div>
+        <div className="apm-head-actions">
+          {moduleKey === "review-required" ? <Link className="apm-btn" href="/admin/work-with-fk">All applications ↗</Link> : null}
+          {moduleKey === "blog" ? <Link className="apm-btn" href="/blog" target="_blank" rel="noreferrer">View journal ↗</Link> : null}
+          {moduleKey === "store" ? <Link className="apm-btn" href="/store" target="_blank" rel="noreferrer">View store ↗</Link> : null}
+          {editable && moduleKey !== "settings" ? <button type="button" className="apm-btn apm-btn-primary" onClick={newRecord}>+ Add {moduleKey === "blog" ? "article" : moduleKey === "store" ? "product" : "subscriber"}</button> : null}
+          {moduleKey === "settings" ? <button type="button" className="apm-btn apm-btn-primary" onClick={editSettings}>{records.length ? "Edit settings" : "Set up settings"}</button> : null}
+        </div>
+      </div>
+
+      <div className="apm-stats">
+        <div className="apm-stat"><small>Records in view</small><strong>{stats.total}</strong></div>
+        <div className="apm-stat"><small>Need attention</small><strong>{stats.waiting}</strong></div>
+        <div className="apm-stat"><small>Live / active</small><strong>{stats.published}</strong></div>
+      </div>
+
+      {notice ? <p role="status" className={`apm-notice is-${notice.tone}`}>{notice.text}</p> : null}
+
+      <section>
+        <div className="apm-toolbar">
+          {STATUS_OPTIONS[moduleKey] ? <div className="apm-chips" role="group" aria-label="Filter by status">
+            <button type="button" className={`apm-chip${statusFilter === "all" ? " is-on" : ""}`} aria-pressed={statusFilter === "all"} onClick={() => setStatusFilter("all")}>All</button>
+            {STATUS_OPTIONS[moduleKey]!.map((option) => <button type="button" key={option.value} className={`apm-chip${statusFilter === option.value ? " is-on" : ""}`} aria-pressed={statusFilter === option.value} onClick={() => setStatusFilter(option.value)}>{option.label}</button>)}
+          </div> : <p className="apm-count">{loading ? "Loading…" : `${records.length} record${records.length === 1 ? "" : "s"}`}</p>}
+          <input className="apm-input apm-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search records…" aria-label="Search records" />
+          <button type="button" className="apm-btn" onClick={() => void loadRecords()}>Refresh</button>
+        </div>
+
+        {moduleKey === "media" ? <section className="apm-card apm-upload">
+          <h3>Upload a reusable asset</h3>
+          <p className="apm-muted">Images and PDFs up to 20 MB. Uploaded library assets are public URLs for use on the website.</p>
+          <label className="apm-btn apm-btn-primary">
             {uploading ? "Uploading…" : "Choose and upload file"}
             <input type="file" accept="image/jpeg,image/png,image/webp,image/avif,application/pdf" disabled={uploading} onChange={(event) => void uploadAsset(event)} style={{ display: "none" }} />
           </label>
         </section> : null}
 
-        {moduleKey === "analytics" && records.length ? <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 10, marginBottom: 18 }}>
-          {["page_view", "article_view", "product_view", "form_submit"].map((eventName) => <div key={eventName} className="ap-admin-card"><small>{eventName.replace(/_/g, " ").toUpperCase()}</small><h2>{records.filter((r) => r.data?.eventName === eventName).length}</h2></div>)}
+        {moduleKey === "analytics" && records.length ? <div className="apm-stats">
+          {["page_view", "article_view", "product_view", "form_submit"].map((eventName) => <div key={eventName} className="apm-stat"><small>{eventName.replace(/_/g, " ")}</small><strong>{records.filter((r) => r.data?.eventName === eventName).length}</strong></div>)}
         </div> : null}
 
-        {records.length ? <div style={{ display: "grid", gap: 10 }}>
-          {records.map((record) => <article key={record.id} className="ap-admin-card" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 18, alignItems: "start" }}>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".1em", fontWeight: 800, padding: "5px 7px", background: "#f0e8eb", color: "#8f174e" }}>{record.status.replace(/-/g, " ")}</span>
-                <small style={{ color: "#777" }}>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
+        {records.length ? <div className="apm-card apm-list">
+          {records.map((record) => <article key={record.id} className="apm-row">
+            <div className="apm-row-main">
+              <div className="apm-row-meta">
+                <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
+                <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
               </div>
-              <h3 style={{ margin: "10px 0 6px", fontSize: 19, overflowWrap: "anywhere" }}>{record.title || "Untitled record"}</h3>
-              {recordSummary(record) ? <p style={{ margin: "0 0 8px", color: "#5e6066", lineHeight: 1.5, overflowWrap: "anywhere" }}>{recordSummary(record)}</p> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <p style={{ margin: "0 0 8px", color: "#5e6066", fontSize: 13 }}>Scheduler: {record.data?.meetingBookedAt ? "meeting booked" : record.data?.schedulerIssuedAt ? "private link sent" : record.data?.paymentStatus === "confirmed" ? "payment confirmed, link not sent yet" : "waiting for payment confirmation"}</p> : null}
-              {moduleKey === "blog" || moduleKey === "store" ? <small style={{ color: "#777" }}>URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
-              {moduleKey === "store" ? <small style={{ display: "block", marginTop: 7, color: record.data?.productFileReference ? "#176447" : "#8a5b12" }}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small> : null}
-              {moduleKey === "media" && typeof record.data?.url === "string" ? <a href={record.data.url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 6, color: "#a91b58", overflowWrap: "anywhere" }}>Open asset ↗</a> : null}
-              {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details style={{ marginTop: 10 }}><summary style={{ cursor: "pointer", fontWeight: 700 }}>Read submission details</summary><dl style={{ display: "grid", gridTemplateColumns: "minmax(85px,130px) minmax(0,1fr)", gap: "6px 12px", fontSize: 13, marginTop: 12 }}>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} style={{ display: "contents" }}><dt style={{ color: "#777", overflowWrap: "anywhere" }}>{key.replace(/([A-Z])/g, " $1")}</dt><dd style={{ margin: 0, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{String(value)}</dd></div>)}</dl></details> : null}
-              {moduleKey === "analytics" ? <details style={{ marginTop: 8 }}><summary style={{ cursor: "pointer" }}>View source and UTM details</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", fontSize: 12, padding: 10, background: "#f7f7f5" }}>{JSON.stringify(record.data, null, 2)}</pre></details> : null}
-              {moduleKey === "subscribers" ? <p style={{ margin: "6px 0 0", color: "#777", fontSize: 12 }}>{text(record.data?.source) || "Source not recorded"}</p> : null}
+              <h3>{record.title || "Untitled record"}</h3>
+              {recordSummary(record) ? <p className="apm-summary">{recordSummary(record)}</p> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <p className="apm-scheduler">Scheduler: {record.data?.meetingBookedAt ? "meeting booked" : record.data?.schedulerIssuedAt ? "private link sent" : record.data?.paymentStatus === "confirmed" ? "payment confirmed, link not sent yet" : "waiting for payment confirmation"}</p> : null}
+              {moduleKey === "blog" || moduleKey === "store" ? <small className="apm-url">URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
+              {moduleKey === "store" ? <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small> : null}
+              {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
+              {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
+              {moduleKey === "analytics" ? <details className="apm-details"><summary>View source and UTM details</summary><pre className="apm-pre">{JSON.stringify(record.data, null, 2)}</pre></details> : null}
+              {moduleKey === "subscribers" ? <p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p> : null}
             </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 7, justifyContent: "end", maxWidth: 260 }}>
-              {editable ? <button type="button" onClick={() => editRecord(record)} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Edit</button> : null}
-              {moduleKey === "store" ? <label style={{ padding: "9px 12px", cursor: uploading ? "wait" : "pointer", border: "1px solid #a91b58", background: "#fff", color: "#a91b58", fontWeight: 700, fontSize: 12, opacity: uploading ? 0.65 : 1 }}>{uploading ? "UPLOADING…" : "UPLOAD PROTECTED FILE"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" onClick={() => void setStatus(record, "approved")} style={{ padding: "9px 12px", cursor: "pointer", border: 0, background: "#1f7658", color: "white" }}>Approve</button><button type="button" onClick={() => void setStatus(record, "declined")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #b33a42", background: "white", color: "#9f2933" }}>Decline</button></> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <>{record.data?.paymentStatus !== "confirmed" ? <button type="button" onClick={() => void schedulerAction(record, "confirm-payment")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Confirm payment received</button> : null}{record.data?.paymentStatus === "confirmed" && !record.data?.meetingBookedAt ? <button type="button" onClick={() => void schedulerAction(record, "send-link")} style={{ padding: "9px 12px", cursor: "pointer", border: 0, background: "#1f7658", color: "white" }}>{record.data?.schedulerIssuedAt ? "Resend scheduler link" : "Send scheduler link"}</button> : null}</> : null}
-              {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
-              {moduleKey === "subscribers" ? <button type="button" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
-              {(moduleKey === "blog" || moduleKey === "store" || moduleKey === "media") ? <button type="button" onClick={() => void removeRecord(record)} style={{ padding: "9px 12px", cursor: "pointer", border: "1px solid #b33a42", color: "#9f2933", background: "white" }}>Delete</button> : null}
+            <div className="apm-actions">
+              {editable ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
+              {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <>{record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn" onClick={() => void schedulerAction(record, "confirm-payment")}>Confirm payment received</button> : null}{record.data?.paymentStatus === "confirmed" && !record.data?.meetingBookedAt ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void schedulerAction(record, "send-link")}>{record.data?.schedulerIssuedAt ? "Resend scheduler link" : "Send scheduler link"}</button> : null}</> : null}
+              {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
+              {moduleKey === "subscribers" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
+              {(moduleKey === "blog" || moduleKey === "store" || moduleKey === "media") ? <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button> : null}
             </div>
           </article>)}
-        </div> : <div className="ap-admin-card" style={{ padding: "28px 20px", color: "#68696e" }}>{loading ? "Loading records…" : moduleKey === "analytics" ? "No tracked events yet. Page-view events will appear as visitors browse the site." : moduleKey === "review-required" ? "Nothing is waiting for review right now. New Work With FK applications will appear here." : moduleKey === "media" ? "Your media library is empty. Upload a reusable image or PDF above." : moduleKey === "settings" || moduleKey === "site-settings" ? "No saved settings yet. Use the settings button to create the first record." : "No records yet. Add the first record or refresh to check for new submissions."}</div>}
+        </div> : <div className="apm-card apm-empty">{loading ? "Loading records…" : moduleKey === "analytics" ? "No tracked events yet. Page-view events will appear as visitors browse the site." : moduleKey === "review-required" ? "Nothing is waiting for review right now. New Work With FK applications will appear here." : moduleKey === "media" ? "Your media library is empty. Upload a reusable image or PDF above." : moduleKey === "settings" ? "No saved settings yet. Use the settings button to create the first record." : "No records yet. Add the first record or refresh to check for new submissions."}</div>}
       </section>
 
-      {editorOpen && editable ? <div role="dialog" aria-modal="true" aria-labelledby="cms-editor-heading" style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,11,14,.68)", overflowY: "auto", padding: "24px 14px" }}>
-        <form onSubmit={save} style={{ width: "min(100%, 900px)", margin: "0 auto", padding: "clamp(18px,4vw,36px)", background: "#f8f7f4", color: "#202126", borderRadius: 5, boxSizing: "border-box" }}>
-          <div style={{ display: "flex", alignItems: "start", justifyContent: "space-between", gap: 12, marginBottom: 24 }}>
-            <div><p className="ap-admin-eyebrow">CMS EDITOR</p><h2 id="cms-editor-heading" style={{ fontSize: 28, margin: "0 0 8px" }}>{editing ? "Edit record" : "Create new record"}</h2><p style={{ color: "#666" }}>{meta.title}</p></div>
-            <button type="button" onClick={() => setEditorOpen(false)} style={{ padding: "10px 12px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Close</button>
+      {editorOpen && editable ? <div role="dialog" aria-modal="true" aria-labelledby="cms-editor-heading" className="apm-modal">
+        <form onSubmit={save} className="apm-editor">
+          <div className="apm-editor-head">
+            <div><p className="apm-eyebrow">CMS EDITOR</p><h2 id="cms-editor-heading">{editing ? "Edit record" : "Create new record"}</h2><p className="apm-muted">{meta.title}</p></div>
+            <button type="button" className="apm-btn" onClick={() => setEditorOpen(false)}>Close</button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 14 }}>
-            <label><span style={LABEL_STYLE}>{moduleKey === "subscribers" ? "Record label" : "Title"}</span><input required style={INPUT_STYLE} value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} placeholder={moduleKey === "subscribers" ? "Subscriber email" : "Title"} /></label>
-            <label><span style={LABEL_STYLE}>Slug / URL key</span><input style={INPUT_STYLE} value={draft.slug} onChange={(event) => setDraft((current) => ({ ...current, slug: event.target.value }))} placeholder="Generated from title if blank" readOnly={moduleKey === "settings" || moduleKey === "site-settings"} /><small style={{ display: "block", color: "#777", marginTop: 5 }}>Changing a published slug changes its public URL.</small></label>
-            <label><span style={LABEL_STYLE}>Status</span><select style={INPUT_STYLE} value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value }))}>{(STATUS_OPTIONS[moduleKey] ?? [{ value: "draft", label: "Draft" }, { value: "active", label: "Active" }, { value: "archived", label: "Archived" }]).map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
+          <div className="apm-form-grid">
+            <label><span className="apm-label">{moduleKey === "subscribers" ? "Record label" : "Title"}</span><input required className="apm-input" value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} placeholder={moduleKey === "subscribers" ? "Subscriber email" : "Title"} /></label>
+            <label><span className="apm-label">Slug / URL key</span><input className="apm-input" value={draft.slug} onChange={(event) => setDraft((current) => ({ ...current, slug: event.target.value }))} placeholder="Generated from title if blank" readOnly={moduleKey === "settings"} /><small className="apm-help">Changing a published slug changes its public URL.</small></label>
+            <label><span className="apm-label">Status</span><select className="apm-input" value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value }))}>{(STATUS_OPTIONS[moduleKey] ?? [{ value: "draft", label: "Draft" }, { value: "active", label: "Active" }, { value: "archived", label: "Archived" }]).map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14, marginTop: 18 }}>
-            {fields.map((field) => <label key={field.key} style={field.type === "textarea" ? { gridColumn: "1 / -1" } : undefined}>
-              <span style={LABEL_STYLE}>{field.label}</span>
-              {field.type === "textarea" ? <textarea rows={field.rows ?? 3} style={{ ...INPUT_STYLE, resize: "vertical" }} value={text(draft.data[field.key])} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} /> : field.type === "checkbox" ? <span style={{ display: "flex", alignItems: "center", gap: 10 }}><input type="checkbox" checked={Boolean(draft.data[field.key])} onChange={(event) => updateField(field.key, event.target.checked)} /><span>{field.label}</span></span> : <input style={INPUT_STYLE} type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(draft.data[field.key])} onChange={(event) => updateField(field.key, field.type === "number" ? event.target.value : event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
-              {field.help ? <small style={{ display: "block", color: "#777", marginTop: 5, lineHeight: 1.4 }}>{field.help}</small> : null}
-            </label>)}
-          </div>
-          {moduleKey === "store" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>Upload the product file using Upload Protected File on its saved product row. Checkout verifies a private file exists before charging. Stripe live keys and the production webhook secret must also be configured in Vercel.</p> : null}
-          {moduleKey === "settings" ? <p style={{ color: "#7a4e10", background: "#fff7e8", padding: 12, lineHeight: 1.5 }}>These values are saved for operational reference. Payment and scheduling automation must not go live until the legal and commercial rules are approved.</p> : null}
-          <div style={{ display: "flex", gap: 10, justifyContent: "end", flexWrap: "wrap", marginTop: 28 }}>
-            <button type="button" onClick={() => setEditorOpen(false)} style={{ padding: "13px 16px", cursor: "pointer", border: "1px solid #c9c7c2", background: "white" }}>Cancel</button>
-            <button type="submit" disabled={saving} style={{ padding: "13px 18px", cursor: saving ? "wait" : "pointer", border: 0, background: "#d51f6d", color: "white", fontWeight: 800 }}>{saving ? "Saving…" : editing ? "Save changes" : "Create record"}</button>
+          <div className="apm-form-grid apm-form-fields">{fields.map(renderField)}</div>
+          {moduleKey === "store" ? <p className="apm-warn">Publishing a product updates the catalogue. Paid checkout works only when a protected file is uploaded and Stripe is configured in production.</p> : null}
+          {moduleKey === "settings" ? <p className="apm-warn">These values are saved for operational reference. Payment and scheduling automation must not go live until the legal and commercial rules are approved.</p> : null}
+          <div className="apm-editor-foot">
+            <button type="button" className="apm-btn" onClick={() => setEditorOpen(false)}>Cancel</button>
+            <button type="submit" className="apm-btn apm-btn-primary" disabled={saving}>{saving ? "Saving…" : editing ? "Save changes" : "Create record"}</button>
           </div>
         </form>
       </div> : null}
-
-      <footer className="ap-admin-footer"><span>THE AFRICA PLUG · ADMIN</span><Link href="/admin">Back to control room ↗</Link><span>Save, review, publish.</span></footer>
-    </main>
+    </div>
   );
 }
