@@ -20,7 +20,10 @@ export default async function StoreCatalogue() {
       <div className="tap-store-hero-copy"><p className="tap-store-eyebrow">THE AFRICA PLUG</p><h1 id="tap-store-heading">THE STORE</h1><p className="tap-store-hero-description">Digital products, practical playbooks and research to help you make better-informed moves across Africa.</p></div>
       <aside className="tap-store-hero-aside"><span aria-hidden="true" style={{fontSize:42,fontWeight:300}}>↗</span><p>Knowledge.<br/>Tools.<br/>Possibility.</p></aside>
     </section>
-    <section aria-label="What you will find" style={{maxWidth:1120,margin:"0 auto",padding:"28px clamp(16px,4vw,28px) 0",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,190px),1fr))",gap:12}}>
+    {/*
+  Introductory category labels intentionally hidden on the public Store page.
+  The offerings remain available through the catalogue without this explanatory card grid.
+  <section aria-label="What you will find" style={{maxWidth:1120,margin:"0 auto",padding:"28px clamp(16px,4vw,28px) 0",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,190px),1fr))",gap:12}}>
       {[
         { title: "Ebooks & Playbooks", detail: "Guides and practical frameworks." },
         { title: "Reports & Research", detail: "Insights to inform your next move." },
@@ -31,6 +34,7 @@ export default async function StoreCatalogue() {
         <p style={{fontSize:13,lineHeight:1.6,color:"#626469",margin:0}}>{item.detail}</p>
       </article>)}
     </section>
+*/}
     <ProductOfTheMonth />
     <section className="tap-store-catalogue" aria-label="Available Store products" style={{paddingTop:40,paddingBottom:64}}>
       {products.length ? <div style={{maxWidth:1120,margin:"0 auto",padding:"0 clamp(16px,4vw,28px)",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,280px),1fr))",gap:22}}>
