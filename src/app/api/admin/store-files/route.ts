@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
+import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,9 +43,10 @@ export async function POST(request: Request) {
   }
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceRoleKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
   if (!supabaseUrl || !serviceRoleKey) {
-    return response("Private file storage is not configured in the production environment.", 503);
+    console.error("Private file storage has no valid service-role credential for the configured Supabase project.");
+    return response("Private file storage is not configured for this Supabase project. Please check the server-side service-role credential.", 503);
   }
 
   try {
