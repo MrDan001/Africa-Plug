@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { cmsBridge } from "@/lib/cms-bridge";
 import { getStripe, getStripeWebhookSecret } from "@/lib/payments/stripe";
+import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,9 +26,9 @@ export async function POST(request: Request) {
     if (session.payment_status !== "paid") return NextResponse.json({ received: true, pending: true });
     const productSlugs = (session.metadata?.product_slugs || "").split(",").filter(Boolean);
     const supabaseUrl = process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error("Store order database configuration is missing.");
+      console.error("Store order database has no valid service-role credential for the configured Supabase project.");
       return NextResponse.json({ error: "Order persistence is temporarily unavailable." }, { status: 500 });
     }
     try {
