@@ -20,8 +20,10 @@ The server environment must contain:
 - `ADMIN_PASSWORD`
 - `ADMIN_SESSION_SECRET`
 - `BLOB_READ_WRITE_TOKEN` — supplied by the connected public Vercel Blob store for the hero image manager
+- `SUPABASE_SERVICE_ROLE_JWT` — preferred legacy `service_role` JWT for Vercel Store file/order operations; it must contain the `service_role` claim and match the project ref in `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY` — server-side fallback credential for Store file/order operations; never use an anon or publishable key here
 
-The CMS bridge uses `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `CMS_BRIDGE_SECRET` in Vercel. The deployed Supabase Edge Function uses `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in Supabase Function Secrets. The hero-image manager uses Vercel Blob, not Supabase Storage. Keep all secret values out of GitHub and public/client environment variables.
+The CMS bridge uses `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `CMS_BRIDGE_SECRET` in Vercel. The protected Store download/order routes use a matching server-side service-role credential in Vercel; they validate a legacy JWT's `role` and project `ref` before use. The deployed Supabase Edge Function uses its server-side `SUPABASE_SERVICE_ROLE_KEY` in Supabase Function Secrets. The hero-image manager uses Vercel Blob, not Supabase Storage. Keep all secret values out of GitHub and public/client environment variables.
 
 ## Usage
 
