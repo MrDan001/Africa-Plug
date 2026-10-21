@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getPublicCmsRecord, getPublicCmsRecords } from "@/lib/cms-bridge";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
+import StoreCartButton from "@/components/store/StoreCartButton";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ slug: string }> };
@@ -28,7 +29,7 @@ export default async function ProductPage({ params }: Props) {
   const product = record ? cmsRecordToPublicProduct(record) : null;
   if (product) {
     return <div className="tap-product-detail-page">
-      <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span></div>
+      <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span><StoreCartButton /></div>
       <section className="tap-product-detail-layout" aria-labelledby="tap-product-title">
         <div className="tap-product-detail-art">
           {product.imageUrl ? <img src={product.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">KNOWLEDGE • TOOLS • RESEARCH</span></div>}

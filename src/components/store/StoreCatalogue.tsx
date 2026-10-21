@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
 import ProductOfTheMonth from "@/components/store/ProductOfTheMonth";
 import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
+import StoreCartButton from "@/components/store/StoreCartButton";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export default async function StoreCatalogue() {
   return <div className="tap-store-page">
     <section className="tap-store-hero" aria-labelledby="tap-store-heading">
       <div className="tap-store-hero-copy"><p className="tap-store-eyebrow">THE AFRICA PLUG</p><h1 id="tap-store-heading">THE STORE</h1><p className="tap-store-hero-description">Digital products, practical playbooks and research to help you make better-informed moves across Africa.</p></div>
-      <aside className="tap-store-hero-aside"><span aria-hidden="true" style={{fontSize:42,fontWeight:300}}>↗</span><p>Knowledge.<br/>Tools.<br/>Possibility.</p></aside>
+      <aside className="tap-store-hero-aside"><span aria-hidden="true" style={{fontSize:42,fontWeight:300}}>↗</span><p>Knowledge.<br/>Tools.<br/>Possibility.</p><StoreCartButton /></aside>
     </section>
     {/*
   Introductory category labels intentionally hidden on the public Store page.

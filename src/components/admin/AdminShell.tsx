@@ -24,7 +24,7 @@ export const ADMIN_NAV: NavGroup[] = [
     { title: "TAP IN", href: "/admin/tap-in", icon: "tapin", detail: "Create, review and publish listings", badgeKey: "tapin" },
     { title: "Blog & Editorial", href: "/admin/blog", icon: "blog", detail: "Articles, categories and SEO" },
     { title: "Store Products", href: "/admin/store", icon: "store", detail: "Products, prices and files" },
-    { title: "Store Orders", href: "/admin/orders", icon: "commercial", detail: "Orders, payments and delivery" },
+    { title: "Store Orders", href: "/admin/store-orders", icon: "commercial", detail: "Orders, payments and delivery" },
   ]},
   { label: "BUSINESS OPERATIONS", items: [
     { title: "Work With FK", href: "/admin/work-with-fk", icon: "fk", detail: "Applications and decisions" },
