@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,9 +12,10 @@ export async function GET(request: Request) {
   }
 
   const url = process.env.SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceRoleKey = url ? getSupabaseServiceRoleKey(url) : null;
   if (!url || !serviceRoleKey) {
-    return NextResponse.json({ error: "Store order management is not configured." }, { status: 503, headers: { "Cache-Control": "no-store" } });
+    console.error("Store order management has no valid service-role credential for the configured Supabase project.");
+    return NextResponse.json({ error: "Store order management is not configured for this Supabase project." }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 
   const status = new URL(request.url).searchParams.get("status") || "all";
