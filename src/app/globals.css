@@ -1879,3 +1879,23 @@ html, body { background: #f7f5f1; color: #292a2c; }
 .intro-video-poster:hover .intro-video-play, .intro-video-poster:focus-visible .intro-video-play { transform: scale(1.08); }
 .intro-video-poster:focus-visible { outline: 3px solid #292a2c; outline-offset: -6px; }
 .intro-video-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+/* Homepage hero: black overlay with white, high-contrast typography (overrides the earlier light theme). */
+.hero { background: #000; }
+.hero-photo { filter: none; }
+.hero-shade {
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.78) 38%, rgba(0,0,0,.50) 66%, rgba(0,0,0,.30) 100%),
+    linear-gradient(0deg, rgba(0,0,0,.70) 0%, transparent 35%, rgba(0,0,0,.30) 100%);
+}
+.hero h1 { color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.55); }
+.hero-brandline, .hero-question { color: #fff; }
+.hero-categories { color: rgba(255,255,255,.9); }
+.hero-copy { color: rgba(255,255,255,.92); font-size: 15px; line-height: 1.6; text-shadow: 0 1px 10px rgba(0,0,0,.6); }
+.hero-location, .hero-slide-count { color: rgba(255,255,255,.8); }
+.hero .button-outline { border-color: rgba(255,255,255,.85); background: transparent; color: #fff; }
+.hero .button-outline:hover { border-color: var(--signal); background: var(--signal); color: #fff; }
+.hero .button-pink:hover { background: #b8175b; border-color: #b8175b; color: #fff; }
+.hero-carousel-arrow, .hero-carousel-toggle { border-color: rgba(255,255,255,.75); background: rgba(0,0,0,.35); color: #fff; }
+.hero-carousel-arrow:hover, .hero-carousel-toggle:hover { border-color: var(--signal); background: var(--signal); color: #fff; }
+.hero-carousel-arrow:focus-visible, .hero-carousel-toggle:focus-visible, .hero-actions a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+@media (max-width: 800px) { .hero-copy { font-size: 14px; } }
