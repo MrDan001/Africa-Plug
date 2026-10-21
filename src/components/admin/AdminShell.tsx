@@ -155,7 +155,13 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             <div className="apd-nav-group" key={group.label ?? `g${index}`}>
               {group.label ? <p className="apd-nav-label">{group.label}</p> : null}
               {group.items.map((item) => {
-                const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
+                // Prevent /admin/store from matching /admin/store-orders via startsWith
+                const active = item.href === "/admin" 
+                  ? pathname === "/admin" 
+                  : item.href === "/admin/store" 
+                    ? pathname === "/admin/store" 
+                    : pathname.startsWith(item.href);
+
                 const badge = item.badgeKey ? badges[item.badgeKey] : 0;
                 return (
                   <Link key={item.href} href={item.href} className={`apd-nav-link${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined}>
@@ -229,7 +235,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         <Link href="/admin" className={pathname === "/admin" ? "is-active" : undefined}><Icon name="home" size={21} /><span>Home</span></Link>
         <Link href="/admin/tap-in" className={pathname.startsWith("/admin/tap-in") ? "is-active" : undefined}><Icon name="tapin" size={21} /><span>TAP IN</span>{counts.draft > 0 ? <em className="apd-badge apd-badge-float">{counts.draft}</em> : null}</Link>
         <Link href="/admin/blog" className={pathname.startsWith("/admin/blog") ? "is-active" : undefined}><Icon name="blog" size={21} /><span>Blog</span></Link>
-        <Link href="/admin/store" className={pathname.startsWith("/admin/store") ? "is-active" : undefined}><Icon name="store" size={21} /><span>Store</span></Link>
+        <Link href="/admin/store" className={pathname === "/admin/store" ? "is-active" : undefined}><Icon name="store" size={21} /><span>Store</span></Link>
         <button type="button" className={!["/admin","/admin/tap-in","/admin/blog","/admin/store"].some((p) => p === "/admin" ? pathname === p : pathname.startsWith(p)) ? "is-active" : undefined} onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen}><Icon name="more" size={21} /><span>More</span></button>
       </nav>
 
