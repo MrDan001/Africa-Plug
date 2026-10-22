@@ -1,3 +1,4 @@
+// FILE PATH: src/app/api/store/checkout/route.ts
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { cmsBridge, getPublicCmsRecords } from "@/lib/cms-bridge";
@@ -15,9 +16,9 @@ const requestSchema = z.object({
 export async function POST(request: Request) {
   let body: unknown;
   try { body = await request.json(); }
-  catch { return NextResponse.json({ error: "Please review your basket and try again." }, { status: 400 }); }
+  catch { return NextResponse.json({ error: "Please review your cart and try again." }, { status: 400 }); }
   const parsed = requestSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Your basket is invalid. Please refresh the Store and try again." }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: "Your cart is invalid. Please refresh the Store and try again." }, { status: 400 });
 
   try {
     const records = await getPublicCmsRecords("products");

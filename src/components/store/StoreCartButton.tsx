@@ -85,7 +85,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
   const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const currencies = new Set(items.map((item) => item.currency || "GBP"));
   const mixedCurrencies = currencies.size > 1;
-  const basketCurrency = items[0]?.currency || "GBP";
+  const cartCurrency = items[0]?.currency || "GBP";
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   async function beginCheckout() {
@@ -119,16 +119,16 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
         <header className={"tapcart-head"}>
           <div>
             <p className={"tapcart-eyebrow"}>THE AFRICA PLUG</p>
-            <h2 id="tap-store-cart-title" className={"tapcart-title"}>Your basket <span>({quantity})</span></h2>
+            <h2 id="tap-store-cart-title" className={"tapcart-title"}>Your cart <span>({quantity})</span></h2>
           </div>
-          <button ref={closeRef} type="button" className={"tapcart-close"} onClick={close} aria-label="Close shopping basket">×</button>
+          <button ref={closeRef} type="button" className={"tapcart-close"} onClick={close} aria-label="Close shopping cart">×</button>
         </header>
 
         {items.length === 0 ? (
           <div className={"tapcart-body"}>
             <div className={"tapcart-empty"}>
               <div className={"tapcart-empty-icon"}><BagIcon size={34} /></div>
-              <h3>Your basket is empty.</h3>
+              <h3>Your cart is empty.</h3>
               <p>Add a TAP product and it will be kept here while you browse.</p>
               <button type="button" className={"tapcart-checkout"} onClick={close}>EXPLORE PRODUCTS</button>
             </div>
@@ -159,11 +159,11 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
             <footer className={"tapcart-foot"}>
               <div className={"tapcart-subtotal"}>
                 <span>Subtotal</span>
-                <strong>{mixedCurrencies ? "Multiple currencies" : formatMoney(subtotal, basketCurrency)}</strong>
+                <strong>{mixedCurrencies ? "Multiple currencies" : formatMoney(subtotal, cartCurrency)}</strong>
               </div>
               <p className={"tapcart-note"}>
                 {mixedCurrencies
-                  ? "Your basket contains different currencies. Remove products until only one currency remains to continue."
+                  ? "Your cart contains different currencies. Remove products until only one currency remains to continue."
                   : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Your download links appear as soon as payment is confirmed."}
               </p>
               {checkoutError ? <p role="alert" className={"tapcart-error"}>{checkoutError}</p> : null}
@@ -184,7 +184,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
         ref={triggerRef}
         type="button"
         className={"tapcart-trigger"}
-        aria-label={"Open shopping basket, " + quantity + (quantity === 1 ? " item" : " items")}
+        aria-label={"Open shopping cart, " + quantity + (quantity === 1 ? " item" : " items")}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}

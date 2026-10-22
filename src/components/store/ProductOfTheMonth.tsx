@@ -1,6 +1,6 @@
 // FILE PATH: src/components/store/ProductOfTheMonth.tsx
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
-import styles from "./ProductOfTheMonth.module.css";
+import "./product-of-the-month.css";
 
 export const dynamic = "force-dynamic";
 
@@ -12,28 +12,28 @@ export default async function ProductOfTheMonth() {
   const paragraphs = product.writeUp.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
 
   return (
-    <section className={styles.wrap} aria-labelledby="potm-heading">
-      <div className={styles.card}>
+    <section className={"tap-potm-wrap"} aria-labelledby="potm-heading">
+      <div className={"tap-potm-card"}>
         {product.imageUrl ? (
-          <div className={styles.media}>
+          <div className={"tap-potm-media"}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={product.imageUrl} alt={product.name} loading="lazy" />
           </div>
         ) : null}
-        <div className={styles.body}>
-          <p className={styles.eyebrow}>PRODUCT OF THE MONTH{product.monthLabel ? ` · ${product.monthLabel.toUpperCase()}` : ""}</p>
+        <div className={"tap-potm-body"}>
+          <p className={"tap-potm-eyebrow"}>PRODUCT OF THE MONTH{product.monthLabel ? ` · ${product.monthLabel.toUpperCase()}` : ""}</p>
           <h2 id="potm-heading">{product.name}</h2>
-          {product.partner ? <p className={styles.partner}>From {product.partner}</p> : null}
-          {paragraphs.map((paragraph, index) => <p className={styles.text} key={index}>{paragraph}</p>)}
+          {product.partner ? <p className={"tap-potm-partner"}>From {product.partner}</p> : null}
+          {paragraphs.map((paragraph, index) => <p className={"tap-potm-text"} key={index}>{paragraph}</p>)}
           {product.discountCode ? (
-            <p className={styles.discount}>
+            <p className={"tap-potm-discount"}>
               <span>Discount code</span>
               <code>{product.discountCode}</code>
               {product.discountNote ? <small>{product.discountNote}</small> : null}
             </p>
           ) : null}
-          <a className={styles.cta} href={product.url} target="_blank" rel="sponsored noopener noreferrer">VIEW THE PRODUCT <span aria-hidden="true">↗</span></a>
-          <p className={styles.disclosure}>TAP may earn a commission.</p>
+          <a className={"tap-potm-cta"} href={product.url} target="_blank" rel="sponsored noopener noreferrer">VIEW THE PRODUCT <span aria-hidden="true">↗</span></a>
+          <p className={"tap-potm-disclosure"}>TAP may earn a commission.</p>
         </div>
       </div>
     </section>
