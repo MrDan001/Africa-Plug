@@ -1,3 +1,4 @@
+// FILE PATH: src/components/store/cart.ts
 export type StoreCartItem = { slug: string; title: string; price: number; quantity: number; cover: string; currency: string };
 export const STORE_CART_KEY = "tap-store-cart-v1";
 export const STORE_CART_EVENT = "tap-store-cart-updated";
@@ -86,4 +87,31 @@ export function changeStoreCartQuantity(slug: string, nextQuantity: number) {
 
 export function removeStoreCartItem(slug: string) {
   writeStoreCart(readStoreCart().filter((item) => item.slug !== slug));
+}
+
+export const STORE_CART_CLEARED_KEY = "tap-store-cart-cleared-session";
+
+export function clearStoreCart() {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(STORE_CART_KEY);
+  } catch {
+    // Storage unavailable; nothing to clear.
+  }
+  announceCartChange();
+}
+
+/**
+ * Empties the basket once per paid Stripe session. The session id is remembered so
+ * re-opening an old receipt link later never wipes a newer basket.
+ */
+export function clearStoreCartForPaidSession(sessionId: string) {
+  if (typeof window === "undefined" || !sessionId) return;
+  try {
+    if (window.localStorage.getItem(STORE_CART_CLEARED_KEY) === sessionId) return;
+    window.localStorage.setItem(STORE_CART_CLEARED_KEY, sessionId);
+  } catch {
+    // If storage is unavailable we still try to clear below.
+  }
+  clearStoreCart();
 }

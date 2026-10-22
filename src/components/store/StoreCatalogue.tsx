@@ -36,6 +36,7 @@ export default async function StoreCatalogue() {
       </article>)}
     </section>
 */}
+    <StoreCartButton mobileFloating />
     <ProductOfTheMonth />
     <section className="tap-store-catalogue" aria-label="Available Store products" style={{paddingTop:40,paddingBottom:64}}>
       {products.length ? <div style={{maxWidth:1120,margin:"0 auto",padding:"0 clamp(16px,4vw,28px)",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,280px),1fr))",gap:22}}>

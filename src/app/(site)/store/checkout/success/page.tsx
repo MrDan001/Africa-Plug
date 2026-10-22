@@ -1,6 +1,8 @@
+// FILE PATH: src/app/(site)/store/checkout/success/page.tsx
 import Link from "next/link";
 import { getStripe } from "@/lib/payments/stripe";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
+import ClearStoreCart from "@/components/store/ClearStoreCart";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Order received | The Africa Plug Store", robots: { index: false, follow: false } };
@@ -28,6 +30,7 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
     : [];
 
   return <main style={{maxWidth:760,margin:"0 auto",padding:"clamp(64px,10vw,120px) 24px",textAlign:"center"}}>
+    {paymentConfirmed ? <ClearStoreCart sessionId={sessionId} /> : null}
     <p className="standard-eyebrow">THE AFRICA PLUG · STORE</p>
     <h1 style={{fontSize:"clamp(36px,7vw,64px)",letterSpacing:"-.05em",lineHeight:1.02,margin:"16px 0"}}>{paymentConfirmed ? "Payment confirmed." : "We’re checking your order."}</h1>
     <p style={{maxWidth:560,margin:"0 auto 28px",lineHeight:1.8,color:"#626469"}}>{paymentConfirmed
