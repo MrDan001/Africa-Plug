@@ -1,9 +1,0 @@
-.feature{background:#101012;color:#f8f8fa;border-bottom:1px solid rgba(255,255,255,.12)}
-.cityStrip{height:clamp(105px,17vw,210px);background:linear-gradient(0deg,rgba(8,8,10,.08),rgba(8,8,10,.08)),url("https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=1800&q=85") center 48%/cover no-repeat}
-.copy{max-width:1400px;margin:0 auto;padding:clamp(54px,8vw,112px) clamp(22px,5vw,72px) clamp(62px,9vw,118px)}
-.eyebrow{margin:0 0 28px;color:#f50070;font-size:12px;font-weight:900;letter-spacing:.2em}
-.copy h2{max-width:920px;margin:0;font-size:clamp(40px,7.3vw,88px);font-weight:950;letter-spacing:-.065em;line-height:.98}
-.description{max-width:700px;margin:26px 0 0;color:#bfc0c6;font-size:clamp(16px,2vw,21px);line-height:1.75}
-.cta{display:inline-flex;align-items:center;justify-content:space-between;gap:32px;margin-top:40px;padding:21px 25px;min-width:280px;background:#f50070;color:#fff;font-size:15px;font-weight:900}
-.cta:hover{background:#fff;color:#08080a}
-@media(max-width:600px){.cityStrip{height:125px}.copy{padding:54px 22px 68px}.eyebrow{margin-bottom:27px;font-size:11px}.copy h2{font-size:clamp(39px,10vw,60px)}.description{font-size:15px;margin-top:24px}.cta{width:100%;min-width:0;margin-top:32px;padding:20px 22px}}
