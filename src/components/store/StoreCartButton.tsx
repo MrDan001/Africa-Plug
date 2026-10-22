@@ -10,7 +10,7 @@ import {
   STORE_CART_EVENT,
   type StoreCartItem,
 } from "./cart";
-import styles from "./StoreCart.module.css";
+import "./store-cart.css";
 
 const MAX_QUANTITY = 10;
 
@@ -107,70 +107,70 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
   }
 
   const drawer = open ? (
-    <div className={styles.overlay} onClick={close}>
+    <div className={"tapcart-overlay"} onClick={close}>
       <section
         ref={panelRef}
-        className={styles.panel}
+        className={"tapcart-panel"}
         role="dialog"
         aria-modal="true"
         aria-labelledby="tap-store-cart-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <header className={styles.head}>
+        <header className={"tapcart-head"}>
           <div>
-            <p className={styles.eyebrow}>THE AFRICA PLUG</p>
-            <h2 id="tap-store-cart-title" className={styles.title}>Your basket <span>({quantity})</span></h2>
+            <p className={"tapcart-eyebrow"}>THE AFRICA PLUG</p>
+            <h2 id="tap-store-cart-title" className={"tapcart-title"}>Your basket <span>({quantity})</span></h2>
           </div>
-          <button ref={closeRef} type="button" className={styles.close} onClick={close} aria-label="Close shopping basket">×</button>
+          <button ref={closeRef} type="button" className={"tapcart-close"} onClick={close} aria-label="Close shopping basket">×</button>
         </header>
 
         {items.length === 0 ? (
-          <div className={styles.body}>
-            <div className={styles.empty}>
-              <div className={styles.emptyIcon}><BagIcon size={34} /></div>
+          <div className={"tapcart-body"}>
+            <div className={"tapcart-empty"}>
+              <div className={"tapcart-empty-icon"}><BagIcon size={34} /></div>
               <h3>Your basket is empty.</h3>
               <p>Add a TAP product and it will be kept here while you browse.</p>
-              <button type="button" className={styles.checkout} onClick={close}>EXPLORE PRODUCTS</button>
+              <button type="button" className={"tapcart-checkout"} onClick={close}>EXPLORE PRODUCTS</button>
             </div>
           </div>
         ) : (
           <>
-            <div className={styles.body}>
+            <div className={"tapcart-body"}>
               {items.map((item) => (
-                <article className={styles.item} key={item.slug}>
-                  <div className={styles.cover} aria-hidden="true"><span>THE<br />AFRICA<br />PLUG</span></div>
-                  <div className={styles.copy}>
-                    <h3 className={styles.name}>{item.title}</h3>
-                    <p className={styles.each}>{formatMoney(item.price, item.currency || "GBP")} each</p>
-                    <div className={styles.controls}>
-                      <div className={styles.stepper}>
+                <article className={"tapcart-item"} key={item.slug}>
+                  <div className={"tapcart-cover"} aria-hidden="true"><span>THE<br />AFRICA<br />PLUG</span></div>
+                  <div className={"tapcart-copy"}>
+                    <h3 className={"tapcart-name"}>{item.title}</h3>
+                    <p className={"tapcart-each"}>{formatMoney(item.price, item.currency || "GBP")} each</p>
+                    <div className={"tapcart-controls"}>
+                      <div className={"tapcart-stepper"}>
                         <button type="button" aria-label={"Decrease quantity of " + item.title} onClick={() => changeStoreCartQuantity(item.slug, item.quantity - 1)}>−</button>
                         <output aria-live="polite">{item.quantity}</output>
                         <button type="button" aria-label={"Increase quantity of " + item.title} disabled={item.quantity >= MAX_QUANTITY} onClick={() => changeStoreCartQuantity(item.slug, item.quantity + 1)}>+</button>
                       </div>
-                      <button type="button" className={styles.remove} onClick={() => removeStoreCartItem(item.slug)}>Remove</button>
+                      <button type="button" className={"tapcart-remove"} onClick={() => removeStoreCartItem(item.slug)}>Remove</button>
                     </div>
                   </div>
-                  <strong className={styles.lineTotal}>{formatMoney(item.price * item.quantity, item.currency || "GBP")}</strong>
+                  <strong className={"tapcart-line-total"}>{formatMoney(item.price * item.quantity, item.currency || "GBP")}</strong>
                 </article>
               ))}
             </div>
 
-            <footer className={styles.foot}>
-              <div className={styles.subtotal}>
+            <footer className={"tapcart-foot"}>
+              <div className={"tapcart-subtotal"}>
                 <span>Subtotal</span>
                 <strong>{mixedCurrencies ? "Multiple currencies" : formatMoney(subtotal, basketCurrency)}</strong>
               </div>
-              <p className={styles.note}>
+              <p className={"tapcart-note"}>
                 {mixedCurrencies
                   ? "Your basket contains different currencies. Remove products until only one currency remains to continue."
                   : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Your download links appear as soon as payment is confirmed."}
               </p>
-              {checkoutError ? <p role="alert" className={styles.error}>{checkoutError}</p> : null}
-              <button type="button" className={styles.checkout} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies}>
+              {checkoutError ? <p role="alert" className={"tapcart-error"}>{checkoutError}</p> : null}
+              <button type="button" className={"tapcart-checkout"} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies}>
                 {checkingOut ? "CONNECTING TO STRIPE…" : "CONTINUE TO SECURE CHECKOUT"} <span aria-hidden="true">→</span>
               </button>
-              <button type="button" className={styles.continue} onClick={close}>CONTINUE BROWSING</button>
+              <button type="button" className={"tapcart-continue"} onClick={close}>CONTINUE BROWSING</button>
             </footer>
           </>
         )}
@@ -179,18 +179,18 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
   ) : null;
 
   return (
-    <div className={styles.root + (mobileFloating ? " " + styles.floating : "")}>
+    <div className={"tapcart-root" + (mobileFloating ? " " + "tapcart-floating" : "")}>
       <button
         ref={triggerRef}
         type="button"
-        className={styles.trigger}
+        className={"tapcart-trigger"}
         aria-label={"Open shopping basket, " + quantity + (quantity === 1 ? " item" : " items")}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(true)}
       >
         <BagIcon />
-        {quantity > 0 ? <span key={quantity} className={styles.badge + " " + styles.badgePop}>{quantity > 99 ? "99+" : quantity}</span> : null}
+        {quantity > 0 ? <span key={quantity} className={"tapcart-badge" + " " + "tapcart-badge-pop"}>{quantity > 99 ? "99+" : quantity}</span> : null}
       </button>
       {mounted && drawer ? createPortal(drawer, document.body) : null}
     </div>
