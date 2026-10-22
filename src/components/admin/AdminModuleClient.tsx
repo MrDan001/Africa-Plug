@@ -44,7 +44,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
     { key: "imageUrl", label: "Product cover image URL", type: "url" },
-    { key: "productType", label: "Product type", type: "text", placeholder: "Digital guide" },
+    { key: "productType", label: "Product type (decides the Store tab)", type: "text", placeholder: "Ebook", help: "Use one of: Ebook, Playbook, Report, Stay Finder or TAP product. This decides which Store tab the product appears under." },
+    { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
     { key: "productFileReference", label: "Private download file path", type: "text", help: "Use Upload Protected File on the saved product row below. Files are stored privately. Never paste a public download URL here." },
     { key: "seoTitle", label: "SEO title", type: "text" },
     { key: "seoDescription", label: "SEO description", type: "textarea", rows: 3 },
@@ -253,7 +254,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   function newRecord() {
     const next = toDraft(undefined, moduleKey);
     if (moduleKey === "blog") next.data = { category: "Business", author: "The TAP Journal Editorial Desk", publishedAt: today(), readingTime: "5 min read", tagsText: "", body: "", excerpt: "", image: "", imageAlt: "", takeaway: "", seoTitle: "", seoDescription: "", shareImage: "" };
-    if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Digital resource", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
+    if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Ebook", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
     setDraft(next);

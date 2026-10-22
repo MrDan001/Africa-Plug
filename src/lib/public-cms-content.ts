@@ -1,5 +1,7 @@
+// FILE PATH: src/lib/public-cms-content.ts
 import type { BlogPost, BlogSection } from "@/lib/blog-posts";
 import { getPublicCmsRecords, type CmsRecord } from "@/lib/cms-bridge";
+import { resolveStoreCategory } from "@/lib/store-categories";
 
 function stringValue(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value : typeof value === "number" ? String(value) : fallback;
@@ -84,6 +86,8 @@ export function cmsRecordToPublicProduct(record: CmsRecord) {
     description: stringValue(data.description) || stringValue(data.summary),
     imageUrl: stringValue(data.imageUrl),
     productType: stringValue(data.productType, "Digital resource"),
+    category: resolveStoreCategory(stringValue(data.productType, "Digital resource")),
+    externalUrl: /^https:\/\//i.test(stringValue(data.externalUrl).trim()) ? stringValue(data.externalUrl).trim() : "",
     currency: stringValue(data.currency, "GBP").toUpperCase(),
     price: Number.isFinite(rawPrice) && rawPrice >= 0 ? rawPrice : 0,
     downloadReady: typeof data.productFileReference === "string"
