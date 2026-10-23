@@ -1,6 +1,8 @@
 // FILE PATH: src/components/layout/Footer.tsx
 import Link from "next/link";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
+import BrandLogo from "@/components/layout/BrandLogo";
+import "./site-chrome.css";
 
 const FOOTER_LINKS = [
   { label: "TAP IN", href: "/tap-in" },
@@ -17,7 +19,7 @@ const FOOTER_LEGAL = [
   { label: "Refunds", href: "/refunds" },
 ];
 function FooterBrand() {
-  return <Link href="/#top" aria-label="The Africa Plug — go to homepage top" className="footer-logo-lockup"><img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="footer-logo-mark"/><span className="footer-wordmark" aria-hidden="true"><span className="footer-wordmark-the">THE</span><span className="footer-wordmark-name"><span>AFRICA</span><b>PLUG</b></span></span></Link>;
+  return <Link href="/#top" aria-label="The Africa Plug — go to homepage top" className="footer-logo-lockup"><BrandLogo className="tap-brand-logo--footer" /></Link>;
 }
 export default async function Footer() {
   const settings = await getPublicSiteSettings();

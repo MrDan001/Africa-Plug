@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "The Africa Plug — Your connection to Africa" }],
     },
-    icons: { icon: "/images/logo-mark.svg" },
+    icons: { icon: "/images/the-africa-plug-logo.jpg", apple: "/images/the-africa-plug-logo.jpg" },
   };
 }
 

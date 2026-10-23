@@ -1,3 +1,4 @@
+// FILE PATH: src/components/layout/Header.tsx
 "use client";
 
 import Link from "next/link";
@@ -5,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import MobileMenu from "./MobileMenu";
 import SiteSearch from "./SiteSearch";
+import BrandLogo from "@/components/layout/BrandLogo";
+import "./site-chrome.css";
 
 const NAV_ITEMS = [
   { label: "TAP IN", href: "/tap-in" },
@@ -47,8 +50,7 @@ export default function Header() {
     <header className="site-header">
       <div className="header-inner">
         <Link href="/#top" aria-label="The Africa Plug — go to top of homepage" className="brand-lockup">
-          <img src="/images/logo-mark.svg" alt="" aria-hidden="true" className="brand-logo" />
-          <span className="brand-wordmark" aria-hidden="true"><span className="brand-the">THE</span><span className="brand-name"><span className="brand-africa">AFRICA</span><span className="brand-plug">PLUG</span></span></span>
+          <BrandLogo className="tap-brand-logo--header" />
         </Link>
         <nav aria-label="Main navigation" className="desktop-nav">
           {navigationItems.map((item) => {

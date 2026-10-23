@@ -1,3 +1,4 @@
+// FILE PATH: src/components/seo/JsonLd.tsx
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app").replace(/\/$/, "");
 
 export default function JsonLd() {
@@ -7,7 +8,7 @@ export default function JsonLd() {
       "@type": "Organization",
       name: "The Africa Plug",
       url: SITE_URL,
-      logo: `${SITE_URL}/images/logo-mark.svg`,
+      logo: `${SITE_URL}/images/the-africa-plug-logo.jpg`,
       email: "connect@theafricaplug.com",
     },
     {

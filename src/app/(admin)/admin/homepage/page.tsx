@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import BrandLogo from "@/components/layout/BrandLogo";
 import { useEffect, useState, type FormEvent } from "react";
 import { parseYouTubeId } from "@/lib/youtube";
 
@@ -184,7 +185,7 @@ export default function AdminPage() {
     <main className="tap-admin-page">
       <div className="tap-admin-shell">
         <header className="tap-admin-header">
-          <Link className="tap-admin-brand" href="/" aria-label="Africa Plug homepage"><span className="tap-admin-brand-mark">AP</span><span><small>THE</small><b>AFRICA PLUG</b></span></Link>
+          <Link className="tap-admin-brand" href="/" aria-label="Africa Plug homepage"><BrandLogo height={72} /></Link>
           <Link className="tap-admin-back" href="/">Back to website ↗</Link>
         </header>
 

@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import BrandLogo from "@/components/layout/BrandLogo";
 import "./TapInManager.css";
 
 type Status = "draft" | "live" | "closed" | "archived";
@@ -288,9 +289,7 @@ export default function TapInManager() {
     <div className="tapin-page">
       <header className="tapin-topbar">
         <Link className="tapin-brand" href="/" aria-label="The Africa Plug homepage">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/logo-mark.svg" alt="" width={36} height={36} />
-          <span>THE AFRICA PLUG</span>
+          <BrandLogo height={60} />
         </Link>
         <div className="tapin-topActions">
           <Link className="tapin-viewLink" href="/tap-in" target="_blank" rel="noreferrer"><Icon name="eye" size={16} /> <span>View TAP IN Page</span> <span aria-hidden="true">↗</span></Link>

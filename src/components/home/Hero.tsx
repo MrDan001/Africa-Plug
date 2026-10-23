@@ -1,6 +1,8 @@
+// FILE PATH: src/components/home/Hero.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import "./hero-brief.css";
 
 const BUTTONS = [
   { label: "WORK WITH FK", href: "#work-with-fk" },
@@ -9,8 +11,10 @@ const BUTTONS = [
 ];
 
 type Slide = {
-  statement: string;
-  body: string;
+  line1: string;
+  line2: string;
+  highlight: string;
+  support: string;
   activeButton: number;
   image: string;
   mobileImage?: string | null;
@@ -19,27 +23,39 @@ type Slide = {
 
 const SLIDES: Slide[] = [
   {
-    statement: "I'M BUILDING BUSINESS IN AFRICA.",
-    body: "For businesses entering an African market, expanding into another African market, or already operating in Africa and facing a commercial challenge or opportunity.",
+    line1: "I'M BUILDING",
+    line2: "BUSINESS IN AFRICA.",
+    highlight: "BUSINESS",
+    support: "For businesses entering, expanding or already operating in Africa.",
     activeButton: 0,
     image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2400&q=88",
     location: "Lagos, Nigeria",
   },
   {
-    statement: "I'M LOOKING FOR AN OPPORTUNITY.",
-    body: "Explore active business and investment opportunities that relevant people and organisations may be able to participate in.",
+    line1: "I'M LOOKING FOR AN",
+    line2: "OPPORTUNITY.",
+    highlight: "OPPORTUNITY",
+    support: "Active business and investment opportunities you can take part in.",
     activeButton: 1,
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=88",
     location: "Across Africa",
   },
   {
-    statement: "I HAVE A QUESTION.",
-    body: "Trying to understand something about Africa, a market, place, issue or opportunity? Start the conversation here.",
+    line1: "I HAVE A",
+    line2: "QUESTION.",
+    highlight: "QUESTION",
+    support: "Trying to understand a market, place, issue or opportunity in Africa?",
     activeButton: 2,
     image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2400&q=88",
     location: "On the ground in Africa",
   },
 ];
+
+function Headline({ text, highlight }: { text: string; highlight: string }) {
+  const at = text.indexOf(highlight);
+  if (at < 0) return <>{text}</>;
+  return <>{text.slice(0, at)}<em>{highlight}</em>{text.slice(at + highlight.length)}</>;
+}
 
 const SLIDE_MS = 6500;
 
@@ -112,7 +128,7 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
     <section
       ref={carouselRef}
       id="top"
-      className="hero"
+      className="hero hero-brief"
       aria-roledescription="carousel"
       aria-label="Where do you want to plug in?"
       onMouseEnter={() => setHovered(true)}
@@ -120,7 +136,7 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
     >
       {displaySlides.map((item, i) => (
         <div
-          key={item.statement}
+          key={item.line1}
           aria-hidden="true"
           className={`hero-photo ${i === index ? "is-active" : ""} hero-photo-slide-${i + 1}`}
           style={{ backgroundImage: `url("${item.image}")`, "--hero-mobile-image": `url("${item.mobileImage || item.image}")` } as React.CSSProperties & { "--hero-mobile-image": string }}
@@ -128,12 +144,14 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
       ))}
       <div className="hero-shade" aria-hidden="true" />
       <div key={index} className="hero-content hero-in" role="group" aria-roledescription="slide" aria-label={`Slide ${index + 1} of ${SLIDES.length}`}>
-        <p className="hero-brandline">THE AFRICA PLUG: YOUR CONNECTION TO AFRICA</p>
+        <h1>
+          <span><Headline text={slide.line1} highlight={slide.highlight} /></span>
+          <span><Headline text={slide.line2} highlight={slide.highlight} /></span>
+        </h1>
+        <p className="hero-support">{slide.support}</p>
+        <p className="hero-brandline">THE AFRICA PLUG — YOUR CONNECTION TO AFRICA</p>
         <p className="hero-categories">Investment <span aria-hidden="true">•</span> Business <span aria-hidden="true">•</span> Entertainment</p>
         <p className="hero-question">Where do you want to plug in?</p>
-        <h1><span>{slide.statement}</span></h1>
-        <p className="hero-copy">{slide.body}</p>
-        <p className="hero-location">{slide.location}</p>
         <div className="hero-actions" aria-label="Choose a route">
           {BUTTONS.map((button, i) => (
             <a
@@ -146,20 +164,33 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
             </a>
           ))}
         </div>
-        <div className="hero-carousel-controls" aria-label="Carousel controls">
-          <button type="button" className="hero-carousel-arrow" onClick={() => go(index - 1)} aria-label="Previous slide">←</button>
-          <span className="hero-slide-count" aria-live="polite">{String(index + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}</span>
-          <button type="button" className="hero-carousel-arrow" onClick={() => go(index + 1)} aria-label="Next slide">→</button>
+        <p className="hero-location">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /><circle cx="12" cy="9.5" r="2.4" fill="currentColor" /></svg>
+          {slide.location}
+        </p>
+      </div>
+      <div className="hero-brief-controls" role="group" aria-label="Carousel controls">
+        <button type="button" className="hero-brief-arrow" onClick={() => go(index - 1)} aria-label="Previous slide">←</button>
+        {SLIDES.map((item, i) => (
           <button
+            key={item.line1}
             type="button"
-            className="hero-carousel-toggle"
-            onClick={() => setPaused((value) => !value)}
-            aria-pressed={paused}
-            aria-label={paused ? "Play carousel" : "Pause carousel"}
-          >
-            {paused ? "Play" : "Pause"}
-          </button>
-        </div>
+            className={`hero-brief-dot${i === index ? " is-active" : ""}`}
+            onClick={() => go(i)}
+            aria-label={`Show slide ${i + 1} of ${SLIDES.length}`}
+            aria-current={i === index ? "true" : undefined}
+          />
+        ))}
+        <button type="button" className="hero-brief-arrow" onClick={() => go(index + 1)} aria-label="Next slide">→</button>
+        <button
+          type="button"
+          className="hero-brief-pause"
+          onClick={() => setPaused((value) => !value)}
+          aria-pressed={paused}
+          aria-label={paused ? "Play carousel" : "Pause carousel"}
+        >
+          {paused ? "▶" : "❚❚"}
+        </button>
       </div>
     </section>
   );

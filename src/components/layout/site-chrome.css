@@ -1,0 +1,46 @@
+/* FILE PATH: src/components/layout/site-chrome.css
+   Black header and black footer, sized for the official logo.
+   Every rule starts with "html body" so it beats the older light-theme rules in globals.css. */
+
+/* ---------- Header ---------- */
+html body .site-header,
+html body .site-header--store { background: #000 !important; border-bottom: 1px solid rgba(255, 255, 255, .14) !important; backdrop-filter: none; }
+html body .site-header .header-inner { height: 88px; }
+html body .site-header .brand-lockup { height: auto; overflow: visible; gap: 0; }
+html body .tap-brand-logo--header { height: 76px; }
+html body .site-header .desktop-nav a { color: rgba(255, 255, 255, .92) !important; }
+html body .site-header .desktop-nav a:hover,
+html body .site-header .desktop-nav a.is-active { color: var(--signal) !important; }
+html body .site-header .search-button,
+html body .site-header .mobile-menu-trigger { color: #fff; }
+html body .site-header .search-button:hover,
+html body .site-header .mobile-menu-trigger:hover { color: var(--signal); }
+html body .mobile-menu-panel { background: #000; border-color: rgba(255, 255, 255, .14); box-shadow: 0 18px 24px rgba(0, 0, 0, .55); }
+html body .mobile-menu-link { color: rgba(255, 255, 255, .9); }
+html body .mobile-menu-link:hover { color: var(--signal); }
+html { scroll-padding-top: 104px; }
+
+/* ---------- Footer ---------- */
+html body .site-footer { background: #000; color: #fff; border-top: 1px solid rgba(255, 255, 255, .14); }
+html body .site-footer .footer-logo-lockup { min-height: 0; }
+html body .tap-brand-logo--footer { height: 132px; }
+html body .site-footer .tap-footer-tagline { color: #c4c7ce; }
+html body .site-footer a.tap-footer-email { color: var(--signal); }
+html body .site-footer .tap-footer-primary-link { color: var(--signal); }
+html body .site-footer .tap-footer-column h2,
+html body .site-footer .tap-footer-kicker { color: var(--signal); }
+html body .site-footer .tap-footer-column a { color: #aeb3bd !important; }
+html body .site-footer .tap-footer-column a:hover { color: #fff !important; }
+html body .site-footer .tap-footer-description { color: #aeb3bd; }
+html body .site-footer .tap-footer-contact-note,
+html body .site-footer .tap-footer-copyright,
+html body .site-footer .tap-footer-motto { color: #8a909a !important; }
+html body .site-footer .tap-footer-contact-note a { color: #c5c8cf !important; }
+html body .site-footer .tap-footer-bottom { border-top-color: rgba(255, 255, 255, .14); }
+
+@media (max-width: 680px) {
+  html body .site-header .header-inner { height: 78px; }
+  html body .tap-brand-logo--header { height: 66px; }
+  html body .tap-brand-logo--footer { height: 112px; }
+  html { scroll-padding-top: 92px; }
+}

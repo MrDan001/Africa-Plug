@@ -1,6 +1,8 @@
+// FILE PATH: src/components/admin/StoreOrdersClient.tsx
 "use client";
 
 import Link from "next/link";
+import BrandLogo from "@/components/layout/BrandLogo";
 import { useEffect, useMemo, useState } from "react";
 
 type OrderItem = {
@@ -104,7 +106,7 @@ export default function StoreOrdersClient() {
 
   return <main className="ap-admin" style={{ minHeight: "100vh", paddingBottom: 48 }}>
     <header className="ap-admin-topbar">
-      <Link className="ap-admin-brand" href="/admin"><span>AP</span><b>THE AFRICA PLUG</b></Link>
+      <Link className="ap-admin-brand" href="/admin" aria-label="The Africa Plug admin home"><BrandLogo height={72} /></Link>
       <div className="ap-admin-top-actions"><Link href="/admin/store">Store products ↗</Link><Link href="/">View website ↗</Link></div>
     </header>
     <section className="ap-admin-hero" style={{ paddingBottom: 30 }}>

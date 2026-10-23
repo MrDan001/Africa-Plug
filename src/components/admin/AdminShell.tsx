@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import BrandLogo from "@/components/layout/BrandLogo";
 import "./AdminDashboard.css";
 import "./AdminPages.css";
 import "./AdminTapIn.css";
@@ -71,9 +72,7 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
 
 export function Logo({ size = 40 }: { size?: number }) {
   return (
-    <span className="apd-logo" style={{ width: size, height: size }} aria-hidden="true">
-      <Icon name="globe" size={Math.round(size * 0.62)} />
-    </span>
+    <BrandLogo height={Math.round(size * 1.5)} />
   );
 }
 
@@ -149,7 +148,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     <div className="apd">
       {/* ---------------- Desktop sidebar ---------------- */}
       <aside className="apd-sidebar" aria-label="Admin navigation">
-        <Link href="/" className="apd-brand"><Logo /><span>THE AFRICA PLUG</span></Link>
+        <Link href="/" className="apd-brand" aria-label="The Africa Plug homepage"><Logo size={44} /></Link>
         <nav className="apd-nav">
           {ADMIN_NAV.map((group, index) => (
             <div className="apd-nav-group" key={group.label ?? `g${index}`}>
@@ -183,7 +182,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <button type="button" className="apd-menu-btn" aria-label="Open all modules" onClick={() => setMoreOpen(true)}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
           </button>
-          <Link href="/" className="apd-top-brand"><Logo size={30} /><span>THE AFRICA PLUG</span></Link>
+          <Link href="/" className="apd-top-brand" aria-label="The Africa Plug homepage"><Logo size={30} /></Link>
 
           <div className="apd-search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>

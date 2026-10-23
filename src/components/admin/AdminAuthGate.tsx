@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
+import BrandLogo from "@/components/layout/BrandLogo";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export default function AdminAuthGate({ children }: { children: ReactNode }) {
@@ -55,7 +56,7 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
     return (
       <main className="ap-admin ap-admin-login" style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
         <section className="ap-admin-login-card" style={{ width: "min(100%, 480px)" }}>
-          <Link className="ap-admin-brand" href="/"><span>AP</span><b>THE AFRICA PLUG</b></Link>
+          <Link className="ap-admin-brand" href="/" aria-label="The Africa Plug homepage"><BrandLogo height={84} /></Link>
           <p className="ap-admin-eyebrow" style={{ marginTop: 32 }}>PRIVATE WORKSPACE</p>
           <h1>Welcome back.</h1>
           <p>Sign in to manage the website, content, media and business enquiries.</p>
