@@ -2,7 +2,15 @@
    Compact "brief" hero carousel (headline, one line of context, three buttons, location).
    Every rule starts with .hero.hero-brief so it always wins over the older .hero rules in globals.css. */
 
-   .hero.hero-brief { min-height: 0; height: auto; padding-top: 0; align-items: center; }
+   .hero.hero-brief { min-height: clamp(480px, 40vw, 640px); height: auto; padding-top: 0; align-items: center; }
+
+   /* Photos are shown with "cover", so a wide banner always crops some of the picture.
+      A taller banner (above) shows more of it, and these focal points keep the crop near the top,
+      where faces usually are, instead of cutting heads off at the centre. */
+   .hero.hero-brief .hero-photo { background-position: center 25%; }
+   .hero.hero-brief .hero-photo.hero-photo-slide-1 { background-position: center 22%; }
+   .hero.hero-brief .hero-photo.hero-photo-slide-2 { background-position: center 40%; }
+   .hero.hero-brief .hero-photo.hero-photo-slide-3 { background-position: center 20%; }
    .hero.hero-brief .hero-content { padding: 46px 32px 64px; }
    
    .hero.hero-brief h1 {
@@ -48,6 +56,9 @@
    
    @media (max-width: 680px) {
      .hero.hero-brief { min-height: 0; height: auto; padding-top: 0; }
+     .hero.hero-brief .hero-photo.hero-photo-slide-1 { background-position: 61% 22%; }
+     .hero.hero-brief .hero-photo.hero-photo-slide-2 { background-position: 61% 40%; }
+     .hero.hero-brief .hero-photo.hero-photo-slide-3 { background-position: 61% 20%; }
      .hero.hero-brief .hero-content { padding: 26px 20px 56px; }
      .hero.hero-brief h1 { font-size: clamp(30px, 8.8vw, 42px); }
      .hero.hero-brief .hero-support { max-width: 340px; margin-top: 10px; font-size: 13px; line-height: 1.45; }
