@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
 import BrandLogo from "@/components/layout/BrandLogo";
+import CookieSettingsLink from "@/components/layout/CookieSettingsLink";
 import "./site-chrome.css";
 
 const FOOTER_LINKS = [
@@ -37,6 +38,6 @@ export default async function Footer() {
       <nav className="tap-footer-column" aria-label="Explore links"><h2>EXPLORE</h2>{exploreLinks.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}</nav>
       <div className="tap-footer-contact"><p className="tap-footer-kicker">THE AFRICA PLUG</p><p className="tap-footer-description">Investment • Business • Entertainment</p><p className="tap-footer-contact-note">For general, business and partnership enquiries, write to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>{socialLinks.length ? <nav aria-label="Social links" style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 16 }}>{socialLinks.map((item) => <a key={item.label} href={item.href} target="_blank" rel="noreferrer">{item.label} ↗</a>)}</nav> : null}</div>
     </div>
-    <div className="tap-footer-bottom"><p className="tap-footer-copyright">© {new Date().getFullYear()} The Africa Plug. All rights reserved.</p><p className="tap-footer-motto">INVESTMENT • BUSINESS • ENTERTAINMENT</p><nav aria-label="Legal information">{FOOTER_LEGAL.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}</nav></div>
+    <div className="tap-footer-bottom"><p className="tap-footer-copyright">© {new Date().getFullYear()} The Africa Plug. All rights reserved.</p><p className="tap-footer-motto">INVESTMENT • BUSINESS • ENTERTAINMENT</p><nav aria-label="Legal information">{FOOTER_LEGAL.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}<CookieSettingsLink /></nav></div>
   </footer>;
 }
