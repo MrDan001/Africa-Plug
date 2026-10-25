@@ -26,8 +26,8 @@ function LegalPage({ eyebrow, title, intro, notice, sections }: LegalPageProps) 
         <h1>{title}</h1>
         <p className="legal-page-intro">{intro}</p>
         <div className="legal-page-meta">
-          <span>Effective date: 14 October 2026</span>
-          <span>Last reviewed: 14 October 2026</span>
+          <span>Effective date: 30 November 2026</span>
+          <span>Last reviewed: 30 November 2026</span>
         </div>
         <p className="legal-page-notice">{notice}</p>
         <div className="legal-page-sections">
@@ -156,8 +156,8 @@ export function TermsOfUse() {
     {
       heading: "1. About these terms",
       paragraphs: [
-        "These terms govern your use of The Africa Plug website. By using the site, you agree to use it lawfully and in accordance with these terms. If you do not agree, please stop using the site.",
-        "The Africa Plug provides information about African markets, business, investment, culture, travel, lifestyle and opportunities, alongside routes for enquiries and potential services. These website terms do not replace a separate written agreement for any consulting, advisory or other paid service."
+        "This website is operated by Fadekemi Oba (known as FK), trading as The Africa Plug, with offices in Victoria Island, Lagos, Nigeria and London, United Kingdom. These terms govern use of the website, its forms, TAP IN and the Store. By using the site, you agree to these terms. If you do not agree, please stop using it.",
+        "Our content covers business, investment, culture, travel and opportunities across Africa for general information only. It is not legal, tax, financial, investment or other regulated advice. Markets and rules change, so check important facts and take qualified advice before committing money, signing a contract or entering a market. These website terms do not replace a separate written agreement for any consulting, advisory or other paid service."
       ]
     },
     {
@@ -184,14 +184,14 @@ export function TermsOfUse() {
     {
       heading: "5. Enquiries and business relationships",
       paragraphs: [
-        "Submitting an enquiry does not create a client relationship, partnership, agency, fiduciary duty or commitment by either party. We may request further information, decline an enquiry or be unable to respond. Any agreed service, scope, fee, timetable, confidentiality obligation and cancellation rule should be set out separately in writing before work begins.",
+        "TAP IN listings are shared for information only and are not an offer, recommendation or endorsement. We do not guarantee the accuracy of any listing or the people behind it. Carry out your own due diligence before entering any agreement. Submitting or expressing interest in an opportunity does not commit either side, and any introduction is made at our discretion. We may request further information, decline an enquiry or be unable to respond. Any agreed service, scope, fee, timetable, confidentiality obligation and cancellation rule should be set out separately in writing before work begins.",
         "Please ensure that information you submit is accurate to the best of your knowledge and that you have permission to share any third-party personal or confidential information included in your message."
       ]
     },
     {
       heading: "6. Store catalogue and product information",
       paragraphs: [
-        "At the effective date of these terms, online sales are not yet enabled. Any product shown in the Store is for information only until checkout and delivery are live, and no order can be placed or paid for through the site. Do not send card or bank details by email.",
+        "Prices, currency and what's included are shown before you pay. Payments are processed securely by Stripe. When you buy a guide or other digital product, you get a personal licence to use it for yourself or your own business. You may not share, resell, copy or publish it, in whole or in part. Cancellations and refunds are covered by our Refunds Policy.",
         "If online sales are enabled later, each product page, checkout and order confirmation will set out the actual product, price, currency, delivery method, applicable taxes and any product-specific terms. A separate order is accepted only when the checkout and confirmation process says it is accepted."
       ]
     },
@@ -245,7 +245,7 @@ export function CookiePolicy() {
       heading: "2. What the current website uses",
       paragraphs: [
         "The website requires technical services to deliver pages, protect them from abuse and keep the site operating. Hosting, security or form-protection providers may process technical information or use strictly necessary storage as part of those functions.",
-        "In the front-end implementation reviewed on 14 October 2026, we did not identify an intentional advertising or analytics-cookie feature. Third-party fonts, images, embeds or services may still make requests to their providers and those providers may receive standard technical information. Actual cookies can also depend on deployment settings and services enabled outside the code, so this statement is not a guarantee that no technical cookies are present."
+        "In the front-end implementation reviewed on 30 November 2026, we did not identify an intentional advertising or analytics-cookie feature. Third-party fonts, images, embeds or services may still make requests to their providers and those providers may receive standard technical information. Actual cookies can also depend on deployment settings and services enabled outside the code, so this statement is not a guarantee that no technical cookies are present."
       ]
     },
     {
@@ -264,7 +264,7 @@ export function CookiePolicy() {
       heading: "5. Managing preferences",
       paragraphs: [
         "Your browser settings usually allow you to view, block or delete cookies. Blocking all cookies may affect features or how some pages work. Browser controls are not always a substitute for a consent mechanism where one is legally required.",
-        "A privacy banner is provided on public pages so you can accept or reject optional analytics. Essential site functions remain available regardless of that choice. Your selection is stored in this browser and can be changed by clearing the site’s local storage. This banner is a basic preference control; this policy and the site’s technology inventory must still be reviewed before launch."
+        "A privacy banner is provided on public pages so you can accept or reject optional analytics. Essential site functions remain available regardless of that choice. Your selection is stored in this browser. Use the “Cookie settings” link in the footer to reopen the banner and change your choice at any time."
       ]
     },
     {
@@ -280,7 +280,7 @@ export function CookiePolicy() {
       eyebrow="DEVICE PREFERENCES"
       title="COOKIE POLICY"
       intro="How cookies and similar technologies can support website operation, security and optional features."
-      notice="This policy is written for the current implementation as reviewed on 14 October 2026. No active consent banner was verified, so non-essential tracking should not be introduced until the required consent controls are in place."
+      notice="This policy describes the website's current cookie choices and technologies as reviewed on 30 November 2026. Optional analytics are sent only after you accept them. Embedded content may set its own cookies when you choose to play or use it."
       sections={sections}
     />
   );
