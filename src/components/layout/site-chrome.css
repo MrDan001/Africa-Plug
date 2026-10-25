@@ -44,3 +44,25 @@ html body .site-footer .tap-footer-bottom { border-top-color: rgba(255, 255, 255
   html body .tap-brand-logo--footer { height: 112px; }
   html { scroll-padding-top: 92px; }
 }
+
+/* Footer cookie preference control */
+.tap-cookie-settings-link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tap-cookie-settings-link:hover,
+.tap-cookie-settings-link:focus-visible {
+  color: var(--signal, #d51f6d);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.tap-cookie-settings-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
