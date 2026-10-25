@@ -245,7 +245,7 @@ export function CookiePolicy() {
       heading: "2. What the current website uses",
       paragraphs: [
         "The website requires technical services to deliver pages, protect them from abuse and keep the site operating. Hosting, security or form-protection providers may process technical information or use strictly necessary storage as part of those functions.",
-        "In the front-end implementation reviewed on 30 November 2026, we did not identify an intentional advertising or analytics-cookie feature. Third-party fonts, images, embeds or services may still make requests to their providers and those providers may receive standard technical information. Actual cookies can also depend on deployment settings and services enabled outside the code, so this statement is not a guarantee that no technical cookies are present."
+        "The site uses first-party analytics events through its analytics endpoint. These events are sent only after you accept analytics in the cookie banner. We do not use advertising cookies. Embedded content, including YouTube videos, may make requests to the relevant provider when you choose to play or use it, and that provider may set cookies under its own policy. Hosting and security providers may also process technical information needed to deliver and protect the site."
       ]
     },
     {
