@@ -1899,3 +1899,43 @@ html, body { background: #f7f5f1; color: #292a2c; }
 .hero-carousel-arrow:hover, .hero-carousel-toggle:hover { border-color: var(--signal); background: var(--signal); color: #fff; }
 .hero-carousel-arrow:focus-visible, .hero-carousel-toggle:focus-visible, .hero-actions a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 @media (max-width: 800px) { .hero-copy { font-size: 14px; } }
+
+/* Site-wide password gate */
+.tap-site-gate {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 28px 18px;
+  color: #f7f5f1;
+  background:
+    radial-gradient(ellipse at 85% 12%, rgba(213,31,109,.16), transparent 38%),
+    radial-gradient(ellipse at 12% 90%, rgba(213,31,109,.09), transparent 34%),
+    #07080b;
+}
+.tap-site-gate-card {
+  width: min(100%, 480px);
+  padding: clamp(26px, 6vw, 48px);
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 20px;
+  background: rgba(18,19,23,.94);
+  box-shadow: 0 28px 90px rgba(0,0,0,.42);
+}
+.tap-site-gate-logo { display: flex; align-items: center; min-height: 76px; margin-bottom: 34px; }
+.tap-site-gate-eyebrow { margin: 0 0 12px; color: #ed4b91; font-size: 10px; font-weight: 900; letter-spacing: .16em; }
+.tap-site-gate-card h1 { margin: 0; font-size: clamp(32px, 8vw, 46px); line-height: 1.04; letter-spacing: -.055em; font-weight: 900; }
+.tap-site-gate-card h1 span { color: #ed4b91; }
+.tap-site-gate-copy { margin: 18px 0 28px; max-width: 340px; color: #c4c5ca; font-size: 14px; line-height: 1.7; }
+.tap-site-gate-card form label { display: block; margin-bottom: 9px; color: #f7f5f1; font-size: 12px; font-weight: 750; }
+.tap-site-gate-input-wrap { position: relative; display: flex; align-items: center; }
+.tap-site-gate-input-wrap input { width: 100%; min-height: 52px; padding: 0 76px 0 15px; border: 1px solid rgba(255,255,255,.2); border-radius: 9px; outline: none; color: #fff; background: #0b0c10; }
+.tap-site-gate-input-wrap input:focus { border-color: #ed4b91; box-shadow: 0 0 0 3px rgba(237,75,145,.14); }
+.tap-site-gate-toggle { position: absolute; right: 8px; min-width: 52px; padding: 8px 6px; border: 0; color: #f0a0c3; background: transparent; font-size: 10px; font-weight: 850; cursor: pointer; }
+.tap-site-gate-submit { width: 100%; min-height: 52px; margin-top: 16px; border: 1px solid #d51f6d; border-radius: 9px; color: white; background: #d51f6d; font-size: 11px; font-weight: 900; letter-spacing: .04em; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+.tap-site-gate-submit:hover { background: #b8185a; transform: translateY(-1px); }
+.tap-site-gate-submit:disabled { opacity: .65; cursor: wait; transform: none; }
+.tap-site-gate-error { margin: 12px 0 0; color: #ff9cbf; font-size: 12px; line-height: 1.5; }
+.tap-site-gate-foot { margin: 22px 0 0; color: #8d9099; font-size: 11px; line-height: 1.6; }
+@media (max-width: 480px) {
+  .tap-site-gate-card { border-radius: 15px; }
+  .tap-site-gate-logo { margin-bottom: 28px; }
+}
