@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
+import RefreshLoginGuard from "@/components/site/RefreshLoginGuard";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-GB" className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col" suppressHydrationWarning><AnalyticsTracker />{children}</body>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning><RefreshLoginGuard /><AnalyticsTracker />{children}</body>
     </html>
   );
 }
