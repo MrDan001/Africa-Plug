@@ -26,7 +26,20 @@ export function proxy(request: NextRequest) {
   const expected = expectedGateToken();
   const supplied = request.cookies.get(COOKIE)?.value;
   const authenticated = Boolean(expected && supplied && supplied.length === expected.length && timingSafeEqual(Buffer.from(supplied), Buffer.from(expected)));
-  if (authenticated) return NextResponse.next();
+  if (authenticated) {
+    // Treat the gate token as a one-page pass: consume it as soon as a
+    // protected page is served, so every subsequent page navigation asks
+    // for the password again.
+    const response = NextResponse.next();
+    response.cookies.set(COOKIE, "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      expires: new Date(0),
+    });
+    return response;
+  }
 
   const url = request.nextUrl.clone();
   url.pathname = "/site-access";
