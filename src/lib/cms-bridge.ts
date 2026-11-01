@@ -31,7 +31,6 @@ export async function cmsBridge<T = Record<string, unknown>>(payload: Record<str
     cache: "no-store",
     headers: {
       apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`,
       "Content-Type": "application/json",
       "x-ap-bridge-secret": secret,
     },
@@ -150,7 +149,6 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     
     const youtubeVal = settingString("youtubeUrl") || settingString("youtube_url") || DEFAULT_VIDEO_URL;
     const introVideoVal = settingString("introVideoUrl") || settingString("intro_video_url") || youtubeVal;
-    // Prefer the dedicated intro link; fall back to the YouTube link, then the default film.
     const introVideoId = parseYouTubeId(introVideoVal) ?? parseYouTubeId(youtubeVal) ?? parseYouTubeId(DEFAULT_VIDEO_URL) ?? undefined;
 
     const longString = (key: string, max: number) => typeof data[key] === "string" ? (data[key] as string).trim().slice(0, max) : "";
@@ -181,7 +179,6 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       enableSearch: settingBool("enableSearch"),
       enableSelectedWork: settingBool("enableSelectedWork"),
       enableProductOfMonth: settingBool("enableProductOfMonth"),
-      // Only a complete record is exposed: name, TAP write-up and a valid https external link are required.
       productOfMonth: potm.name && potm.writeUp && potm.url ? potm : undefined,
       tapInFilterThreshold: settingNumber("tapInFilterThreshold"),
       navigation: safeNavigation(data.navigation),
