@@ -326,32 +326,12 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(isApplicationDecision ? { id: record.id, decision: status } : { id: record.id, status }),
       });
-      const data = await response.json() as { error?: string };
+      const data = await response.json() as { error?: string; message?: string };
       if (!response.ok) throw new Error(data.error || "Could not update status.");
-      setNotice({ tone: "success", text: `Status updated to ${status.replace(/-/g, " ")}.` });
+      setNotice({ tone: "success", text: isApplicationDecision && data.message ? data.message : `Status updated to ${status.replace(/-/g, " ")}.` });
       await loadRecords();
     } catch (error) {
       setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not update status." });
-    }
-  }
-
-  async function schedulerAction(record: CmsRecord, action: "confirm-payment" | "send-link") {
-    if (action === "confirm-payment" && !window.confirm(`Confirm that the deposit or invoice payment for “${record.title}” has been received?`)) return;
-    if (action === "send-link" && record.data?.schedulerIssuedAt && !window.confirm("A scheduler link was already sent. Sending again deactivates the old link. Continue?")) return;
-    setNotice(null);
-    try {
-      const response = await fetch("/api/work-with-fk/schedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: record.id, action }),
-      });
-      const data = await response.json() as { error?: string; message?: string; link?: string; emailNotification?: string };
-      if (!response.ok) throw new Error(data.error || "Could not update the scheduler.");
-      if (data.link && data.emailNotification !== "sent") window.prompt("The email was not sent automatically. Copy this private link and send it to the applicant:", data.link);
-      setNotice({ tone: "success", text: data.message || "Scheduler updated." });
-      await loadRecords();
-    } catch (error) {
-      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not update the scheduler." });
     }
   }
 
@@ -580,7 +560,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               </div>
               <h3>{record.title || "Untitled record"}</h3>
               {recordSummary(record) ? <p className="apm-summary">{recordSummary(record)}</p> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <p className="apm-scheduler">Scheduler: {record.data?.meetingBookedAt ? "meeting booked" : record.data?.schedulerIssuedAt ? "private link sent" : record.data?.paymentStatus === "confirmed" ? "payment confirmed, link not sent yet" : "waiting for payment confirmation"}</p> : null}
               {moduleKey === "blog" || moduleKey === "store" ? <small className="apm-url">URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
               {moduleKey === "store" ? <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
@@ -592,7 +571,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {editable ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" ? <>{record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn" onClick={() => void schedulerAction(record, "confirm-payment")}>Confirm payment received</button> : null}{record.data?.paymentStatus === "confirmed" && !record.data?.meetingBookedAt ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void schedulerAction(record, "send-link")}>{record.data?.schedulerIssuedAt ? "Resend scheduler link" : "Send scheduler link"}</button> : null}</> : null}
               {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
               {moduleKey === "subscribers" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
               {(moduleKey === "blog" || moduleKey === "store" || moduleKey === "media") ? <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button> : null}

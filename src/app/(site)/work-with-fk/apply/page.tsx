@@ -1,20 +1,25 @@
+// FILE PATH: src/app/(site)/work-with-fk/apply/page.tsx
+import type { Metadata } from "next";
 import ContentPage from "@/components/layout/ContentPage";
-import EnquiryForm from "@/components/forms/EnquiryForm";
+import WorkApplyForm from "@/components/work-with-fk/WorkApplyForm";
+
+export const metadata: Metadata = {
+  title: { absolute: "Start Your Application | Work With FK | The Africa Plug" },
+  description: "Send your brief to FK. If it’s a fit, you receive fees, terms and a private link to book your Deal Diagnostic.",
+  alternates: { canonical: "/work-with-fk/apply" },
+};
 
 export default function WorkWithFkApplyPage() {
   return (
     <ContentPage
       eyebrow="WORK WITH FK"
-      title="LET’S UNDERSTAND YOUR BRIEF."
-      description="Tell us about your organisation, target market, mandate, requirements and timeframe. The team reviews every application. This form does not take payment or confirm a meeting."
+      title="START YOUR APPLICATION."
+      description="Send your brief. If it’s a fit, you receive fees, terms and a private link to book."
     >
-      <div className="application-steps">
-        <div><span>01</span><h2>Your context</h2><p>Who you are, what your organisation does and where the opportunity sits.</p></div>
-        <div><span>02</span><h2>Your objective</h2><p>What you are trying to achieve, your timing and the help you are looking for.</p></div>
-        <div><span>03</span><h2>Review & next steps</h2><p>If the brief is a fit, the team can outline the next steps and relevant terms.</p></div>
-      </div>
-      <EnquiryForm kind="work" />
-      <p className="standard-disclaimer">The full agreed sequence is Application → Review → Approval → Deposit or Invoice → Private Scheduler → Balance Payment → Meeting. Payment, scheduler access and transactional emails remain disabled until the relevant provider accounts and final commercial/legal terms are configured and end-to-end tested.</p>
+      <p className="wfk-nda-note">
+        Please don’t share confidential details here. If needed, an NDA can be signed before your Deal Diagnostic.
+      </p>
+      <WorkApplyForm />
     </ContentPage>
   );
 }

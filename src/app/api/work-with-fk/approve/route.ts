@@ -1,10 +1,15 @@
-import { Resend } from "resend";
+// FILE PATH: src/app/api/work-with-fk/approve/route.ts
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/**
+ * Admin only. Records FK's decision on a Work With FK application.
+ * It changes the status and nothing else: no email is sent and nothing is charged or booked.
+ * FK sends the approval or decline email herself (fees and terms, Stripe link or invoice details).
+ */
 export async function POST(request: Request) {
   if (!await isAdminAuthenticated()) return Response.json({ error: "Please sign in to the admin workspace." }, { status: 401, headers: { "Cache-Control": "no-store" } });
   let input: { id?: unknown; decision?: unknown };
@@ -28,37 +33,13 @@ export async function POST(request: Request) {
       id: input.id,
       status: input.decision,
     });
-    const data = application.data ?? {};
-    const email = typeof data.email === "string" ? data.email.trim() : "";
-    const name = typeof data.name === "string" ? data.name.trim() : "there";
-    let emailNotification: "sent" | "not-configured" | "failed" = "not-configured";
-
-    if (email && process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
-      try {
-        const isApproved = input.decision === "approved";
-        const subject = isApproved ? "An update on your Work With FK application" : "An update on your Africa Plug application";
-        const body = isApproved
-          ? `Hello ${name},\n\nWe have reviewed your Work With FK application and approved it for the next stage.\n\nThe commercial details and next-step instructions are being confirmed. Please do not make a payment unless you receive an official fee summary and payment or invoice instructions from The Africa Plug. This email is not a meeting or payment confirmation.\n\nRegards,\nThe Africa Plug team`
-          : `Hello ${name},\n\nThank you for taking the time to submit your Work With FK application. After review, we will not be progressing this application at this time.\n\nThank you for your interest in The Africa Plug.\n\nRegards,\nThe Africa Plug team`;
-        const response = await new Resend(process.env.RESEND_API_KEY).emails.send({
-          from: process.env.EMAIL_FROM,
-          to: [email],
-          subject,
-          text: body,
-        });
-        if (!response.error) emailNotification = "sent";
-        else emailNotification = "failed";
-      } catch (error) {
-        emailNotification = "failed";
-        console.error("Work With FK decision email failed:", error instanceof Error ? error.message : "Unknown error");
-      }
-    }
 
     return Response.json({
       ok: true,
       application: result.record,
-      emailNotification,
-      message: input.decision === "approved" ? "Application approved for the next stage." : "Application declined.",
+      message: input.decision === "approved"
+        ? "Marked as approved. Now send your approval email with the fee and terms."
+        : "Marked as declined. Now send your decline email.",
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Work With FK decision failed:", error instanceof Error ? error.message : "Unknown error");
