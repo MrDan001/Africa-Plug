@@ -47,6 +47,22 @@ export default async function HomeSections() {
     </section> : null}
 
     <section className="content-section tap-in-home-section" id="tap-in" style={{padding:"clamp(48px,8vw,100px) clamp(20px,6vw,90px)"}}>
+      <style>{`
+        .tap-in-home-section { background: #000; color: #fff; }
+        .tap-in-home-section .standard-section-heading h2 { color: #fff; }
+        .tap-in-home-section .standard-section-heading > p:last-child { color: #d0d0d0; }
+        .tap-in-home-section .standard-card { background: #050505; border-color: rgba(255,255,255,.18); border-top-color: #d51f6d; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+        .tap-in-home-section .standard-card:hover { background: #090909; border-color: #d51f6d; transform: translateY(-3px); }
+        .tap-in-home-section .standard-card-category { color: #d51f6d; }
+        .tap-in-home-section .standard-card h3 { color: #fff; }
+        .tap-in-home-section .standard-card > p:not(.standard-card-category) { color: #d7d7d7; }
+        .tap-in-home-section .standard-card .text-link { color: #d51f6d; transition: color .2s ease; }
+        .tap-in-home-section .standard-card:hover h3,
+        .tap-in-home-section .standard-card:hover > p:not(.standard-card-category),
+        .tap-in-home-section .standard-card:hover .text-link { color: #fff; }
+        .tap-in-home-section > div > .text-link { color: #fff; }
+        .tap-in-home-section > div > .text-link:hover { color: #d51f6d; }
+      `}</style>
       <div style={{maxWidth:1200,margin:"0 auto"}}><div className="standard-section-heading"><p className="standard-eyebrow">TAP IN</p><h2>Current opportunities.</h2><p>Business and investment opportunities that are open now.</p></div>
       {opportunities.length ? <div className="standard-card-grid">{opportunities.slice(0,3).map((item)=><article className="standard-card" key={item.id}><p className="standard-card-category">{[item.sector,item.opportunity_type].filter(Boolean).join(" · ")}</p><h3>{item.title}</h3><p>{item.description}</p><p className="standard-card-category">{[item.country,item.region].filter(Boolean).join(" · ")}</p><a className="text-link" href={"/tap-in/"+item.slug}>VIEW OPPORTUNITY <span>→</span></a></article>)}</div> : <div className="standard-note"><div><h3>No current opportunities to display.</h3><p>Listings will appear here when genuine opportunities have been reviewed and approved for publication.</p></div><Link href="/tap-in">ABOUT TAP IN <span>→</span></Link></div>}
       <Link className="text-link" href="/tap-in">EXPLORE TAP IN <span>→</span></Link></div>
