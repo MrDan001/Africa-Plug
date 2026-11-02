@@ -40,7 +40,7 @@ export default async function Footer() {
     settings.whatsappUrl ? { label: "WhatsApp", href: settings.whatsappUrl, icon: <WhatsAppIcon /> } : null,
     settings.linkedinUrl ? { label: "LinkedIn", href: settings.linkedinUrl, icon: <LinkedInIcon /> } : null,
     settings.instagramUrl ? { label: "Instagram", href: settings.instagramUrl, icon: null } : null,
-  ].filter((item) => item !== null && /^https:\/\//i.test(item.href));
+  ].filter((item): item is Exclude<typeof item, null> => item !== null && /^https:\/\//i.test(item.href));
 
   return <footer className="site-footer">
     <div className="footer-accent" aria-hidden="true"/>
