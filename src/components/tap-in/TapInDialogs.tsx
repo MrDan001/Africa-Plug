@@ -8,7 +8,7 @@ import { useTurnstile } from "@/components/work-with-fk/useTurnstile";
 
 const THANKS = "Thank you. We’ll be in touch if it’s a fit.";
 
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+function Modal({ title, onClose, children, success = false }: { title: string; onClose: () => void; children: ReactNode; success?: boolean }) {
   const titleId = useId();
   useEffect(() => {
     const previous = document.body.style.overflow;
@@ -19,9 +19,9 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
     return () => { document.body.style.overflow = previous; document.removeEventListener("keydown", onKey, true); };
   }, [onClose]);
   return (
-    <div className="ti-modal-wrap">
+    <div className={`ti-modal-wrap${success ? " ti-modal-wrap-success" : ""}`}>
       <div className="ti-modal-overlay" onClick={onClose} aria-hidden="true" />
-      <div className="ti-modal" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <div className={`ti-modal${success ? " ti-modal-success" : ""}`} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <button type="button" className="ti-panel-close" aria-label="Close" onClick={onClose}>×</button>
         <h2 id={titleId}>{title}</h2>
         {children}
@@ -33,8 +33,15 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 function Done({ onClose, text = THANKS }: { onClose: () => void; text?: string }) {
   return (
     <div className="ti-done" role="status" aria-live="polite">
+      <div className="ti-done-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12.5 9.2 16.5 19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <span className="ti-done-kicker">SUBMISSION RECEIVED</span>
+      <h3>Thank you!</h3>
       <p>{text}</p>
-      <button type="button" className="ti-btn ti-btn-outline" onClick={onClose}>CLOSE</button>
+      <button type="button" className="ti-btn ti-btn-primary ti-done-close" onClick={onClose}>DONE<span aria-hidden="true">→</span></button>
     </div>
   );
 }
@@ -90,7 +97,7 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
   }, token);
 
   return (
-    <Modal title="Express interest" onClose={onClose}>
+    <Modal title="Express interest" onClose={onClose} success={done}>
       {done ? <Done onClose={onClose} /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label className="ti-full"><span>Opportunity <b>*</b></span>
@@ -135,7 +142,7 @@ export function RegisterInterestDialog({ onClose }: { onClose: () => void }) {
   }, token);
 
   return (
-    <Modal title="Register your interest" onClose={onClose}>
+    <Modal title="Register your interest" onClose={onClose} success={done}>
       {done ? <Done onClose={onClose} /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label><span>Name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
@@ -170,7 +177,7 @@ export function SubmitOpportunityDialog({ onClose }: { onClose: () => void }) {
   }, token);
 
   return (
-    <Modal title="Submit an opportunity" onClose={onClose}>
+    <Modal title="Submit an opportunity" onClose={onClose} success={done}>
       {done ? <Done onClose={onClose} /> : (
         <form className="ti-form" onSubmit={(event) => { if (fileError) { event.preventDefault(); return; } void onSubmit(event); }}>
           <label><span>Name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
