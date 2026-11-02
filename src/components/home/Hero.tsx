@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import "./hero-brief.css";
 
 const BUTTONS = [
-  { label: "WORK WITH FK", href: "#work-with-fk" },
-  { label: "TAP IN", href: "#tap-in" },
+  { label: "WORK WITH FK", href: "work-with-fk" },
+  { label: "TAP IN", href: "tap-in" },
   { label: "ASK THE AFRICA PLUG", href: "/contact?type=ask" },
 ];
 

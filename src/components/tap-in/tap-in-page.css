@@ -33,16 +33,30 @@
   .ti-btn-outline:hover { background: var(--ti-text); border-color: var(--ti-text); color: #fff; }
   .ti-btn:focus-visible, .ti-chip:focus-visible, .ti-card:focus-visible { outline: 2px solid var(--ti-pink); outline-offset: 3px; }
   
-  /* Hero */
-  .ti-hero { position: relative; overflow: hidden; min-height: 440px; padding-top: 150px; padding-bottom: 72px; background: var(--ti-cream); }
-  .ti-hero-img {
-    position: absolute; top: 88px; right: 0; bottom: 0; width: 64%;
-    background: url("/images/tap-in/tap-in-hero.jpg") center / cover no-repeat;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%); mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
+  /* Hero - Flush Top with Vertically Centered Text */
+  .ti-hero { 
+    position: relative; 
+    overflow: hidden; 
+    min-height: 460px; 
+    padding-top: 110px; 
+    padding-bottom: 90px; 
+    background: #000000; 
   }
-  .ti-hero-inner { position: relative; }
-  .ti-hero h1 { margin: 0; color: var(--ti-ink); font-size: clamp(68px, 11vw, 124px); font-weight: 900; line-height: .9; letter-spacing: -.055em; }
-  .ti-hero-sub { max-width: 480px; margin: 22px 0 0; color: #3b3c3f; font-size: clamp(14px, 1.5vw, 16px); line-height: 1.6; }
+  .ti-hero-img {
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    bottom: 0; 
+    width: 64%;
+    background: url("/images/tap-in/tap-in-hero.jpg") center / cover no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%); 
+    mask-image: linear-gradient(90deg, transparent 0%, #000 40%);
+    opacity: 0.45; 
+    z-index: 1;
+  }
+  .ti-hero-inner { position: relative; z-index: 2; }
+  .ti-hero h1 { margin: 0; color: #ffffff; font-size: clamp(68px, 11vw, 124px); font-weight: 900; line-height: .9; letter-spacing: -.055em; }
+  .ti-hero-sub { max-width: 480px; margin: 22px 0 0; color: #d1d5db; font-size: clamp(14px, 1.5vw, 16px); line-height: 1.6; }
   
   /* Listings */
   .ti-listings { padding-top: 56px; padding-bottom: 64px; }
@@ -57,8 +71,38 @@
   .ti-chip.is-active { background: #fbe9f1; border-color: var(--ti-pink); color: var(--ti-pink); font-weight: 800; }
   
   .ti-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-  .ti-card { display: flex; flex-direction: column; background: #fff; border: 1px solid #ece9e2; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 14px rgba(41, 42, 44, .07); color: inherit; transition: transform .2s ease, box-shadow .2s ease; }
-  .ti-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(41, 42, 44, .13); }
+  
+  /* Highly Noticeable Opportunity Cards Hover Effect */
+  .ti-card { 
+    display: flex; 
+    flex-direction: column; 
+    background: #fff; 
+    border: 1px solid #ece9e2; 
+    border-radius: 6px; 
+    overflow: hidden; 
+    box-shadow: 0 2px 14px rgba(41, 42, 44, .07); 
+    color: inherit; 
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; 
+  }
+  .ti-card:hover { 
+    transform: translateY(-6px) scale(1.02); /* Noticeable lift and subtle zoom */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35); /* Deep, striking shadow */
+    background-color: #0c0d10; /* Switches background to solid black */
+    color: #ffffff;            /* Switches text to white */
+    border-color: var(--ti-pink); /* Highlights border with pink accent */
+  }
+  .ti-card:hover h3 {
+    color: #ffffff !important;
+  }
+  .ti-card:hover .ti-card-meta, 
+  .ti-card:hover .ti-card-desc {
+    color: #e2e8f0 !important; /* Bright, high-contrast readable white/gray */
+  }
+  .ti-card:hover .ti-card-cta {
+    border-top-color: #2a2b32; 
+    color: var(--ti-pink); /* Keeps the CTA pop pink */
+  }
+
   .ti-card-media { position: relative; aspect-ratio: 16 / 10; background: #e7e4dd; }
   .ti-card-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .ti-card-noimg { display: block; width: 100%; height: 100%; background: linear-gradient(135deg, #e9e6df, #d9d5cb); }
@@ -110,7 +154,18 @@
   .ti-band-alerts .ti-error { color: #f5b7d1; }
   
   .ti-disclaimer { margin: 0; padding-top: 28px; padding-bottom: 36px; background: var(--ti-cream); color: var(--ti-muted); font-size: 11px; line-height: 1.7; }
-  .ti-disclaimer a { color: var(--ti-text); text-decoration: underline; text-decoration-color: var(--ti-pink); text-underline-offset: 3px; }
+  .ti-disclaimer a { 
+    color: var(--ti-pink); 
+    font-weight: 800; 
+    text-decoration: underline; 
+    text-decoration-color: var(--ti-pink); 
+    text-underline-offset: 3px; 
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
+  .ti-disclaimer a:hover { 
+    color: var(--ti-ink); 
+    text-decoration-color: var(--ti-ink); 
+  }
   
   /* Listing panel */
   .ti-overlay { position: fixed; inset: 0; z-index: 80; background: rgba(12, 13, 16, .45); animation: ti-fade .2s ease; }
