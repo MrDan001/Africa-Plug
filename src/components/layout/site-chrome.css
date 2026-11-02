@@ -38,6 +38,46 @@ html body .site-footer .tap-footer-motto { color: #8a909a !important; }
 html body .site-footer .tap-footer-contact-note a { color: #c5c8cf !important; }
 html body .site-footer .tap-footer-bottom { border-top-color: rgba(255, 255, 255, .14); }
 
+/* Social icons */
+html body .site-footer .tap-footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+html body .site-footer .tap-footer-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  color: #fff !important;
+  text-decoration: none;
+  transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+html body .site-footer .tap-footer-social:hover {
+  border-color: var(--signal);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-1px);
+}
+html body .site-footer .tap-footer-social:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+html body .site-footer .tap-social-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+html body .site-footer .tap-footer-social span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
 @media (max-width: 680px) {
   html body .site-header .header-inner { height: 78px; }
   html body .tap-brand-logo--header { height: 66px; }
