@@ -100,7 +100,7 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
           <label><span>Full name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>
           <label><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
-          <label><span>Phone or WhatsApp <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={30} pattern="\+[0-9][0-9 ()\-]{5,28}" placeholder="+234 801 234 5678" title="Include your country code, for example +234" /></label>
+          <label><span>Phone or WhatsApp <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={30} pattern="\+[0-9][0-9 ()\-]{5,28}" placeholder="+234 (0) 913 - XXX - XXXX" title="Include your country code, for example +234" /></label>
           <label className="ti-full"><span>Country you’re based in <b>*</b></span>
             <select name="country" defaultValue="" required><option value="" disabled>Select a country</option>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
           </label>
