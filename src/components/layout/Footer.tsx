@@ -1,5 +1,6 @@
 // FILE PATH: src/components/layout/Footer.tsx
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
 import BrandLogo from "@/components/layout/BrandLogo";
 import CookieSettingsLink from "@/components/layout/CookieSettingsLink";
@@ -32,15 +33,21 @@ function LinkedInIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" className="tap-social-icon"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.95v5.66H9.34V8.99h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.3ZM5.32 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM3.54 20.45h3.57V8.99H3.54v11.46ZM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0Z"/></svg>;
 }
 
+type SocialLink = {
+  label: string;
+  href: string;
+  icon: ReactNode;
+};
+
 export default async function Footer() {
   const settings = await getPublicSiteSettings();
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
   const exploreLinks = settings.navigation?.length ? settings.navigation : FOOTER_LINKS;
-  const socialLinks = [
+  const socialLinks: SocialLink[] = [
     settings.whatsappUrl ? { label: "WhatsApp", href: settings.whatsappUrl, icon: <WhatsAppIcon /> } : null,
     settings.linkedinUrl ? { label: "LinkedIn", href: settings.linkedinUrl, icon: <LinkedInIcon /> } : null,
     settings.instagramUrl ? { label: "Instagram", href: settings.instagramUrl, icon: null } : null,
-  ].filter((item): item is { label: string; href: string; icon: React.ReactNode } => item !== null && /^https:\/\//i.test(item.href));
+  ].filter((item): item is SocialLink => item !== null && /^https:\/\//i.test(item.href));
 
   return <footer className="site-footer">
     <div className="footer-accent" aria-hidden="true"/>
