@@ -1,115 +1,52 @@
-# Africa Plug — Current Working Requirements
+# The Africa Plug
 
-**Current requirements baseline:** [docs/WORKING_BRIEF.md](./docs/WORKING_BRIEF.md)
-**TAP IN manager setup:** [docs/TAP_IN_SETUP.md](./docs/TAP_IN_SETUP.md) — includes the one-time Supabase migration and admin workflow notes.
+The Africa Plug is a Next.js web platform for connecting people, businesses and opportunities across African markets. The site combines editorial content, TAP IN opportunities, commercial enquiries, a Store, and an admin workspace backed by Supabase.
 
-Use this document alongside the original brief dated 30 September. Work through its 21 numbered sections in order. Requirements not changed or clarified in the working document still follow the original brief. This is a requirements baseline, not a claim that every item is implemented; track verified completion in [roadmap.md](./roadmap.md). Do not invent listings, products, prices, testimonials or other factual content to fill gaps.
+## Platform
 
----
+- Next.js, React and TypeScript
+- Supabase for managed content and TAP IN data
+- Vercel for production hosting
+- Admin workspace for managing site content and operational records
+- Responsive desktop and mobile presentation
+- TAP IN opportunity listings and enquiry flows
+- Store catalogue and product detail pages
+- Journal/editorial content
+- Contact, partnership and commercial application forms
+- Privacy, cookies, terms and refunds pages
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Production is deployed through Vercel from the `main` branch. Environment variables are managed in the deployment environment and should never be committed to the repository.
 
-## Learn More
+## Content management
 
-To learn more about Next.js, take a look at the following resources:
+Public content is designed to be managed through the admin workspace and connected data sources rather than by editing page components. TAP IN listings should only be published when they have been reviewed and approved for public disclosure.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Store
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Store products are sourced through the public CMS layer. Product availability, pricing, provider links and digital delivery readiness determine which actions are shown to visitors. No product, price, testimonial or business claim should be invented simply to fill a page.
 
-## Deploy on Vercel
+## Media
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The homepage introduction video is configured through site settings. When no approved video is configured, the site displays a branded introduction panel rather than an external sample video.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Repository structure
 
+- `src/app` — routes and API handlers
+- `src/components` — reusable UI and feature components
+- `src/lib` — CMS, data, validation and business logic
+- `docs` — internal implementation and operational documentation
 
-## Africa Playbook and Store
+## Delivery standard
 
-The homepage Africa Playbook feature links directly to the Store and presents a designed collection of book-cover artwork. The Store presents ten demo guide/workbook covers on visual shelf boards. Each title has its own detail page with a longer description, included topics, demo price and purchase-enquiry action.
-
-**Commerce status:** titles, content and prices are placeholders. The current Pay action opens an email enquiry and does not charge a customer. Connect and test secure checkout and digital-file delivery before selling real products.
-
-
-## Homepage intro video
-
-A temporary Africa-themed YouTube sample is embedded in the intro-video slot immediately below the hero carousel. It is only a visual placeholder and should be replaced with the approved FK introduction video before launch. Keep large video files out of the Git repository and deployment bundle; for a real uploaded video, use a media host such as Vercel Blob or an unlisted YouTube upload.
-
-
-## Current build status
-
-The latest repository roadmap now includes an actionable, stage-by-stage working checklist. The homepage and Store are front-end prototypes; the Store's sample Pay actions are email enquiries, not real checkout. The temporary intro video is embedded below the homepage carousel and its latest commit reports a completed Vercel deployment, but the live presentation still needs visual/device verification.
-
-See [roadmap.md](./roadmap.md) for remaining launch blockers across product data, CMS/admin, payments and digital delivery, forms/email, legal/compliance, SEO and QA.
-
-
-## SEO and legal implementation note
-
-The current sitemap contains the core static page routes; dynamic book-detail URLs have not yet been added. Privacy, Terms, Cookies and Refunds pages contain substantive policy drafts, but business details and legal review still need to be completed before launch. A source review is not a substitute for running the build and testing the live deployment.
-
-
-## Repository audit status (14 October 2026)
-
-A source audit has compared the App Router pages, core components, API handlers, configuration and planning documents against the intended scope. Major visual pages are present, but this is still a front-end prototype with demo book data and preview blog/opportunity content. Secure checkout, digital delivery, the CMS/admin, newsletter handling, Work With FK approval/scheduling, and verified email-routing workflows are not complete. Some homepage/footer/search anchors and carousel accessibility controls also need fixing.
-
-See [roadmap.md](./roadmap.md) for the itemised done/partial/remaining checklist and audit findings. The earlier video-code commit received a successful Vercel status; the current storefront/cart revision is awaiting final deployment status and browser verification. Local build/lint and interactive browser/email-delivery QA were not run in this environment.
-
-
-## Storefront rebuild
-
-The Store page has been rebuilt with a warm, photo-led bookstore banner, ten designed book covers across two wooden shelf levels, matching photographic cover treatment on individual book detail pages, individual book detail links, and a cart control in the Store header. The cart saves selections in browser local storage and supports quantity updates/removal. Its order action composes an email enquiry; it does not process payment. Secure checkout and digital delivery remain future launch requirements.
-
-The shared desktop navigation now remains visible above 800px; the hamburger is reserved for widths at or below 800px. The storefront/cart commit was still deploying when last checked. Verify the deployed result on desktop, mobile, and 801–1000px widths.
-
-## Header and Store spacing polish (14 October 2026)
-
-The shared navigation now has clearer horizontal spacing on desktop, stays inline above 800px, and switches to the hamburger menu at 800px and below. The Store wrapper no longer forces a full-viewport minimum height, preventing an artificial blank block after the catalogue on shorter layouts. After the commit deploys, verify the header at 801–1000px, wide desktop, and mobile widths, and confirm the Store footer follows the demo note without a large gap.
-
-## Pink CTA text contrast (14 October 2026)
-
-Pink-background actions now use white text across the Playbook bookshelf CTA, search action, book purchase/pay links, product purchase action, cart checkout action and add-to-cart controls. Hover states that switch to a white background use a dark label for readable contrast. The legacy bookstore-feature and shelf CSS modules were updated too. Visual verification after deployment remains outstanding.
-
-## TAP Journal — ten original articles (14 October 2026)
-
-The Blog now contains ten practical, fully written editorial explainers covering AfCFTA, local partnerships, mobile money, digital business, energy, food systems, SME finance, logistics, climate resilience and the creative economy. Each article has its own route, summary, reading time, tags, practical takeaway and links to public institutional research. The homepage preview remains limited to four cards while the Journal page displays all ten. Article routes are included in the sitemap and searchable through the header search. The articles are hard-coded editorial content for this stage; CMS authoring, editing, drafts and publication controls are not yet implemented.
-
-
-## Blog outbound-link cleanup (14 October 2026)
-
-Removed the per-article “Sources and further reading” block and the external source URL list from the local article data. Also removed generic LinkedIn, YouTube and Instagram placeholder links from the homepage blog strip. Blog cards and article navigation remain internal, and the ten stories are stored in `src/lib/blog-posts.ts` for later editing. Official email contact links remain email actions, not website links. Remote images and the existing intro-video embed remain media resources rather than clickable blog/source links.
-
-
-## External link cleanup — homepage media (14 October 2026)
-
-The temporary third-party YouTube sample embed has been replaced with a non-clickable, photo-led introduction card. This avoids sending visitors to an unapproved external video and leaves a visual slot for the final FK introduction film. Blog article source links and generic social placeholder links were removed in the preceding commit. External photography assets remain loaded as images; they are not clickable outbound links.
-
-
-## Journal header simplification (14 October 2026)
-
-Removed the library-count sentence from the Journal hero and the separate article-count badge beside the archive heading, as requested. The hero now focuses on the brand headline, introduction and topic labels; the full article grid remains intact. Related unused CSS was removed.
-
-
-## Production build fix — 14 October 2026
-
-The Vercel build for commit `a3ccaed` failed because `src/components/blog/FeaturedStories.tsx` contained a malformed conditional JSX expression in the Journal header. This was fixed in commit `15d1e555`. The roadmap tracks confirmation of the next Vercel build; deployment is not considered verified until that build reports success.
+Before any client-facing launch, verify the live deployment on desktop and mobile, confirm production environment variables and connected services, review public content for accuracy, test forms and enquiry flows, and confirm that all published products and opportunities are approved for public use.
