@@ -89,7 +89,7 @@
   .ti-band h2 { margin: 0; color: var(--ti-ink); font-size: clamp(28px, 3.4vw, 38px); font-weight: 850; letter-spacing: -.04em; line-height: 1.1; }
   .ti-band-copy p:not(.ti-label) { max-width: 440px; margin: 14px 0 0; color: var(--ti-muted); font-size: 13px; line-height: 1.7; }
   .ti-band-copy .ti-btn { margin-top: 24px; }
-  .ti-map { width: min(300px, 32vw); height: auto; flex: 0 0 auto; }
+  .ti-map { width: min(340px, 32vw); height: auto; flex: 0 0 auto; }
   
   .ti-submit { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 0; }
   .ti-submit h2 { max-width: 420px; font-size: clamp(24px, 2.8vw, 32px); text-transform: uppercase; letter-spacing: -.035em; }
