@@ -63,10 +63,21 @@ export default function WorkApplyForm() {
 
   if (done) {
     return (
-      <section className="enquiry-panel wfk-thanks" role="status" aria-live="polite">
-        <h2>Thank you.</h2>
-        <p>We’ll be in touch if it’s a fit.</p>
-      </section>
+      <div className="wfk-success-wrap" role="dialog" aria-modal="true" aria-labelledby="wfk-success-title">
+        <div className="wfk-success-overlay" aria-hidden="true" />
+        <section className="wfk-success-modal" role="document">
+          <button type="button" className="wfk-success-close" aria-label="Close" onClick={() => setDone(false)}>×</button>
+          <div className="wfk-success-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 12.5 9.2 16.5 19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <span className="wfk-success-kicker">APPLICATION RECEIVED</span>
+          <h2 id="wfk-success-title">Thank you!</h2>
+          <p>We’ll be in touch if it’s a fit.</p>
+          <button type="button" className="wfk-btn wfk-btn-primary wfk-success-done" onClick={() => setDone(false)}>DONE<span aria-hidden="true">→</span></button>
+        </section>
+      </div>
     );
   }
 
