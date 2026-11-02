@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import BrandLogo from "@/components/layout/BrandLogo";
+import { REGION_FILTERS, TYPE_FILTERS } from "@/lib/tap-in/public";
 import "./TapInManager.css";
 
 type Status = "draft" | "live" | "closed" | "archived";
@@ -51,10 +52,11 @@ type Sort = "latest" | "oldest" | "title";
 const PAGE_SIZE = 6;
 const BLANK: Draft = {
   slug: "", title: "", opportunity_type: "", who_this_is_for: "", description: "", sector: "", country: "", region: "",
-  image_url: "", share_image_url: "", enquiry_questions: ["", ""], seo_title: "", seo_description: "", status: "draft",
+  image_url: "", share_image_url: "", enquiry_questions: [], seo_title: "", seo_description: "", status: "draft",
 };
-const TYPE_SUGGESTIONS = ["Investment", "Partnership", "Procurement", "Distribution", "Funding", "Joint venture", "Job", "Programme"];
-const STATUS_LABEL: Record<Status, string> = { draft: "Draft", live: "Live", closed: "Closed", archived: "Archived" };
+// The public T.A.P IN page filters on exactly these three types and six regions, so the editor offers only these.
+const SECTOR_SUGGESTIONS = ["Agriculture", "Construction", "Energy", "Fintech", "Health", "Logistics", "Manufacturing", "Mining", "Technology", "Trade"];
+const STATUS_LABEL: Record<Status, string> = { draft: "Draft", live: "Open", closed: "Closed", archived: "Archived" };
 
 const NAV: { href: string; label: string; icon: string; active?: boolean }[] = [
   { href: "/admin", label: "Dashboard", icon: "grid" },
@@ -204,13 +206,11 @@ export default function TapInManager() {
 
   function problem(): string | null {
     if (draft.title.trim().length < 2) return "Add a listing title.";
-    if (draft.opportunity_type.trim().length < 2) return "Choose or type an opportunity type.";
+    if (!draft.opportunity_type.trim()) return "Choose Products, Services or Projects.";
     if (draft.who_this_is_for.trim().length < 5) return "Say who this opportunity is for.";
     if (draft.description.trim().length < 10) return "Add a fuller description of the opportunity.";
     if (draft.sector.trim().length < 2) return "Add a sector or category.";
-    if (!draft.country.trim() && !draft.region.trim()) return "Add a country and/or region.";
-    const questions = draft.enquiry_questions.map((question) => question.trim());
-    if (questions.length < 2 || questions.some((question) => question.length < 3)) return "Add two to four enquiry questions, each at least 3 characters.";
+    if (!draft.country.trim() && !draft.region.trim()) return "Choose a region and/or add a country.";
     return null;
   }
 
@@ -224,13 +224,15 @@ export default function TapInManager() {
       const response = await fetch(editingId ? `/api/admin/tap-in/opportunities/${editingId}` : "/api/admin/tap-in/opportunities", {
         method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
+        // Custom enquiry questions are no longer asked (every listing uses the same Express Interest form), so none are sent.
+        // Existing listings keep whatever questions are already stored.
+        body: JSON.stringify({ ...draft, enquiry_questions: draft.enquiry_questions.filter((q) => q.trim().length >= 3) }),
       });
       const data = await response.json() as { error?: string };
       if (!response.ok) { setNotice({ tone: "error", text: data.error || "Could not save this listing." }); return; }
       await loadItems();
       closeEditor();
-      setNotice({ tone: "success", text: editingId ? "Listing updated." : draft.status === "live" ? "Listing created and published." : "Listing saved as a draft." });
+      setNotice({ tone: "success", text: editingId ? "Listing updated." : draft.status === "live" ? "Listing created and open on TAP IN." : "Listing saved as a draft." });
     } catch {
       setNotice({ tone: "error", text: "Could not save this listing. Please try again." });
     } finally {
@@ -239,7 +241,7 @@ export default function TapInManager() {
   }
 
   async function changeStatus(item: Opportunity, status: Status) {
-    const verb = { live: item.status === "closed" ? "reopen" : "publish", closed: "close", archived: "archive", draft: item.status === "archived" ? "restore" : "return to draft" }[status];
+    const verb = { live: item.status === "closed" ? "reopen" : "open", closed: "close", archived: "archive", draft: item.status === "archived" ? "restore" : "return to draft" }[status];
     if (!window.confirm(`Are you sure you want to ${verb} “${item.title}”?`)) return;
     setNotice(null);
     try {
@@ -282,8 +284,7 @@ export default function TapInManager() {
     finally { window.location.href = "/admin"; } // eslint-disable-line @next/next/no-location-assign-relative-destination
   }
 
-  const questionCount = draft.enquiry_questions.length;
-  const toggleable = draft.status === "draft" || draft.status === "live";
+    const toggleable = draft.status === "draft" || draft.status === "live";
 
   return (
     <div className="tapin-page">
@@ -328,11 +329,16 @@ export default function TapInManager() {
                 <p className="tapin-script" aria-hidden="true">Real Opportunities.<br />Real Impact.</p>
               </section>
 
+              <nav className="tapin-actions" aria-label="TAP IN submissions" style={{ margin: "0 0 18px" }}>
+                <Link className="tapin-soft" href="/admin/enquiries"><Icon name="mail" size={14} /> Interest &amp; opportunity submissions</Link>
+                <Link className="tapin-soft" href="/admin/subscribers"><Icon name="send" size={14} /> Alert subscribers</Link>
+              </nav>
+
               {notice ? <p className={`tapin-notice tapin-${notice.tone}`} role="status">{notice.text}</p> : null}
 
               <section className="tapin-stats" aria-label="Listing summary">
                 <div className="tapin-stat"><div><span>Total Listings</span><strong>{counts.total}</strong><small className="tapin-pinkText">All opportunities</small></div><span className="tapin-statIcon tapin-tonePink"><Icon name="briefcase" /></span></div>
-                <div className="tapin-stat"><div><span>Live</span><strong>{counts.live}</strong><small><i className="tapin-dot tapin-dotGreen" />Active &amp; visible</small></div><span className="tapin-statIcon tapin-toneGreen"><Icon name="check" /></span></div>
+                <div className="tapin-stat"><div><span>Open</span><strong>{counts.live}</strong><small><i className="tapin-dot tapin-dotGreen" />Active &amp; visible</small></div><span className="tapin-statIcon tapin-toneGreen"><Icon name="check" /></span></div>
                 <div className="tapin-stat"><div><span>Drafts</span><strong>{counts.draft}</strong><small><i className="tapin-dot tapin-dotAmber" />Not yet published</small></div><span className="tapin-statIcon tapin-toneAmber"><Icon name="edit" /></span></div>
                 <div className="tapin-stat"><div><span>Closed</span><strong>{counts.closed}</strong><small><i className="tapin-dot tapin-dotGrey" />No longer accepting</small></div><span className="tapin-statIcon tapin-toneGrey"><Icon name="x" /></span></div>
               </section>
@@ -343,7 +349,7 @@ export default function TapInManager() {
                 </label>
                 <label className="tapin-select"><Icon name="filter" size={16} /><span className="tapin-srOnly">Filter by status</span>
                   <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value as Status | "all"); setPage(1); }}>
-                    <option value="all">All Statuses</option><option value="live">Live</option><option value="draft">Draft</option><option value="closed">Closed</option><option value="archived">Archived</option>
+                    <option value="all">All Statuses</option><option value="live">Open</option><option value="draft">Draft</option><option value="closed">Closed</option><option value="archived">Archived</option>
                   </select>
                 </label>
                 <button type="button" className="tapin-primary" onClick={() => openEditor()}><Icon name="plus" size={16} /> Create New Listing</button>
@@ -362,7 +368,7 @@ export default function TapInManager() {
               {!loading && !visible.length ? (
                 <div className="tapin-empty">
                   <strong>{items.length ? "No listings match your search." : "No TAP IN listings yet."}</strong>
-                  <p>{items.length ? "Try a different search or status." : "Create your first listing to publish an opportunity on TAP IN."}</p>
+                  <p>{items.length ? "Try a different search or status." : "Create your first listing to put an opportunity on TAP IN."}</p>
                 </div>
               ) : null}
 
@@ -391,7 +397,7 @@ export default function TapInManager() {
                         {item.status === "live" || item.status === "closed" ? (
                           <Link className="tapin-soft" href={`/tap-in/${item.slug}`} target="_blank" rel="noreferrer"><Icon name="eye" size={14} /> View</Link>
                         ) : null}
-                        {item.status === "draft" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Publish</button> : null}
+                        {item.status === "draft" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Open</button> : null}
                         {item.status === "live" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "closed")}><Icon name="x" size={14} /> Close</button> : null}
                         {item.status === "closed" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Reopen</button> : null}
                         {item.status === "closed" ? <button type="button" className="tapin-ghost" onClick={() => void changeStatus(item, "archived")}>Archive</button> : null}
@@ -434,9 +440,12 @@ export default function TapInManager() {
                     <h2><span className="tapin-step">1</span><span>Basic Information<small>Start with the key details about your opportunity.</small></span></h2>
                     <div className="tapin-twoCol">
                       <Field label="Listing Title" required><input value={draft.title} maxLength={180} placeholder="e.g. Cold-chain distribution partner, Lagos" onChange={(event) => update("title", event.target.value)} /></Field>
-                      <Field label="Opportunity Type" required>
-                        <input list="tap-in-types" value={draft.opportunity_type} maxLength={120} placeholder="Select or type a type" onChange={(event) => update("opportunity_type", event.target.value)} />
-                        <datalist id="tap-in-types">{[...new Set([...TYPE_SUGGESTIONS, ...items.map((item) => item.opportunity_type)])].map((type) => <option key={type} value={type} />)}</datalist>
+                      <Field label="Type" required>
+                        <select value={draft.opportunity_type} onChange={(event) => update("opportunity_type", event.target.value)}>
+                          <option value="">Select a type</option>
+                          {TYPE_FILTERS.map((type) => <option key={type} value={type}>{type}</option>)}
+                          {draft.opportunity_type && !(TYPE_FILTERS as readonly string[]).includes(draft.opportunity_type) ? <option value={draft.opportunity_type}>{draft.opportunity_type} (older value)</option> : null}
+                        </select>
                       </Field>
                     </div>
                     <Field label="Who this is for" required count={draft.who_this_is_for.length} max={3000}>
@@ -450,9 +459,18 @@ export default function TapInManager() {
                   <section className="tapin-card">
                     <h2><span className="tapin-step">2</span><span>Details &amp; Settings<small>Add more information to help the right people find this.</small></span></h2>
                     <div className="tapin-twoCol">
-                      <Field label="Sector / Category" required><input value={draft.sector} maxLength={120} placeholder="e.g. Agriculture, Energy, Fintech" onChange={(event) => update("sector", event.target.value)} /></Field>
-                      <Field label="Country" hint="or region below"><input value={draft.country} maxLength={120} placeholder="e.g. Nigeria" onChange={(event) => update("country", event.target.value)} /></Field>
-                      <Field label="Region" hint="optional"><input value={draft.region} maxLength={120} placeholder="e.g. West Africa" onChange={(event) => update("region", event.target.value)} /></Field>
+                      <Field label="Sector / Category" required>
+                        <input list="tap-in-sectors" value={draft.sector} maxLength={120} placeholder="e.g. Agriculture, Energy, Fintech" onChange={(event) => update("sector", event.target.value)} />
+                        <datalist id="tap-in-sectors">{[...new Set([...SECTOR_SUGGESTIONS, ...items.map((item) => item.sector).filter(Boolean)])].map((sector) => <option key={sector} value={sector} />)}</datalist>
+                      </Field>
+                      <Field label="Region" hint="used by the Region filter on TAP IN">
+                        <select value={draft.region} onChange={(event) => update("region", event.target.value)}>
+                          <option value="">Select a region</option>
+                          {REGION_FILTERS.map((region) => <option key={region} value={region}>{region}</option>)}
+                          {draft.region && !(REGION_FILTERS as readonly string[]).includes(draft.region) ? <option value={draft.region}>{draft.region} (older value)</option> : null}
+                        </select>
+                      </Field>
+                      <Field label="Country" hint="optional"><input value={draft.country} maxLength={120} placeholder="e.g. Nigeria" onChange={(event) => update("country", event.target.value)} /></Field>
                     </div>
                   </section>
 
@@ -460,7 +478,7 @@ export default function TapInManager() {
                     <h2><span className="tapin-step">3</span><span>Images &amp; Sharing<small>Optional. Add a listing image and a social share image.</small></span></h2>
                     <div className="tapin-twoCol">
                       {(["image_url", "share_image_url"] as const).map((field) => (
-                        <Field key={field} label={field === "image_url" ? "Listing image" : "Share image"} hint="optional">
+                        <Field key={field} label={field === "image_url" ? "Listing image (shown on the TAP IN card)" : "Share image (social previews)"} hint="optional">
                           <input type="url" value={draft[field]} placeholder="https://…" onChange={(event) => update(field, event.target.value)} />
                           <span className="tapin-uploadRow">
                             <span className="tapin-uploadBtn"><Icon name="upload" size={15} /> {uploading === field ? "Uploading…" : "Upload image"}
@@ -474,22 +492,7 @@ export default function TapInManager() {
                   </section>
 
                   <section className="tapin-card">
-                    <h2><span className="tapin-step">4</span><span>Enquiry Questions<small>Add two to four questions people answer when they show interest.</small></span></h2>
-                    <div className="tapin-questions">
-                      {draft.enquiry_questions.map((question, index) => (
-                        <div className="tapin-questionRow" key={index}>
-                          <Field label={`Question ${index + 1}`} required className="tapin-grow">
-                            <input value={question} maxLength={500} placeholder="e.g. What is your estimated annual volume?" onChange={(event) => setDraft((current) => ({ ...current, enquiry_questions: current.enquiry_questions.map((value, i) => i === index ? event.target.value : value) }))} />
-                          </Field>
-                          {questionCount > 2 ? <button type="button" className="tapin-iconBtn" aria-label={`Remove question ${index + 1}`} onClick={() => update("enquiry_questions", draft.enquiry_questions.filter((_, i) => i !== index))}><Icon name="trash" size={16} /></button> : null}
-                        </div>
-                      ))}
-                    </div>
-                    {questionCount < 4 ? <button type="button" className="tapin-addBtn" onClick={() => update("enquiry_questions", [...draft.enquiry_questions, ""])}><Icon name="plus" size={15} /> Add Question</button> : null}
-                  </section>
-
-                  <section className="tapin-card">
-                    <h2><span className="tapin-step">5</span><span>SEO &amp; Visibility <i>(optional)</i><small>Help your listing get discovered on search engines.</small></span></h2>
+                    <h2><span className="tapin-step">4</span><span>SEO &amp; Visibility <i>(optional)</i><small>Help your listing get discovered on search engines.</small></span></h2>
                     <div className="tapin-twoCol">
                       <Field label="SEO Title" count={draft.seo_title.length} max={180}><input value={draft.seo_title} maxLength={180} placeholder="Shown in search results" onChange={(event) => update("seo_title", event.target.value)} /></Field>
                       <Field label="Meta Description" count={draft.seo_description.length} max={320}><textarea rows={3} value={draft.seo_description} maxLength={320} placeholder="Brief description for search engines" onChange={(event) => update("seo_description", event.target.value)} /></Field>
@@ -498,11 +501,11 @@ export default function TapInManager() {
                       <label className="tapin-switchRow">
                         <input type="checkbox" role="switch" checked={draft.status === "live"} onChange={(event) => update("status", event.target.checked ? "live" : "draft")} />
                         <span className="tapin-switch" aria-hidden="true" />
-                        <span><b>Publish immediately</b><small>Leave off to save as a draft and publish later.</small></span>
+                        <span><b>Open on TAP IN immediately</b><small>Leave off to save as a draft and open it later.</small></span>
                       </label>
                     ) : (
                       <Field label="Status"><select value={draft.status} onChange={(event) => update("status", event.target.value as Status)}>
-                        <option value="draft">Draft</option><option value="live">Live</option><option value="closed">Closed</option><option value="archived">Archived</option>
+                        <option value="draft">Draft</option><option value="live">Open</option><option value="closed">Closed</option><option value="archived">Archived</option>
                       </select></Field>
                     )}
                     <div className="tapin-formFoot">
@@ -536,8 +539,7 @@ export default function TapInManager() {
                     <ul>
                       <li>Use a clear and specific title</li>
                       <li>Say plainly who the opportunity is for</li>
-                      <li>Choose the right sector and location</li>
-                      <li>Ask questions that help you qualify interest</li>
+                      <li>Choose the right type, sector and region</li>
                       <li>Add an image so the listing stands out</li>
                     </ul>
                   </section>

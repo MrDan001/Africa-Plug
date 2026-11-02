@@ -1,3 +1,4 @@
+// FILE PATH: src/lib/tap-in/validation.ts
 import type { OpportunityInput, OpportunityStatus } from "./opportunities";
 
 const STATUSES = new Set<OpportunityStatus>(["draft", "live", "closed", "archived"]);
@@ -34,11 +35,14 @@ export function parseOpportunityInput(value: unknown): OpportunityInput {
   const opportunityType = text(data.opportunity_type ?? data.opportunityType, "Opportunity type", 120, 2);
   const description = text(data.description, "Description", 12000, 10);
   const whoThisIsFor = text(data.who_this_is_for ?? data.whoThisIsFor, "Who this is for", 3000, 5);
+  // The T.A.P IN Express Interest form now asks the same fixed questions on every listing, so custom questions are optional.
+  // The database still requires 2 to 4 stored questions, so two defaults are filled in when none are supplied.
   const rawQuestions = data.enquiry_questions ?? data.enquiryQuestions;
-  if (!Array.isArray(rawQuestions) || rawQuestions.length < 2 || rawQuestions.length > 4) {
-    throw new Error("Add between 2 and 4 custom enquiry questions.");
-  }
-  const enquiryQuestions = rawQuestions.map((question, index) => text(question, `Question ${index + 1}`, 500, 3));
+  const supplied = Array.isArray(rawQuestions) ? rawQuestions.filter((q) => typeof q === "string" && q.trim()) : [];
+  if (supplied.length === 1 || supplied.length > 4) throw new Error("Add between 2 and 4 custom questions, or leave them all empty.");
+  const enquiryQuestions = supplied.length
+    ? supplied.map((question, index) => text(question, `Question ${index + 1}`, 500, 3))
+    : ["What are you looking for?", "What is your timeframe?"];
   const statusValue = data.status ?? "draft";
   if (typeof statusValue !== "string" || !STATUSES.has(statusValue as OpportunityStatus)) {
     throw new Error("Choose Draft, Live, Closed, or Archived.");

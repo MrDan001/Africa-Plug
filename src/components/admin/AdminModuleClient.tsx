@@ -108,6 +108,22 @@ const STATUS_OPTIONS: Partial<Record<ModuleKey, { value: string; label: string }
   "site-settings": [{ value: "active", label: "Current settings" }],
 };
 
+/** TAP IN submissions arrive in the shared enquiries inbox. These labels and filters make them easy to tell apart. */
+const TAP_IN_KINDS: { value: string; label: string }[] = [
+  { value: "interest", label: "Express Interest" },
+  { value: "register", label: "Register Interest" },
+  { value: "opportunity", label: "Opportunity submissions" },
+];
+
+function enquiryKind(record: CmsRecord): string {
+  const kind = text(record.data?.kind);
+  return TAP_IN_KINDS.some((item) => item.value === kind) ? kind : "other";
+}
+
+function subscriberList(record: CmsRecord): string {
+  return text(record.data?.list) === "tap-in-alerts" ? "tap-in-alerts" : "other";
+}
+
 function text(value: unknown) {
   if (value === null || value === undefined) return "";
   if (typeof value === "string" || typeof value === "number") return String(value);
@@ -214,6 +230,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   const [tab, setTab] = useState(SETTINGS_TABS[0].id);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [groupFilter, setGroupFilter] = useState("all");
   const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string } | null>(null);
 
   const loadRecords = useCallback(async () => {
@@ -240,11 +257,19 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { document.title = `${meta.title} | Africa Plug Admin`; void loadRecords(); }, [loadRecords, meta.title]);
 
+  // Enquiries can be narrowed to one TAP IN form, and subscribers to the TAP IN alerts list.
+  const shown = useMemo(() => {
+    if (groupFilter === "all") return records;
+    if (moduleKey === "enquiries") return records.filter((record) => enquiryKind(record) === groupFilter);
+    if (moduleKey === "subscribers") return records.filter((record) => subscriberList(record) === groupFilter);
+    return records;
+  }, [records, groupFilter, moduleKey]);
+
   const stats = useMemo(() => ({
-    total: records.length,
-    waiting: records.filter((record) => ["review-required", "pending", "submitted", "new"].includes(record.status)).length,
-    published: records.filter((record) => ["published", "active", "approved"].includes(record.status)).length,
-  }), [records]);
+    total: shown.length,
+    waiting: shown.filter((record) => ["review-required", "pending", "submitted", "new"].includes(record.status)).length,
+    published: shown.filter((record) => ["published", "active", "approved"].includes(record.status)).length,
+  }), [shown]);
 
   function updateField(key: string, value: unknown) {
     setDirty(true);
@@ -533,10 +558,17 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
           {STATUS_OPTIONS[moduleKey] ? <div className="apm-chips" role="group" aria-label="Filter by status">
             <button type="button" className={`apm-chip${statusFilter === "all" ? " is-on" : ""}`} aria-pressed={statusFilter === "all"} onClick={() => setStatusFilter("all")}>All</button>
             {STATUS_OPTIONS[moduleKey]!.map((option) => <button type="button" key={option.value} className={`apm-chip${statusFilter === option.value ? " is-on" : ""}`} aria-pressed={statusFilter === option.value} onClick={() => setStatusFilter(option.value)}>{option.label}</button>)}
-          </div> : <p className="apm-count">{loading ? "Loading…" : `${records.length} record${records.length === 1 ? "" : "s"}`}</p>}
+          </div> : <p className="apm-count">{loading ? "Loading…" : `${shown.length} record${shown.length === 1 ? "" : "s"}`}</p>}
           <input className="apm-input apm-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search records…" aria-label="Search records" />
           <button type="button" className="apm-btn" onClick={() => void loadRecords()}>Refresh</button>
         </div>
+
+        {moduleKey === "enquiries" || moduleKey === "subscribers" ? <div className="apm-chips" role="group" aria-label={moduleKey === "enquiries" ? "Filter by form" : "Filter by list"} style={{ marginBottom: 14 }}>
+          {(moduleKey === "enquiries"
+            ? [{ value: "all", label: "All forms" }, ...TAP_IN_KINDS, { value: "other", label: "Other forms" }]
+            : [{ value: "all", label: "All lists" }, { value: "tap-in-alerts", label: "TAP IN alerts" }, { value: "other", label: "Stay Plugged In" }]
+          ).map((option) => <button type="button" key={option.value} className={`apm-chip${groupFilter === option.value ? " is-on" : ""}`} aria-pressed={groupFilter === option.value} onClick={() => setGroupFilter(option.value)}>{option.label}</button>)}
+        </div> : null}
 
         {moduleKey === "media" ? <section className="apm-card apm-upload">
           <h3>Upload a reusable asset</h3>
@@ -551,11 +583,13 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
           {["page_view", "article_view", "product_view", "form_submit"].map((eventName) => <div key={eventName} className="apm-stat"><small>{eventName.replace(/_/g, " ")}</small><strong>{records.filter((r) => r.data?.eventName === eventName).length}</strong></div>)}
         </div> : null}
 
-        {records.length ? <div className="apm-card apm-list">
-          {records.map((record) => <article key={record.id} className="apm-row">
+        {shown.length ? <div className="apm-card apm-list">
+          {shown.map((record) => <article key={record.id} className="apm-row">
             <div className="apm-row-main">
               <div className="apm-row-meta">
                 <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
+                {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label}</span> : null}
+                {moduleKey === "subscribers" && subscriberList(record) === "tap-in-alerts" ? <span className="apm-tag is-neutral">TAP IN alerts</span> : null}
                 <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
               </div>
               <h3>{record.title || "Untitled record"}</h3>

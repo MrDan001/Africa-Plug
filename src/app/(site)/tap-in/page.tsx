@@ -1,38 +1,52 @@
 // FILE PATH: src/app/(site)/tap-in/page.tsx
-import ContentPage from "@/components/layout/ContentPage";
-import TapInListings from "@/components/tap-in/TapInListings";
-import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
-import { getPublicSiteSettings } from "@/lib/cms-bridge";
+import type { Metadata } from "next";
+import TapInBoard from "@/components/tap-in/TapInBoard";
+import { listAllOpportunities } from "@/lib/tap-in/opportunities";
+import type { PublicListing } from "@/lib/tap-in/public";
+import "@/components/tap-in/tap-in-page.css";
 
 export const dynamic = "force-dynamic";
 
+export const metadata: Metadata = {
+  title: { absolute: "T.A.P IN | Business and Investment Opportunities Across Africa | The Africa Plug" },
+  description: "Live business and investment opportunities across Africa. Find one or put yours forward, and TAP makes the introduction.",
+  alternates: { canonical: "/tap-in" },
+};
+
 export default async function TapInPage() {
-  const [opportunities, settings] = await Promise.all([
-    listLiveOpportunities().catch(() => []),
-    getPublicSiteSettings(),
-  ]);
-  const threshold = settings.tapInFilterThreshold ?? 6;
+  const all = await listAllOpportunities().catch(() => []);
+  // Open (live) and Closed listings show. Drafts and archived records never do. Newest first.
+  const listings: PublicListing[] = all
+    .filter((item) => item.status === "live" || item.status === "closed")
+    .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))
+    .map((item) => ({
+      id: item.id,
+      slug: item.slug,
+      title: item.title,
+      country: item.country,
+      region: item.region,
+      sector: item.sector,
+      opportunity_type: item.opportunity_type,
+      description: item.description,
+      who_this_is_for: item.who_this_is_for,
+      image_url: item.image_url,
+      open: item.status === "live",
+    }));
 
   return (
-    <ContentPage
-      eyebrow="LIVE BUSINESS & INVESTMENT OPPORTUNITIES"
-      title="TAP IN."
-      description="Explore current business and investment opportunities across Africa. Each listing is shared only when its details are approved for publication."
-    >
-      <div className="standard-section-heading">
-        <p className="standard-eyebrow">CURRENT OPPORTUNITIES</p>
-        <h2>Where business meets possibility.</h2>
-        <p>Each opportunity is shared only once its details have been approved for publication.</p>
-      </div>
-      <TapInListings opportunities={opportunities} filterThreshold={threshold} />
-      <div className="standard-note">
-        <span className="standard-note-mark" aria-hidden="true">↗</span>
-        <div>
-          <h3>Have an opportunity to put forward?</h3>
-          <p>Send the team a concise overview, location and the kind of partner you are looking for.</p>
+    <div className="ti">
+      <section className="ti-hero" aria-labelledby="ti-h1">
+        <div className="ti-hero-img" aria-hidden="true" />
+        <div className="ti-wrap ti-hero-inner">
+          <p className="ti-label">LIVE BUSINESS AND INVESTMENT OPPORTUNITIES</p>
+          <h1 id="ti-h1">TAP IN.</h1>
+          <p className="ti-hero-sub">
+            Business and investment opportunities across Africa.<br />
+            Find one or put yours forward, and TAP makes the introduction.
+          </p>
         </div>
-        <a href="mailto:connect@theafricaplug.com?subject=Opportunity%20enquiry">Contact TAP <span aria-hidden="true">→</span></a>
-      </div>
-    </ContentPage>
+      </section>
+      <TapInBoard listings={listings} />
+    </div>
   );
 }
