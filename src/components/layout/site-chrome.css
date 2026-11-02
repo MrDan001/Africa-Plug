@@ -106,3 +106,167 @@ html body .site-footer .tap-footer-social span {
   outline: 2px solid currentColor;
   outline-offset: 3px;
 }
+
+/* Footer layout refinements — keep the existing content, improve spacing only. */
+html body .site-footer {
+  padding-top: 48px;
+  padding-bottom: 22px;
+}
+
+html body .site-footer .tap-footer-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(150px, 0.62fr) minmax(0, 1.08fr);
+  align-items: start;
+  gap: clamp(30px, 4vw, 64px);
+}
+
+html body .tap-brand-logo--footer {
+  height: 118px;
+}
+
+html body .site-footer .tap-footer-tagline {
+  margin-top: 13px;
+  margin-bottom: 8px;
+}
+
+html body .site-footer .tap-footer-contact {
+  grid-column: auto;
+  display: block;
+  min-width: 0;
+}
+
+html body .site-footer .tap-footer-socials {
+  margin-top: 15px;
+  gap: 10px;
+}
+
+html body .site-footer .tap-footer-social[aria-label="WhatsApp"] {
+  border-color: rgba(37, 211, 102, .36);
+}
+
+html body .site-footer .tap-footer-social[aria-label="LinkedIn"] {
+  border-color: rgba(10, 102, 194, .42);
+}
+
+html body .site-footer .tap-footer-social[aria-label="WhatsApp"] .tap-social-icon {
+  color: #25D366;
+}
+
+html body .site-footer .tap-footer-social[aria-label="LinkedIn"] .tap-social-icon {
+  color: #0A66C2;
+}
+
+html body .site-footer .tap-footer-social[aria-label="WhatsApp"]:hover {
+  border-color: #25D366;
+  background: rgba(37, 211, 102, .08);
+}
+
+html body .site-footer .tap-footer-social[aria-label="LinkedIn"]:hover {
+  border-color: #0A66C2;
+  background: rgba(10, 102, 194, .1);
+}
+
+html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link {
+  color: #858b94;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link:hover {
+  color: #fff;
+}
+
+@media (max-width: 1100px) and (min-width: 681px) {
+  html body .site-footer .tap-footer-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+    gap: 30px 38px;
+  }
+
+  html body .site-footer .tap-footer-contact {
+    grid-column: 1 / -1;
+    display: block;
+    max-width: none;
+  }
+
+  html body .site-footer .tap-footer-bottom {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 680px) {
+  html body .site-footer {
+    padding: 34px 20px 20px;
+  }
+
+  html body .site-footer .tap-footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 25px;
+  }
+
+  html body .site-footer .tap-footer-brand,
+  html body .site-footer .tap-footer-column,
+  html body .site-footer .tap-footer-contact {
+    grid-column: 1;
+  }
+
+  html body .tap-brand-logo--footer {
+    height: 96px;
+  }
+
+  html body .site-footer .tap-footer-tagline {
+    margin: 11px 0 7px;
+    font-size: 14px;
+  }
+
+  html body .site-footer a.tap-footer-email {
+    display: inline-block;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  html body .site-footer .tap-footer-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px 18px;
+  }
+
+  html body .site-footer .tap-footer-column h2 {
+    grid-column: 1 / -1;
+    margin: 0 0 3px;
+  }
+
+  html body .site-footer .tap-footer-column a {
+    line-height: 1.45;
+  }
+
+  html body .site-footer .tap-footer-contact {
+    padding: 17px 15px 14px;
+    margin: 0;
+  }
+
+  html body .site-footer .tap-footer-socials {
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  html body .site-footer .tap-footer-social {
+    min-height: 42px;
+    padding: 8px 11px;
+  }
+
+  html body .site-footer .tap-footer-bottom {
+    margin-top: 25px;
+    padding-top: 16px;
+    gap: 11px;
+  }
+
+  html body .site-footer .tap-footer-bottom nav {
+    gap: 10px 16px;
+  }
+
+  html body .site-footer .tap-footer-bottom nav a,
+  html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link {
+    font-size: 10px;
+  }
+}
+
