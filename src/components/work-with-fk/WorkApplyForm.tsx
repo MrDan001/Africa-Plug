@@ -80,7 +80,7 @@ export default function WorkApplyForm() {
           <label><span>Email <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           <label>
             <span>Phone or WhatsApp <small>Optional</small></span>
-            <input name="phone" type="tel" autoComplete="tel" maxLength={30} pattern="\+[0-9][0-9 ()\-]{5,28}" placeholder="+234 801 234 5678" title="Include your country code, for example +234" />
+            <input name="phone" type="tel" autoComplete="tel" maxLength={30} pattern="\+[0-9][0-9 ()\-]{5,28}" placeholder="+234 (0) 913 - XXX - XXXX" title="Include your country code, for example +234" />
           </label>
           <label>
             <span>Country you’re based in <b>*</b></span>
