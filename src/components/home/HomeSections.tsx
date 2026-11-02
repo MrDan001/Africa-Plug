@@ -21,14 +21,12 @@ export default async function HomeSections() {
   const showSelectedWork = settings.enableSelectedWork !== false;
   const showFeaturedResource = true;
   const showNewsletter = settings.enableNewsletter === true;
-
-  // Use settings ID or fall back to a default preview video ID if not yet defined in CMS settings
-  const videoIdToUse = settings.introVideoId || "dQw4w9WgXcQ";
+  const videoIdToUse = settings.introVideoId?.trim() || null;
 
   return <>
     <section className="intro-section section-grid" id="about">
       <div className="intro-video-card" aria-label="The Africa Plug introduction video" style={{position:"relative",width:"100%",aspectRatio:"16 / 9",minHeight:260,overflow:"hidden",background:"#e9e5df"}}>
-        <IntroVideo videoId={videoIdToUse} />
+        {videoIdToUse ? <IntroVideo videoId={videoIdToUse} /> : <div style={{height:"100%",minHeight:260,display:"grid",placeItems:"center",padding:32,background:"#000",color:"#fff",textAlign:"center"}}><div><p className="eyebrow" style={{color:"#db2777",fontWeight:"bold"}}>THE AFRICA PLUG</p><p style={{margin:0,fontSize:"clamp(24px,4vw,42px)",lineHeight:1,letterSpacing:"-.04em"}}>Connecting people, context and opportunity across Africa.</p></div></div>}
       </div>
       <div className="intro-copy"><p className="eyebrow">MEET FK</p><h2>A MORE CONNECTED WAY TO ENGAGE WITH AFRICA</h2><p>The Africa Plug connects commercial ambition with context, relationships and opportunities across African markets. We help people ask better questions, find relevant routes in and move with greater clarity.</p><Link className="text-link" href="/about">ABOUT THE AFRICA PLUG <span>→</span></Link></div>
     </section>
@@ -72,8 +70,8 @@ export default async function HomeSections() {
 
     {showFeaturedResource ? <section className="content-section" id="store" style={{padding:"clamp(42px,7vw,84px) clamp(20px,6vw,90px)",background:"#f7f5f1",color:"#292a2c"}}>
       <div style={{maxWidth:1200,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:30,alignItems:"center"}}>
-        <div><p className="eyebrow">THE STORE · FIRST RELEASE</p><h2 style={{fontSize:"clamp(32px,5vw,54px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h2><p style={{maxWidth:500,color:"#626469",lineHeight:1.7}}>{featuredProduct?.summary || "The Africa Starter Guide is being finished and will be available here when it is ready."}</p>{featuredProduct && featuredProduct.price > 0 ? <p style={{fontWeight:800,color:"#292a2c"}}>{new Intl.NumberFormat("en-GB",{style:"currency",currency:featuredProduct.currency}).format(featuredProduct.price)}</p> : null}<a className="button button-pink" href={featuredProduct ? `/store/${featuredProduct.slug}` : "/store"}>{featuredProduct ? "VIEW FEATURED RESOURCE" : "VISIT THE STORE"} <span>→</span></a></div>
-        <div style={{padding:28,background:"#000",border:"1px solid #2a2a2a",color:"#fff"}}>{featuredProduct?.imageUrl ? <img src={featuredProduct.imageUrl} alt="" style={{display:"block",width:"100%",maxHeight:340,objectFit:"cover",marginBottom:18}} /> : null}<p className="eyebrow">{featuredProduct?.productType || "FIRST RELEASE"}</p><h3 style={{fontSize:30,lineHeight:1,letterSpacing:"-.04em",margin:"0 0 12px",color:"#fff"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h3><p style={{color:"#b8bbc2",lineHeight:1.6}}>{featuredProduct ? "A resource from The Africa Plug Store." : "The first release from The Africa Plug Store."}</p></div>
+        <div><p className="eyebrow">THE STORE · FIRST RELEASE</p><h2 style={{fontSize:"clamp(32px,5vw,54px)",letterSpacing:"-.05em",lineHeight:1,margin:"0 0 15px"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h2><p style={{maxWidth:500,color:"#626469",lineHeight:1.7}}>{featuredProduct?.summary || "Explore practical guides, playbooks and other resources from The Africa Plug Store."}</p>{featuredProduct && featuredProduct.price > 0 ? <p style={{fontWeight:800,color:"#292a2c"}}>{new Intl.NumberFormat("en-GB",{style:"currency",currency:featuredProduct.currency}).format(featuredProduct.price)}</p> : null}<a className="button button-pink" href={featuredProduct ? `/store/${featuredProduct.slug}` : "/store"}>{featuredProduct ? "VIEW FEATURED RESOURCE" : "VISIT THE STORE"} <span>→</span></a></div>
+        <div style={{padding:28,background:"#000",border:"1px solid #2a2a2a",color:"#fff"}}>{featuredProduct?.imageUrl ? <img src={featuredProduct.imageUrl} alt="" style={{display:"block",width:"100%",maxHeight:340,objectFit:"cover",marginBottom:18}} /> : null}<p className="eyebrow">{featuredProduct?.productType || "FIRST RELEASE"}</p><h3 style={{fontSize:30,lineHeight:1,letterSpacing:"-.04em",margin:"0 0 12px",color:"#fff"}}>{featuredProduct?.title || "The Africa Starter Guide"}</h3><p style={{color:"#b8bbc2",lineHeight:1.6}}>{featuredProduct ? "A resource from The Africa Plug Store." : "Explore the current resources from The Africa Plug Store."}</p></div>
       </div>
     </section> : null}
 
