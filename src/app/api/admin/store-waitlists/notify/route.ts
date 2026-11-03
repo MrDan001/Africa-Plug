@@ -119,7 +119,7 @@ export async function POST(request: Request) {
       });
       const chunkIds = chunk.flatMap(([, rows]) => rows.map((row) => row.id)).sort().join("|");
       const idempotency = "tap-store-waitlist-" + product.id + "-" + createHash("sha256").update(chunkIds).digest("hex").slice(0, 40);
-      const result = await resend.batch.send(messages, { headers: { "Idempotency-Key": idempotency } });
+      const result = await resend.batch.send(messages, { idempotencyKey: idempotency });
       if (result.error) {
         return Response.json({ error: "Email provider rejected the campaign after " + sent + " successful recipients: " + result.error.message, sent }, { status: 502 });
       }
