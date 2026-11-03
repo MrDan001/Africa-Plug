@@ -6,7 +6,6 @@ export type PublicListing = {
     slug: string;
     title: string;
     country: string;
-    region: string;
     sector: string;
     opportunity_type: string;
     description: string;
@@ -16,7 +15,6 @@ export type PublicListing = {
   };
   
   export const TYPE_FILTERS = ["Products", "Services", "Projects"] as const;
-  export const REGION_FILTERS = ["North Africa", "East Africa", "West Africa", "Central Africa", "Southern Africa", "Pan African"] as const;
   
   /** Maps whatever the admin typed ("Service", "services", "Product") onto the three public Type filters. */
   export function typeGroup(value: string): string {
@@ -27,16 +25,8 @@ export type PublicListing = {
     return "";
   }
   
-  /** Maps the stored region onto the six public Region filters ("Pan-African", "pan africa" and so on all count). */
-  export function regionGroup(region: string): string {
-    const v = region.trim().toLowerCase().replace(/[-_]+/g, " ").replace(/\s+/g, " ");
-    if (!v) return "";
-    if (v.startsWith("pan")) return "Pan African";
-    return REGION_FILTERS.find((item) => item.toLowerCase() === v) ?? "";
-  }
-  
-  export function placeLabel(item: Pick<PublicListing, "region" | "country">) {
-    return item.region || item.country;
+  export function placeLabel(item: Pick<PublicListing, "country">) {
+    return item.country;
   }
   
   export function metaLine(item: PublicListing) {
