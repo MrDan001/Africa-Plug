@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormE
 type ModuleKey = "blog" | "store" | "work-with-fk" | "review-required" | "enquiries" | "subscribers" | "analytics" | "media" | "settings" | "site-settings";
 type CmsRecord = { id: string; module: string; title: string; slug: string | null; status: string; data: Record<string, unknown>; created_at: string; updated_at: string };
 type Draft = { id?: string; title: string; slug: string; status: string; data: Record<string, unknown> };
-type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "date" | "checkbox"; help?: string; rows?: number; placeholder?: string };
+type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "date" | "checkbox" | "select"; help?: string; rows?: number; placeholder?: string; options?: { value: string; label: string }[] };
 
 const DETAILS: Record<ModuleKey, { title: string; description: string; db: string }> = {
   blog: { title: "Blog & editorial", description: "Write articles, add imagery, manage categories and tags, and control SEO metadata. Publishing an article makes it eligible for the public journal.", db: "articles" },
@@ -44,7 +44,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
     { key: "imageUrl", label: "Product cover image URL", type: "url" },
-    { key: "productType", label: "Product type (decides the Store tab)", type: "text", placeholder: "Ebook", help: "Use one of: Ebook, Playbook, Report, Stay Finder or TAP product. This decides which Store tab the product appears under." },
+    { key: "imageAlt", label: "Product image alt text", type: "text" },
+    { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
     { key: "productFileReference", label: "Private download file path", type: "text", help: "Use Upload Protected File on the saved product row below. Files are stored privately. Never paste a public download URL here." },
     { key: "seoTitle", label: "SEO title", type: "text" },
@@ -122,6 +123,10 @@ function enquiryKind(record: CmsRecord): string {
 
 function subscriberList(record: CmsRecord): string {
   return text(record.data?.list) === "tap-in-alerts" ? "tap-in-alerts" : "other";
+}
+
+function subscriberListLabel(record: CmsRecord): string {
+  return subscriberList(record) === "tap-in-alerts" ? "TAP IN alerts" : "Stay Plugged In";
 }
 
 function text(value: unknown) {
@@ -279,7 +284,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   function newRecord() {
     const next = toDraft(undefined, moduleKey);
     if (moduleKey === "blog") next.data = { category: "Business", author: "The TAP Journal Editorial Desk", publishedAt: today(), readingTime: "5 min read", tagsText: "", body: "", excerpt: "", image: "", imageAlt: "", takeaway: "", seoTitle: "", seoDescription: "", shareImage: "" };
-    if (moduleKey === "store") next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", productType: "Ebook", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false };
+    if (moduleKey === "store") { next.status = "active"; next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", imageAlt: "", productType: "Guide", availability: "coming-soon", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false }; }
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
     setDraft(next);
@@ -360,6 +365,22 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     }
   }
 
+  async function setProductAvailability(record: CmsRecord, availability: "available" | "coming-soon") {
+    try {
+      const response = await fetch("/api/admin/cms/store", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: record.id, record: { id: record.id, title: record.title, slug: record.slug, status: record.status, data: { ...record.data, availability } } }),
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error || "Could not update product availability.");
+      setNotice({ tone: "success", text: `${record.title} set to ${availability === "available" ? "Available" : "Coming soon"}.` });
+      await loadRecords();
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not update product availability." });
+    }
+  }
+
   async function removeRecord(record: CmsRecord) {
     if (!window.confirm(`Delete “${record.title}”? This cannot be undone.`)) return;
     try {
@@ -422,7 +443,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
   function recordSummary(record: CmsRecord) {
     const data = record.data ?? {};
-    const fields = [data.email, data.organisation, data.organization, data.opportunityName, data.category, data.excerpt, data.summary, data.path, data.eventName];
+    const fields = [data.email, data.organisation, data.organization, data.opportunityName, data.productTitle, data.category, data.excerpt, data.summary, data.path, data.eventName];
     return fields.map(text).filter(Boolean).join(" · ");
   }
 
@@ -438,6 +459,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <span className="apm-label">{field.label}</span>
             {field.type === "textarea"
               ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
+              : field.type === "select"
+                ? <select className="apm-input" value={text(value) || field.options?.[0]?.value || ""} onChange={(event) => updateField(field.key, event.target.value)}>{field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
               : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
           </>
         )}
@@ -589,25 +612,32 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               <div className="apm-row-meta">
                 <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
                 {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label}</span> : null}
-                {moduleKey === "subscribers" && subscriberList(record) === "tap-in-alerts" ? <span className="apm-tag is-neutral">TAP IN alerts</span> : null}
+                {moduleKey === "subscribers" && subscriberList(record) !== "other" ? <span className="apm-tag is-neutral">{subscriberListLabel(record)}</span> : null}
                 <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
               </div>
               <h3>{record.title || "Untitled record"}</h3>
               {recordSummary(record) ? <p className="apm-summary">{recordSummary(record)}</p> : null}
               {moduleKey === "blog" || moduleKey === "store" ? <small className="apm-url">URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
-              {moduleKey === "store" ? <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small> : null}
+              {moduleKey === "store" ? <><span className="apm-tag is-neutral">{record.data?.availability === "available" ? "Available" : "Coming soon"}</span><small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small></> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
               {moduleKey === "analytics" ? <details className="apm-details"><summary>View source and UTM details</summary><pre className="apm-pre">{JSON.stringify(record.data, null, 2)}</pre></details> : null}
-              {moduleKey === "subscribers" ? <p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p> : null}
+              {moduleKey === "subscribers" ? <><p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p>{record.data?.consentText ? <details className="apm-details"><summary>View consent record</summary><dl><div className="apm-dl-row"><dt>Wording</dt><dd>{text(record.data.consentText)}</dd></div><div className="apm-dl-row"><dt>Version</dt><dd>{text(record.data.consentVersion)}</dd></div><div className="apm-dl-row"><dt>Consented at</dt><dd>{text(record.data.consentedAt)}</dd></div></dl></details> : null}</> : null}
             </div>
             <div className="apm-actions">
-              {editable ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
+              {editable && moduleKey !== "store" ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
+              {moduleKey === "store" ? <>
+                <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button>
+                <button type="button" className={`apm-btn${record.data?.availability !== "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability !== "available"} onClick={() => void setProductAvailability(record, "coming-soon")}>Coming soon</button>
+                <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button>
+                <button type="button" className="apm-btn" disabled={record.status === "archived"} onClick={() => void setStatus(record, "archived")}>Archive</button>
+                <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit details</button>
+              </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
               {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
               {moduleKey === "subscribers" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
-              {(moduleKey === "blog" || moduleKey === "store" || moduleKey === "media") ? <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button> : null}
+              {(moduleKey === "blog" || moduleKey === "media") ? <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button> : null}
             </div>
           </article>)}
         </div> : <div className="apm-card apm-empty">{loading ? "Loading records…" : moduleKey === "analytics" ? "No tracked events yet. Page-view events will appear as visitors browse the site." : moduleKey === "review-required" ? "Nothing is waiting for review right now. New Work With FK applications will appear here." : moduleKey === "media" ? "Your media library is empty. Upload a reusable image or PDF above." : moduleKey === "settings" ? "No saved settings yet. Use the settings button to create the first record." : "No records yet. Add the first record or refresh to check for new submissions."}</div>}

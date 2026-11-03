@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPublicBlogPost } from "@/lib/public-cms-content";
+import { PartnershipTrigger } from "@/components/forms/PartnershipDialog";
 
 type BlogArticlePageProps = { params: Promise<{ slug: string }> };
 
@@ -54,7 +55,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
             </section>
           ))}
           {post.takeaway ? <aside className="blog-article-takeaway"><p className="blog-page-eyebrow">THE TAP TAKEAWAY</p><p>{post.takeaway}</p></aside> : null}
-          <div className="blog-article-end"><span>END OF ARTICLE</span><Link href="/blog">Explore more from The TAP Journal <span aria-hidden="true">→</span></Link></div>
+          <div className="blog-article-end"><span>END OF ARTICLE</span><Link href="/blog">Explore more from The TAP Journal <span aria-hidden="true">→</span></Link><PartnershipTrigger className="blog-page-contact-link">Pitch a story <span aria-hidden="true">↗</span></PartnershipTrigger></div>
         </div>
       </div>
     </article>

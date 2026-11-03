@@ -1,24 +1,30 @@
-// FILE PATH: src/components/store/StoreCatalogue.tsx
 import Link from "next/link";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
-import ProductOfTheMonth from "@/components/store/ProductOfTheMonth";
-import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
-import StoreCartButton from "@/components/store/StoreCartButton";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
-import { STORE_CATEGORIES, getStoreCategory, parseStoreCategory, type StoreCategoryId } from "@/lib/store-categories";
+import { STORE_CATEGORIES, getStoreCategory, parseStoreCategory } from "@/lib/store-categories";
+import StoreEnquiryButton from "@/components/store/StoreEnquiryButton";
 import "./store-categories.css";
+import "./store-page.css";
 
 export const dynamic = "force-dynamic";
 
 type Props = { category?: string | string[] };
+type StoreProduct = NonNullable<ReturnType<typeof cmsRecordToPublicProduct>>;
+
+const DEMO_PRODUCTS: StoreProduct[] = [
+  { id: "demo-travel-guide", slug: "demo-explore-africa", title: "Explore Africa Like an Insider", summary: "Practical tips, cultural insights and local know how for exploring more of Africa.", description: "A practical travel guide for exploring Africa with confidence.", imageUrl: "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=900&q=85", imageAlt: "Mountain landscape overlooking an African travel route", productType: "Guide", category: "guides", availability: "coming-soon", externalUrl: "", currency: "GBP", price: 39, downloadReady: false, seoTitle: "", seoDescription: "", shareImageUrl: "", featured: false },
+  { id: "demo-business-guide", slug: "demo-unwritten-rules", title: "The Unwritten Rules of Doing Business in Africa", summary: "What the guides leave out.", description: "A field guide to the context, relationships and decisions behind doing business across African markets.", imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=85", imageAlt: "Modern business district skyline", productType: "Guide", category: "guides", availability: "coming-soon", externalUrl: "", currency: "GBP", price: 49, downloadReady: false, seoTitle: "", seoDescription: "", shareImageUrl: "", featured: false },
+  { id: "demo-pet-service", slug: "demo-pet-travel-consultation", title: "Pet Travel Consultation", summary: "A 20 minute call on moving your pet internationally.", description: "A 20 minute consultation to help you plan an international move with your pet.", imageUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=85", imageAlt: "Two dogs outdoors", productType: "Service", category: "services", availability: "available", externalUrl: "", currency: "GBP", price: 95, downloadReady: false, seoTitle: "", seoDescription: "", shareImageUrl: "", featured: false },
+];
 
 export default async function StoreCatalogue({ category }: Props) {
   const records = await getPublicCmsRecords("products");
-  const products = records.map(cmsRecordToPublicProduct).filter((item): item is NonNullable<ReturnType<typeof cmsRecordToPublicProduct>> => item !== null);
+  const cmsProducts = records.map(cmsRecordToPublicProduct).filter((item): item is StoreProduct => item !== null);
+  const products = cmsProducts.length ? cmsProducts : process.env.NODE_ENV === "development" ? DEMO_PRODUCTS : [];
   const selected = parseStoreCategory(category);
   const selectedInfo = selected ? getStoreCategory(selected) : null;
   const visible = selected ? products.filter((product) => product.category === selected) : products;
-  const counts = Object.fromEntries(STORE_CATEGORIES.map((item) => [item.id, products.filter((product) => product.category === item.id).length])) as Record<StoreCategoryId, number>;
+  const availableCategories = STORE_CATEGORIES.filter((item) => products.some((product) => product.category === item.id));
   const formatter = (value: number, currency: string) => {
     try { return new Intl.NumberFormat("en-GB", { style: "currency", currency }).format(value); }
     catch { return `${currency} ${value.toFixed(2)}`; }
@@ -26,59 +32,50 @@ export default async function StoreCatalogue({ category }: Props) {
 
   return <div className="tap-store-page">
     <section className="tap-store-hero" aria-labelledby="tap-store-heading">
-      <div className="tap-store-hero-copy"><p className="tap-store-eyebrow">THE AFRICA PLUG</p><h1 id="tap-store-heading">THE STORE</h1><p className="tap-store-hero-description">Ebooks, playbooks, reports, Stay Finder and other TAP products to help you make better-informed moves across Africa.</p></div>
-      <aside className="tap-store-hero-aside"><span aria-hidden="true" style={{fontSize:42,fontWeight:300}}>↗</span><p>Knowledge.<br/>Tools.<br/>Possibility.</p><StoreCartButton /></aside>
+      <div className="tap-store-hero-copy">
+        <p className="tap-store-eyebrow">THE AFRICA PLUG</p>
+        <h1 id="tap-store-heading">THE STORE<span>.</span></h1>
+        <p className="tap-store-hero-description">Guides and services for exploring, doing business<br className="store-copy-break" /> and investing across Africa.</p>
+      </div>
     </section>
-    <StoreCartButton mobileFloating />
-    <ProductOfTheMonth />
 
     <div className="tap-cat-wrap">
       <nav className="tap-cat-nav" aria-label="Store categories">
         <ul>
-          <li><Link href="/store" scroll={false} className={"tap-cat-chip" + (!selected ? " is-active" : "")} aria-current={!selected ? "page" : undefined}>All <span>{products.length}</span></Link></li>
-          {STORE_CATEGORIES.map((item) => <li key={item.id}><Link href={`/store?category=${item.id}`} scroll={false} className={"tap-cat-chip" + (selected === item.id ? " is-active" : "") + (counts[item.id] === 0 ? " is-empty" : "")} aria-current={selected === item.id ? "page" : undefined}>{item.label} <span>{counts[item.id]}</span></Link></li>)}
+          <li><Link href="/store" scroll={false} className={`tap-cat-chip${!selected ? " is-active" : ""}`} aria-current={!selected ? "page" : undefined}>All</Link></li>
+          {availableCategories.map((item) => <li key={item.id}><Link href={`/store?category=${item.id}`} scroll={false} className={`tap-cat-chip${selected === item.id ? " is-active" : ""}`} aria-current={selected === item.id ? "page" : undefined}>{item.label}</Link></li>)}
         </ul>
       </nav>
-      {selectedInfo ? <p className="tap-cat-intro"><strong>{selectedInfo.label}.</strong> {selectedInfo.blurb}</p> : null}
+      {selectedInfo ? <p className="tap-cat-intro">{selectedInfo.blurb}</p> : null}
     </div>
 
-    <section className="tap-store-catalogue" aria-label="Available Store products" style={{paddingTop:28,paddingBottom:64}}>
-      {visible.length ? <div style={{maxWidth:1120,margin:"0 auto",padding:"0 clamp(16px,4vw,28px)",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,280px),1fr))",gap:22}}>
+    <section className="tap-store-catalogue" aria-label="The Africa Plug Store products">
+      {visible.length ? <div className="store-product-grid">
         {visible.map((product) => {
-          const categoryInfo = getStoreCategory(product.category);
-          const sellsHere = !product.externalUrl && product.price > 0 && product.downloadReady;
-          return <article className="standard-card" key={product.id} style={{overflow:"hidden",display:"flex",flexDirection:"column"}}>
-            {product.imageUrl ? <div style={{width:"100%",aspectRatio:"4/3",background:"#e9e5df"}}><img src={product.imageUrl} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}} /></div> : <div aria-hidden="true" style={{aspectRatio:"4/3",display:"grid",placeItems:"center",background:"#e9e5df",color:"#292a2c",padding:20,fontWeight:800,textAlign:"center"}}>THE AFRICA PLUG<br/>{categoryInfo.singular}</div>}
-            <div style={{padding:24,display:"flex",flexDirection:"column",alignItems:"start",flex:1}}>
-              <p className="standard-eyebrow">{categoryInfo.singular}</p><h2 style={{fontSize:28,letterSpacing:"-.04em",lineHeight:1.05,margin:"0 0 12px",color:"#292a2c"}}>{product.title}</h2><p style={{color:"#626469",lineHeight:1.7,flex:1}}>{product.summary}</p>
-              {product.externalUrl
-                ? <strong style={{marginTop:8,color:"#626469",fontSize:13}}>Pricing and booking are set by the provider</strong>
-                : <strong style={{marginTop:8,color:"#292a2c"}}>{product.price > 0 ? formatter(product.price, product.currency) : "Pricing available on request"}</strong>}
-              <div style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap",marginTop:20}}>
-                {product.externalUrl
-                  ? <a className="tap-cat-external" href={product.externalUrl} target="_blank" rel="noopener noreferrer sponsored">{product.category === "stay-finder" ? "FIND A STAY" : "VISIT"} <span aria-hidden="true">↗</span></a>
-                  : sellsHere
-                    ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" compact={false} />
-                    : <span style={{fontSize:11,fontWeight:800,letterSpacing:".06em",color:"#777"}}>DETAILS AVAILABLE ON REQUEST</span>}
-                <Link href={`/store/${product.slug}`} className="text-link">VIEW PRODUCT <span aria-hidden="true">→</span></Link>
+          const type = getStoreCategory(product.category).singular;
+          const isGuide = product.category === "guides";
+          const available = product.availability === "available";
+          return <article className="store-product-card" key={product.id}>
+            <Link href={`/store/${product.slug}`} className="store-product-image-link" aria-label={`View ${product.title}`}>
+              {product.imageUrl ? <img className="store-product-image" src={product.imageUrl} alt={product.imageAlt} /> : <div className="store-product-image store-product-image-placeholder" aria-hidden="true"><span>THE AFRICA PLUG</span><strong>{product.title}</strong></div>}
+            </Link>
+            <div className="store-product-copy">
+              <p className="store-product-kicker">{type}{!available ? <><span aria-hidden="true"> · </span>COMING SOON</> : null}</p>
+              <h2><Link href={`/store/${product.slug}`}>{product.title}</Link></h2>
+              <p className="store-product-summary">{product.summary}</p>
+              <div className="store-product-action">
+                {available ? <>
+                  <strong className="store-product-price">{formatter(product.price, product.currency)}</strong>
+                  {isGuide
+                    ? <Link className="store-product-cta" href={`/store/${product.slug}`}>BUY NOW <span aria-hidden="true">→</span></Link>
+                    : <StoreEnquiryButton title={product.title} />}
+                </> : <button className="store-product-cta store-product-coming-soon" type="button" disabled>COMING SOON</button>}
               </div>
             </div>
           </article>;
         })}
-      </div> : selectedInfo ? <article className="tap-cat-empty">
-        <p className="standard-eyebrow">STORE</p>
-        <h2>No products available in this category.</h2>
-        <p>{selectedInfo.blurb} Browse the other categories to explore the current collection.</p>
-        <Link className="text-link" href="/store">BACK TO ALL PRODUCTS <span aria-hidden="true">→</span></Link>
-      </article> : <article className="standard-card" style={{maxWidth:980,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,250px),1fr))",gap:32,alignItems:"center",padding:"clamp(24px,5vw,56px)"}}>
-        <div aria-hidden="true" style={{aspectRatio:"4/5",maxWidth:270,width:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",padding:24,background:"#e9e5df",color:"#292a2c",border:"1px solid #d6d0c7"}}>
-          <span style={{fontSize:10,fontWeight:900,letterSpacing:".14em"}}>THE AFRICA PLUG</span>
-          <div><span style={{fontSize:10,fontWeight:800,letterSpacing:".12em",color:"#d51f6d"}}>DIGITAL RESOURCE · 01</span><h2 style={{fontSize:"clamp(30px,4vw,44px)",lineHeight:.98,letterSpacing:"-.06em",margin:"12px 0"}}>IDEAS INTO<br/>ACTION</h2><span style={{display:"block",width:48,height:3,background:"#d51f6d"}}/></div>
-          <span style={{fontSize:9,fontWeight:800,letterSpacing:".1em"}}>KNOWLEDGE • TOOLS • RESEARCH</span>
-        </div>
-        <div><p className="standard-eyebrow">THE STORE</p><h2 style={{fontSize:"clamp(30px,4vw,48px)",lineHeight:1,letterSpacing:"-.05em",margin:"0 0 16px",color:"#292a2c"}}>Explore the Africa Plug Store.</h2><p style={{color:"#626469",lineHeight:1.75}}>Browse practical guides, playbooks, reports and other resources from The Africa Plug as they become available.</p><Link className="text-link" href="/contact">ASK ABOUT STORE PRODUCTS <span aria-hidden="true">→</span></Link></div>
-      </article>}
-      {selectedInfo && selected === "stay-finder" && visible.length ? <p className="tap-cat-note" style={{maxWidth:1120,margin:"18px auto 0",padding:"0 clamp(16px,4vw,28px)"}}>Stay Finder links take you to accommodation providers, who handle bookings, prices and payment directly.</p> : null}
+      </div> : <section className="store-empty-state"><p className="tap-store-eyebrow">THE AFRICA PLUG STORE</p><h2>{selectedInfo?.emptyTitle ?? "A considered collection is on its way."}</h2><p>Practical guides and services to help you explore, do business and invest across Africa.</p><Link href="/work-with-fk" className="store-secondary-cta">WORK WITH FK <span aria-hidden="true">→</span></Link></section>}
+      <div className="store-more-guides"><p>Need more than a guide?</p><Link href="/work-with-fk">WORK WITH FK <span aria-hidden="true">→</span></Link></div>
     </section>
   </div>;
 }

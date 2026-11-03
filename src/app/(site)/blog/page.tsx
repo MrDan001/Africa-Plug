@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import FeaturedStories from "@/components/blog/FeaturedStories";
+import { PartnershipTrigger } from "@/components/forms/PartnershipDialog";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ export default async function BlogPage({ searchParams }: Props) {
           <h2>Have a perspective worth sharing?</h2>
           <p>We’re interested in useful insight, original ideas and stories that add context to the way people understand Africa.</p>
         </div>
-        <Link href="/contact" className="blog-page-contact-link">Speak to the team <span aria-hidden="true">↗</span></Link>
+        <PartnershipTrigger className="blog-page-contact-link">Pitch a story <span aria-hidden="true">↗</span></PartnershipTrigger>
       </section>
     </div>
   );
