@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormE
 type ModuleKey = "blog" | "store" | "work-with-fk" | "review-required" | "enquiries" | "subscribers" | "analytics" | "media" | "settings" | "site-settings";
 type CmsRecord = { id: string; module: string; title: string; slug: string | null; status: string; data: Record<string, unknown>; created_at: string; updated_at: string };
 type Draft = { id?: string; title: string; slug: string; status: string; data: Record<string, unknown> };
-type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "date" | "checkbox" | "select"; help?: string; rows?: number; placeholder?: string; options?: { value: string; label: string }[] };
+type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "date" | "checkbox" | "select" | "image-upload"; help?: string; rows?: number; placeholder?: string; options?: { value: string; label: string }[] };
 
 const DETAILS: Record<ModuleKey, { title: string; description: string; db: string }> = {
   blog: { title: "Blog & editorial", description: "Write articles, add imagery, manage categories and tags, and control SEO metadata. Publishing an article makes it eligible for the public journal.", db: "articles" },
@@ -43,7 +43,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
-    { key: "imageUrl", label: "Product cover image URL", type: "url", help: "Upload the image in Admin → Media, then paste its public URL here. This image appears on the Store product card and detail page." },
+    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be saved to the media library and attached to this product." },
     { key: "imageAlt", label: "Product image alt text", type: "text" },
     { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
@@ -413,6 +413,41 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     } finally { setUploading(false); }
   }
 
+  async function uploadProductCover(event: ChangeEvent<HTMLInputElement>) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)) {
+      setNotice({ tone: "error", text: "Choose a JPG, PNG, WebP or AVIF image." });
+      input.value = "";
+      return;
+    }
+    if (file.size <= 0 || file.size > 20 * 1024 * 1024) {
+      setNotice({ tone: "error", text: "The cover image must be smaller than 20 MB." });
+      input.value = "";
+      return;
+    }
+    setUploading(true);
+    setNotice(null);
+    try {
+      const form = new FormData();
+      form.set("file", file);
+      const response = await fetch("/api/admin/media", { method: "POST", body: form });
+      const result = await response.json() as { error?: string; record?: CmsRecord };
+      if (!response.ok) throw new Error(result.error || "Cover image upload failed.");
+      const url = text(result.record?.data?.url);
+      if (!url) throw new Error("The image uploaded but no public image URL was returned.");
+      updateField("imageUrl", url);
+      if (!text(draft.data.imageAlt)) updateField("imageAlt", file.name.replace(/\\.[^.]+$/, "").replace(/[-_]+/g, " "));
+      setNotice({ tone: "success", text: "Product cover uploaded and attached. Save the product to publish the change." });
+      input.value = "";
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Cover image upload failed." });
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function uploadStoreProductFile(event: ChangeEvent<HTMLInputElement>, record: CmsRecord) {
     const input = event.currentTarget;
     const file = input.files?.[0];
@@ -457,11 +492,19 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         ) : (
           <>
             <span className="apm-label">{field.label}</span>
-            {field.type === "textarea"
-              ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
-              : field.type === "select"
-                ? <select className="apm-input" value={text(value) || field.options?.[0]?.value || ""} onChange={(event) => updateField(field.key, event.target.value)}>{field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-              : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
+            {field.type === "image-upload"
+              ? <div className="apm-cover-upload">
+                  {text(value) ? <div className="apm-cover-preview"><img src={text(value)} alt={text(draft.data.imageAlt) || "Product cover preview"} /><button type="button" className="apm-btn" onClick={() => updateField("imageUrl", "")}>Remove cover</button></div> : <p className="apm-muted">No cover image selected yet.</p>}
+                  <label className={`apm-btn apm-btn-primary${uploading ? " is-busy" : ""}`}>
+                    {uploading ? "Uploading cover…" : text(value) ? "Replace cover image" : "Upload product cover"}
+                    <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event)} style={{ display: "none" }} />
+                  </label>
+                </div>
+              : field.type === "textarea"
+                ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
+                : field.type === "select"
+                  ? <select className="apm-input" value={text(value) || field.options?.[0]?.value || ""} onChange={(event) => updateField(field.key, event.target.value)}>{field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                  : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
           </>
         )}
         {field.help ? <small className="apm-help">{field.help}</small> : null}
