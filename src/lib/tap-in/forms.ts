@@ -2,11 +2,10 @@
 // Validation shared by the T.A.P IN forms (browser options and server routes).
 import { z } from "zod";
 import { COUNTRIES } from "@/lib/work-with-fk/application-schema";
-import { REGION_FILTERS } from "@/lib/tap-in/public";
 
 export { COUNTRIES };
 export const INTEREST_TIMEFRAMES = ["Now", "Within 3 months", "Exploring"] as const;
-export const REGISTER_REGIONS = ["Any region", ...REGION_FILTERS] as const;
+export const REGISTER_COUNTRIES = COUNTRIES.filter((country) => country !== "Other");
 
 const text = (label: string, max: number) =>
   z.string().trim().min(1, `Please enter ${label}.`).max(max, `${label[0].toUpperCase()}${label.slice(1)} is too long.`);
@@ -35,7 +34,7 @@ export const registerSchema = z.object({
   company: optionalText(160),
   email,
   looking: text("what you are looking for", 1000),
-  region: z.enum(REGISTER_REGIONS, { message: "Please choose a region of interest." }),
+  country: z.enum(COUNTRIES, { message: "Please choose a country of interest." }).refine((country) => country !== "Other", "Please choose a valid country."),
   consent,
   ...spam,
 });
