@@ -184,3 +184,11 @@
   @media (prefers-reduced-motion: reduce) {
     .apm-btn, .apm-chip, .apm-tab, .apm-input, .apm-check input, .apm-check input::after { transition: none; }
   }
+/* Product cover upload: visible local preview and upload affordance. */
+.apm-cover-field { display: grid; align-content: start; gap: 8px; min-width: 0; }
+.apm-cover-upload { display: grid; gap: 12px; min-width: 0; }
+.apm-cover-preview { display: grid; gap: 10px; max-width: 100%; padding: 10px; border: 1px solid #e5e1e8; border-radius: 12px; background: #faf9fb; }
+.apm-cover-preview img { display: block; width: 100%; max-width: 420px; max-height: 260px; object-fit: contain; justify-self: start; border-radius: 8px; background: #f1efeb; }
+.apm-cover-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+.apm-cover-upload .apm-btn input[type="file"] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+.apm-cover-upload .apm-btn { position: relative; width: fit-content; }

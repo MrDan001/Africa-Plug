@@ -231,6 +231,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [coverPreview, setCoverPreview] = useState("");
   const [dirty, setDirty] = useState(false);
   const [tab, setTab] = useState(SETTINGS_TABS[0].id);
   const [search, setSearch] = useState("");
@@ -281,7 +282,13 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     setDraft((current) => ({ ...current, data: { ...current.data, [key]: value } }));
   }
 
+  function clearCoverPreview() {
+    if (coverPreview.startsWith("blob:")) URL.revokeObjectURL(coverPreview);
+    setCoverPreview("");
+  }
+
   function newRecord() {
+    clearCoverPreview();
     const next = toDraft(undefined, moduleKey);
     if (moduleKey === "blog") next.data = { category: "Business", author: "The TAP Journal Editorial Desk", publishedAt: today(), readingTime: "5 min read", tagsText: "", body: "", excerpt: "", image: "", imageAlt: "", takeaway: "", seoTitle: "", seoDescription: "", shareImage: "" };
     if (moduleKey === "store") { next.status = "active"; next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", imageAlt: "", productType: "Guide", availability: "coming-soon", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false }; }
@@ -294,6 +301,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   }
 
   function editRecord(record: CmsRecord) {
+    clearCoverPreview();
     setDraft(toDraft(record, moduleKey));
     setEditing(true);
     setEditorOpen(true);
@@ -397,6 +405,9 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   async function uploadAsset(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
+    const localPreview = URL.createObjectURL(file);
+    clearCoverPreview();
+    setCoverPreview(localPreview);
     setUploading(true);
     setNotice(null);
     try {
@@ -439,6 +450,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       if (!url) throw new Error("The image uploaded but no public image URL was returned.");
       updateField("imageUrl", url);
       if (!text(draft.data.imageAlt)) updateField("imageAlt", file.name.replace(/\\.[^.]+$/, "").replace(/[-_]+/g, " "));
+      URL.revokeObjectURL(localPreview);
+      setCoverPreview("");
       setNotice({ tone: "success", text: "Product cover uploaded and attached. Save the product to publish the change." });
       input.value = "";
     } catch (error) {
@@ -485,6 +498,30 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   /** One form control, used by both the modal editor and the inline Site & SEO form. */
   function renderField(field: Field) {
     const value = draft.data[field.key];
+    if (field.type === "image-upload") {
+      const imageSrc = coverPreview || text(value);
+      return (
+        <div key={field.key} className="apm-cover-field">
+          <span className="apm-label">{field.label}</span>
+          <div className="apm-cover-upload">
+            {imageSrc ? (
+              <div className="apm-cover-preview">
+                <img src={imageSrc} alt={text(draft.data.imageAlt) || "Product cover preview"} />
+                <div className="apm-cover-actions">
+                  <span className="apm-help">{coverPreview ? "Previewing selected image" : "Current product cover"}</span>
+                  <button type="button" className="apm-btn" onClick={() => { clearCoverPreview(); updateField("imageUrl", ""); }}>Remove cover</button>
+                </div>
+              </div>
+            ) : <p className="apm-muted">No cover image selected yet.</p>}
+            <label className={`apm-btn apm-btn-primary${uploading ? " is-busy" : ""}`}>
+              {uploading ? "Uploading cover…" : imageSrc ? "Replace cover image" : "Upload product cover"}
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event)} />
+            </label>
+          </div>
+          {field.help ? <small className="apm-help">{field.help}</small> : null}
+        </div>
+      );
+    }
     return (
       <label key={field.key} className={field.type === "textarea" ? "is-wide" : undefined}>
         {field.type === "checkbox" ? (
@@ -492,19 +529,11 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         ) : (
           <>
             <span className="apm-label">{field.label}</span>
-            {field.type === "image-upload"
-              ? <div className="apm-cover-upload">
-                  {text(value) ? <div className="apm-cover-preview"><img src={text(value)} alt={text(draft.data.imageAlt) || "Product cover preview"} /><button type="button" className="apm-btn" onClick={() => updateField("imageUrl", "")}>Remove cover</button></div> : <p className="apm-muted">No cover image selected yet.</p>}
-                  <label className={`apm-btn apm-btn-primary${uploading ? " is-busy" : ""}`}>
-                    {uploading ? "Uploading cover…" : text(value) ? "Replace cover image" : "Upload product cover"}
-                    <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event)} style={{ display: "none" }} />
-                  </label>
-                </div>
-              : field.type === "textarea"
-                ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
-                : field.type === "select"
-                  ? <select className="apm-input" value={text(value) || field.options?.[0]?.value || ""} onChange={(event) => updateField(field.key, event.target.value)}>{field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                  : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
+            {field.type === "textarea"
+              ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
+              : field.type === "select"
+                ? <select className="apm-input" value={text(value) || field.options?.[0]?.value || ""} onChange={(event) => updateField(field.key, event.target.value)}>{field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
           </>
         )}
         {field.help ? <small className="apm-help">{field.help}</small> : null}
