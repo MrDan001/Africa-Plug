@@ -32,8 +32,8 @@ function canEmail(record: RecordRow) {
 }
 function stateLabel(record: RecordRow) {
   if (record.data.waitlistUnsubscribedAt || record.data.waitlistStatus === "unsubscribed") return "Unsubscribed";
-  if (record.data.waitlistLastNotifiedAt) return "Notified";
   if (record.data.waitlistStatus === "contacted") return "Contacted";
+  if (record.data.waitlistLastNotifiedAt) return "Notified";
   return "Waiting";
 }
 function csv(valueText: unknown) {
@@ -278,7 +278,7 @@ export default function StoreWaitlistsClient() {
               </div>
               {record.data.message ? <details className="apm-details"><summary>View visitor message</summary><p className="apm-pre">{value(record.data.message)}</p></details> : null}
               <div className="apw-record-actions">
-                {record.data.waitlistLastNotifiedAt ? null : <button type="button" className="apm-btn" disabled={busy} onClick={() => void updateRecord(record, status === "Contacted" ? "waiting" : "contacted")}>{busy ? "Saving…" : status === "Contacted" ? "Move to waiting" : "Mark contacted"}</button>}
+                <button type="button" className="apm-btn" disabled={busy} onClick={() => void updateRecord(record, status === "Contacted" ? "waiting" : "contacted")}>{busy ? "Saving…" : status === "Contacted" ? "Move to waiting" : "Mark contacted"}</button>
                 <button type="button" className="apm-btn apm-btn-danger" disabled={busy} onClick={() => void removeRecord(record)}>{busy ? "Working…" : "Remove entry"}</button>
               </div>
             </article>;

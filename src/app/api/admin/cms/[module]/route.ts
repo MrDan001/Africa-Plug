@@ -49,6 +49,9 @@ export async function GET(request: Request, context: { params: Promise<{ module:
       const reviewStatuses = new Set(["review-required", "pending", "submitted", "new"]);
       records = records.filter((record) => reviewStatuses.has(record.status));
     }
+    if (routeKey === "enquiries") {
+      records = records.filter((record) => record.data?.enquiryType !== "Store waitlist");
+    }
     return Response.json({ records }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return serverError(error);
