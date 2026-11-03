@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
-import { COUNTRIES, INTEREST_TIMEFRAMES, REGISTER_REGIONS, IMAGE_MAX_BYTES } from "@/lib/tap-in/forms";
+import { COUNTRIES, INTEREST_TIMEFRAMES, IMAGE_MAX_BYTES } from "@/lib/tap-in/forms";
 import type { PublicListing } from "@/lib/tap-in/public";
 import { useTurnstile } from "@/components/work-with-fk/useTurnstile";
 
@@ -149,8 +149,8 @@ export function RegisterInterestDialog({ onClose }: { onClose: () => void }) {
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>
           <label className="ti-full"><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           <label className="ti-full"><span>What you’re looking for <b>*</b></span><textarea name="looking" rows={4} required maxLength={1000} /></label>
-          <label className="ti-full"><span>Region of interest <b>*</b></span>
-            <select name="region" defaultValue="" required><option value="" disabled>Select a region</option>{REGISTER_REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}</select>
+          <label className="ti-full"><span>Country of interest <b>*</b></span>
+            <select name="country" defaultValue="" required><option value="" disabled>Select a country</option>{COUNTRIES.filter((country) => country !== "Other").map((country) => <option key={country} value={country}>{country}</option>)}</select>
           </label>
           <Consent>I agree to {policyLinks}.</Consent>
           <Honeypot />
