@@ -37,7 +37,6 @@ type Draft = {
   description: string;
   sector: string;
   country: string;
-  region: string;
   image_url: string;
   share_image_url: string;
   enquiry_questions: string[];
@@ -526,7 +525,7 @@ export default function TapInManager() {
                       </div>
                       <span className={`tapin-pill tapin-pill_${draft.status}`}><i />{STATUS_LABEL[draft.status]}</span>
                       <h3>{draft.title.trim() || "Example Listing Title"}</h3>
-                      <p className="tapin-previewMeta"><Icon name="pin" size={14} /> {place(draft) || "Country, Region"}</p>
+                      <p className="tapin-previewMeta"><Icon name="pin" size={14} /> {place(draft) || "Country"}</p>
                       {draft.opportunity_type.trim() ? <span className="tapin-typeChip">{draft.opportunity_type.trim()}</span> : null}
                       <p className="tapin-previewText">{draft.who_this_is_for.trim() || "A short summary of who this opportunity is for will appear here."}</p>
                       <span className="tapin-previewLink">View Details →</span>
@@ -537,7 +536,7 @@ export default function TapInManager() {
                     <ul>
                       <li>Use a clear and specific title</li>
                       <li>Say plainly who the opportunity is for</li>
-                      <li>Choose the right type, sector and region</li>
+                      <li>Choose the right type, sector and country</li>
                       <li>Add an image so the listing stands out</li>
                     </ul>
                   </section>
