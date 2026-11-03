@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   const data = isRegister
     ? (() => {
         const v = input as ReturnType<typeof registerSchema.parse>;
-        return { kind: "register", enquiryType: "T.A.P IN register interest", name: v.name, organisation: v.company || "", email: v.email, message: v.looking, regionOfInterest: v.region };
+        return { kind: "register", enquiryType: "T.A.P IN register interest", name: v.name, organisation: v.company || "", email: v.email, message: v.looking, countryOfInterest: v.country };
       })()
     : (() => {
         const v = input as ReturnType<typeof opportunitySchema.parse>;
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
   const rows: [string, string][] = isRegister
     ? (() => {
         const v = input as ReturnType<typeof registerSchema.parse>;
-        return [["Name", v.name], ["Company or organisation", v.company || "Not provided"], ["Email", v.email], ["What you're looking for", v.looking], ["Region of interest", v.region]] as [string, string][];
+        return [["Name", v.name], ["Company or organisation", v.company || "Not provided"], ["Email", v.email], ["What you're looking for", v.looking], ["Country of interest", v.country]] as [string, string][];
       })()
     : (() => {
         const v = input as ReturnType<typeof opportunitySchema.parse>;
