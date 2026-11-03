@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     ...PAGES,
     ...posts.map((post) => ({ title: post.title, description: post.excerpt, href: `/blog/${encodeURIComponent(post.slug)}`, keywords: [post.category, ...post.tags].join(" ") })),
     ...products.map((product) => ({ title: product.title, description: product.summary, href: `/store/${encodeURIComponent(product.slug)}`, keywords: product.productType })),
-    ...opportunities.map((opportunity) => ({ title: opportunity.title, description: opportunity.who_this_is_for, href: `/tap-in#${encodeURIComponent(opportunity.slug)}`, keywords: [opportunity.country, opportunity.region, opportunity.sector, opportunity.opportunity_type].join(" ") })),
+    ...opportunities.map((opportunity) => ({ title: opportunity.title, description: opportunity.who_this_is_for, href: `/tap-in#${encodeURIComponent(opportunity.slug)}`, keywords: [opportunity.country, opportunity.sector, opportunity.opportunity_type].join(" ") })),
   ];
 
   const results = content.map((item) => {
