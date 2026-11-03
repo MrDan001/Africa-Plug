@@ -9,6 +9,7 @@ import StoreCartButton from "@/components/store/StoreCartButton";
 import StoreEnquiryButton from "@/components/store/StoreEnquiryButton";
 import "@/components/store/store-categories.css";
 import { getStoreCategory } from "@/lib/store-categories";
+import { DEMO_STORE_PRODUCTS } from "@/lib/store-demo-products";
 
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ slug: string }> };
@@ -16,7 +17,9 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const record = await getPublicCmsRecord("products", slug);
-  const product = record ? cmsRecordToPublicProduct(record) : null;
+  const product = record ? cmsRecordToPublicProduct(record) : process.env.NODE_ENV === "development"
+    ? DEMO_STORE_PRODUCTS.find((item) => item.slug === slug) ?? null
+    : null;
   if (product) return { title: product.seoTitle || product.title, description: product.seoDescription || product.summary };
   return { title: "The Store | The Africa Plug" };
 }
@@ -29,7 +32,9 @@ export async function generateStaticParams() {
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const record = await getPublicCmsRecord("products", slug);
-  const product = record ? cmsRecordToPublicProduct(record) : null;
+  const product = record ? cmsRecordToPublicProduct(record) : process.env.NODE_ENV === "development"
+    ? DEMO_STORE_PRODUCTS.find((item) => item.slug === slug) ?? null
+    : null;
   if (product) {
     const available = product.availability === "available";
     const isService = product.category === "services";
