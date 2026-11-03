@@ -26,7 +26,7 @@ declare global {
   }
 }
 
-export default function EnquiryForm({ kind = "contact", opportunityName, modal = false, defaultArea = "", storeEnquiryTitle }: { kind?: Kind; opportunityName?: string; modal?: boolean; defaultArea?: string; storeEnquiryTitle?: string }) {
+export default function EnquiryForm({ kind = "contact", opportunityName, modal = false, defaultArea = "", storeEnquiryTitle, storeWaitlist = false }: { kind?: Kind; opportunityName?: string; modal?: boolean; defaultArea?: string; storeEnquiryTitle?: string; storeWaitlist?: boolean }) {
   const form = config[kind];
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const widgetRef = useRef<HTMLDivElement>(null);
@@ -99,7 +99,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
       }
       currentForm.reset();
       setToken("");
-      setNotice({ ok: true, text: storeEnquiryTitle ? "Thank you. We'll be in touch soon." : kind === "partner" ? "Thank you. We'll be in touch if it's a fit." : kind === "ask" ? "Thanks, we review every question and may select yours for research, content or follow up." : kind === "interest" && opportunityName ? `Thanks, The Africa Plug has received your expression of interest in ${opportunityName}.` : kind === "work" ? "Thanks. Your application has been received for review. This is not an approval or payment confirmation." : "Thank you. Your enquiry has been sent to The Africa Plug." });
+      setNotice({ ok: true, text: storeWaitlist ? "Thank you. You are on the waitlist and we will be in touch when this guide is ready." : storeEnquiryTitle ? "Thank you. We'll be in touch soon." : kind === "partner" ? "Thank you. We'll be in touch if it's a fit." : kind === "ask" ? "Thanks, we review every question and may select yours for research, content or follow up." : kind === "interest" && opportunityName ? `Thanks, The Africa Plug has received your expression of interest in ${opportunityName}.` : kind === "work" ? "Thanks. Your application has been received for review. This is not an approval or payment confirmation." : "Thank you. Your enquiry has been sent to The Africa Plug." });
     } catch {
       setNotice({ ok: false, text: "We couldn't connect to the form service. Please email connect@theafricaplug.com directly." });
     } finally {
@@ -111,8 +111,8 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
     <section className={`enquiry-panel${modal ? " enquiry-panel-modal" : ""}`}>
       <header className="enquiry-panel-heading">
         <p className="standard-eyebrow">THE AFRICA PLUG</p>
-        <h2>{storeEnquiryTitle ? `Enquire about ${storeEnquiryTitle}` : form.title}</h2>
-        <p>{storeEnquiryTitle ? "Send FK a few details and she will follow up by email." : form.description}</p>
+        <h2>{storeWaitlist ? `Join the waitlist for ${storeEnquiryTitle}` : storeEnquiryTitle ? `Enquire about ${storeEnquiryTitle}` : form.title}</h2>
+        <p>{storeWaitlist ? "Leave your details and we will let you know when this guide is ready." : storeEnquiryTitle ? "Send FK a few details and she will follow up by email." : form.description}</p>
       </header>
       <form className="enquiry-form" onSubmit={submit} onFocusCapture={markStarted}>
         <div className="enquiry-form-grid">
@@ -120,7 +120,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
           <label><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           {!storeEnquiryTitle ? <label><span>Organisation <small>Optional</small></span><input name="organisation" autoComplete="organization" maxLength={160} /></label> : null}
           <label><span>{storeEnquiryTitle ? "Phone or WhatsApp" : "Phone"} <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={50} /></label>
-          {storeEnquiryTitle ? <input type="hidden" name="enquiryType" value="Store enquiry" /> : null}
+          {storeEnquiryTitle ? <input type="hidden" name="enquiryType" value={storeWaitlist ? "Store waitlist" : "Store enquiry"} /> : null}
           {kind === "partner" ? <label className="enquiry-full-width">
             <span>Partnership area <b>*</b></span>
             <select name="enquiryType" defaultValue={defaultArea} required>
@@ -160,7 +160,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
         {siteKey ? <div className="enquiry-security"><div ref={widgetRef} /><small>Complete the security check before submitting.</small></div> : null}
         {notice ? <p className={`enquiry-status ${notice.ok ? "success" : "error"}`} role="status" aria-live="polite">{notice.text}{!notice.ok ? <>{" "}Email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a> if you need another route.</> : null}</p> : null}
         <div className="enquiry-submit-row">
-          <button className="standard-button" type="submit" disabled={busy || Boolean(siteKey && !token)}>{busy ? "SENDING…" : storeEnquiryTitle ? "SEND ENQUIRY" : form.button}<span aria-hidden="true">→</span></button>
+          <button className="standard-button" type="submit" disabled={busy || Boolean(siteKey && !token)}>{busy ? "SENDING…" : storeWaitlist ? "JOIN WAITLIST" : storeEnquiryTitle ? "SEND ENQUIRY" : form.button}<span aria-hidden="true">→</span></button>
           <p>Or email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a> directly.</p>
         </div>
         <p className="enquiry-privacy-note">Please do not include passwords, payment card details or other sensitive information.</p>

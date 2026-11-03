@@ -60,11 +60,13 @@ export default async function StoreCatalogue({ category }: Props) {
               <p className="store-product-summary">{product.summary}</p>
               <div className="store-product-action">
                 {available ? <>
-                  <strong className="store-product-price">{formatter(product.price, product.currency)}</strong>
+                  {product.price > 0 ? <strong className="store-product-price">{formatter(product.price, product.currency)}</strong> : null}
                   {isGuide
-                    ? <Link className="store-product-cta" href={`/store/${product.slug}`}>BUY NOW <span aria-hidden="true">→</span></Link>
+                    ? product.downloadReady
+                      ? <Link className="store-product-cta" href={'/store/' + product.slug}>BUY NOW <span aria-hidden="true">→</span></Link>
+                      : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist />
                     : <StoreEnquiryButton title={product.title} />}
-                </> : <button className="store-product-cta store-product-coming-soon" type="button" disabled>COMING SOON</button>}
+                </> : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist />}
               </div>
             </div>
           </article>;

@@ -43,7 +43,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
-    { key: "imageUrl", label: "Product cover image URL", type: "url" },
+    { key: "imageUrl", label: "Product cover image URL", type: "url", help: "Upload the image in Admin → Media, then paste its public URL here. This image appears on the Store product card and detail page." },
     { key: "imageAlt", label: "Product image alt text", type: "text" },
     { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
