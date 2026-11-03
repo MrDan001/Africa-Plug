@@ -16,8 +16,7 @@ export default async function FeaturedStories({ variant: _variant = "home" }: { 
           </div>
           <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link>
         </header>
-        {post ? (
-          <Link className="featured-blog-card featured-blog-card--primary" href={"/blog/" + encodeURIComponent(post.slug)} aria-label={"Read article: " + post.title}>
+        <Link className="featured-blog-card featured-blog-card--primary" href={"/blog/" + encodeURIComponent(post.slug)} aria-label={"Read article: " + post.title}>
             <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: post.image ? 'url("' + post.image + '")' : undefined }} />
             <span className="featured-blog-card-copy">
               <span className="featured-blog-card-category">{post.category}</span>
@@ -25,8 +24,7 @@ export default async function FeaturedStories({ variant: _variant = "home" }: { 
               <span className="featured-blog-card-excerpt">{post.excerpt}</span>
               <span className="featured-blog-card-arrow" aria-hidden="true">↗</span>
             </span>
-          </Link>
-        )}
+        </Link>
       </div>
     </section>
   );
