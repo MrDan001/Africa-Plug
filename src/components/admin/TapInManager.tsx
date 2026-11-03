@@ -4,7 +4,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import BrandLogo from "@/components/layout/BrandLogo";
-import { REGION_FILTERS, TYPE_FILTERS } from "@/lib/tap-in/public";
+import { TYPE_FILTERS } from "@/lib/tap-in/public";
+import { COUNTRIES } from "@/lib/work-with-fk/application-schema";
 import "./TapInManager.css";
 
 type Status = "draft" | "live" | "closed" | "archived";
@@ -14,7 +15,6 @@ type Opportunity = {
   slug: string;
   title: string;
   country: string;
-  region: string;
   sector: string;
   opportunity_type: string;
   description: string;
@@ -51,10 +51,10 @@ type Sort = "latest" | "oldest" | "title";
 
 const PAGE_SIZE = 6;
 const BLANK: Draft = {
-  slug: "", title: "", opportunity_type: "", who_this_is_for: "", description: "", sector: "", country: "", region: "",
+  slug: "", title: "", opportunity_type: "", who_this_is_for: "", description: "", sector: "", country: "",
   image_url: "", share_image_url: "", enquiry_questions: [], seo_title: "", seo_description: "", status: "draft",
 };
-// The public T.A.P IN page filters on exactly these three types and six regions, so the editor offers only these.
+// TAP IN locations are selected from the shared worldwide country list.
 const SECTOR_SUGGESTIONS = ["Agriculture", "Construction", "Energy", "Fintech", "Health", "Logistics", "Manufacturing", "Mining", "Technology", "Trade"];
 const STATUS_LABEL: Record<Status, string> = { draft: "Draft", live: "Open", closed: "Closed", archived: "Archived" };
 
@@ -103,14 +103,14 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
 function toDraft(item: Opportunity): Draft {
   return {
     slug: item.slug, title: item.title, opportunity_type: item.opportunity_type, who_this_is_for: item.who_this_is_for,
-    description: item.description, sector: item.sector, country: item.country, region: item.region,
+    description: item.description, sector: item.sector, country: item.country,
     image_url: item.image_url ?? "", share_image_url: item.share_image_url ?? "", enquiry_questions: [...item.enquiry_questions],
     seo_title: item.seo_title ?? "", seo_description: item.seo_description ?? "", status: item.status,
   };
 }
 
-function place(item: { country: string; region: string }) {
-  return [item.region, item.country].map((part) => part.trim()).filter(Boolean).join(", ");
+function place(item: { country: string }) {
+  return item.country.trim();
 }
 
 function Field({ label, required, hint, count, max, children, className }: { label: string; required?: boolean; hint?: string; count?: number; max?: number; children: ReactNode; className?: string }) {
@@ -171,7 +171,7 @@ export default function TapInManager() {
     const phrase = search.trim().toLowerCase();
     const filtered = items.filter((item) => {
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-      const matchesSearch = !phrase || [item.title, item.sector, item.country, item.region, item.opportunity_type].some((value) => value.toLowerCase().includes(phrase));
+      const matchesSearch = !phrase || [item.title, item.sector, item.country, item.opportunity_type].some((value) => value.toLowerCase().includes(phrase));
       return matchesStatus && matchesSearch;
     });
     return filtered.sort((a, b) => {
@@ -210,7 +210,7 @@ export default function TapInManager() {
     if (draft.who_this_is_for.trim().length < 5) return "Say who this opportunity is for.";
     if (draft.description.trim().length < 10) return "Add a fuller description of the opportunity.";
     if (draft.sector.trim().length < 2) return "Add a sector or category.";
-    if (!draft.country.trim() && !draft.region.trim()) return "Choose a region and/or add a country.";
+    if (!draft.country.trim()) return "Choose a country.";
     return null;
   }
 
@@ -463,14 +463,12 @@ export default function TapInManager() {
                         <input list="tap-in-sectors" value={draft.sector} maxLength={120} placeholder="e.g. Agriculture, Energy, Fintech" onChange={(event) => update("sector", event.target.value)} />
                         <datalist id="tap-in-sectors">{[...new Set([...SECTOR_SUGGESTIONS, ...items.map((item) => item.sector).filter(Boolean)])].map((sector) => <option key={sector} value={sector} />)}</datalist>
                       </Field>
-                      <Field label="Region" hint="used by the Region filter on TAP IN">
-                        <select value={draft.region} onChange={(event) => update("region", event.target.value)}>
-                          <option value="">Select a region</option>
-                          {REGION_FILTERS.map((region) => <option key={region} value={region}>{region}</option>)}
-                          {draft.region && !(REGION_FILTERS as readonly string[]).includes(draft.region) ? <option value={draft.region}>{draft.region} (older value)</option> : null}
+                      <Field label="Country" required>
+                        <select value={draft.country} onChange={(event) => update("country", event.target.value)}>
+                          <option value="">Select a country</option>
+                          {COUNTRIES.filter((country) => country !== "Other").map((country) => <option key={country} value={country}>{country}</option>)}
                         </select>
                       </Field>
-                      <Field label="Country" hint="optional"><input value={draft.country} maxLength={120} placeholder="e.g. Nigeria" onChange={(event) => update("country", event.target.value)} /></Field>
                     </div>
                   </section>
 
