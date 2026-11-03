@@ -93,7 +93,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
       (!type || typeGroup(item.opportunity_type) === type) &&
       (!sector || item.sector.trim() === sector));
     return [...matches.filter((item) => item.open), ...matches.filter((item) => !item.open)];
-  }, [listings, type, region, sector]);
+  }, [listings, type, country, sector]);
   const anyFilter = Boolean(type || country || sector);
   const hasOpen = listings.some((item) => item.open);
 
