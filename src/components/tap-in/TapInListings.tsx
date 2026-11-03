@@ -7,7 +7,6 @@ export type PublicTapInOpportunity = {
   slug: string;
   title: string;
   country: string;
-  region: string;
   sector: string;
   opportunity_type: string;
   description: string;
@@ -22,27 +21,23 @@ function choices(values: string[]) {
 }
 
 export default function TapInListings({ opportunities, filterThreshold = 6 }: Props) {
-  const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
   const [sector, setSector] = useState("");
   const [opportunityType, setOpportunityType] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const showFilters = opportunities.length >= Math.min(100, Math.max(1, Math.floor(filterThreshold)));
 
-  const regions = useMemo(() => choices(opportunities.map((item) => item.region)), [opportunities]);
   const countries = useMemo(() => choices(opportunities.map((item) => item.country)), [opportunities]);
   const sectors = useMemo(() => choices(opportunities.map((item) => item.sector)), [opportunities]);
   const opportunityTypes = useMemo(() => choices(opportunities.map((item) => item.opportunity_type)), [opportunities]);
   const filtered = useMemo(() => opportunities.filter((item) =>
-    (!region || item.region === region) &&
     (!country || item.country === country) &&
     (!sector || item.sector === sector) &&
     (!opportunityType || item.opportunity_type === opportunityType)
-  ), [opportunities, region, country, sector, opportunityType]);
-  const activeCount = [region, country, sector, opportunityType].filter(Boolean).length;
+  ), [opportunities, country, sector, opportunityType]);
+  const activeCount = [country, sector, opportunityType].filter(Boolean).length;
 
   function clearFilters() {
-    setRegion("");
     setCountry("");
     setSector("");
     setOpportunityType("");
@@ -68,11 +63,6 @@ export default function TapInListings({ opportunities, filterThreshold = 6 }: Pr
         </button>
       </div>
       <div id="tap-in-filter-panel" className={`tap-in-filter-panel ${mobileFiltersOpen ? "is-open" : ""}`}>
-        <label>Region
-          <select value={region} onChange={(event) => setRegion(event.target.value)}>
-            <option value="">All regions</option>{regions.map((value) => <option key={value}>{value}</option>)}
-          </select>
-        </label>
         <label>Country
           <select value={country} onChange={(event) => setCountry(event.target.value)}>
             <option value="">All countries</option>{countries.map((value) => <option key={value}>{value}</option>)}
@@ -99,7 +89,7 @@ export default function TapInListings({ opportunities, filterThreshold = 6 }: Pr
         <p className="standard-card-category">{[item.sector, item.opportunity_type].filter(Boolean).join(" · ")}</p>
         <h3>{item.title}</h3>
         <p>{item.description}</p>
-        {(item.country || item.region) ? <p className="standard-card-category">{[item.country, item.region].filter(Boolean).join(" · ")}</p> : null}
+        {item.country ? <p className="standard-card-category">{item.country}</p> : null}
         <p><strong>Who this is for:</strong> {item.who_this_is_for}</p>
         <a className="text-link" href={`/tap-in/${item.slug}`}>VIEW OPPORTUNITY <span aria-hidden="true">→</span></a>
       </article>)}
