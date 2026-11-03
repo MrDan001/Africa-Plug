@@ -50,7 +50,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
   if (kind === "partner" && (body as Record<string, unknown>).consent !== "true") {
     return Response.json({ error: "Please agree to the Privacy Policy and Terms." }, { status: 400 });
   }
-  if (kind === "contact" && lead.enquiryType === "Store enquiry" && (body as Record<string, unknown>).consent !== "true") {
+  if (kind === "contact" && (lead.enquiryType === "Store enquiry" || lead.enquiryType === "Store waitlist") && (body as Record<string, unknown>).consent !== "true") {
     return Response.json({ error: "Please agree to the Privacy Policy and Terms." }, { status: 400 });
   }
   if (lead.website) return Response.json({ ok: true });
@@ -164,7 +164,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
       from,
       to: [to],
       replyTo: lead.email,
-      subject: kind === "contact" && lead.enquiryType === "Store enquiry" ? `Store enquiry: ${lead.opportunityName || "Product"}` : kind === "partner" ? lead.enquiryType === "Article pitch" ? `Blog pitch: ${lead.name}` : `Partnership enquiry: ${lead.enquiryType || "Other"}` : `[${labels[kind]}] ${lead.name}`,
+      subject: kind === "contact" && (lead.enquiryType === "Store enquiry" || lead.enquiryType === "Store waitlist") ? `${lead.enquiryType === "Store waitlist" ? "Store waitlist" : "Store enquiry"}: ${lead.opportunityName || "Product"}` : kind === "partner" ? lead.enquiryType === "Article pitch" ? `Blog pitch: ${lead.name}` : `Partnership enquiry: ${lead.enquiryType || "Other"}` : `[${labels[kind]}] ${lead.name}`,
       text,
       html: `<div style="background:#08090c;padding:24px;font-family:Arial,sans-serif"><div style="max-width:680px;margin:0 auto;border:1px solid #2b2b31;background:#111217;padding:22px"><p style="color:#f50070;font-size:11px;font-weight:700;letter-spacing:2px">THE AFRICA PLUG</p><h1 style="font-size:22px;color:#fff;margin:0 0 20px">${escapeHtml(labels[kind])}</h1><table role="presentation" style="border-collapse:collapse;width:100%">${html}</table></div></div>`,
     });
