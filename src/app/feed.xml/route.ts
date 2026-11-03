@@ -27,9 +27,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>The TAP Journal — The Africa Plug</title>
+    <title>The Blog — The Africa Plug</title>
     <link>${SITE_URL}/blog</link>
-    <description>Practical written perspectives from The Africa Plug.</description>
+    <description>Articles on the investment, business and entertainment stories shaping Africa.</description>
     <language>en-gb</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     ${items}

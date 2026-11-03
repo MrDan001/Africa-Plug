@@ -1,68 +1,32 @@
 import Link from "next/link";
 import { getBlogPosts } from "@/lib/public-cms-content";
 
-type FeaturedStoriesProps = { variant?: "home" | "page"; filterTag?: string; filterCategory?: string };
-
-export default async function FeaturedStories({ variant = "home", filterTag = "", filterCategory = "" }: FeaturedStoriesProps) {
-  const isHome = variant === "home";
+export default async function FeaturedStories({ variant: _variant = "home" }: { variant?: "home" | "page" }) {
   const posts = await getBlogPosts();
-  const tag = filterTag.trim().toLowerCase();
-  const category = filterCategory.trim().toLowerCase();
-  const filteredPosts = posts.filter((post) => (!tag || post.tags.some((item) => item.toLowerCase() === tag)) && (!category || post.category.toLowerCase() === category));
-  const visiblePosts = isHome ? posts.slice(0, 4) : filteredPosts;
+  const post = posts.find((item) => item.featureOnHomepage) ?? posts[0];
+  if (!post) return null;
 
   return (
-    <section
-      id={isHome ? "blog" : "featured-stories"}
-      className={`featured-blog-section ${isHome ? "featured-blog-section-home" : "featured-blog-section-page"}`}
-      aria-labelledby={isHome ? "home-featured-stories-title" : "journal-featured-stories-title"}
-    >
+    <section id="blog" className={`featured-blog-section${_variant === "home" ? " featured-blog-section-home" : ""}`} aria-labelledby={`${_variant}-featured-stories-title`}>
       <div className="featured-blog-inner">
         <header className="featured-blog-header">
           <div>
-            <p className="featured-blog-eyebrow">{isHome ? "FEATURED" : "THE FULL JOURNAL"}</p>
-            <h2 id={isHome ? "home-featured-stories-title" : "journal-featured-stories-title"}>
-              {isHome ? "What’s happening in Africa" : "Practical ideas for a changing continent"}
-            </h2>
-            {!isHome ? <p className="featured-blog-intro">Thoughtful perspectives and practical ideas for a changing continent.</p> : null}
+            <p className="featured-blog-eyebrow">THE BLOG</p>
+            <h2 id={`${_variant}-featured-stories-title`}>Beyond the headlines.</h2>
           </div>
-          {isHome ? <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link> : null}
+          <Link className="featured-blog-view-all" href="/blog">View all <span aria-hidden="true">→</span></Link>
         </header>
-
-        {!visiblePosts.length ? <div className="featured-blog-empty"><h3>{filterTag || filterCategory ? "No articles match this filter." : "The TAP Journal is being prepared."}</h3><p>{filterTag || filterCategory ? "Try a different tag or category, or clear the filter." : "Approved articles will appear here when they are published."}</p></div> : null}
-        {visiblePosts.length && isHome ? (
-          <div className="featured-blog-grid">
-            {visiblePosts.map((post, index) => {
-              const layout = index === 0 ? "primary" : index === 3 ? "text" : "secondary";
-              return (
-                <Link className={`featured-blog-card featured-blog-card--${layout}`} href={`/blog/${post.slug}`} key={post.slug} aria-label={`Read article: ${post.title}`}>
-                  {layout !== "text" ? <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: post.image ? `url("${post.image}")` : undefined }} /> : null}
-                  <span className="featured-blog-card-copy">
-                    <span className="featured-blog-card-category">{post.category}</span>
-                    <span className="featured-blog-card-title">{post.title}</span>
-                    {layout === "primary" ? <span className="featured-blog-card-excerpt">{post.excerpt}</span> : null}
-                    <span className="featured-blog-card-arrow" aria-hidden="true">↗</span>
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        ) : visiblePosts.length ? (
-          <div className="featured-blog-grid featured-blog-grid--journal">
-            {visiblePosts.map((post) => (
-              <Link className="featured-blog-card featured-blog-card--journal" href={`/blog/${post.slug}`} key={post.slug} aria-label={`Read article: ${post.title}`}>
-                <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: post.image ? `url("${post.image}")` : undefined }} />
-                <span className="featured-blog-card-copy">
-                  <span className="featured-blog-card-category">{post.category}</span>
-                  <span className="featured-blog-card-title">{post.title}</span>
-                  <span className="featured-blog-card-excerpt">{post.excerpt}</span>
-                  <span className="featured-blog-card-meta">{post.readingTime} <span aria-hidden="true">·</span> {post.publishedAt}</span>
-                  <span className="featured-blog-card-arrow" aria-hidden="true">↗</span>
-                </span>
-              </Link>
-            ))}
-          </div>
-        ) : null}
+        {post ? (
+          <Link className="featured-blog-card featured-blog-card--primary" href={"/blog/" + encodeURIComponent(post.slug)} aria-label={"Read article: " + post.title}>
+            <span className="featured-blog-card-image" role="img" aria-label={post.imageAlt} style={{ backgroundImage: post.image ? 'url("' + post.image + '")' : undefined }} />
+            <span className="featured-blog-card-copy">
+              <span className="featured-blog-card-category">{post.category}</span>
+              <span className="featured-blog-card-title">{post.title}</span>
+              <span className="featured-blog-card-excerpt">{post.excerpt}</span>
+              <span className="featured-blog-card-arrow" aria-hidden="true">↗</span>
+            </span>
+          </Link>
+        )}
       </div>
     </section>
   );

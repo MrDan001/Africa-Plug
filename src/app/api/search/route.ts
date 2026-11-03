@@ -11,7 +11,7 @@ const PAGES: SearchItem[] = [
   { title: "TAP IN", description: "Explore current business and investment opportunities.", href: "/tap-in", keywords: "opportunities listings business investment" },
   { title: "Work With FK", description: "Commercial consultancy and market navigation.", href: "/work-with-fk", keywords: "commercial consulting market entry application" },
   { title: "The Store", description: "Practical TAP resources and digital products.", href: "/store", keywords: "store resources guides products" },
-  { title: "The TAP Journal", description: "Read approved written editorial from The Africa Plug.", href: "/blog", keywords: "blog journal articles editorial" },
+  { title: "The Blog", description: "Read articles on investment, business and entertainment stories shaping Africa.", href: "/blog", keywords: "blog articles investment business entertainment editorial" },
   { title: "Ask The Africa Plug", description: "Ask a question about Africa, a market, place or opportunity.", href: "/contact?type=ask", keywords: "question ask help market place" },
   { title: "Partner With TAP", description: "Explore sponsorship and partnership opportunities.", href: "/contact?type=partner", keywords: "partnership sponsorship collaboration" },
   { title: "Contact", description: "Contact The Africa Plug team.", href: "/contact", keywords: "email contact connect" },

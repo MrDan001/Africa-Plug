@@ -76,6 +76,7 @@ export function PrivacyPolicy() {
         "Contact and enquiry details: name, email address, organisation, role, country, phone number if supplied, and the message or information you choose to send.",
         "Opportunity or service enquiry details: the market, project, requirements, experience, timing, budget range or other answers you include in a form.",
         "Store waitlist details: the product you selected, your request for an availability notification, whether you separately opted in to receive that product-specific email, the date of that choice and any later unsubscribe request.",
+        "Blog subscription details: your email address, the Blog-only list you chose, confirmation status and dates, and any later unsubscribe request. Blog subscription preferences are kept separate from other Africa Plug email lists.",
         "Communications: information in emails and follow-up correspondence so that we can understand and respond to a request.",
         "Technical information: information that hosting, security and delivery services may record, such as IP address, browser/device information, requested pages, timestamps, referrer information and diagnostic logs.",
         "Preference information: your choice to accept or reject optional analytics storage through the site privacy banner."
@@ -84,7 +85,7 @@ export function PrivacyPolicy() {
     {
       heading: "3. Why we use information and our legal grounds",
       paragraphs: [
-        "Depending on the context and applicable law, we process personal information to respond to requests, provide information you ask for, assess enquiries, send a product-availability email only where you have expressly opted in for that specific Store item, maintain security, troubleshoot the site, keep appropriate records and meet legal obligations.",
+        "Depending on the context and applicable law, we process personal information to respond to requests, provide information you ask for, assess enquiries, send a Blog email only after you confirm your subscription, send a product-availability email only where you have expressly opted in for that specific Store item, maintain security, troubleshoot the site, keep appropriate records and meet legal obligations.",
         "Where UK GDPR applies, the relevant legal ground may be taking steps at your request before entering a contract, performing a contract, our legitimate interests in operating and securing the website and responding to business enquiries, consent where required, or compliance with a legal obligation. We consider the purpose and impact before relying on legitimate interests."
       ]
     },
@@ -95,7 +96,7 @@ export function PrivacyPolicy() {
       ],
       bullets: [
         "Website hosting and deployment providers, including Vercel, for delivering the site and related technical operations.",
-        "Email delivery providers, including Resend where configured, so that enquiries can be received and answered and product-specific availability notifications can be delivered to people who opted in.",
+        "Email delivery providers, including Resend where configured, so that enquiries can be received and answered, Blog subscriptions can be confirmed, and product-specific availability notifications can be delivered to people who opted in.",
         "Anti-spam or security services, including Cloudflare Turnstile if enabled, to help distinguish genuine submissions from automated abuse.",
         "Payment or digital-delivery providers only if those functions are introduced and activated in the future. The Store does not currently take online payments.",
         "Professional advisers, regulators, courts or law-enforcement bodies when disclosure is lawful or necessary to protect rights, safety or comply with law."
@@ -111,7 +112,7 @@ export function PrivacyPolicy() {
       heading: "6. How long we keep information",
       paragraphs: [
         "We keep personal information only for as long as reasonably necessary for the purpose it was collected, including to respond to an enquiry, maintain appropriate business records, resolve disputes and meet legal requirements. Retention periods depend on the type of information and the context; we periodically review information and securely delete or anonymise it when it is no longer needed.",
-        "For example, we may retain an ordinary enquiry and its correspondence for up to 24 months after the last meaningful contact where that is reasonably needed to manage the relationship. Records related to contracts, tax or accounting may need to be kept longer where the law requires it. These are working guidelines, not a promise that every record is removed on a fixed date."
+        "For example, we may retain an ordinary enquiry and its correspondence for up to 24 months after the last meaningful contact where that is reasonably needed to manage the relationship. Blog subscription records are kept while the subscription is active; if you unsubscribe, we stop Blog emails and retain the preference record needed to prevent further sends. Store waitlist records are kept while the product update remains relevant; if you unsubscribe, we stop those messages and retain the preference record needed to prevent another send. Records related to contracts, tax or accounting may need to be kept longer where the law requires it. These are working guidelines, not a promise that every record is removed on a fixed date."
       ]
     },
     {
@@ -124,7 +125,7 @@ export function PrivacyPolicy() {
       heading: "8. Your privacy rights",
       paragraphs: [
         "Depending on your location and the applicable law, you may have rights to request access to personal information, correct it, delete it, restrict or object to certain processing, receive a portable copy, withdraw consent where processing relies on consent, or complain to a data-protection regulator. These rights are subject to legal conditions and exceptions.",
-        "To exercise a right, email connect@theafricaplug.com and explain your request. You can also unsubscribe from an individual product waitlist using the unsubscribe link in its availability email; this does not unsubscribe you from the general newsletter. We may need to verify your identity before acting. If UK data-protection law applies, you can also contact the Information Commissioner's Office (ICO) through its official website. You may contact your local regulator where another law applies."
+        "To exercise a right, email connect@theafricaplug.com and explain your request. You can unsubscribe from The Blog using the unsubscribe link in a Blog email; this does not change other Africa Plug email preferences. You can also unsubscribe from an individual product waitlist using the unsubscribe link in its availability email; this does not unsubscribe you from the general newsletter. We may need to verify your identity before acting. If UK data-protection law applies, you can also contact the Information Commissioner's Office (ICO) through its official website. You may contact your local regulator where another law applies."
       ]
     },
     {

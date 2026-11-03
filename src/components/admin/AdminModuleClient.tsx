@@ -7,15 +7,15 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormE
 type ModuleKey = "blog" | "store" | "work-with-fk" | "review-required" | "enquiries" | "subscribers" | "analytics" | "media" | "settings" | "site-settings";
 type CmsRecord = { id: string; module: string; title: string; slug: string | null; status: string; data: Record<string, unknown>; created_at: string; updated_at: string };
 type Draft = { id?: string; title: string; slug: string; status: string; data: Record<string, unknown> };
-type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "date" | "checkbox" | "select" | "image-upload"; help?: string; rows?: number; placeholder?: string; options?: { value: string; label: string }[] };
+type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "date" | "datetime-local" | "checkbox" | "select" | "image-upload"; help?: string; rows?: number; placeholder?: string; options?: { value: string; label: string }[] };
 
 const DETAILS: Record<ModuleKey, { title: string; description: string; db: string }> = {
-  blog: { title: "Blog & editorial", description: "Write articles, add imagery, manage categories and tags, and control SEO metadata. Publishing an article makes it eligible for the public journal.", db: "articles" },
+  blog: { title: "Blog & editorial", description: "Write, schedule and publish articles. Choose the territory, homepage feature, images, byline and search previews, then email confirmed Blog readers when a story is live.", db: "articles" },
   store: { title: "Store products", description: "Manage product descriptions, imagery, prices and catalogue status. Paid digital checkout is only available when a private download file is configured and Stripe is set up in production.", db: "products" },
   "work-with-fk": { title: "Work With FK", description: "Review incoming applications and keep every decision recorded in the admin inbox.", db: "applications" },
   "review-required": { title: "Review required", description: "Applications waiting for a decision. Approve or decline each one to keep the queue current.", db: "applications" },
   enquiries: { title: "Enquiries & forms", description: "Track Contact, Partner With TAP, Ask TAP and TAP IN expressions of interest in one persistent inbox.", db: "enquiries" },
-  subscribers: { title: "Subscribers", description: "Manage the Stay Plugged In subscriber list and subscription status.", db: "subscribers" },
+  subscribers: { title: "Subscribers", description: "Manage Stay Plugged In, TAP IN alerts and the separate Blog readers list. Export confirmed Blog readers when needed.", db: "subscribers" },
   analytics: { title: "Analytics & funnel", description: "Review page views, content views, form-related events and UTM/source information captured by the website.", db: "analytics" },
   media: { title: "Media library", description: "Upload reusable public images and PDFs and copy their asset URLs into articles and product records. Do not upload confidential or paid-download files here.", db: "media" },
   settings: { title: "Commercial settings", description: "Keep the current fees, meeting length, booking rules and draft commercial terms together. Payment automation should only be enabled after terms are approved.", db: "commercial-settings" },
@@ -24,19 +24,20 @@ const DETAILS: Record<ModuleKey, { title: string; description: string; db: strin
 
 const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
   blog: [
-    { key: "category", label: "Category", type: "text" },
-    { key: "excerpt", label: "Article excerpt", type: "textarea", rows: 3 },
-    { key: "author", label: "Author / editorial desk", type: "text" },
-    { key: "image", label: "Cover image URL", type: "url", help: "Upload an image in Media library and paste its public URL." },
-    { key: "imageAlt", label: "Cover image alt text", type: "text" },
-    { key: "publishedAt", label: "Publish date", type: "date" },
-    { key: "readingTime", label: "Reading time", type: "text", placeholder: "5 min read" },
+    { key: "category", label: "Territory", type: "select", options: [{ value: "Business", label: "Business" }, { value: "Investment", label: "Investment" }, { value: "Entertainment", label: "Entertainment" }] },
+    { key: "excerpt", label: "One-line article summary", type: "textarea", rows: 2, help: "This appears on the Blog card." },
+    { key: "author", label: "Byline", type: "text", placeholder: "FK" },
+    { key: "image", label: "Main article image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF image. This image appears on the Blog card and at the top of the article." },
+    { key: "imageAlt", label: "Main image alt text", type: "text" },
+    { key: "imageCredit", label: "Image credit (optional)", type: "text" },
+    { key: "publishedAt", label: "Publish date and time", type: "datetime-local", help: "Set a future date and time to schedule an article. It will appear publicly when that time arrives." },
+    { key: "featureOnHomepage", label: "Feature this article on the homepage", type: "checkbox" },
     { key: "tagsText", label: "Tags (comma separated)", type: "text" },
-    { key: "takeaway", label: "TAP takeaway", type: "textarea", rows: 3 },
-    { key: "body", label: "Article body", type: "textarea", rows: 12, help: "Separate paragraphs with a blank line. Use the site editor for simple editorial text; rich text and custom embeds are not enabled in this first CMS pass." },
+    { key: "takeaway", label: "Article takeaway (optional)", type: "textarea", rows: 3 },
+    { key: "body", label: "Article body", type: "textarea", rows: 18, help: "Separate paragraphs with a blank line. Use ## Heading for section headings, > Quote for pull quotes, ![Alt text](https://image-url) for inline images, then Caption: words below an image, and YouTube: https://youtu.be/... for privacy-enhanced embeds. Inline links use [link text](https://url)." },
     { key: "seoTitle", label: "SEO title", type: "text" },
     { key: "seoDescription", label: "SEO description", type: "textarea", rows: 3 },
-    { key: "shareImage", label: "Share image URL (Open Graph)", type: "url" },
+    { key: "shareImage", label: "Social sharing image URL (optional)", type: "url", help: "Leave blank to use the main article image." },
   ],
   store: [
     { key: "summary", label: "Short product summary", type: "textarea", rows: 3 },
@@ -104,7 +105,7 @@ const SETTINGS_TABS: { id: string; label: string; blurb: string; keys: string[] 
 const STATUS_OPTIONS: Partial<Record<ModuleKey, { value: string; label: string }[]>> = {
   blog: [{ value: "draft", label: "Draft" }, { value: "published", label: "Published" }, { value: "archived", label: "Archived" }],
   store: [{ value: "draft", label: "Draft" }, { value: "active", label: "Visible in catalogue" }, { value: "archived", label: "Archived" }],
-  subscribers: [{ value: "active", label: "Active" }, { value: "unsubscribed", label: "Unsubscribed" }],
+  subscribers: [{ value: "pending", label: "Awaiting confirmation" }, { value: "active", label: "Active" }, { value: "unsubscribed", label: "Unsubscribed" }],
   settings: [{ value: "active", label: "Current settings" }],
   "site-settings": [{ value: "active", label: "Current settings" }],
 };
@@ -118,15 +119,17 @@ const TAP_IN_KINDS: { value: string; label: string }[] = [
 
 function enquiryKind(record: CmsRecord): string {
   const kind = text(record.data?.kind);
+  if (kind === "partner" && text(record.data?.enquiryType) === "Article pitch") return "article-pitch";
   return TAP_IN_KINDS.some((item) => item.value === kind) ? kind : "other";
 }
 
 function subscriberList(record: CmsRecord): string {
-  return text(record.data?.list) === "tap-in-alerts" ? "tap-in-alerts" : "other";
+  const list = text(record.data?.list);
+  return list === "tap-in-alerts" || list === "blog" ? list : "other";
 }
 
 function subscriberListLabel(record: CmsRecord): string {
-  return subscriberList(record) === "tap-in-alerts" ? "TAP IN alerts" : "Stay Plugged In";
+  return subscriberList(record) === "tap-in-alerts" ? "TAP IN alerts" : subscriberList(record) === "blog" ? "Blog readers" : "Stay Plugged In";
 }
 
 function text(value: unknown) {
@@ -150,6 +153,19 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function todayDateTime() {
+  const date = new Date(Date.now() + 60 * 60 * 1000);
+  date.setMinutes(Math.ceil(date.getMinutes() / 5) * 5, 0, 0);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+function toLocalDateTime(value: string) {
+  if (!value) return todayDateTime();
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value.slice(0, 16);
+  return new Date(parsed.getTime() - parsed.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
 function defaultSiteSettings(): Draft {
   return {
     title: "Site settings",
@@ -167,13 +183,19 @@ function toDraft(record?: CmsRecord, moduleKey?: ModuleKey): Draft {
     data.body = Array.isArray(source.sections)
       ? source.sections.map((section) => {
           if (!section || typeof section !== "object") return "";
-          const item = section as { heading?: unknown; paragraphs?: unknown };
-          const paragraphs = Array.isArray(item.paragraphs) ? item.paragraphs.map(String).join("\n\n") : "";
-          return [typeof item.heading === "string" ? item.heading : "", paragraphs].filter(Boolean).join("\n\n");
-        }).join("\n\n")
+          const item = section as Record<string, unknown>;
+          const parts = [
+            text(item.heading) ? "## " + text(item.heading) : "",
+            ...(Array.isArray(item.paragraphs) ? item.paragraphs.map(String) : []),
+            text(item.pullQuote) ? "> " + text(item.pullQuote) : "",
+            text(item.image) ? "![" + text(item.imageAlt) + "](" + text(item.image) + ")" : "",
+            text(item.caption) ? "Caption: " + text(item.caption) : "",
+            text(item.youtubeUrl) ? "YouTube: " + text(item.youtubeUrl) : "",
+          ].filter(Boolean);
+          return parts.join("\n\n");
+        }).filter(Boolean).join("\n\n")
       : text(source.body);
-    const publishedAt = text(source.publishedAt);
-    data.publishedAt = /^\d{4}-\d{2}-\d{2}$/.test(publishedAt) ? publishedAt : publishedAt ? (Number.isNaN(Date.parse(publishedAt)) ? today() : new Date(publishedAt).toISOString().slice(0, 10)) : today();
+    data.publishedAt = toLocalDateTime(text(source.publishedAt));
   }
   if (moduleKey === "subscribers") data.email = text(source.email) || record?.title || "";
   if (moduleKey === "site-settings") {
@@ -196,9 +218,42 @@ function makeData(moduleKey: ModuleKey, draft: Draft) {
     const tagsText = text(data.tagsText);
     const body = text(data.body);
     data.tags = tagsText.split(",").map((tag) => tag.trim()).filter(Boolean).slice(0, 30);
-    data.sections = body.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean).map((paragraph) => ({ heading: "", paragraphs: [paragraph] }));
+    const sections: Record<string, unknown>[] = [];
+    let current: Record<string, unknown> = { heading: "", paragraphs: [] as string[] };
+    const flush = () => {
+      const paragraphs = current.paragraphs as string[];
+      if (text(current.heading) || paragraphs.length || text(current.image) || text(current.pullQuote) || text(current.youtubeUrl)) sections.push(current);
+      current = { heading: "", paragraphs: [] as string[] };
+    };
+    for (const block of body.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean)) {
+      if (/^##\s+/.test(block)) {
+        flush();
+        current.heading = block.replace(/^##\s+/, "").trim();
+      } else if (/^>\s*/.test(block)) {
+        current.pullQuote = block.replace(/^>\s*/, "").trim();
+      } else {
+        const imageMatch = block.match(/^!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)$/);
+        const videoMatch = block.match(/^YouTube:\s*(https?:\/\/\S+)$/i);
+        if (imageMatch) {
+          current.imageAlt = imageMatch[1].trim();
+          current.image = imageMatch[2].trim();
+        } else if (/^Caption:\s*/i.test(block)) {
+          current.caption = block.replace(/^Caption:\s*/i, "").trim();
+        } else if (videoMatch) {
+          current.youtubeUrl = videoMatch[1].trim();
+        } else {
+          (current.paragraphs as string[]).push(block);
+        }
+      }
+    }
+    flush();
+    data.sections = sections;
+    const scheduledAt = text(data.publishedAt);
+    data.publishedAt = Number.isNaN(Date.parse(scheduledAt)) ? new Date().toISOString() : new Date(scheduledAt).toISOString();
+    data.author = text(data.author) || "FK";
     delete data.tagsText;
     delete data.body;
+    delete data.readingTime;
   }
   if (moduleKey === "store") {
     const price = Number(data.price ?? 0);
@@ -238,6 +293,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   const [statusFilter, setStatusFilter] = useState("all");
   const [groupFilter, setGroupFilter] = useState("all");
   const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string } | null>(null);
+  const [sendingArticleId, setSendingArticleId] = useState("");
 
   const loadRecords = useCallback(async () => {
     setLoading(true);
@@ -290,7 +346,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   function newRecord() {
     clearCoverPreview();
     const next = toDraft(undefined, moduleKey);
-    if (moduleKey === "blog") next.data = { category: "Business", author: "The TAP Journal Editorial Desk", publishedAt: today(), readingTime: "5 min read", tagsText: "", body: "", excerpt: "", image: "", imageAlt: "", takeaway: "", seoTitle: "", seoDescription: "", shareImage: "" };
+    if (moduleKey === "blog") next.data = { category: "Business", author: "FK", publishedAt: todayDateTime(), featureOnHomepage: false, tagsText: "", body: "", excerpt: "", image: "", imageAlt: "", imageCredit: "", takeaway: "", seoTitle: "", seoDescription: "", shareImage: "" };
     if (moduleKey === "store") { next.status = "active"; next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", imageAlt: "", productType: "Guide", availability: "coming-soon", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false }; }
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
@@ -344,6 +400,15 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       });
       const result = await response.json() as { record?: CmsRecord; error?: string };
       if (!response.ok) throw new Error(result.error || "Could not save changes.");
+      if (moduleKey === "blog" && data.featureOnHomepage === true && result.record?.id && result.record.status === "published") {
+        const featureResponse = await fetch("/api/admin/blog/feature", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ articleId: result.record.id }),
+        });
+        const featureResult = await featureResponse.json() as { error?: string };
+        if (!featureResponse.ok) throw new Error(featureResult.error || "Article saved, but the homepage feature could not be updated.");
+      }
       setNotice({ tone: "success", text: moduleKey === "site-settings" ? "Settings saved. The site will use them on the next page load." : editing ? "Changes saved." : "Record created and saved." });
       setEditorOpen(false);
       setEditing(false);
@@ -353,16 +418,65 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     } finally { setSaving(false); }
   }
 
+  async function sendArticleEmail(record: CmsRecord) {
+    if (sendingArticleId) return;
+    setSendingArticleId(record.id);
+    setNotice(null);
+    try {
+      const response = await fetch("/api/admin/blog/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ articleId: record.id }),
+      });
+      const result = await response.json() as { error?: string; sent?: number; message?: string };
+      if (!response.ok) throw new Error(result.error || "The article email could not be sent.");
+      setNotice({ tone: "success", text: result.message || "Article announcement sent to " + (result.sent ?? 0) + " Blog readers." });
+      await loadRecords();
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "The article email could not be sent." });
+    } finally {
+      setSendingArticleId("");
+    }
+  }
+
+  function exportBlogReaders() {
+    const rows = shown.filter((record) => subscriberList(record) === "blog");
+    const quote = (value: unknown) => '"' + text(value).replace(/"/g, '""') + '"';
+    const data = [["Email","Name","Status","Joined","Source"], ...rows.map((record) => [
+      text(record.data.email), text(record.data.name), record.status, record.created_at, text(record.data.source)
+    ])];
+    const blob = new Blob(["\uFEFF" + data.map((row) => row.map(quote).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "the-africa-plug-blog-readers.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function setStatus(record: CmsRecord, status: string) {
     const actionLabel = status === "approved" ? "approve" : status === "declined" ? "decline" : status === "resolved" ? "resolve" : status === "unsubscribed" ? "unsubscribe" : "update";
     if ((status === "declined" || status === "archived") && !window.confirm(`Are you sure you want to ${actionLabel} “${record.title}”?`)) return;
     setNotice(null);
     try {
       const isApplicationDecision = (moduleKey === "work-with-fk" || moduleKey === "review-required") && (status === "approved" || status === "declined");
+      const isBlogOptOut = moduleKey === "subscribers" && record.data?.list === "blog" && status === "unsubscribed";
+      const patchBody = isBlogOptOut
+        ? {
+            id: record.id,
+            record: {
+              id: record.id,
+              title: record.title,
+              slug: record.slug,
+              status: "unsubscribed",
+              data: { ...record.data, consent: false, subscriptionStatus: "unsubscribed", unsubscribedAt: new Date().toISOString() },
+            },
+          }
+        : { id: record.id, status };
       const response = await fetch(isApplicationDecision ? "/api/work-with-fk/approve" : `/api/admin/cms/${moduleKey}`, {
         method: isApplicationDecision ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(isApplicationDecision ? { id: record.id, decision: status } : { id: record.id, status }),
+        body: JSON.stringify(isApplicationDecision ? { id: record.id, decision: status } : patchBody),
       });
       const data = await response.json() as { error?: string; message?: string };
       if (!response.ok) throw new Error(data.error || "Could not update status.");
@@ -421,7 +535,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     } finally { setUploading(false); }
   }
 
-  async function uploadProductCover(event: ChangeEvent<HTMLInputElement>) {
+  async function uploadProductCover(event: ChangeEvent<HTMLInputElement>, fieldKey = "imageUrl") {
     const input = event.currentTarget;
     const file = input.files?.[0];
     if (!file) return;
@@ -448,7 +562,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       if (!response.ok) throw new Error(result.error || "Cover image upload failed.");
       const url = text(result.record?.data?.url);
       if (!url) throw new Error("The image uploaded but no public image URL was returned.");
-      updateField("imageUrl", url);
+      updateField(fieldKey, url);
       if (!text(draft.data.imageAlt)) updateField("imageAlt", file.name.replace(/\\.[^.]+$/, "").replace(/[-_]+/g, " "));
       URL.revokeObjectURL(localPreview);
       setCoverPreview("");
@@ -509,13 +623,13 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
                 <img src={imageSrc} alt={text(draft.data.imageAlt) || "Product cover preview"} />
                 <div className="apm-cover-actions">
                   <span className="apm-help">{coverPreview ? "Previewing selected image" : "Current product cover"}</span>
-                  <button type="button" className="apm-btn" onClick={() => { clearCoverPreview(); updateField("imageUrl", ""); }}>Remove cover</button>
+                  <button type="button" className="apm-btn" onClick={() => { clearCoverPreview(); updateField(field.key, ""); }}>Remove image</button>
                 </div>
               </div>
             ) : <p className="apm-muted">No cover image selected yet.</p>}
             <label className={`apm-btn apm-btn-primary${uploading ? " is-busy" : ""}`}>
               {uploading ? "Uploading cover…" : imageSrc ? "Replace cover image" : "Upload product cover"}
-              <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event)} />
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event, field.key)} />
             </label>
           </div>
           {field.help ? <small className="apm-help">{field.help}</small> : null}
@@ -533,7 +647,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               ? <textarea rows={field.rows ?? 3} className="apm-input apm-textarea" value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} />
               : field.type === "select"
                 ? <select className="apm-input" value={text(value) || field.options?.[0]?.value || ""} onChange={(event) => updateField(field.key, event.target.value)}>{field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
-                : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
+                : <input className="apm-input" type={field.type === "number" || field.type === "date" || field.type === "datetime-local" || field.type === "url" ? field.type : "text"} value={text(value)} onChange={(event) => updateField(field.key, event.target.value)} placeholder={field.placeholder} required={field.key === "email" || field.key === "excerpt" || (moduleKey === "blog" && field.key === "category")} />}
           </>
         )}
         {field.help ? <small className="apm-help">{field.help}</small> : null}
@@ -660,10 +774,11 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
         {moduleKey === "enquiries" || moduleKey === "subscribers" ? <div className="apm-chips" role="group" aria-label={moduleKey === "enquiries" ? "Filter by form" : "Filter by list"} style={{ marginBottom: 14 }}>
           {(moduleKey === "enquiries"
-            ? [{ value: "all", label: "All forms" }, ...TAP_IN_KINDS, { value: "other", label: "Other forms" }]
-            : [{ value: "all", label: "All lists" }, { value: "tap-in-alerts", label: "TAP IN alerts" }, { value: "other", label: "Stay Plugged In" }]
+            ? [{ value: "all", label: "All forms" }, ...TAP_IN_KINDS, { value: "article-pitch", label: "Article pitches" }, { value: "other", label: "Other forms" }]
+            : [{ value: "all", label: "All lists" }, { value: "blog", label: "Blog readers" }, { value: "tap-in-alerts", label: "TAP IN alerts" }, { value: "other", label: "Stay Plugged In" }]
           ).map((option) => <button type="button" key={option.value} className={`apm-chip${groupFilter === option.value ? " is-on" : ""}`} aria-pressed={groupFilter === option.value} onClick={() => setGroupFilter(option.value)}>{option.label}</button>)}
         </div> : null}
+        {moduleKey === "subscribers" && groupFilter === "blog" ? <div style={{ marginBottom: 14 }}><button type="button" className="apm-btn" onClick={exportBlogReaders} disabled={!shown.length}>Export Blog readers CSV</button></div> : null}
 
         {moduleKey === "media" ? <section className="apm-card apm-upload">
           <h3>Upload a reusable asset</h3>
@@ -683,13 +798,15 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <div className="apm-row-main">
               <div className="apm-row-meta">
                 <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
-                {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label}</span> : null}
+                {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label || (enquiryKind(record) === "article-pitch" ? "Article pitch" : "Other")}</span> : null}
                 {moduleKey === "subscribers" && subscriberList(record) !== "other" ? <span className="apm-tag is-neutral">{subscriberListLabel(record)}</span> : null}
                 <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
               </div>
               <h3>{record.title || "Untitled record"}</h3>
               {recordSummary(record) ? <p className="apm-summary">{recordSummary(record)}</p> : null}
               {moduleKey === "blog" || moduleKey === "store" ? <small className="apm-url">URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
+              {moduleKey === "blog" && record.data?.featureOnHomepage === true ? <span className="apm-tag is-neutral">Homepage feature</span> : null}
+              {moduleKey === "blog" && record.status === "published" && text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now() ? <span className="apm-tag is-warn">Scheduled</span> : null}
               {moduleKey === "store" ? <><span className="apm-tag is-neutral">{record.data?.availability === "available" ? "Available" : "Coming soon"}</span><small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small></> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
@@ -708,7 +825,9 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
               {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
-              {moduleKey === "subscribers" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
+              {moduleKey === "subscribers" && record.data?.list === "blog" && record.status === "active" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, "unsubscribed")}>Unsubscribe</button> : null}
+              {moduleKey === "subscribers" && record.data?.list !== "blog" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
+              {moduleKey === "blog" && record.status === "published" && !(text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now()) ? <button type="button" className="apm-btn" disabled={sendingArticleId === record.id} onClick={() => void sendArticleEmail(record)}>{sendingArticleId === record.id ? "Sending…" : "Email Blog readers"}</button> : null}
               {(moduleKey === "blog" || moduleKey === "media") ? <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button> : null}
             </div>
           </article>)}

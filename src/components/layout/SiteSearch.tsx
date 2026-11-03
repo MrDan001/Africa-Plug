@@ -10,7 +10,7 @@ const SHORTCUTS = [
   { label: "TAP IN", href: "/tap-in" },
   { label: "Work With FK", href: "/work-with-fk" },
   { label: "The Store", href: "/store" },
-  { label: "The TAP Journal", href: "/blog" },
+  { label: "The Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
