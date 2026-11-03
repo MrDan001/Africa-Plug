@@ -76,6 +76,7 @@ function AfricaMap() {
 
 export default function TapInBoard({ listings }: { listings: PublicListing[] }) {
   const [type, setType] = useState("");
+  const [country, setCountry] = useState("");
   const [sector, setSector] = useState("");
   const [dialog, setDialog] = useState<"interest" | "register" | "submit" | null>(null);
   const [copied, setCopied] = useState(false);
