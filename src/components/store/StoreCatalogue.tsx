@@ -64,9 +64,9 @@ export default async function StoreCatalogue({ category }: Props) {
                   {isGuide
                     ? product.downloadReady
                       ? <Link className="store-product-cta" href={'/store/' + product.slug}>BUY NOW <span aria-hidden="true">→</span></Link>
-                      : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist />
-                    : <StoreEnquiryButton title={product.title} />}
-                </> : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist />}
+                      : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} />
+                    : <StoreEnquiryButton title={product.title} productId={product.id} productSlug={product.slug} />}
+                </> : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} />}
               </div>
             </div>
           </article>;

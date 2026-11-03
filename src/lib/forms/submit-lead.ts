@@ -47,6 +47,18 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
     return Response.json({ error: parsed.error.issues[0]?.message ?? "Please check the information you entered." }, { status: 400 });
   }
   const lead = parsed.data;
+  const isStoreWaitlist = kind === "contact" && lead.enquiryType === "Store waitlist";
+  if (isStoreWaitlist && (body as Record<string, unknown>).waitlistEmailConsent !== "true") {
+    return Response.json({ error: "Please confirm that you want an email when this product becomes available." }, { status: 400 });
+  }
+  if (isStoreWaitlist && (!lead.storeProductId || !lead.storeProductSlug)) {
+    return Response.json({ error: "The product details are missing. Please refresh the Store page and try again." }, { status: 400 });
+  }
+  if (isStoreWaitlist) {
+    const productResult = await cmsBridge<{ records?: { id: string; slug: string | null; title: string; status: string }[] }>({ action: "cms.list", module: "products", status: "all", id: lead.storeProductId });
+    const product = productResult.records?.find((item) => item.id === lead.storeProductId && item.slug === lead.storeProductSlug && item.status === "active");
+    if (!product) return Response.json({ error: "This product is no longer accepting waitlist registrations. Refresh the Store page and try again." }, { status: 409 });
+  }
   if (kind === "partner" && (body as Record<string, unknown>).consent !== "true") {
     return Response.json({ error: "Please agree to the Privacy Policy and Terms." }, { status: 400 });
   }
@@ -84,6 +96,14 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
           organisation: lead.organisation || "",
           phone: lead.phone || "",
           opportunityName: lead.opportunityName || "",
+          ...(isStoreWaitlist ? {
+            storeProductId: lead.storeProductId,
+            storeProductSlug: lead.storeProductSlug,
+            waitlistEmailConsent: true,
+            waitlistConsentText: "Email me when this specific product is available. I can unsubscribe at any time.",
+            waitlistConsentAt: new Date().toISOString(),
+            waitlistStatus: "waiting",
+          } : {}),
           countryMarket: lead.countryMarket || "",
           role: lead.role || "",
           projectMandate: lead.projectMandate || "",

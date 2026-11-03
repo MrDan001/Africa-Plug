@@ -26,7 +26,7 @@ declare global {
   }
 }
 
-export default function EnquiryForm({ kind = "contact", opportunityName, modal = false, defaultArea = "", storeEnquiryTitle, storeWaitlist = false }: { kind?: Kind; opportunityName?: string; modal?: boolean; defaultArea?: string; storeEnquiryTitle?: string; storeWaitlist?: boolean }) {
+export default function EnquiryForm({ kind = "contact", opportunityName, modal = false, defaultArea = "", storeEnquiryTitle, storeWaitlist = false, storeProductId = "", storeProductSlug = "" }: { kind?: Kind; opportunityName?: string; modal?: boolean; defaultArea?: string; storeEnquiryTitle?: string; storeWaitlist?: boolean; storeProductId?: string; storeProductSlug?: string }) {
   const form = config[kind];
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const widgetRef = useRef<HTMLDivElement>(null);
@@ -120,7 +120,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
           <label><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           {!storeEnquiryTitle ? <label><span>Organisation <small>Optional</small></span><input name="organisation" autoComplete="organization" maxLength={160} /></label> : null}
           <label><span>{storeEnquiryTitle ? "Phone or WhatsApp" : "Phone"} <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={50} /></label>
-          {storeEnquiryTitle ? <input type="hidden" name="enquiryType" value={storeWaitlist ? "Store waitlist" : "Store enquiry"} /> : null}
+          {storeEnquiryTitle ? <><input type="hidden" name="enquiryType" value={storeWaitlist ? "Store waitlist" : "Store enquiry"} /><input type="hidden" name="storeProductId" value={storeProductId} /><input type="hidden" name="storeProductSlug" value={storeProductSlug} /></> : null}
           {kind === "partner" ? <label className="enquiry-full-width">
             <span>Partnership area <b>*</b></span>
             <select name="enquiryType" defaultValue={defaultArea} required>
@@ -156,6 +156,8 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
           <label className="enquiry-full-width"><span>Your message <b>*</b></span><textarea name="message" rows={5} required minLength={10} maxLength={5000} placeholder="Tell us a little about your enquiry…" /></label>
         </div>
         {kind === "partner" || storeEnquiryTitle ? <label className="enquiry-consent"><input type="checkbox" name="consent" value="true" required /> <span>I agree to the <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> and <a href="/terms" target="_blank" rel="noreferrer">Terms</a>.</span></label> : null}
+        {storeWaitlist ? <label className="enquiry-consent"><input type="checkbox" name="waitlistEmailConsent" value="true" required /> <span>Email me when this specific product is available. I can unsubscribe at any time.</span></label> : null}
+        {storeWaitlist ? <p className="enquiry-privacy-note">This only signs you up for updates about this product. It does not subscribe you to the general newsletter or other product lists.</p> : null}
         <label className="enquiry-honeypot" aria-hidden="true">Leave this field empty<input name="website" tabIndex={-1} autoComplete="off" /></label>
         {siteKey ? <div className="enquiry-security"><div ref={widgetRef} /><small>Complete the security check before submitting.</small></div> : null}
         {notice ? <p className={`enquiry-status ${notice.ok ? "success" : "error"}`} role="status" aria-live="polite">{notice.text}{!notice.ok ? <>{" "}Email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a> if you need another route.</> : null}</p> : null}

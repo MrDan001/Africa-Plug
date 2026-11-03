@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 
-export default function StoreEnquiryButton({ title, className = "store-product-cta", buttonLabel = "ENQUIRE NOW", waitlist = false }: { title: string; className?: string; buttonLabel?: string; waitlist?: boolean }) {
+export default function StoreEnquiryButton({ title, className = "store-product-cta", buttonLabel = "ENQUIRE NOW", waitlist = false, productId = "", productSlug = "" }: { title: string; className?: string; buttonLabel?: string; waitlist?: boolean; productId?: string; productSlug?: string }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (!open) return;
@@ -17,7 +17,7 @@ export default function StoreEnquiryButton({ title, className = "store-product-c
     {open ? <div className="store-enquiry-overlay" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
       <section className="store-enquiry-modal" role="dialog" aria-modal="true" aria-label={waitlist ? `Join the waitlist for ${title}` : `Enquire about ${title}`}>
         <button type="button" className="store-enquiry-close" aria-label="Close enquiry" onClick={() => setOpen(false)}>×</button>
-        <EnquiryForm kind="contact" modal storeEnquiryTitle={title} storeWaitlist={waitlist} opportunityName={title} />
+        <EnquiryForm kind="contact" modal storeEnquiryTitle={title} storeWaitlist={waitlist} storeProductId={productId} storeProductSlug={productSlug} opportunityName={title} />
       </section>
     </div> : null}
   </>;
