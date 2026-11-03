@@ -1,5 +1,6 @@
 // FILE PATH: src/lib/tap-in/validation.ts
 import type { OpportunityInput, OpportunityStatus } from "./opportunities";
+import { COUNTRIES } from "@/lib/work-with-fk/application-schema";
 
 const STATUSES = new Set<OpportunityStatus>(["draft", "live", "closed", "archived"]);
 
@@ -28,9 +29,8 @@ export function parseOpportunityInput(value: unknown): OpportunityInput {
   const data = value as Record<string, unknown>;
   const title = text(data.title, "Title", 180, 2);
   const slug = slugify(typeof data.slug === "string" && data.slug.trim() ? data.slug : title);
-  const country = text(data.country ?? "", "Country", 120);
-  const region = text(data.region ?? "", "Region", 120);
-  if (!country && !region) throw new Error("Provide a country and/or region.");
+  const country = text(data.country ?? "", "Country", 120, 1);
+  if (!(COUNTRIES as readonly string[]).includes(country) || country === "Other") throw new Error("Choose a valid country from the country list.");
   const sector = text(data.sector, "Sector", 120, 2);
   const opportunityType = text(data.opportunity_type ?? data.opportunityType, "Opportunity type", 120, 2);
   const description = text(data.description, "Description", 12000, 10);
@@ -52,7 +52,6 @@ export function parseOpportunityInput(value: unknown): OpportunityInput {
     slug,
     title,
     country,
-    region,
     sector,
     opportunity_type: opportunityType,
     description,
