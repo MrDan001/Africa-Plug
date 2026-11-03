@@ -1999,8 +1999,8 @@ html, body { background: #f7f5f1; color: #292a2c; }
 
 /* Blog index — warm editorial art direction */
 .blog-index-page {
-  min-height: 100vh;
-  padding: 108px clamp(22px, 4.2vw, 64px) 18px;
+  min-height: 0;
+  padding: 32px clamp(22px, 4.2vw, 64px) 18px;
   background: #f8f5ef;
   color: #171614;
   font-family: Georgia, "Times New Roman", serif;
@@ -2339,7 +2339,7 @@ body:has(.blog-index-page) { background: #f8f5ef; }
   .blog-index-pitch-copy { padding-right: 24px; padding-left: 28px; }
 }
 @media(max-width:620px) {
-  .blog-index-page { padding: 100px 15px 16px; }
+  .blog-index-page { padding: 24px 15px 16px; }
   .blog-index-heading { padding: 0 3px 17px; }
   .blog-index-heading h1 { font-size: clamp(42px, 12.4vw, 58px); }
   .blog-index-intro { font-size: 14px; line-height: 1.45; }
