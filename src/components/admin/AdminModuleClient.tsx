@@ -405,9 +405,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   async function uploadAsset(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
-    const localPreview = URL.createObjectURL(file);
-    clearCoverPreview();
-    setCoverPreview(localPreview);
     setUploading(true);
     setNotice(null);
     try {
@@ -438,6 +435,9 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       input.value = "";
       return;
     }
+    const localPreview = URL.createObjectURL(file);
+    clearCoverPreview();
+    setCoverPreview(localPreview);
     setUploading(true);
     setNotice(null);
     try {
