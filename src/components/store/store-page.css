@@ -1,4 +1,4 @@
-.tap-store-page { padding: 76px max(20px,calc((100vw - 1120px)/2)) 0; overflow: hidden; background: #fff; color: #202020; }
+.tap-store-page { width: 100%; padding: 76px clamp(22px,4.2vw,64px) 0; overflow: hidden; background: #fff; color: #202020; }
 .tap-store-hero { display: block; min-height: 0; padding: 34px 0 23px; overflow: visible; background: #fff; }
 .tap-store-hero::before { display: none; }
 .tap-store-hero-copy { max-width: 690px; }
