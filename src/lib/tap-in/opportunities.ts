@@ -8,7 +8,6 @@ export type TapInOpportunity = {
   slug: string;
   title: string;
   country: string;
-  region: string;
   sector: string;
   opportunity_type: string;
   description: string;
