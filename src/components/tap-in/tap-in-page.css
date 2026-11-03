@@ -65,6 +65,9 @@
   
   .ti-filters { display: flex; flex-wrap: wrap; gap: 12px; margin: 26px 0 30px; }
   .ti-filter-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px; background: #fffdf9; border: 1px solid var(--ti-line); border-radius: 6px; }
+  .ti-filter-select { display: grid; gap: 7px; min-width: 190px; padding: 9px 12px; background: #fffdf9; border: 1px solid var(--ti-line); border-radius: 6px; color: var(--ti-ink); font-size: 11px; font-weight: 800; }
+  .ti-filter-select select { width: 100%; min-height: 34px; padding: 0 30px 0 10px; border: 1px solid var(--ti-line); border-radius: 4px; background: #fff; color: var(--ti-text); font: inherit; font-size: 12px; font-weight: 500; }
+  .ti-filter-select select:focus-visible { outline: 2px solid var(--ti-pink); outline-offset: 2px; }
   .ti-filter-label { margin-right: 4px; color: var(--ti-ink); font-size: 11px; font-weight: 800; }
   .ti-chip { padding: 5px 11px; background: #fff; border: 1px solid var(--ti-line); border-radius: 999px; color: var(--ti-muted); font: inherit; font-size: 10px; font-weight: 600; cursor: pointer; transition: all .15s ease; }
   .ti-chip:hover { border-color: var(--ti-pink); color: var(--ti-ink); }
