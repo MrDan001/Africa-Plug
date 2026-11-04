@@ -645,3 +645,36 @@
   .homepage-opportunity-row > img,
   .homepage-opportunity-placeholder { width: 70px; height: 54px; }
 }
+
+
+/* Use the supplied Store artwork as a single exact, responsive banner image. */
+.homepage-store-banner {
+  width: 100%;
+  padding: clamp(14px, 2.8vw, 34px) clamp(14px, 4vw, 58px);
+  background: #fff;
+}
+.homepage-store-banner-link {
+  display: block;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  line-height: 0;
+  text-decoration: none;
+}
+.homepage-store-banner-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  object-fit: contain;
+}
+.home-work-reference .work-intro .eyebrow {
+  color: var(--signal, #c21e67) !important;
+}
+@media (max-width: 760px) {
+  .homepage-store-banner {
+    padding: 12px 10px 24px;
+  }
+  .homepage-store-banner-link {
+    width: 100%;
+  }
+}
