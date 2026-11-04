@@ -582,3 +582,14 @@ EMAIL_FK=fk@
 - [ ] If the build reveals another error, address that error before treating the deployment as ready.
 
 **Verification note:** The supplied Vercel log showed the build stopping during JSX parsing, before compilation completed. The npm configuration and install-script messages were warnings; the malformed JSX was the fatal error.
+
+
+## Homepage Store banner image-delivery fix — 4 November 2026
+
+- [x] Bypassed the Next.js/Vercel image-optimization route for the homepage Store banner so the browser receives the committed source image directly.
+- [x] Added a versioned asset query to prevent an old optimized/cached banner variant from being reused.
+- [x] Kept the existing banner artwork, link destination, dimensions, spacing and responsive behavior unchanged.
+- [ ] Verify the banner on Android Chrome and desktop after the Vercel deployment; confirm the full image decodes cleanly with no mosaic/pixel blocks.
+- [ ] If artifacts remain with direct delivery, replace the source asset itself with the original clean high-resolution artwork rather than masking the issue with CSS.
+
+**Verification status:** Source change committed; live visual verification is pending deployment and a fresh browser reload. The screenshots alone do not establish whether the artifacts are embedded in the source file or introduced by image optimization/cache delivery.
