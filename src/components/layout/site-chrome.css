@@ -283,3 +283,22 @@ html body .site-footer .tap-footer-social.is-instagram:hover { border-color: #E4
 html body .site-footer .tap-footer-social.is-youtube:hover { border-color: #FF0033; background: rgba(255,0,51,.1); }
 html body .site-footer .tap-footer-social.is-tiktok:hover { border-color: #25F4EE; background: rgba(37,244,238,.1); }
 html body .site-footer .tap-footer-social.is-facebook:hover { border-color: #1877F2; background: rgba(24,119,242,.1); }
+
+/* Header Work With FK CTA: keep the navigation button pink with white text. */
+html body .site-header .header-actions > a.header-cta,
+html body .site-header .header-actions > a.header-cta:link,
+html body .site-header .header-actions > a.header-cta:visited {
+  background: var(--signal, #d51f6d) !important;
+  border: 1px solid var(--signal, #d51f6d) !important;
+  color: #fff !important;
+}
+html body .site-header .header-actions > a.header-cta:hover,
+html body .site-header .header-actions > a.header-cta:focus-visible {
+  background: #b8175b !important;
+  border-color: #b8175b !important;
+  color: #fff !important;
+}
+html body .site-header .header-actions > a.header-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
