@@ -6,6 +6,7 @@ export type PublicListing = {
     slug: string;
     title: string;
     country: string;
+    region: string;
     sector: string;
     opportunity_type: string;
     description: string;
@@ -25,8 +26,8 @@ export type PublicListing = {
     return "";
   }
   
-  export function placeLabel(item: Pick<PublicListing, "country">) {
-    return item.country;
+  export function placeLabel(item: Pick<PublicListing, "country" | "region">) {
+    return [item.region, item.country].filter(Boolean).join(" · ");
   }
   
   export function metaLine(item: PublicListing) {
