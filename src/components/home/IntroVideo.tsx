@@ -30,9 +30,9 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
       onClick={() => setPlaying(true)} 
       aria-label="Play the introduction video"
       style={{
-        backgroundImage: "linear-gradient(180deg, rgba(0,0,0,.48), transparent 30%, transparent 70%, rgba(0,0,0,.38)), url('/images/work-with-fk-hero.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.48), transparent 30%, transparent 70%, rgba(0,0,0,.38)), url("https://img.youtube.com/vi/${videoId}/hqdefault.jpg"), url("/images/work-with-fk-hero.jpg")`,
+        backgroundSize: "cover, cover, cover",
+        backgroundPosition: "center, center, center",
         color: "#ffffff",
       }}
     >
