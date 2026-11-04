@@ -602,3 +602,13 @@ EMAIL_FK=fk@
 - [ ] Verify the deployed homepage on Android Chrome and desktop at narrow, tablet and wide viewport sizes; confirm the banner has no overlap, clipping or unexpected whitespace.
 
 **Root cause confirmed in source:** the homepage rendered the banner image inside .homepage-store-banner-link, but the latest CSS made that link position:absolute with top, left, a 22.5% width and a 10.8% height. The image itself was therefore constrained to a small absolutely positioned link rather than participating as a normal full-width section element. The CSS also defined a .homepage-store-banner-frame wrapper that the JSX did not render. The fix removes the absolute positioning and restores the image/link to normal document flow. Live visual verification remains pending deployment.
+
+## Homepage Store typography and CTA refinement — 4 November 2026
+
+- [x] Replaced the rasterised “THE STORE” artwork text with a real HTML heading in crisp black type.
+- [x] Removed the artwork's baked-in CTA from view with a matching ivory backplate; the old pink raster button is no longer the interaction target.
+- [x] Added a separate white, accessible “GO TO OUR STORE” link-button that navigates to `/store`; the decorative banner image itself is no longer wrapped in a full-image link.
+- [x] Kept the guide, phone and tablet artwork in the banner and retained responsive aspect-ratio sizing.
+- [ ] Verify the deployed banner on Android Chrome and desktop at mobile, tablet and wide viewport sizes; check heading sharpness, button contrast/tap target, and the artwork/backplate blend.
+
+**Implementation note:** The previous 912 × 383 JPEG contained the heading and pink CTA as raster pixels. Rendering that file at a larger responsive width made the lettering and button visibly soft and made the full banner one large link. The updated homepage renders the title and CTA as HTML/CSS instead, while the image is now decorative supporting artwork. Live visual verification remains pending the Vercel deployment.
