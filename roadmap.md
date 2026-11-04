@@ -593,3 +593,12 @@ EMAIL_FK=fk@
 - [ ] If artifacts remain with direct delivery, replace the source asset itself with the original clean high-resolution artwork rather than masking the issue with CSS.
 
 **Verification status:** Source change committed; live visual verification is pending deployment and a fresh browser reload. The screenshots alone do not establish whether the artifacts are embedded in the source file or introduced by image optimization/cache delivery.
+
+## Homepage Store banner positioning fix — 4 November 2026
+
+- [x] Corrected the Store banner link from a small absolutely positioned hotspot to a normal, full-width responsive image link.
+- [x] Constrained the banner to a centered maximum width of 1,240px, with the complete artwork scaling proportionally and the entire image remaining clickable.
+- [x] Kept the Store banner in the homepage content flow immediately after the T.A.P IN section and before Featured Stories; it no longer overlays or floats independently of its section.
+- [ ] Verify the deployed homepage on Android Chrome and desktop at narrow, tablet and wide viewport sizes; confirm the banner has no overlap, clipping or unexpected whitespace.
+
+**Root cause confirmed in source:** the homepage rendered the banner image inside .homepage-store-banner-link, but the latest CSS made that link position:absolute with top, left, a 22.5% width and a 10.8% height. The image itself was therefore constrained to a small absolutely positioned link rather than participating as a normal full-width section element. The CSS also defined a .homepage-store-banner-frame wrapper that the JSX did not render. The fix removes the absolute positioning and restores the image/link to normal document flow. Live visual verification remains pending deployment.
