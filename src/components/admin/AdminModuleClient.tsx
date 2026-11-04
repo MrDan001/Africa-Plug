@@ -19,7 +19,7 @@ const DETAILS: Record<ModuleKey, { title: string; description: string; db: strin
   analytics: { title: "Analytics & funnel", description: "Review page views, content views, form-related events and UTM/source information captured by the website.", db: "analytics" },
   media: { title: "Media library", description: "Upload reusable public images and PDFs and copy their asset URLs into articles and product records. Do not upload confidential or paid-download files here.", db: "media" },
   settings: { title: "Commercial settings", description: "Keep the current fees, meeting length, booking rules and draft commercial terms together. Payment automation should only be enabled after terms are approved.", db: "commercial-settings" },
-  "site-settings": { title: "Site & SEO Settings", description: "Site identity, navigation, search-engine details, store features and switches in one place.", db: "site-settings" },
+  "site-settings": { title: "Site & SEO Settings", description: "Manage site identity, footer social links, navigation, search-engine details, store features and switches in one place.", db: "site-settings" },
 };
 
 const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
@@ -77,6 +77,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "linkedinUrl", label: "LinkedIn URL", type: "url" },
     { key: "instagramUrl", label: "Instagram URL", type: "url" },
     { key: "youtubeUrl", label: "YouTube URL", type: "url" },
+    { key: "tiktokUrl", label: "TikTok URL", type: "url", help: "Footer social link. Leave blank to hide this link." },
+    { key: "facebookUrl", label: "Facebook URL", type: "url", help: "Footer social link. Leave blank to hide this link." },
     { key: "enableNewsletter", label: "Show newsletter signup", type: "checkbox" },
     { key: "enableSearch", label: "Enable site search", type: "checkbox" },
     { key: "enableSelectedWork", label: "Show selected work", type: "checkbox" },
@@ -95,7 +97,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
 
 /** Which Site & SEO fields appear on which tab. */
 const SETTINGS_TABS: { id: string; label: string; blurb: string; keys: string[] }[] = [
-  { id: "info", label: "Site information", blurb: "Your brand name and public contact and social links.", keys: ["siteTitle", "contactEmail", "whatsappUrl", "linkedinUrl", "instagramUrl", "youtubeUrl"] },
+  { id: "info", label: "Site information", blurb: "Your brand name and public contact details.", keys: ["siteTitle", "contactEmail", "whatsappUrl"] },
+  { id: "social", label: "Footer social links", blurb: "Edit the public social links shown in the footer. Keep the order shown here; clear a URL to hide that platform.", keys: ["linkedinUrl", "instagramUrl", "youtubeUrl", "tiktokUrl", "facebookUrl"] },
   { id: "navigation", label: "Navigation", blurb: "The links shown in the main site menu.", keys: ["navigationText"] },
   { id: "seo", label: "SEO", blurb: "What search engines and link previews show by default.", keys: ["siteDescription"] },
   { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the homepage.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmImageUrl", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
@@ -171,13 +174,14 @@ function defaultSiteSettings(): Draft {
     title: "Site settings",
     slug: "site-settings",
     status: "active",
-    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "", instagramUrl: "", youtubeUrl: "", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
+    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/", instagramUrl: "https://www.instagram.com/theafricaplug/", youtubeUrl: "https://www.youtube.com/@TheAfricaPlugYT", tiktokUrl: "https://www.tiktok.com/@theafricaplug", facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
   };
 }
 
 function toDraft(record?: CmsRecord, moduleKey?: ModuleKey): Draft {
   const source = record?.data ?? {};
-  const data: Record<string, unknown> = { ...source };
+  const siteDefaults = moduleKey === "site-settings" ? defaultSiteSettings().data : {};
+  const data: Record<string, unknown> = { ...siteDefaults, ...source };
   if (moduleKey === "blog") {
     data.tagsText = Array.isArray(source.tags) ? source.tags.map(String).join(", ") : "";
     data.body = Array.isArray(source.sections)
@@ -660,7 +664,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     const saved = records[0];
     const data = draft.data;
     const filled = (key: string) => text(data[key]).trim().length > 0;
-    const profileKeys = ["siteTitle", "siteDescription", "contactEmail", "whatsappUrl", "linkedinUrl"];
+    const profileKeys = ["siteTitle", "siteDescription", "contactEmail", "whatsappUrl"];
     const profilePercent = Math.round((profileKeys.filter(filled).length / profileKeys.length) * 100);
     const switches = ["enableNewsletter", "enableSearch", "enableSelectedWork", "enableProductOfMonth"];
     const switchesOn = switches.filter((key) => Boolean(data[key])).length;
@@ -671,7 +675,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       { ok: filled("siteTitle"), label: "Site title is set" },
       { ok: text(data.siteDescription).trim().length >= 50, label: "SEO description is 50+ characters" },
       { ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text(data.contactEmail).trim()), label: "Public contact email is valid" },
-      { ok: /^https:\/\//i.test(text(data.whatsappUrl).trim()), label: "WhatsApp link is set (https://)" },
+      { ok: ["linkedinUrl", "instagramUrl", "youtubeUrl", "tiktokUrl", "facebookUrl"].every((key) => /^https:\/\//i.test(text(data[key]).trim())), label: "All five footer social links are valid" },
       { ok: filled("navigationText"), label: "Navigation links are set" },
       { ok: !data.enableProductOfMonth || potmReady, label: data.enableProductOfMonth ? "Product of the Month is complete" : "Product of the Month is off" },
     ];

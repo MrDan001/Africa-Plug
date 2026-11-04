@@ -82,6 +82,8 @@ export type PublicSiteSettings = {
   linkedinUrl?: string;
   instagramUrl?: string;
   youtubeUrl?: string;
+  tiktokUrl?: string;
+  facebookUrl?: string;
   introVideoUrl?: string;
   intro_video_url?: string;
   introVideoId?: string;
@@ -104,6 +106,11 @@ function fallbackSettings(navigation: { label: string; href: string }[]): Public
     intro_video_url: DEFAULT_VIDEO_URL,
     introVideoId: parseYouTubeId(DEFAULT_VIDEO_URL) ?? undefined,
     contactEmail: "connect@theafricaplug.com",
+    linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/",
+    instagramUrl: "https://www.instagram.com/theafricaplug/",
+    youtubeUrl: "https://www.youtube.com/@TheAfricaPlugYT",
+    tiktokUrl: "https://www.tiktok.com/@theafricaplug",
+    facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013",
   };
 }
 
@@ -147,7 +154,19 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     const settingBool = (key: string) => typeof data[key] === "boolean" ? data[key] as boolean : undefined;
     const settingNumber = (key: string) => { const value = Number(data[key]); return Number.isFinite(value) && value >= 1 && value <= 100 ? Math.floor(value) : undefined; };
     
-    const youtubeVal = settingString("youtubeUrl") || settingString("youtube_url") || DEFAULT_VIDEO_URL;
+    const safeSocialUrl = (key: string, fallback: string) => {
+      const raw = settingString(key);
+      if (raw === undefined) return fallback;
+      try {
+        const url = new URL(raw);
+        return url.protocol === "https:" ? url.toString() : "";
+      } catch { return ""; }
+    };
+    const linkedinUrl = safeSocialUrl("linkedinUrl", "https://www.linkedin.com/company/the-africa-plug/");
+    const instagramUrl = safeSocialUrl("instagramUrl", "https://www.instagram.com/theafricaplug/");
+    const youtubeVal = safeSocialUrl("youtubeUrl", "https://www.youtube.com/@TheAfricaPlugYT");
+    const tiktokUrl = safeSocialUrl("tiktokUrl", "https://www.tiktok.com/@theafricaplug");
+    const facebookUrl = safeSocialUrl("facebookUrl", "https://www.facebook.com/profile.php?id=61595019957013");
     const introVideoVal = settingString("introVideoUrl") || settingString("intro_video_url") || youtubeVal;
     const introVideoId = parseYouTubeId(introVideoVal) ?? parseYouTubeId(youtubeVal) ?? parseYouTubeId(DEFAULT_VIDEO_URL) ?? undefined;
 
@@ -169,9 +188,11 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       siteDescription: settingString("siteDescription"),
       contactEmail: settingString("contactEmail") || "connect@theafricaplug.com",
       whatsappUrl: settingString("whatsappUrl"),
-      linkedinUrl: settingString("linkedinUrl"),
-      instagramUrl: settingString("instagramUrl"),
+      linkedinUrl,
+      instagramUrl,
       youtubeUrl: youtubeVal,
+      tiktokUrl,
+      facebookUrl,
       introVideoUrl: introVideoVal,
       intro_video_url: introVideoVal,
       introVideoId,

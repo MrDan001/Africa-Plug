@@ -270,3 +270,16 @@ html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link:hover {
   }
 }
 
+
+
+/* Official platform accents and order-preserving social links in the footer. */
+html body .site-footer .tap-footer-social.is-linkedin .tap-social-icon { color: #0A66C2; }
+html body .site-footer .tap-footer-social.is-instagram .tap-social-icon { color: #E4405F; }
+html body .site-footer .tap-footer-social.is-youtube .tap-social-icon { color: #FF0033; }
+html body .site-footer .tap-footer-social.is-tiktok .tap-social-icon { color: #25F4EE; }
+html body .site-footer .tap-footer-social.is-facebook .tap-social-icon { color: #1877F2; }
+html body .site-footer .tap-footer-social.is-linkedin:hover { border-color: #0A66C2; background: rgba(10,102,194,.1); }
+html body .site-footer .tap-footer-social.is-instagram:hover { border-color: #E4405F; background: rgba(228,64,95,.1); }
+html body .site-footer .tap-footer-social.is-youtube:hover { border-color: #FF0033; background: rgba(255,0,51,.1); }
+html body .site-footer .tap-footer-social.is-tiktok:hover { border-color: #25F4EE; background: rgba(37,244,238,.1); }
+html body .site-footer .tap-footer-social.is-facebook:hover { border-color: #1877F2; background: rgba(24,119,242,.1); }
