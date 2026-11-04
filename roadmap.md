@@ -612,3 +612,9 @@ EMAIL_FK=fk@
 - [ ] Verify the deployed banner on Android Chrome and desktop at mobile, tablet and wide viewport sizes; check heading sharpness, button contrast/tap target, and the artwork/backplate blend.
 
 **Implementation note:** The previous 912 × 383 JPEG contained the heading and pink CTA as raster pixels. Rendering that file at a larger responsive width made the lettering and button visibly soft and made the full banner one large link. The updated homepage renders the title and CTA as HTML/CSS instead, while the image is now decorative supporting artwork. Live visual verification remains pending the Vercel deployment.
+
+## Store CTA colour correction — 4 November 2026
+
+- [x] Changed only the separate “GO TO OUR STORE” button to TAP pink (#c21e67) with white text and a white arrow.
+- [x] Kept the existing button dimensions, placement, typography, and `/store` destination unchanged.
+- [x] Left the Store banner artwork, heading, and all other homepage styling untouched.
