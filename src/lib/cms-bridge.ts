@@ -82,6 +82,7 @@ export type PublicSiteSettings = {
   linkedinUrl?: string;
   instagramUrl?: string;
   youtubeUrl?: string;
+  footerYoutubeUrl?: string;
   tiktokUrl?: string;
   facebookUrl?: string;
   introVideoUrl?: string;
@@ -108,7 +109,7 @@ function fallbackSettings(navigation: { label: string; href: string }[]): Public
     contactEmail: "connect@theafricaplug.com",
     linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/",
     instagramUrl: "https://www.instagram.com/theafricaplug/",
-    youtubeUrl: "https://www.youtube.com/@TheAfricaPlugYT",
+    footerYoutubeUrl: "https://www.youtube.com/@TheAfricaPlugYT",
     tiktokUrl: "https://www.tiktok.com/@theafricaplug",
     facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013",
   };
@@ -164,7 +165,8 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
     };
     const linkedinUrl = safeSocialUrl("linkedinUrl", "https://www.linkedin.com/company/the-africa-plug/");
     const instagramUrl = safeSocialUrl("instagramUrl", "https://www.instagram.com/theafricaplug/");
-    const youtubeVal = safeSocialUrl("youtubeUrl", "https://www.youtube.com/@TheAfricaPlugYT");
+    const youtubeVal = settingString("youtubeUrl") || settingString("youtube_url") || DEFAULT_VIDEO_URL;
+    const footerYoutubeUrl = safeSocialUrl("footerYoutubeUrl", "https://www.youtube.com/@TheAfricaPlugYT");
     const tiktokUrl = safeSocialUrl("tiktokUrl", "https://www.tiktok.com/@theafricaplug");
     const facebookUrl = safeSocialUrl("facebookUrl", "https://www.facebook.com/profile.php?id=61595019957013");
     const introVideoVal = settingString("introVideoUrl") || settingString("intro_video_url") || youtubeVal;
@@ -191,6 +193,7 @@ export async function getPublicSiteSettings(): Promise<PublicSiteSettings> {
       linkedinUrl,
       instagramUrl,
       youtubeUrl: youtubeVal,
+      footerYoutubeUrl,
       tiktokUrl,
       facebookUrl,
       introVideoUrl: introVideoVal,
