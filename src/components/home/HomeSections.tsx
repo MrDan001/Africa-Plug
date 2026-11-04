@@ -4,15 +4,25 @@ import FeaturedStories from "@/components/blog/FeaturedStories";
 import IntroVideo from "@/components/home/IntroVideo";
 import NewsletterSignup from "@/components/home/NewsletterSignup";
 import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
-import { getPublicSiteSettings as getSettings } from "@/lib/cms-bridge";
+import { getPublicSiteSettings as getSettings, getPublicCmsRecords } from "@/lib/cms-bridge";
+import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
+import ProductOfTheMonth from "@/components/store/ProductOfTheMonth";
 import { PartnershipTrigger } from "@/components/forms/PartnershipDialog";
 import "./homepage-reference.css";
 
 export default async function HomeSections() {
-  const [opportunities, settings] = await Promise.all([
+  const [opportunities, settings, productRecords] = await Promise.all([
     listLiveOpportunities().catch(() => []),
     getSettings(),
+    getPublicCmsRecords("products"),
   ]);
+  const products = productRecords
+    .flatMap((record) => {
+      const product = cmsRecordToPublicProduct(record);
+      return product ? [product] : [];
+    })
+    .sort((a, b) => Number(b.featured) - Number(a.featured))
+    .slice(0, 3);
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
   const showSelectedWork = settings.enableSelectedWork !== false;
   const showNewsletter = settings.enableNewsletter === true;
@@ -67,14 +77,41 @@ export default async function HomeSections() {
 
     <section className="homepage-store-section" id="store">
       <div className="homepage-store-inner">
-        <div className="homepage-store-copy"><h2>THE STORE</h2><Link className="button button-pink" href="/store">GO TO OUR STORE <span>→</span></Link></div>
-        <div className="homepage-store-art" role="img" aria-label="The Africa Plug Explore Africa Like an Insider guide, with phone and tablet previews">
-          <div className="homepage-store-device homepage-store-phone"><span>Practical guides.</span><small>Explore more of Africa with local know how.</small></div>
-          <div className="homepage-store-device homepage-store-tablet"><span>Cultural insights.</span><small>Local know how.</small><img src="/images/tap-in/port-aerial.jpg" alt="" /></div>
-          <img className="homepage-store-book" src="/store/explore.webp" alt="The Africa Plug Explore Africa Like an Insider guide cover" />
+        <div className="homepage-store-copy">
+          <p className="eyebrow">GUIDES & SERVICES</p>
+          <h2>THE STORE</h2>
+          <p>Practical resources and services selected by The Africa Plug.</p>
+          <Link className="button button-pink" href="/store">GO TO OUR STORE <span>→</span></Link>
         </div>
+        {products.length ? (
+          <div className="homepage-store-products" aria-label="Products from The Africa Plug Store">
+            {products.map((product) => (
+              <article className="homepage-store-product" key={product.id}>
+                <Link className="homepage-store-product-image" href={`/store/${product.slug}`} aria-label={`View ${product.title}`}>
+                  {product.imageUrl
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={product.imageUrl} alt={product.imageAlt} loading="lazy" />
+                    : <span aria-hidden="true">THE AFRICA PLUG</span>}
+                </Link>
+                <div className="homepage-store-product-copy">
+                  <span className="homepage-store-product-type">{product.category === "guides" ? "GUIDE" : "SERVICE"} · {product.availability === "available" ? "AVAILABLE" : "COMING SOON"}</span>
+                  <h3><Link href={`/store/${product.slug}`}>{product.title}</Link></h3>
+                  <p>{product.summary}</p>
+                  <Link className="homepage-store-product-link" href={`/store/${product.slug}`}>VIEW DETAILS <span aria-hidden="true">→</span></Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="homepage-store-art" role="img" aria-label="The Africa Plug practical guides and cultural insights">
+            <div className="homepage-store-device homepage-store-phone"><span>Practical guides.</span><small>Explore more of Africa with local know how.</small></div>
+            <div className="homepage-store-device homepage-store-tablet"><span>Cultural insights.</span><small>Local know how.</small><img src="/images/tap-in/port-aerial.jpg" alt="" /></div>
+            <img className="homepage-store-book" src="/store/explore.webp" alt="The Africa Plug Explore Africa Like an Insider guide cover" />
+          </div>
+        )}
       </div>
     </section>
+    {settings.enableProductOfMonth ? <ProductOfTheMonth settings={settings} /> : null}
 
     <FeaturedStories variant="home" />
 
