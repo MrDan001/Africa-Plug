@@ -715,20 +715,20 @@
   justify-content: center;
   gap: 12px;
   padding: 0 19px;
-  border: 1px solid rgb(34 34 34 / 18%);
+  border: 1px solid #c21e67;
   border-radius: 6px;
-  background: #fff;
+  background: #c21e67;
   box-shadow: 0 3px 12px rgb(20 20 20 / 10%);
-  color: #17191c;
+  color: #fff;
   font-size: 10px;
   font-weight: 900;
   letter-spacing: .09em;
   line-height: 1;
   text-decoration: none;
-  transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
 }
 .homepage-store-banner-cta span {
-  color: #c21e67;
+  color: #fff;
   font-size: 16px;
   line-height: 1;
 }
