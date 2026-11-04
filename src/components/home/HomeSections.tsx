@@ -67,15 +67,27 @@ export default async function HomeSections() {
     </section>
 
     <section className="homepage-store-banner" id="store" aria-label="The Africa Plug Store">
-      <Link href="/store" className="homepage-store-banner-link" aria-label="Go to The Africa Plug Store">
-        <Image
-          src="/images/homepage-store-banner.webp"
-          alt="The Store. Go to our store. Explore Africa Like an Insider guide displayed with a phone and tablet preview."
-          width={1100}
-          height={450}
-          sizes="(max-width: 760px) 100vw, (max-width: 1300px) 92vw, 1240px"
-        />
-      </Link>
+      <div className="homepage-store-banner-inner">
+        <div className="homepage-store-banner-copy">
+          <h2>THE STORE</h2>
+          <Link className="button button-pink" href="/store">GO TO OUR STORE <span aria-hidden="true">→</span></Link>
+        </div>
+        <div className="homepage-store-banner-art" aria-label="Explore Africa Like an Insider guide shown with a phone and tablet preview">
+          <div className="homepage-store-banner-phone">
+            <span>Practical guides.</span>
+            <small>Explore more of Africa with local know-how.</small>
+            <Image src="/store/unwritten.webp" alt="" width={160} height={100} />
+          </div>
+          <div className="homepage-store-banner-book">
+            <Image src="/store/explore.webp" alt="Explore Africa Like an Insider guide cover" width={360} height={440} priority />
+          </div>
+          <div className="homepage-store-banner-tablet">
+            <span>Cultural insights.</span>
+            <small>Local know-how.</small>
+            <Image src="/images/tap-in/port-aerial.jpg" alt="" width={330} height={170} />
+          </div>
+        </div>
+      </div>
     </section>
 
     <FeaturedStories variant="home" />
