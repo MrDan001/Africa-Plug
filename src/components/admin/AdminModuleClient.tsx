@@ -76,7 +76,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "whatsappUrl", label: "WhatsApp URL", type: "url" },
     { key: "linkedinUrl", label: "LinkedIn URL", type: "url", help: "Footer social link. Leave blank to hide this link." },
     { key: "instagramUrl", label: "Instagram URL", type: "url", help: "Footer social link. Leave blank to hide this link." },
-    { key: "youtubeUrl", label: "YouTube channel URL", type: "url", help: "Footer social link. Leave blank to hide this link. Intro video is managed separately." },
+    { key: "footerYoutubeUrl", label: "YouTube channel URL", type: "url", help: "Footer social link. Leave blank to hide this link. Intro video is managed separately." },
     { key: "tiktokUrl", label: "TikTok URL", type: "url", help: "Footer social link. Leave blank to hide this link." },
     { key: "facebookUrl", label: "Facebook URL", type: "url", help: "Footer social link. Leave blank to hide this link." },
     { key: "enableNewsletter", label: "Show newsletter signup", type: "checkbox" },
@@ -98,7 +98,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
 /** Which Site & SEO fields appear on which tab. */
 const SETTINGS_TABS: { id: string; label: string; blurb: string; keys: string[] }[] = [
   { id: "info", label: "Site information", blurb: "Your brand name and public contact details.", keys: ["siteTitle", "contactEmail", "whatsappUrl"] },
-  { id: "social", label: "Footer social links", blurb: "Edit the public social links shown in the footer. Keep the order shown here; clear a URL to hide that platform.", keys: ["linkedinUrl", "instagramUrl", "youtubeUrl", "tiktokUrl", "facebookUrl"] },
+  { id: "social", label: "Footer social links", blurb: "Edit the public social links shown in the footer. Keep the order shown here; clear a URL to hide that platform.", keys: ["linkedinUrl", "instagramUrl", "footerYoutubeUrl", "tiktokUrl", "facebookUrl"] },
   { id: "navigation", label: "Navigation", blurb: "The links shown in the main site menu.", keys: ["navigationText"] },
   { id: "seo", label: "SEO", blurb: "What search engines and link previews show by default.", keys: ["siteDescription"] },
   { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the homepage.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmImageUrl", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
@@ -174,7 +174,7 @@ function defaultSiteSettings(): Draft {
     title: "Site settings",
     slug: "site-settings",
     status: "active",
-    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/", instagramUrl: "https://www.instagram.com/theafricaplug/", youtubeUrl: "https://www.youtube.com/@TheAfricaPlugYT", tiktokUrl: "https://www.tiktok.com/@theafricaplug", facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
+    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/", instagramUrl: "https://www.instagram.com/theafricaplug/", youtubeUrl: "https://www.youtube.com/watch?v=KnY5dnnuLc4", footerYoutubeUrl: "https://www.youtube.com/@TheAfricaPlugYT", tiktokUrl: "https://www.tiktok.com/@theafricaplug", facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
   };
 }
 
@@ -675,7 +675,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       { ok: filled("siteTitle"), label: "Site title is set" },
       { ok: text(data.siteDescription).trim().length >= 50, label: "SEO description is 50+ characters" },
       { ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text(data.contactEmail).trim()), label: "Public contact email is valid" },
-      { ok: ["linkedinUrl", "instagramUrl", "youtubeUrl", "tiktokUrl", "facebookUrl"].every((key) => !text(data[key]).trim() || /^https:\/\//i.test(text(data[key]).trim())), label: "Footer social links use secure HTTPS URLs" },
+      { ok: ["linkedinUrl", "instagramUrl", "footerYoutubeUrl", "tiktokUrl", "facebookUrl"].every((key) => !text(data[key]).trim() || /^https:\/\//i.test(text(data[key]).trim())), label: "Footer social links use secure HTTPS URLs" },
       { ok: filled("navigationText"), label: "Navigation links are set" },
       { ok: !data.enableProductOfMonth || potmReady, label: data.enableProductOfMonth ? "Product of the Month is complete" : "Product of the Month is off" },
     ];
