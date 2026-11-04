@@ -658,23 +658,20 @@
   background: #fff;
 }
 .homepage-store-banner-link {
-  position: absolute;
-  z-index: 1;
-  top: 54%;
-  left: 5.9%;
+  position: relative;
   display: block;
-  width: 22.5%;
-  height: 10.8%;
-  border-radius: 8px;
-  transition: background-color .16s ease, box-shadow .16s ease;
+  width: min(100%, 1240px);
+  height: auto;
+  margin: 0 auto;
+  line-height: 0;
   text-decoration: none;
 }
-.homepage-store-banner-frame { position: relative; width: min(100%, 912px); margin: 0 auto; line-height: 0; }
-.homepage-store-banner-link:hover { background: rgb(0 0 0 / 6%); }
-.homepage-store-banner-link:focus-visible { outline: 3px solid #292a2c; outline-offset: 3px; }
+.homepage-store-banner-link:hover { opacity: .985; }
+.homepage-store-banner-link:focus-visible { outline: 3px solid #292a2c; outline-offset: 4px; }
 .homepage-store-banner-image {
   display: block;
   width: 100%;
+  max-width: 100%;
   height: auto;
   margin: 0;
   object-fit: contain;
@@ -687,6 +684,6 @@
     padding: 12px 10px 24px;
   }
   .homepage-store-banner-link {
-    width: 22.5%;
+    width: 100%;
   }
 }
