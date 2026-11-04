@@ -77,6 +77,7 @@ function AfricaMap() {
 export default function TapInBoard({ listings }: { listings: PublicListing[] }) {
   const [type, setType] = useState("");
   const [country, setCountry] = useState("");
+  const [region, setRegion] = useState("");
   const [sector, setSector] = useState("");
   const [dialog, setDialog] = useState<"interest" | "register" | "submit" | null>(null);
   const [copied, setCopied] = useState(false);
@@ -92,10 +93,12 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
   const visible = useMemo(() => {
     const matches = listings.filter((item) =>
       (!type || typeGroup(item.opportunity_type) === type) &&
-      (!sector || item.sector.trim() === sector));
+      (!sector || item.sector.trim() === sector) &&
+      (!country || item.country === country) &&
+      (!region || item.region === region));
     return [...matches.filter((item) => item.open), ...matches.filter((item) => !item.open)];
-  }, [listings, type, country, sector]);
-  const anyFilter = Boolean(type || country || sector);
+  }, [listings, type, country, region, sector]);
+  const anyFilter = Boolean(type || country || region || sector);
   const hasOpen = listings.some((item) => item.open);
 
   const openListing = useCallback((slug: string) => { window.location.hash = slug; }, []);
@@ -142,6 +145,12 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
                 {COUNTRIES.filter((item) => item !== "Other").map((item) => <option key={item} value={item}>{item}</option>)}
               </select>
             </label>
+            <label className="ti-filter-select">Region
+              <select value={region} onChange={(event) => setRegion(event.target.value)}>
+                <option value="">All regions</option>
+                {["North Africa", "West Africa", "Central Africa", "East Africa", "Southern Africa"].map((item) => <option key={item} value={item}>{item}</option>)}
+              </select>
+            </label>
             <label className="ti-filter-select">Sector
               <select value={sector} onChange={(event) => setSector(event.target.value)}>
                 <option value="">All sectors</option>
@@ -173,7 +182,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
           ) : listings.length && anyFilter ? (
             <div className="ti-empty">
               <h3>No opportunities match those filters.</h3>
-              <button type="button" className="ti-link" onClick={() => { setType(""); setCountry(""); setSector(""); }}>Clear filters</button>
+              <button type="button" className="ti-link" onClick={() => { setType(""); setCountry(""); setRegion(""); setSector(""); }}>Clear filters</button>
             </div>
           ) : (
             <div className="ti-empty"><h3>No live opportunities right now.</h3><p>New opportunities are on the way. Tell us what you’re looking for below.</p></div>
