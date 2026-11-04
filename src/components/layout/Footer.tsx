@@ -49,11 +49,11 @@ export default async function Footer() {
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
   const exploreLinks = settings.navigation?.length ? settings.navigation : FOOTER_LINKS;
   const socialLinks = [
-    { label: "LinkedIn", href: settings.linkedinUrl || "https://www.linkedin.com/company/the-africa-plug/", icon: <LinkedInIcon />, className: "is-linkedin" },
-    { label: "Instagram", href: settings.instagramUrl || "https://www.instagram.com/theafricaplug/", icon: <InstagramIcon />, className: "is-instagram" },
-    { label: "YouTube", href: settings.youtubeUrl || "https://www.youtube.com/@TheAfricaPlugYT", icon: <YouTubeIcon />, className: "is-youtube" },
-    { label: "TikTok", href: settings.tiktokUrl || "https://www.tiktok.com/@theafricaplug", icon: <TikTokIcon />, className: "is-tiktok" },
-    { label: "Facebook", href: settings.facebookUrl || "https://www.facebook.com/profile.php?id=61595019957013", icon: <FacebookIcon />, className: "is-facebook" },
+    { label: "LinkedIn", href: settings.linkedinUrl ?? "", icon: <LinkedInIcon />, className: "is-linkedin" },
+    { label: "Instagram", href: settings.instagramUrl ?? "", icon: <InstagramIcon />, className: "is-instagram" },
+    { label: "YouTube", href: settings.youtubeUrl ?? "", icon: <YouTubeIcon />, className: "is-youtube" },
+    { label: "TikTok", href: settings.tiktokUrl ?? "", icon: <TikTokIcon />, className: "is-tiktok" },
+    { label: "Facebook", href: settings.facebookUrl ?? "", icon: <FacebookIcon />, className: "is-facebook" },
   ].filter((item) => /^https:\/\//i.test(item.href));
 
   return <footer className="site-footer">
