@@ -51,7 +51,7 @@ export default async function Footer() {
   const socialLinks = [
     { label: "LinkedIn", href: settings.linkedinUrl ?? "", icon: <LinkedInIcon />, className: "is-linkedin" },
     { label: "Instagram", href: settings.instagramUrl ?? "", icon: <InstagramIcon />, className: "is-instagram" },
-    { label: "YouTube", href: settings.youtubeUrl ?? "", icon: <YouTubeIcon />, className: "is-youtube" },
+    { label: "YouTube", href: settings.footerYoutubeUrl ?? "", icon: <YouTubeIcon />, className: "is-youtube" },
     { label: "TikTok", href: settings.tiktokUrl ?? "", icon: <TikTokIcon />, className: "is-tiktok" },
     { label: "Facebook", href: settings.facebookUrl ?? "", icon: <FacebookIcon />, className: "is-facebook" },
   ].filter((item) => /^https:\/\//i.test(item.href));
