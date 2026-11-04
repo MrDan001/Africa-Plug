@@ -1,12 +1,12 @@
 // FILE PATH: src/components/store/ProductOfTheMonth.tsx
-import { getPublicSiteSettings } from "@/lib/cms-bridge";
+import { getPublicSiteSettings, type PublicSiteSettings } from "@/lib/cms-bridge";
 import "./product-of-the-month.css";
 
 export const dynamic = "force-dynamic";
 
 /** Renders only when the switch is on in Site & SEO settings and the record is complete. */
-export default async function ProductOfTheMonth() {
-  const settings = await getPublicSiteSettings();
+export default async function ProductOfTheMonth({ settings: suppliedSettings }: { settings?: PublicSiteSettings } = {}) {
+  const settings = suppliedSettings ?? await getPublicSiteSettings();
   const product = settings.productOfMonth;
   if (!settings.enableProductOfMonth || !product) return null;
   const paragraphs = product.writeUp.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
