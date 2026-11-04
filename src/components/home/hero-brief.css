@@ -22,7 +22,11 @@
      letter-spacing: -.04em;
      text-transform: uppercase;
    }
-   .hero.hero-brief h1 em { color: var(--signal); font-style: normal; }
+   .hero.hero-brief h1,
+.hero.hero-brief h1 em {
+  color: #fff !important;
+}
+.hero.hero-brief h1 em { font-style: normal; }
    
    .hero.hero-brief .hero-support { max-width: 560px; margin: 14px 0 0; color: rgba(255, 255, 255, .9); font-size: 14px; line-height: 1.5; }
    
