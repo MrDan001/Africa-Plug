@@ -31,6 +31,7 @@ export function parseOpportunityInput(value: unknown): OpportunityInput {
   const slug = slugify(typeof data.slug === "string" && data.slug.trim() ? data.slug : title);
   const country = text(data.country ?? "", "Country", 120, 1);
   if (!(COUNTRIES as readonly string[]).includes(country) || country === "Other") throw new Error("Choose a valid country from the country list.");
+  const region = optionalText(data.region, "Region", 80);
   const sector = text(data.sector, "Sector", 120, 2);
   const opportunityType = text(data.opportunity_type ?? data.opportunityType, "Opportunity type", 120, 2);
   const description = text(data.description, "Description", 12000, 10);
@@ -52,6 +53,7 @@ export function parseOpportunityInput(value: unknown): OpportunityInput {
     slug,
     title,
     country,
+    region,
     sector,
     opportunity_type: opportunityType,
     description,
