@@ -121,3 +121,8 @@ The developer can start on layout, responsive behavior, CMS structure, forms, ro
 - All copy, listings (excavator hire and honey), articles, testimonials and Selected Work cards
 - Africa Starter Guide file and price
 - Legal texts
+
+
+## Homepage Store banner delivery note — 4 November 2026
+
+The homepage Store banner continues to use the approved single-image artwork and `/store` destination. The image is now served directly from the repository asset (Next.js image optimization is bypassed) with a versioned URL to avoid stale transformed variants. Final mobile and desktop visual verification remains a launch QA item.
