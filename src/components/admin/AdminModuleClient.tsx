@@ -80,7 +80,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "enableNewsletter", label: "Show newsletter signup", type: "checkbox" },
     { key: "enableSearch", label: "Enable site search", type: "checkbox" },
     { key: "enableSelectedWork", label: "Show selected work", type: "checkbox" },
-    { key: "enableProductOfMonth", label: "Show Product of the Month on the Store page", type: "checkbox", help: "Needs the product name, TAP write-up and external link below. Leave off until you are ready to feature a product." },
+    { key: "enableProductOfMonth", label: "Show Product of the Month on the homepage", type: "checkbox", help: "Needs the product name, TAP write-up and external link below. Leave off until you are ready to feature a product." },
     { key: "potmName", label: "Product of the Month: product name", type: "text" },
     { key: "potmPartner", label: "Product of the Month: partner / brand", type: "text" },
     { key: "potmMonthLabel", label: "Product of the Month: month label", type: "text", placeholder: "November 2026" },
@@ -98,7 +98,7 @@ const SETTINGS_TABS: { id: string; label: string; blurb: string; keys: string[] 
   { id: "info", label: "Site information", blurb: "Your brand name and public contact and social links.", keys: ["siteTitle", "contactEmail", "whatsappUrl", "linkedinUrl", "instagramUrl", "youtubeUrl"] },
   { id: "navigation", label: "Navigation", blurb: "The links shown in the main site menu.", keys: ["navigationText"] },
   { id: "seo", label: "SEO", blurb: "What search engines and link previews show by default.", keys: ["siteDescription"] },
-  { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the Store page.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmImageUrl", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
+  { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the homepage.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmImageUrl", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
   { id: "switches", label: "Features & switches", blurb: "Turn site features on or off.", keys: ["enableNewsletter", "enableSearch", "enableSelectedWork", "tapInFilterThreshold"] },
 ];
 
