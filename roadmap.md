@@ -618,3 +618,10 @@ EMAIL_FK=fk@
 - [x] Changed only the separate “GO TO OUR STORE” button to TAP pink (#c21e67) with white text and a white arrow.
 - [x] Kept the existing button dimensions, placement, typography, and `/store` destination unchanged.
 - [x] Left the Store banner artwork, heading, and all other homepage styling untouched.
+
+
+## Homepage carousel headline colour correction — 4 November 2026
+
+- [x] Set the full hero headline and its highlighted word to pure white (#fff) in the shared carousel styling, so all three slides use the same white headline treatment.
+- [x] Kept the slide copy, images, pink buttons, transitions, and carousel behaviour unchanged.
+- [ ] Verify all three slides on desktop and mobile after the production deployment.
