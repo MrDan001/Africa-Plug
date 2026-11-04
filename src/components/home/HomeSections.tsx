@@ -73,12 +73,11 @@ export default async function HomeSections() {
         aria-label="Go to The Africa Plug Store"
       >
         <Image
-          src="/images/homepage-store-banner.webp?v=20261104-direct"
+          src="/images/homepage-store-banner.jpg"
           alt="The Store. Go to our store. Explore Africa Like an Insider guide displayed with a phone and tablet preview."
-          width={900}
-          height={369}
+          width={912}
+          height={383}
           priority
-          unoptimized
           sizes="(max-width: 760px) 100vw, (max-width: 1300px) 92vw, 1240px"
           className="homepage-store-banner-image"
         />

@@ -99,6 +99,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
     return [...matches.filter((item) => item.open), ...matches.filter((item) => !item.open)];
   }, [listings, type, country, region, sector]);
   const anyFilter = Boolean(type || country || region || sector);
+  const activeFilterCount = [type, country, region, sector].filter(Boolean).length;
   const hasOpen = listings.some((item) => item.open);
 
   const openListing = useCallback((slug: string) => { window.location.hash = slug; }, []);
@@ -132,31 +133,40 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
           <h2 id="ti-listings-h2">Current opportunities in Africa.</h2>
           <p className="ti-sub">Explore live business and investment opportunities from across the continent.</p>
 
-          <div className="ti-filters" aria-label="Filter opportunities">
-            <label className="ti-filter-select">Type
-              <select value={type} onChange={(event) => setType(event.target.value)}>
-                <option value="">All types</option>
-                {TYPE_FILTERS.map((item) => <option key={item} value={item}>{item}</option>)}
-              </select>
-            </label>
-            <label className="ti-filter-select">Country
-              <select value={country} onChange={(event) => setCountry(event.target.value)}>
-                <option value="">All countries</option>
-                {COUNTRIES.filter((item) => item !== "Other").map((item) => <option key={item} value={item}>{item}</option>)}
-              </select>
-            </label>
-            <label className="ti-filter-select">Region
-              <select value={region} onChange={(event) => setRegion(event.target.value)}>
-                <option value="">All regions</option>
-                {["North Africa", "West Africa", "Central Africa", "East Africa", "Southern Africa"].map((item) => <option key={item} value={item}>{item}</option>)}
-              </select>
-            </label>
-            <label className="ti-filter-select">Sector
-              <select value={sector} onChange={(event) => setSector(event.target.value)}>
-                <option value="">All sectors</option>
-                {sectors.map((item) => <option key={item} value={item}>{item}</option>)}
-              </select>
-            </label>
+          <div className="ti-filters">
+            <details className="ti-filter-dropdown">
+              <summary className="ti-filter-trigger">
+                <span>FILTER OPPORTUNITIES</span>
+                <span className="ti-filter-trigger-count">{activeFilterCount ? `${activeFilterCount} applied` : "All opportunities"}</span>
+              </summary>
+              <div className="ti-filter-panel" aria-label="Filter opportunities">
+                <label className="ti-filter-select">Type
+                  <select value={type} onChange={(event) => setType(event.target.value)}>
+                    <option value="">All types</option>
+                    {TYPE_FILTERS.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                <label className="ti-filter-select">Country
+                  <select value={country} onChange={(event) => setCountry(event.target.value)}>
+                    <option value="">All countries</option>
+                    {COUNTRIES.filter((item) => item !== "Other").map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                <label className="ti-filter-select">Region
+                  <select value={region} onChange={(event) => setRegion(event.target.value)}>
+                    <option value="">All regions</option>
+                    {["North Africa", "West Africa", "Central Africa", "East Africa", "Southern Africa"].map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                <label className="ti-filter-select">Sector
+                  <select value={sector} onChange={(event) => setSector(event.target.value)}>
+                    <option value="">All sectors</option>
+                    {sectors.map((item) => <option key={item} value={item}>{item}</option>)}
+                  </select>
+                </label>
+                {anyFilter ? <button type="button" className="ti-filter-clear" onClick={() => { setType(""); setCountry(""); setRegion(""); setSector(""); }}>Clear filters</button> : null}
+              </div>
+            </details>
           </div>
 
           {visible.length ? (

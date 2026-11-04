@@ -73,7 +73,9 @@
 .homepage-opportunity-empty { display: grid; gap: 6px; padding: 25px; border: 1px solid #dedbd4; background: #fff; }
 .homepage-opportunity-empty strong { font-family: Georgia, "Times New Roman", serif; font-size: 20px; }
 .homepage-opportunity-empty span { color: #686866; font-size: 12px; }
-.homepage-section-link { display: inline-flex; align-items: center; gap: 7px; margin-top: 17px; color: var(--signal); font-size: 9px; font-weight: 900; letter-spacing: .14em; text-decoration: underline; text-underline-offset: 4px; }
+.homepage-section-link { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 8px; margin-top: 17px; padding: 0 15px; border: 1px solid var(--signal); border-radius: 6px; background: var(--signal); color: #fff; font-size: 9px; font-weight: 900; letter-spacing: .12em; text-decoration: none; transition: background-color .18s ease, border-color .18s ease, transform .18s ease; }
+.homepage-section-link:hover { transform: translateY(-1px); border-color: #b8175b; background: #b8175b; color: #fff; }
+.homepage-section-link:focus-visible { outline: 2px solid #292a2c; outline-offset: 3px; }
 
 .homepage-store-section { overflow: hidden; padding: clamp(35px, 5vw, 62px) clamp(22px, 5vw, 68px); background: #f0eee9; color: #292a2c; }
 .homepage-store-inner { display: grid; width: min(100%, 1240px); min-height: 285px; grid-template-columns: minmax(200px, .7fr) minmax(0, 1.3fr); align-items: center; gap: 30px; margin: 0 auto; }
@@ -94,7 +96,9 @@
 .homepage-contact-column h2 { max-width: 510px; margin: 0; color: #fff; font-size: clamp(21px, 2.5vw, 31px); line-height: 1.05; letter-spacing: -.035em; }
 .homepage-contact-column > p:not(.eyebrow) { max-width: 460px; margin: 10px 0 15px; color: #c5c6c9; font-size: 11px; line-height: 1.55; }
 .homepage-contact-column .button { min-height: 40px; padding: 0 16px; font-size: 9px; }
-.homepage-contact-column .button-outline { border-color: #f3f3f3; background: transparent; color: #fff; }
+.homepage-contact-column .button-outline { border-color: #fff; background: #fff; color: var(--signal); }
+.homepage-contact-column .button-outline:hover,
+.homepage-contact-column .button-outline:focus-visible { border-color: var(--signal); background: var(--signal); color: #fff; }
 .homepage-contact-divider { width: 1px; height: 100%; min-height: 140px; background: linear-gradient(transparent, #505155 15%, #505155 85%, transparent); }
 .homepage-contact-email { display: block; width: fit-content; margin-top: 10px; color: #eee; font-size: 10px; }
 
@@ -654,12 +658,20 @@
   background: #fff;
 }
 .homepage-store-banner-link {
+  position: absolute;
+  z-index: 1;
+  top: 54%;
+  left: 5.9%;
   display: block;
-  width: min(100%, 1240px);
-  margin: 0 auto;
-  line-height: 0;
+  width: 22.5%;
+  height: 10.8%;
+  border-radius: 8px;
+  transition: background-color .16s ease, box-shadow .16s ease;
   text-decoration: none;
 }
+.homepage-store-banner-frame { position: relative; width: min(100%, 912px); margin: 0 auto; line-height: 0; }
+.homepage-store-banner-link:hover { background: rgb(0 0 0 / 6%); }
+.homepage-store-banner-link:focus-visible { outline: 3px solid #292a2c; outline-offset: 3px; }
 .homepage-store-banner-image {
   display: block;
   width: 100%;
@@ -675,6 +687,6 @@
     padding: 12px 10px 24px;
   }
   .homepage-store-banner-link {
-    width: 100%;
+    width: 22.5%;
   }
 }
