@@ -6,7 +6,7 @@ import "./hero-brief.css";
 
 const BUTTONS = [
   { label: "WORK WITH FK", href: "work-with-fk" },
-  { label: "TAP IN", href: "tap-in" },
+  { label: "T.A.P IN", href: "tap-in" },
   { label: "ASK THE AFRICA PLUG", href: "/contact?type=ask" },
 ];
 
@@ -28,8 +28,8 @@ const SLIDES: Slide[] = [
     highlight: "BUSINESS",
     support: "For businesses entering, expanding or already operating in Africa.",
     activeButton: 0,
-    image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2400&q=88",
-    location: "Lagos, Nigeria",
+    image: "/images/work-with-fk-hero.jpg",
+    location: "AFRICA ⇄ THE WORLD",
   },
   {
     line1: "I'M LOOKING FOR AN",
@@ -128,7 +128,7 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
     <section
       ref={carouselRef}
       id="top"
-      className="hero hero-brief"
+      className="hero hero-brief hero-home-reference"
       aria-roledescription="carousel"
       aria-label="Where do you want to plug in?"
       onMouseEnter={() => setHovered(true)}
@@ -149,8 +149,6 @@ export default function Hero({ initialImages = [null, null, null], initialMobile
           <span><Headline text={slide.line2} highlight={slide.highlight} /></span>
         </h1>
         <p className="hero-support">{slide.support}</p>
-        <p className="hero-brandline">THE AFRICA PLUG — YOUR CONNECTION TO AFRICA</p>
-        <p className="hero-categories">Investment <span aria-hidden="true">•</span> Business <span aria-hidden="true">•</span> Entertainment</p>
         <p className="hero-question">Where do you want to plug in?</p>
         <div className="hero-actions" aria-label="Choose a route">
           {BUTTONS.map((button, i) => (

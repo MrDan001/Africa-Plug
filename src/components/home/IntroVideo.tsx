@@ -30,16 +30,15 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
       onClick={() => setPlaying(true)} 
       aria-label="Play the introduction video"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.80)), url('https://img.youtube.com/vi/${videoId}/hqdefault.jpg')`,
+        backgroundImage: "linear-gradient(180deg, rgba(0,0,0,.48), transparent 30%, transparent 70%, rgba(0,0,0,.38)), url('/images/work-with-fk-hero.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         color: "#ffffff",
       }}
     >
-      {/* Keeping "INTRODUCTION" explicitly pink */}
-      <span className="eyebrow" style={{ color: "#db2777", fontWeight: "bold" }}>INTRODUCTION</span>
-      <span className="intro-video-label" style={{ color: "#ffffff" }}>Meet FK. The Africa Plug, on the ground.</span>
+      <span className="intro-video-title"><b>Your Connection to Africa</b><small>The Africa Plug</small></span>
       <span className="intro-video-play" aria-hidden="true" style={{ color: "#ffffff" }}>▶</span>
+      <span className="intro-video-youtube" aria-hidden="true">YouTube</span>
     </button>
   );
 }

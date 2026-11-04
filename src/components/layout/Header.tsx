@@ -10,7 +10,7 @@ import BrandLogo from "@/components/layout/BrandLogo";
 import "./site-chrome.css";
 
 const NAV_ITEMS = [
-  { label: "TAP IN", href: "/tap-in" },
+  { label: "T.A.P IN", href: "/tap-in" },
   { label: "STORE", href: "/store" },
   { label: "BLOG", href: "/blog" },
   { label: "CONTACT", href: "/contact" },
@@ -47,7 +47,7 @@ export default function Header() {
     return () => { active = false; };
   }, []);
   return (
-    <header className="site-header">
+    <header className={`site-header${pathname === "/" ? " site-header-home" : ""}`}>
       <div className="header-inner">
         <Link href="/#top" aria-label="The Africa Plug — go to top of homepage" className="brand-lockup">
           <BrandLogo className="tap-brand-logo--header" />
@@ -55,7 +55,8 @@ export default function Header() {
         <nav aria-label="Main navigation" className="desktop-nav">
           {navigationItems.map((item) => {
             const active = pathname === item.href || pathname.startsWith(item.href + "/");
-            return <Link key={item.href} href={item.href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>{item.label}</Link>;
+            const label = item.label === "TAP IN" ? "T.A.P IN" : item.label;
+            return <Link key={item.href} href={item.href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>{label}</Link>;
           })}
         </nav>
         <div className="header-actions">
