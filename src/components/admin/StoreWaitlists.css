@@ -1,0 +1,33 @@
+.apw { display: grid; gap: 18px; }
+.apw-products { padding: 20px; }
+.apw-product-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 10px; }
+.apw-product-card { display: grid; gap: 9px; min-width: 0; padding: 16px; border: 1px solid var(--ln); border-radius: 13px; background: #fff; color: var(--ink); text-align: left; cursor: pointer; }
+.apw-product-card:hover, .apw-product-card.is-active { border-color: var(--pk); box-shadow: 0 0 0 3px rgba(240,40,127,.09); }
+.apw-product-card strong { font-size: 16px; line-height: 1.25; }
+.apw-product-card > span:last-child { color: var(--mut); font-size: 12px; }
+.apw-product-type { color: var(--pkd); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.apw-filter { display: grid; gap: 6px; min-width: min(100%,220px); font-size: 12px; font-weight: 700; }
+.apw-filter .apm-input { min-width: 190px; }
+.apw-list-section { display: grid; gap: 12px; }
+.apw-send-note { padding: 13px 15px; border: 1px solid #f5c4d9; border-radius: 12px; background: #fff7fb; color: #69405a; font-size: 13px; line-height: 1.6; }
+.apw-list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.apw-list-head h2 { font-size: 20px; }
+.apw-record-list { display: grid; gap: 12px; }
+.apw-record { display: grid; gap: 14px; padding: 18px; }
+.apw-record-main { display: grid; grid-template-columns: minmax(0,1fr) minmax(200px,.65fr); gap: 18px; align-items: start; }
+.apw-record-identity { display: grid; justify-items: start; gap: 6px; min-width: 0; }
+.apw-record-identity h3 { margin-top: 4px; font-size: 17px; }
+.apw-record-identity a { color: var(--pkd); font-size: 13px; overflow-wrap: anywhere; }
+.apw-record-identity p { color: var(--mut); font-size: 12px; line-height: 1.5; }
+.apw-record-product { display: grid; justify-items: start; gap: 7px; min-width: 0; padding: 12px; border-radius: 12px; background: #faf8fc; }
+.apw-record-product small { color: var(--mut); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.apw-record-product strong { font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+.apw-record-product > small:last-child { font-weight: 500; letter-spacing: 0; }
+.apw-record-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 12px; border-top: 1px solid var(--ln); }
+@media(max-width:720px) {
+  .apw .apm-toolbar { align-items: stretch; }
+  .apw-filter, .apw .apm-search { width: 100%; max-width: none; flex-basis: 100%; margin-left: 0; }
+  .apw-filter .apm-input { width: 100%; }
+  .apw .apm-toolbar > .apm-btn { flex: 1; }
+  .apw-record-main { grid-template-columns: minmax(0,1fr); }
+}

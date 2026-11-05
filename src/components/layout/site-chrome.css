@@ -1,0 +1,304 @@
+/* FILE PATH: src/components/layout/site-chrome.css
+   Black header and black footer, sized for the official logo.
+   Every rule starts with "html body" so it beats the older light-theme rules in globals.css. */
+
+/* ---------- Header ---------- */
+html body .site-header,
+html body .site-header--store { background: #000 !important; border-bottom: 1px solid rgba(255, 255, 255, .14) !important; backdrop-filter: none; }
+html body .site-header .header-inner { height: 88px; }
+html body .site-header .brand-lockup { height: auto; overflow: visible; gap: 0; }
+html body .tap-brand-logo--header { height: 76px; }
+html body .site-header .desktop-nav a { color: rgba(255, 255, 255, .92) !important; }
+html body .site-header .desktop-nav a:hover,
+html body .site-header .desktop-nav a.is-active { color: var(--signal) !important; }
+html body .site-header .search-button,
+html body .site-header .mobile-menu-trigger { color: #fff; }
+html body .site-header .search-button:hover,
+html body .site-header .mobile-menu-trigger:hover { color: var(--signal); }
+html body .mobile-menu-panel { background: #000; border-color: rgba(255, 255, 255, .14); box-shadow: 0 18px 24px rgba(0, 0, 0, .55); }
+html body .mobile-menu-link { color: rgba(255, 255, 255, .9); }
+html body .mobile-menu-link:hover { color: var(--signal); }
+html { scroll-padding-top: 104px; }
+
+/* ---------- Footer ---------- */
+html body .site-footer { background: #000; color: #fff; border-top: 1px solid rgba(255, 255, 255, .14); }
+html body .site-footer .footer-logo-lockup { min-height: 0; }
+html body .tap-brand-logo--footer { height: 132px; }
+html body .site-footer .tap-footer-tagline { color: #c4c7ce; }
+html body .site-footer a.tap-footer-email { color: var(--signal); }
+html body .site-footer .tap-footer-primary-link { color: var(--signal); }
+html body .site-footer .tap-footer-column h2,
+html body .site-footer .tap-footer-kicker { color: var(--signal); }
+html body .site-footer .tap-footer-column a { color: #aeb3bd !important; }
+html body .site-footer .tap-footer-column a:hover { color: #fff !important; }
+html body .site-footer .tap-footer-description { color: #aeb3bd; }
+html body .site-footer .tap-footer-contact-note,
+html body .site-footer .tap-footer-copyright,
+html body .site-footer .tap-footer-motto { color: #8a909a !important; }
+html body .site-footer .tap-footer-contact-note a { color: #c5c8cf !important; }
+html body .site-footer .tap-footer-bottom { border-top-color: rgba(255, 255, 255, .14); }
+
+/* Social icons */
+html body .site-footer .tap-footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+html body .site-footer .tap-footer-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  color: #fff !important;
+  text-decoration: none;
+  transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+html body .site-footer .tap-footer-social:hover {
+  border-color: var(--signal);
+  background: rgba(255, 255, 255, .07);
+  transform: translateY(-1px);
+}
+html body .site-footer .tap-footer-social:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+html body .site-footer .tap-social-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+html body .site-footer .tap-footer-social span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+@media (max-width: 680px) {
+  html body .site-header .header-inner { height: 78px; }
+  html body .tap-brand-logo--header { height: 66px; }
+  html body .tap-brand-logo--footer { height: 112px; }
+  html { scroll-padding-top: 92px; }
+}
+
+/* Footer cookie preference control */
+.tap-cookie-settings-link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tap-cookie-settings-link:hover,
+.tap-cookie-settings-link:focus-visible {
+  color: var(--signal, #d51f6d);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.tap-cookie-settings-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Footer layout refinements — keep the existing content, improve spacing only. */
+html body .site-footer {
+  padding-top: 48px;
+  padding-bottom: 22px;
+}
+
+html body .site-footer .tap-footer-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(150px, 0.62fr) minmax(0, 1.08fr);
+  align-items: start;
+  gap: clamp(30px, 4vw, 64px);
+}
+
+html body .tap-brand-logo--footer {
+  height: 118px;
+}
+
+html body .site-footer .tap-footer-tagline {
+  margin-top: 13px;
+  margin-bottom: 8px;
+}
+
+html body .site-footer .tap-footer-contact {
+  grid-column: auto;
+  display: block;
+  min-width: 0;
+}
+
+html body .site-footer .tap-footer-socials {
+  margin-top: 15px;
+  gap: 10px;
+}
+
+html body .site-footer .tap-footer-social[aria-label="WhatsApp"] {
+  border-color: rgba(37, 211, 102, .36);
+}
+
+html body .site-footer .tap-footer-social[aria-label="LinkedIn"] {
+  border-color: rgba(10, 102, 194, .42);
+}
+
+html body .site-footer .tap-footer-social[aria-label="WhatsApp"] .tap-social-icon {
+  color: #25D366;
+}
+
+html body .site-footer .tap-footer-social[aria-label="LinkedIn"] .tap-social-icon {
+  color: #0A66C2;
+}
+
+html body .site-footer .tap-footer-social[aria-label="WhatsApp"]:hover {
+  border-color: #25D366;
+  background: rgba(37, 211, 102, .08);
+}
+
+html body .site-footer .tap-footer-social[aria-label="LinkedIn"]:hover {
+  border-color: #0A66C2;
+  background: rgba(10, 102, 194, .1);
+}
+
+html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link {
+  color: #858b94;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link:hover {
+  color: #fff;
+}
+
+@media (max-width: 1100px) and (min-width: 681px) {
+  html body .site-footer .tap-footer-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+    gap: 30px 38px;
+  }
+
+  html body .site-footer .tap-footer-contact {
+    grid-column: 1 / -1;
+    display: block;
+    max-width: none;
+  }
+
+  html body .site-footer .tap-footer-bottom {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 680px) {
+  html body .site-footer {
+    padding: 34px 20px 20px;
+  }
+
+  html body .site-footer .tap-footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 25px;
+  }
+
+  html body .site-footer .tap-footer-brand,
+  html body .site-footer .tap-footer-column,
+  html body .site-footer .tap-footer-contact {
+    grid-column: 1;
+  }
+
+  html body .tap-brand-logo--footer {
+    height: 96px;
+  }
+
+  html body .site-footer .tap-footer-tagline {
+    margin: 11px 0 7px;
+    font-size: 14px;
+  }
+
+  html body .site-footer a.tap-footer-email {
+    display: inline-block;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  html body .site-footer .tap-footer-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px 18px;
+  }
+
+  html body .site-footer .tap-footer-column h2 {
+    grid-column: 1 / -1;
+    margin: 0 0 3px;
+  }
+
+  html body .site-footer .tap-footer-column a {
+    line-height: 1.45;
+  }
+
+  html body .site-footer .tap-footer-contact {
+    padding: 17px 15px 14px;
+    margin: 0;
+  }
+
+  html body .site-footer .tap-footer-socials {
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  html body .site-footer .tap-footer-social {
+    min-height: 42px;
+    padding: 8px 11px;
+  }
+
+  html body .site-footer .tap-footer-bottom {
+    margin-top: 25px;
+    padding-top: 16px;
+    gap: 11px;
+  }
+
+  html body .site-footer .tap-footer-bottom nav {
+    gap: 10px 16px;
+  }
+
+  html body .site-footer .tap-footer-bottom nav a,
+  html body .site-footer .tap-footer-bottom nav .tap-cookie-settings-link {
+    font-size: 10px;
+  }
+}
+
+
+
+/* Official platform accents and order-preserving social links in the footer. */
+html body .site-footer .tap-footer-social.is-linkedin .tap-social-icon { color: #0A66C2; }
+html body .site-footer .tap-footer-social.is-instagram .tap-social-icon { color: #E4405F; }
+html body .site-footer .tap-footer-social.is-youtube .tap-social-icon { color: #FF0033; }
+html body .site-footer .tap-footer-social.is-tiktok .tap-social-icon { color: #25F4EE; }
+html body .site-footer .tap-footer-social.is-facebook .tap-social-icon { color: #1877F2; }
+html body .site-footer .tap-footer-social.is-linkedin:hover { border-color: #0A66C2; background: rgba(10,102,194,.1); }
+html body .site-footer .tap-footer-social.is-instagram:hover { border-color: #E4405F; background: rgba(228,64,95,.1); }
+html body .site-footer .tap-footer-social.is-youtube:hover { border-color: #FF0033; background: rgba(255,0,51,.1); }
+html body .site-footer .tap-footer-social.is-tiktok:hover { border-color: #25F4EE; background: rgba(37,244,238,.1); }
+html body .site-footer .tap-footer-social.is-facebook:hover { border-color: #1877F2; background: rgba(24,119,242,.1); }
+
+/* Header Work With FK CTA: keep the navigation button pink with white text. */
+html body .site-header .header-actions > a.header-cta,
+html body .site-header .header-actions > a.header-cta:link,
+html body .site-header .header-actions > a.header-cta:visited {
+  background: var(--signal, #d51f6d) !important;
+  border: 1px solid var(--signal, #d51f6d) !important;
+  color: #fff !important;
+}
+html body .site-header .header-actions > a.header-cta:hover,
+html body .site-header .header-actions > a.header-cta:focus-visible {
+  background: #b8175b !important;
+  border-color: #b8175b !important;
+  color: #fff !important;
+}
+html body .site-header .header-actions > a.header-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}

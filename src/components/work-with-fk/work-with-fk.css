@@ -1,0 +1,349 @@
+/* FILE PATH: src/components/work-with-fk/work-with-fk.css */
+/* Work With FK page. All classes are prefixed .wfk so nothing else on the site is affected. */
+
+/* Namespaced variables live on :root so the application form (outside .wfk) can use them too. */
+:root {
+    --wfk-pink: var(--signal, #d51f6d);
+    --wfk-pink-hover: #b8175b;
+    --wfk-ink: #0c0d10;
+    --wfk-text: #292a2c;
+    --wfk-muted: #626469;
+    --wfk-gold: #c8a46b;
+    --wfk-gold-line: rgba(200, 164, 107, .55);
+    --wfk-cream: #faf8f4;
+    --wfk-stone: #efede8;
+    --wfk-gutter: max(24px, calc((100vw - 1240px) / 2));
+  }
+  
+  .wfk {
+    color: var(--wfk-text);
+    background: var(--wfk-cream);
+  }
+  
+  .wfk-wrap { padding-left: var(--wfk-gutter); padding-right: var(--wfk-gutter); }
+  
+  .wfk-label {
+    margin: 0 0 12px;
+    color: var(--wfk-pink);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .12em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+  
+  /* Buttons: pink is for the two primary actions only. */
+  .wfk-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-height: 48px;
+    padding: 0 22px;
+    border: 1px solid transparent;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .06em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .wfk-btn-primary { background: var(--wfk-pink); border-color: var(--wfk-pink); color: #fff; }
+  .wfk-btn-primary:hover { background: var(--wfk-pink-hover); border-color: var(--wfk-pink-hover); color: #fff; }
+  .wfk-btn-outline { background: transparent; border-color: #77797d; color: var(--wfk-text); }
+  .wfk-btn-outline:hover { background: var(--wfk-text); border-color: var(--wfk-text); color: #fff; }
+  .wfk-btn:focus-visible { outline: 2px solid var(--wfk-pink); outline-offset: 3px; }
+  
+  /* 1. Hero */
+  .wfk-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: 600px;
+    padding: 130px var(--wfk-gutter) 80px;
+    overflow: hidden;
+    background-color: var(--wfk-ink);
+    background-image:
+      linear-gradient(90deg, rgba(5,6,9,.94) 0%, rgba(5,6,9,.82) 38%, rgba(5,6,9,.25) 70%, rgba(5,6,9,.1) 100%),
+      url("/images/work-with-fk-hero.jpg");
+    background-size: cover;
+    background-position: center right;
+    color: #fff;
+  }
+  .wfk-hero-inner { max-width: 600px; }
+  .wfk-hero h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(44px, 7vw, 76px);
+    font-weight: 850;
+    line-height: .95;
+    letter-spacing: -.05em;
+    text-transform: uppercase;
+  }
+  .wfk-hero-line {
+    max-width: 420px;
+    margin: 22px 0 0;
+    color: #f0f0f2;
+    font-size: clamp(16px, 1.9vw, 20px);
+    line-height: 1.45;
+  }
+  .wfk-hero .wfk-btn { margin-top: 28px; }
+  .wfk-clients {
+    max-width: 470px;
+    margin: 28px 0 0;
+    color: #d4d6dc;
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  
+  /* 2. When to bring FK in */
+  .wfk-when { padding-top: 56px; padding-bottom: 72px; background: var(--wfk-cream); }
+  .wfk-when h2,
+  .wfk-diagnostic h2 {
+    margin: 0;
+    color: var(--wfk-ink);
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 850;
+    line-height: 1.05;
+    letter-spacing: -.045em;
+  }
+  .wfk-when h2 { text-transform: uppercase; }
+  .wfk-when-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 26px;
+  }
+  .wfk-when-card {
+    padding: 26px 24px 28px;
+    background: #fffdf9;
+    border: 1px solid var(--wfk-gold-line);
+  }
+  .wfk-when-icon { display: block; color: var(--wfk-gold); }
+  .wfk-when-card h3 {
+    margin: 22px 0 0;
+    color: var(--wfk-ink);
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -.01em;
+  }
+  .wfk-rule { display: block; width: 24px; height: 2px; margin: 12px 0 14px; background: var(--wfk-gold); }
+  .wfk-when-card p { margin: 0; color: var(--wfk-muted); font-size: 12px; line-height: 1.7; }
+  
+  /* 3. The Deal Diagnostic */
+  .wfk-diagnostic { padding-top: 56px; padding-bottom: 64px; background: var(--wfk-stone); }
+  .wfk-diag-body { max-width: 640px; margin: 14px 0 0; color: var(--wfk-muted); font-size: 14px; line-height: 1.7; }
+  .wfk-steps {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: stretch;
+    gap: 14px;
+    margin: 26px 0 30px;
+    padding: 0;
+    list-style: none;
+  }
+  .wfk-step-item { display: contents; }
+  .wfk-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    background: #fffdf9;
+    border: 1px solid var(--wfk-gold-line);
+  }
+  .wfk-step-num {
+    padding-right: 16px;
+    border-right: 1px solid var(--wfk-gold-line);
+    color: var(--wfk-gold);
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .wfk-step-text { display: flex; flex-direction: column; gap: 4px; }
+  .wfk-step-text strong { color: var(--wfk-ink); font-size: 11px; font-weight: 900; letter-spacing: .02em; }
+  .wfk-step-text span { color: var(--wfk-muted); font-size: 11px; line-height: 1.55; }
+  .wfk-step-arrow { align-self: center; color: var(--wfk-gold); font-size: 20px; }
+  
+  /* 4. One question? (visibly smaller and quieter) */
+  .wfk-call {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    min-height: 250px;
+    padding-top: 40px;
+    padding-bottom: 44px;
+    background: #f9f9f7;
+  }
+  .wfk-call-inner { position: relative; z-index: 1; width: 100%; }
+  .wfk-call-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 46%;
+    background: url("/images/work-with-fk-call.jpg") center right / cover no-repeat;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 30%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 30%);
+  }
+  .wfk-call h2 {
+    margin: 0;
+    color: var(--wfk-ink);
+    font-size: clamp(26px, 3.2vw, 38px);
+    font-weight: 850;
+    line-height: 1.1;
+    letter-spacing: -.045em;
+  }
+  /* The call button is pink in the approved design for this block only. */
+  .wfk-call .wfk-btn { margin-top: 20px; min-height: 44px; padding: 0 20px; }
+  
+  /* Application form (/work-with-fk/apply) */
+  .wfk-nda-note {
+    max-width: 720px;
+    margin: 0 0 4px;
+    padding: 14px 16px;
+    border-left: 3px solid var(--wfk-pink, #d51f6d);
+    background: #fffdf9;
+    color: #626469;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .wfk-counter { align-self: flex-end; color: #777875; font-size: 10px; }
+  .wfk-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 22px;
+    color: #343537;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .wfk-consent input { width: 16px; height: 16px; margin-top: 2px; accent-color: #d51f6d; flex: 0 0 auto; }
+  .wfk-consent a { text-decoration: underline; text-decoration-color: #d51f6d; text-underline-offset: 3px; }
+  .wfk-form-panel .wfk-btn { cursor: pointer; }
+  .wfk-form-panel .wfk-btn:disabled { cursor: not-allowed; opacity: .5; }
+  .wfk-thanks h2 { margin: 0; color: #292a2c; font-size: clamp(28px, 4vw, 40px); font-weight: 850; letter-spacing: -.04em; }
+  .wfk-thanks p { margin: 10px 0 0; color: #626469; font-size: 16px; line-height: 1.6; }
+  
+  /* Mobile: columns and steps stack, buttons go full width */
+  @media (max-width: 800px) {
+    .wfk-hero {
+      min-height: 0;
+      padding-top: 110px;
+      padding-bottom: 56px;
+      background-image:
+        linear-gradient(180deg, rgba(5,6,9,.9) 0%, rgba(5,6,9,.78) 100%),
+        url("/images/work-with-fk-hero.jpg");
+      background-position: 70% center;
+    }
+    .wfk-when-grid { grid-template-columns: 1fr; }
+    .wfk-steps { grid-template-columns: 1fr; gap: 10px; }
+    .wfk-step-arrow { display: none; }
+    .wfk-btn { width: 100%; }
+    .wfk-call { min-height: 0; padding-bottom: 210px; }
+    .wfk-call-img { top: auto; width: 100%; height: 170px; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 40%); mask-image: linear-gradient(180deg, transparent 0%, #000 40%); }
+  }
+  
+  /* 30 minute call page (/work-with-fk/call) */
+  .wfk-price { max-width: 720px; padding: 22px 24px; background: #fffdf9; border: 1px solid var(--wfk-gold-line); }
+  .wfk-price-line { margin: 0; color: var(--wfk-ink); font-size: clamp(24px, 3.4vw, 34px); font-weight: 850; letter-spacing: -.035em; line-height: 1.1; }
+  .wfk-price-small { margin: 12px 0 0; color: var(--wfk-text); font-size: 13px; line-height: 1.6; }
+  .wfk-price-terms { margin: 8px 0 0; color: var(--wfk-muted); font-size: 12px; line-height: 1.65; }
+  .wfk-price-terms a { color: var(--wfk-text); text-decoration: underline; text-decoration-color: var(--wfk-pink); text-underline-offset: 3px; }
+
+  /* Application success popup — matches the polished TAP IN confirmation treatment. */
+  .wfk-success-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+  .wfk-success-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 13, 16, .62);
+    animation: wfk-success-fade .2s ease;
+  }
+  .wfk-success-modal {
+    position: relative;
+    z-index: 1;
+    width: min(420px, 100%);
+    padding: 34px 30px 30px;
+    border: 1px solid #eee5e9;
+    border-top: 3px solid var(--wfk-pink);
+    border-radius: 18px;
+    background: linear-gradient(160deg, #fff 0%, #fffafd 100%);
+    box-shadow: 0 24px 60px rgba(12, 13, 16, .35);
+    text-align: center;
+    animation: wfk-success-pop .22s ease;
+  }
+  .wfk-success-close {
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0 0 3px;
+    background: #f5f0f2;
+    border: 0;
+    border-radius: 50%;
+    color: var(--wfk-ink);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .wfk-success-close:hover { background: #eee4e9; color: var(--wfk-pink); }
+  .wfk-success-icon {
+    display: grid;
+    width: 68px;
+    height: 68px;
+    place-items: center;
+    margin: 0 auto 18px;
+    border: 1px solid #cdebd8;
+    border-radius: 50%;
+    background: #eaf7ef;
+    color: #19834b;
+  }
+  .wfk-success-icon svg { display: block; width: 30px; height: 30px; }
+  .wfk-success-kicker {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--wfk-pink);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .15em;
+  }
+  .wfk-success-modal h2 {
+    margin: 0 0 10px;
+    color: var(--wfk-ink);
+    font-size: 30px;
+    font-weight: 850;
+    letter-spacing: -.045em;
+    line-height: 1.1;
+  }
+  .wfk-success-modal p {
+    max-width: 300px;
+    margin: 0 auto 24px;
+    color: var(--wfk-muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .wfk-success-done {
+    width: 100%;
+    max-width: 220px;
+    border-radius: 6px;
+  }
+  @keyframes wfk-success-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes wfk-success-pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .wfk-success-overlay, .wfk-success-modal { animation: none; } }
+  @media (max-width: 640px) {
+    .wfk-success-wrap { padding: 20px; }
+    .wfk-success-modal { width: min(100%, 420px); padding: 34px 24px 26px; border-radius: 18px; }
+  }

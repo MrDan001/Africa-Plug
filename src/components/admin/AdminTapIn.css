@@ -1,0 +1,100 @@
+/* FILE PATH: src/components/admin/AdminTapIn.css */
+/* Brings the TAP IN manager into the shared admin shell: hides its own header, sidebar and mobile bar (the shell provides them) and restyles it to match. */
+
+/* ---------- Page frame ---------- */
+.apd-content .tapin-page {
+    --pink: #f0287f;
+    --pink-dark: #d51f6d;
+    --pink-soft: #fde8f1;
+    --ink: #1d1e24;
+    --muted: #666a74;
+    --line: #ebe9f0;
+    min-height: 0;
+    padding-bottom: 0;
+    background: transparent;
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  }
+  .apd-content .tapin-layout { display: block; }
+  .apd-content .tapin-sidebar,
+  .apd-content .tapin-tabbar,
+  .apd-content .tapin-brand,
+  .apd-content .tapin-profile { display: none !important; }
+  .apd-content .tapin-topbar { position: static; justify-content: flex-end; padding: 0 0 14px; border: 0; background: transparent; backdrop-filter: none; }
+  .apd-content .tapin-viewLink { min-height: 44px; padding: 0 16px; border-color: #d8d5df; border-radius: 12px; font-weight: 750; }
+  .apd-content .tapin-viewLink:hover { border-color: var(--pink); color: var(--pink-dark); }
+  .apd-content .tapin-main { max-width: 1180px; padding: 0; }
+  
+  /* ---------- Heading ---------- */
+  .apd-content .tapin-heading { margin-bottom: 22px; }
+  .apd-content .tapin-heading h1 { margin: 8px 0 8px; font-size: clamp(26px, 3.2vw, 34px); font-weight: 850; letter-spacing: -.04em; }
+  .apd-content .tapin-heading p { font-size: 14px; line-height: 1.65; }
+  .apd-content .tapin-chip { font-size: 11px; font-weight: 900; letter-spacing: .14em; }
+  .apd-content .tapin-notice { border-radius: 14px; font-weight: 650; }
+  
+  /* ---------- Stat cards ---------- */
+  .apd-content .tapin-stats { gap: 14px; }
+  .apd-content .tapin-stat { padding: 18px 20px; border-radius: 16px; box-shadow: 0 6px 24px rgba(20,21,26,.045); }
+  .apd-content .tapin-stat span:first-child { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .apd-content .tapin-stat strong { margin: 8px 0 6px; font-size: 30px; font-weight: 850; letter-spacing: -.04em; }
+  
+  /* ---------- Toolbar ---------- */
+  .apd-content .tapin-search,
+  .apd-content .tapin-select { height: 46px; border-color: #d8d5df; border-radius: 12px; }
+  .apd-content .tapin-search:focus-within,
+  .apd-content .tapin-select:focus-within { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(240,40,127,.12); }
+  .apd-content .tapin-primary { min-height: 46px; border-radius: 12px; background: linear-gradient(90deg, #ff2d87, #e01d72); font-weight: 800; box-shadow: 0 8px 20px rgba(240,40,127,.28); transition: box-shadow .15s ease, transform .15s ease; }
+  .apd-content .tapin-primary:hover:not(:disabled) { background: linear-gradient(90deg, #ff2d87, #e01d72); box-shadow: 0 10px 24px rgba(240,40,127,.38); transform: translateY(-1px); }
+  .apd-content .tapin-listHead h2 { font-size: 17px; font-weight: 850; }
+  .apd-content .tapin-sort select { min-height: 42px; border-color: #d8d5df; border-radius: 12px; }
+  .apd-content .tapin-empty { border-radius: 16px; }
+  
+  /* ---------- Listing rows ---------- */
+  .apd-content .tapin-list { gap: 14px; }
+  .apd-content .tapin-row { padding: 14px; border-radius: 16px; box-shadow: 0 6px 24px rgba(20,21,26,.045); transition: border-color .15s ease, box-shadow .15s ease; }
+  .apd-content .tapin-row:hover { border-color: #f6bcd5; box-shadow: 0 12px 30px rgba(240,40,127,.1); }
+  .apd-content .tapin-thumb { border-radius: 12px; }
+  .apd-content .tapin-rowTop h3 { font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
+  .apd-content .tapin-pill { padding: 5px 11px; font-size: 11.5px; font-weight: 800; }
+  .apd-content .tapin-soft,
+  .apd-content .tapin-solid,
+  .apd-content .tapin-ghost { min-height: 40px; padding: 0 16px; border-radius: 10px; font-weight: 750; transition: background .15s ease; }
+  .apd-content .tapin-solid { background: var(--pink); }
+  .apd-content .tapin-pager button { min-width: 40px; height: 40px; border-radius: 10px; }
+  
+  /* ---------- Editor ---------- */
+  .apd-content .tapin-editorGrid { gap: 20px; }
+  .apd-content .tapin-card { padding: 24px; border-radius: 16px; box-shadow: 0 6px 24px rgba(20,21,26,.045); }
+  .apd-content .tapin-card h2 { font-size: 18px; font-weight: 850; letter-spacing: -.02em; }
+  .apd-content .tapin-step { background: linear-gradient(135deg, #ff2d87, #e01d72); }
+  .apd-content .tapin-fieldLabel { color: #34353c; font-size: 12.5px; font-weight: 800; }
+  .apd-content .tapin-field input:not([type=file]):not([type=checkbox]),
+  .apd-content .tapin-field textarea,
+  .apd-content .tapin-field select { min-height: 46px; border-color: #d8d5df; border-radius: 12px; font-weight: 500; transition: border-color .15s ease, box-shadow .15s ease; }
+  .apd-content .tapin-field input:focus,
+  .apd-content .tapin-field textarea:focus,
+  .apd-content .tapin-field select:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(240,40,127,.12); }
+  .apd-content .tapin-uploadBtn,
+  .apd-content .tapin-addBtn { min-height: 42px; border-radius: 12px; }
+  .apd-content .tapin-iconBtn { border-radius: 12px; }
+  .apd-content .tapin-formFoot { background: #faf8fc; border-radius: 0 0 16px 16px; }
+  .apd-content .tapin-cancel { border-radius: 12px; font-weight: 750; }
+  .apd-content .tapin-side { top: 18px; }
+  .apd-content .tapin-preview { border-radius: 14px; }
+  .apd-content .tapin-tips { background: linear-gradient(180deg, #fff, #fff4f8); }
+  
+  /* ---------- Keyboard focus ---------- */
+  .apd-content .tapin-primary:focus-visible,
+  .apd-content .tapin-soft:focus-visible,
+  .apd-content .tapin-solid:focus-visible,
+  .apd-content .tapin-ghost:focus-visible,
+  .apd-content .tapin-addBtn:focus-visible,
+  .apd-content .tapin-iconBtn:focus-visible,
+  .apd-content .tapin-cancel:focus-visible,
+  .apd-content .tapin-viewLink:focus-visible { outline: 3px solid rgba(29,30,36,.85); outline-offset: 2px; }
+  
+  @media (max-width: 960px) {
+    .apd-content .tapin-topbar { justify-content: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .apd-content .tapin-primary, .apd-content .tapin-row, .apd-content .tapin-soft, .apd-content .tapin-solid, .apd-content .tapin-ghost { transition: none; }
+  }

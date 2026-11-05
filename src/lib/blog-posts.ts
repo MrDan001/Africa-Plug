@@ -1,0 +1,31 @@
+// FILE PATH: src/lib/blog-posts.ts
+export type BlogChecklistItem = { label: string; detail: string };
+export type BlogSection = {
+  heading: string;
+  paragraphs: string[];
+  checklist?: BlogChecklistItem[];
+  image?: string;
+  imageAlt?: string;
+  caption?: string;
+  pullQuote?: string;
+  youtubeUrl?: string;
+};
+export type BlogPost = {
+  slug: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  imageAlt: string;
+  imageCredit?: string;
+  publishedAt: string;
+  readingTime: string;
+  author: string;
+  tags: string[];
+  takeaway: string;
+  sections: BlogSection[];
+  featureOnHomepage?: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
+  shareImage?: string;
+};
