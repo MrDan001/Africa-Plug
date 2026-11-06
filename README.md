@@ -1,6 +1,6 @@
 # The Africa Plug
 
-The Africa Plug is a Next.js web platform for connecting people, businesses and opportunities across African markets. The site combines editorial content, T.A.P IN opportunities, commercial enquiries, a Store, and an admin workspace backed by Supabase. The public opportunity country filter is limited to African countries.
+The Africa Plug is a Next.js web platform for connecting people, businesses and opportunities across African markets. The site combines editorial content, T.A.P IN opportunities, commercial enquiries, a Store, and an admin workspace backed by Supabase. T.A.P IN opportunity listings display country only; regional labels are not used.
 
 ## Platform
 
