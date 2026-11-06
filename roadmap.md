@@ -666,3 +666,11 @@ EMAIL_FK=fk@
 - [ ] Upload each final guide file in Admin → Store before release. The two guides are intentionally still Coming soon until their final files are uploaded and FK releases them.
 - [ ] Confirm production Stripe webhook secret, service-role credential, Resend API key and sender address; run a real test-mode preorder, release and five-download/30-day expiry QA before accepting live money.
 - [ ] Add a visible Admin Store “Release guide” control for the authenticated release endpoint; current release workflow is API-backed but does not yet expose a dashboard button.
+
+- [x] Added the Admin Store release control; guides can only be released through the workflow that emails preorder customers.
+- [x] Added an Admin download-activity view showing each customer's first-open timestamp, download count, and expiry.
+- [x] Created the private `store-downloads` Supabase Storage bucket (50 MB limit; PDF, EPUB and ZIP only).
+- [x] Added a server-side guard that prevents new Stripe checkout sessions until `STRIPE_WEBHOOK_SECRET` is configured, so paid orders are not accepted without verifiable payment events.
+- [ ] Configure the Stripe webhook endpoint `/api/store/webhook` for `checkout.session.completed` and `checkout.session.async_payment_succeeded`, then add its signing secret to Vercel as `STRIPE_WEBHOOK_SECRET`.
+- [ ] Upload the two final guide files, run a Stripe test-mode preorder and release, verify email delivery, first-open tracking, and five-download/30-day expiry.
+- [ ] Confirm the latest Vercel production build completes and visually inspect the Store and Work With FK form.
