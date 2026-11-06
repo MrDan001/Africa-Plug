@@ -47,6 +47,11 @@ The homepage introduction video is configured through site settings. When no app
 - `src/lib` — CMS, data, validation and business logic
 - `docs` — internal implementation and operational documentation
 
+
+## Search metadata
+
+The homepage title and description are managed in Admin → Site Settings. Core public pages define their own SEO titles, descriptions and canonical paths. Store product detail pages derive their title and description from product SEO fields, normalize the brand suffix to appear once, publish a canonical product URL, and use descriptive product-image alt text. Keep product SEO fields accurate when editing products in the CMS.
+
 ## Delivery standard
 
 Before any client-facing launch, verify the live deployment on desktop and mobile, confirm production environment variables and connected services, review public content for accuracy, test forms and enquiry flows, and confirm that all published products and opportunities are approved for public use.
