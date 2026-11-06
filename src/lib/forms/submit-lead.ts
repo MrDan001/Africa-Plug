@@ -9,7 +9,7 @@ const labels: Record<LeadKind, string> = {
   contact: "Website contact enquiry",
   ask: "Ask The Africa Plug",
   partner: "Partner With TAP enquiry",
-  interest: "TAP IN expression of interest",
+  interest: "T.A.P IN expression of interest",
   work: "Work With FK application enquiry",
 };
 

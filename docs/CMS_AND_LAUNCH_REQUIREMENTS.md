@@ -21,8 +21,8 @@ The first screen after login should show:
 - Approved applications
 - Deposits paid
 - Meetings booked
-- Live TAP IN opportunities
-- New TAP IN enquiries
+- Live T.A.P IN opportunities
+- New T.A.P IN enquiries
 - Blog articles
 - Store sales
 - Newsletter subscribers
@@ -62,7 +62,7 @@ Admin should be able to edit:
 - Work With FK content
 - Selected Work
 - Testimonials
-- TAP IN preview
+- T.A.P IN preview
 - Featured product
 - The Africa Plug + Partner With TAP content
 - Blog preview
@@ -86,7 +86,7 @@ Every optional module needs an ON/OFF control:
 
 This is important because functionality may be built before it launches.
 
-## 3. TAP IN Management
+## 3. T.A.P IN Management
 
 ### Opportunity list
 
@@ -131,7 +131,7 @@ Visitors never see the status label.
 
 FK must be able to add, remove and edit questions without a developer. For example, Question 1, Question 2 and Question 3 should automatically appear on that listing's Expression of Interest form.
 
-## 4. TAP IN Enquiries
+## 4. T.A.P IN Enquiries
 
 Admin should have access to all expressions of interest, with the listing attached automatically. Each submission should include:
 
@@ -299,7 +299,7 @@ A central inbox-style area should handle:
 - Contact: Events
 - Partner With TAP
 - Ask The Africa Plug
-- TAP IN
+- T.A.P IN
 
 Each enquiry should show:
 
@@ -429,7 +429,7 @@ Admin doesn't necessarily need to reproduce the full analytics platform, but sho
 - Applications submitted
 - Deposits paid
 - Meetings booked
-- TAP IN views
+- T.A.P IN views
 - Expressions of interest
 - Product views
 - Purchases
@@ -577,7 +577,7 @@ The current homepage uses an external YouTube iframe sample; an upload/publishin
 - Poster
 - Final approved copy
 
-### K. TAP IN needs real opportunity content
+### K. T.A.P IN needs real opportunity content
 
 The excavator and honey details are to follow. The system can be built before they arrive, but real listings need:
 
@@ -657,7 +657,7 @@ At minimum, the final TAP site needs:
 | SEO | Metadata + sitemap + structured data |
 | Legal | Privacy/terms/cookies/deposit terms |
 | Cookie consent | UK-compliant consent mechanism |
-| Search | Blog + TAP IN only |
+| Search | Blog + T.A.P IN only |
 | Sharing | Open Graph + RSS/share workflow |
 | Monitoring/testing | Desktop + mobile QA |
 

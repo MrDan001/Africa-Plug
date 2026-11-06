@@ -55,7 +55,7 @@ export default function Header() {
         <nav aria-label="Main navigation" className="desktop-nav">
           {navigationItems.map((item) => {
             const active = pathname === item.href || pathname.startsWith(item.href + "/");
-            const label = item.label === "TAP IN" ? "T.A.P IN" : item.label;
+            const label = item.label === "TAP IN" || item.label === "T.A.P IN" ? "T.A.P IN" : item.label;
             return <Link key={item.href} href={item.href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>{label}</Link>;
           })}
         </nav>

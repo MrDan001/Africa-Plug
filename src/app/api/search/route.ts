@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 type SearchItem = { title: string; description: string; href: string; keywords: string };
 
 const PAGES: SearchItem[] = [
-  { title: "TAP IN", description: "Explore current business and investment opportunities.", href: "/tap-in", keywords: "opportunities listings business investment" },
+  { title: "T.A.P IN", description: "Explore current business and investment opportunities.", href: "/tap-in", keywords: "opportunities listings business investment" },
   { title: "Work With FK", description: "Commercial consultancy and market navigation.", href: "/work-with-fk", keywords: "commercial consulting market entry application" },
   { title: "The Store", description: "Practical TAP resources and digital products.", href: "/store", keywords: "store resources guides products" },
   { title: "The Blog", description: "Read articles on investment, business and entertainment stories shaping Africa.", href: "/blog", keywords: "blog articles investment business entertainment editorial" },

@@ -73,16 +73,16 @@ I'M BUILDING BUSINESS IN AFRICA.
 
 This is the pink/active button on Slide 1.
 
-### Slide 2 — TAP IN
+### Slide 2 — T.A.P IN
 
 **Statement:**  
 I'M LOOKING FOR AN OPPORTUNITY.
 
-**Supporting line:** Keep it short and make clear that TAP IN contains active business and investment opportunities that relevant people or organisations may be able to participate in.
+**Supporting line:** Keep it short and make clear that T.A.P IN contains active business and investment opportunities that relevant people or organisations may be able to participate in.
 
 **Image direction:** Real commercial opportunity or industry at scale, such as equipment, infrastructure, agriculture, logistics, construction, energy, industrial projects or commercial assets.
 
-**Active button:** TAP IN →
+**Active button:** T.A.P IN →
 
 This is the pink/active button on Slide 2.
 
@@ -104,7 +104,7 @@ This is the pink/active button on Slide 3.
 All three buttons must remain visible on every slide and in this order:
 
 1. WORK WITH FK →
-2. TAP IN →
+2. T.A.P IN →
 3. ASK THE AFRICA PLUG →
 
 The button connected to the current slide is highlighted in TAP pink. The other two remain neutral/outlined. When the carousel moves, the active button changes with it. Visitors must not have to wait for a particular slide before accessing one of the three routes.
@@ -140,11 +140,11 @@ The imagery should follow the direction for each slide above. Image assets are t
 - Text must stay readable.
 - Important parts of each photograph must not be hidden by the copy.
 
-## 3. TAP IN — opportunity management
+## 3. T.A.P IN — opportunity management
 
-TAP IN must be a proper opportunity-listing system, not a static page.
+T.A.P IN must be a proper opportunity-listing system, not a static page.
 
-I need to manage changing TAP IN content, including:
+I need to manage changing T.A.P IN content, including:
 - Add listing
 - Edit listing
 - Publish listing
@@ -169,7 +169,7 @@ These status values are for the back end and must not be displayed publicly.
 
 ### No public posting dates
 
-Do not show public posting dates on TAP IN opportunities. An opportunity that remains active should not look stale merely because it has been on the website for a few months.
+Do not show public posting dates on T.A.P IN opportunities. An opportunity that remains active should not look stale merely because it has been on the website for a few months.
 
 ### Principal confidentiality
 
@@ -185,7 +185,7 @@ When an opportunity closes:
 - Do not show a prominent public “Closed” label.
 - Route the visitor towards current opportunities instead.
 
-## 4. TAP IN filters
+## 4. T.A.P IN filters
 
 Build filtering functionality for:
 - Region
@@ -197,7 +197,7 @@ Filters do not need to appear publicly while there are only a few listings. Once
 
 On mobile, filters may sit inside a filter drawer.
 
-## 5. TAP IN — Expression of Interest
+## 5. T.A.P IN — Expression of Interest
 
 The Expression of Interest form must automatically record which listing the person is responding to.
 
@@ -207,7 +207,7 @@ Confirmation message:
 
 ### Consistent claims about live opportunities
 
-The homepage currently presents TAP IN as containing live/vetted opportunities while the TAP IN page says current cards are not live or verified. These claims must match.
+The homepage currently presents T.A.P IN as containing live/vetted opportunities while the T.A.P IN page says current cards are not live or verified. These claims must match.
 
 Only genuinely live opportunities may be presented as live opportunities. Do not create fictional opportunities simply to populate the design.
 
@@ -241,7 +241,7 @@ I need to manage:
 - SEO description
 - Share image
 
-### TAP IN management
+### T.A.P IN management
 
 I need to manage opportunity listings and their statuses as described in Sections 3–5.
 
@@ -324,7 +324,7 @@ Check navigation across the entire website, not only the homepage.
 
 The main navigation should be:
 
-**TAP IN | WORK WITH FK | STORE | BLOG | CONTACT | ABOUT**
+**T.A.P IN | WORK WITH FK | STORE | BLOG | CONTACT | ABOUT**
 
 ### Home
 
@@ -334,8 +334,8 @@ Remove Home from the navigation. The TAP logo should take the visitor back to th
 
 Navigation must be consistent across:
 - Homepage
-- TAP IN
-- TAP IN listing pages
+- T.A.P IN
+- T.A.P IN listing pages
 - Store
 - Product pages
 - Blog
@@ -409,7 +409,7 @@ Use this routing:
 
 | Form / enquiry type | Destination |
 | --- | --- |
-| General / Partnerships / TAP IN | `connect@theafricaplug.com` |
+| General / Partnerships / T.A.P IN | `connect@theafricaplug.com` |
 | Ask The Africa Plug | `ask@theafricaplug.com` |
 | Qualified Work With FK applications | `fk@theafricaplug.com` |
 
@@ -426,7 +426,7 @@ Keep the funnel tracking from the original brief rather than implementing only b
 - Deposit paid
 - Meeting booked
 
-### TAP IN
+### T.A.P IN
 - Listing viewed
 - Express Interest submitted
 
@@ -485,7 +485,7 @@ Confirm the recommended email platform for Stay Plugged In. I need to be able to
 
 Please confirm:
 
-1. Which CMS/system will manage the Blog and TAP IN?
+1. Which CMS/system will manage the Blog and T.A.P IN?
 2. Which form tool is recommended for Work With FK?
 3. Which scheduling tool is recommended?
 4. Which payment tool is recommended?

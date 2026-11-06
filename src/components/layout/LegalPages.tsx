@@ -158,7 +158,7 @@ export function TermsOfUse() {
     {
       heading: "1. About these terms",
       paragraphs: [
-        "This website is operated by Fadekemi Oba (known as FK), trading as The Africa Plug, with offices in Victoria Island, Lagos, Nigeria and London, United Kingdom. These terms govern use of the website, its forms, TAP IN and the Store. By using the site, you agree to these terms. If you do not agree, please stop using it.",
+        "This website is operated by Fadekemi Oba (known as FK), trading as The Africa Plug, with offices in Victoria Island, Lagos, Nigeria and London, United Kingdom. These terms govern use of the website, its forms, T.A.P IN and the Store. By using the site, you agree to these terms. If you do not agree, please stop using it.",
         "Our content covers business, investment, culture, travel and opportunities across Africa for general information only. It is not legal, tax, financial, investment or other regulated advice. Markets and rules change, so check important facts and take qualified advice before committing money, signing a contract or entering a market. These website terms do not replace a separate written agreement for any consulting, advisory or other paid service."
       ]
     },
@@ -186,7 +186,7 @@ export function TermsOfUse() {
     {
       heading: "5. Enquiries and business relationships",
       paragraphs: [
-        "TAP IN listings are shared for information only and are not an offer, recommendation or endorsement. We do not guarantee the accuracy of any listing or the people behind it. Carry out your own due diligence before entering any agreement. Submitting or expressing interest in an opportunity does not commit either side, and any introduction is made at our discretion. We may request further information, decline an enquiry or be unable to respond. Any agreed service, scope, fee, timetable, confidentiality obligation and cancellation rule should be set out separately in writing before work begins.",
+        "T.A.P IN listings are shared for information only and are not an offer, recommendation or endorsement. We do not guarantee the accuracy of any listing or the people behind it. Carry out your own due diligence before entering any agreement. Submitting or expressing interest in an opportunity does not commit either side, and any introduction is made at our discretion. We may request further information, decline an enquiry or be unable to respond. Any agreed service, scope, fee, timetable, confidentiality obligation and cancellation rule should be set out separately in writing before work begins.",
         "Please ensure that information you submit is accurate to the best of your knowledge and that you have permission to share any third-party personal or confidential information included in your message."
       ]
     },

@@ -1,15 +1,15 @@
 # The Africa Plug
 
-The Africa Plug is a Next.js web platform for connecting people, businesses and opportunities across African markets. The site combines editorial content, TAP IN opportunities, commercial enquiries, a Store, and an admin workspace backed by Supabase.
+The Africa Plug is a Next.js web platform for connecting people, businesses and opportunities across African markets. The site combines editorial content, T.A.P IN opportunities, commercial enquiries, a Store, and an admin workspace backed by Supabase. The public opportunity country filter is limited to African countries.
 
 ## Platform
 
 - Next.js, React and TypeScript
-- Supabase for managed content and TAP IN data
+- Supabase for managed content and T.A.P IN data
 - Vercel for production hosting
 - Admin workspace for managing site content and operational records
 - Responsive desktop and mobile presentation
-- TAP IN opportunity listings and enquiry flows
+- T.A.P IN opportunity listings and enquiry flows
 - Store catalogue and product detail pages
 - Journal/editorial content
 - Contact, partnership and commercial application forms
@@ -30,7 +30,7 @@ Production is deployed through Vercel from the `main` branch. Environment variab
 
 ## Content management
 
-Public content is designed to be managed through the admin workspace and connected data sources rather than by editing page components. TAP IN listings should only be published when they have been reviewed and approved for public disclosure.
+Public content is designed to be managed through the admin workspace and connected data sources rather than by editing page components. T.A.P IN listings should only be published when they have been reviewed and approved for public disclosure.
 
 ## Store
 

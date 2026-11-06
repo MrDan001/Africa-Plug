@@ -13,7 +13,7 @@ Education, storytelling and video stay on TAP's social platforms. The site says,
 ### Audiences, in priority order
 
 1. **Commercial clients** (companies, investors, founders, institutions): Work With FK
-2. **Opportunity responders** (people who can act on a live opportunity): TAP IN
+2. **Opportunity responders** (people who can act on a live opportunity): T.A.P IN
 3. **Partners** (brands, sponsors, events, guests): Partner With TAP
 4. **TAP's social audience**, mostly on phones: Store, Blog, Ask The Africa Plug, email sign-up
 
@@ -26,24 +26,24 @@ The site is one scrolling homepage, three separate pages, and a set of shareable
 | Type | Page | Purpose |
 | --- | --- | --- |
 | Homepage | Single scrolling page | Main experience, with jump links |
-| Page | TAP IN | Business and investment opportunity listings |
+| Page | T.A.P IN | Business and investment opportunity listings |
 | Page | Blog | Articles and tags |
 | Page | Store | Products and checkout |
-| Own link | Each TAP IN listing, article and product | Shareable on LinkedIn and WhatsApp |
+| Own link | Each T.A.P IN listing, article and product | Shareable on LinkedIn and WhatsApp |
 | Flow | Work With FK | Application, deposit, scheduling |
 | Flow | Forms | Expression of Interest, Partner, Ask TAP, Contact |
 | Legal | Privacy, Terms, Cookies, Deposit & Refund Terms, 404 | Required pages |
 
 ### Navigation
 
-**Desktop order:** TAP logo | TAP IN · WORK WITH FK · STORE · BLOG · CONTACT · ABOUT.
+**Desktop order:** TAP logo | T.A.P IN · WORK WITH FK · STORE · BLOG · CONTACT · ABOUT.
 
 The logo always returns to the top of the homepage, and there is no Home item. On mobile the same order sits in a hamburger menu, with the Work With FK button kept visible beside it.
 
 ### Hero carousel
 
 - Three slides, each with one statement.
-- All three buttons—Work With FK, TAP IN, Ask The Africa Plug—appear on every slide.
+- All three buttons—Work With FK, T.A.P IN, Ask The Africa Plug—appear on every slide.
 - The button matching the active slide is solid TAP pink.
 - Auto-advances every 6 to 7 seconds with a visible pause control.
 
@@ -51,7 +51,7 @@ The logo always returns to the top of the homepage, and there is no Home item. O
 
 1. FK video (40 to 60 seconds, inline, with captions)
 2. Work With FK, with proof: process, Selected Work cards, testimonials
-3. TAP IN preview: the 2 to 3 latest live listings
+3. T.A.P IN preview: the 2 to 3 latest live listings
 4. Featured product (initially the Africa Starter Guide)
 5. The Africa Plug, with the Partner With TAP invitation
 6. Blog preview, with LinkedIn, YouTube and Instagram links
@@ -62,7 +62,7 @@ The logo always returns to the top of the homepage, and there is no Home item. O
 | Area | What is delivered |
 | --- | --- |
 | Work With FK funnel | Qualification form, review, approval email, deposit payment, scheduler access, balance payment, confirmation email |
-| TAP IN | Listings with their own URLs and share images, Express Interest form with the listing name attached automatically |
+| T.A.P IN | Listings with their own URLs and share images, Express Interest form with the listing name attached automatically |
 | Blog | Articles with clickable tags, SEO title, description and share image, one URL per article |
 | Store | Africa Starter Guide, on-site checkout, digital file delivery |
 | Forms | Partner With TAP, Ask The Africa Plug, Contact, email sign-up, with spam protection and clear success and error messages |
@@ -96,8 +96,8 @@ The admin dashboard manages uploads, store, media and blog. Page layouts and tex
 The build runs in six stages, each ending in something the client can review. Timings will be confirmed in the updated quote.
 
 1. **Stage 1: Foundation and design shell.** Platform and CMS setup, TAP visual system, navigation, hero carousel, responsive layouts, and legal page templates.
-2. **Stage 2: Homepage sections.** FK video, Work With FK proof section, TAP IN preview, featured product, About and Partner section, Blog preview, closing zone and footer.
-3. **Stage 3: TAP IN, Blog and Store.** Listing, article and product pages with their own URLs, tags, share images, checkout and digital file delivery.
+2. **Stage 2: Homepage sections.** FK video, Work With FK proof section, T.A.P IN preview, featured product, About and Partner section, Blog preview, closing zone and footer.
+3. **Stage 3: T.A.P IN, Blog and Store.** Listing, article and product pages with their own URLs, tags, share images, checkout and digital file delivery.
 4. **Stage 4: Forms and Work With FK funnel.** All forms and email routing, then the application, approval, deposit, scheduling and confirmation flow. The payment flow goes live only after the terms pass legal review.
 5. **Stage 5: Admin dashboard.** Management of uploads, Store, media and Blog, plus a handover walkthrough.
 6. **Stage 6: SEO, QA and launch.** Metadata, schema, sitemap, analytics basics, cookie banner, accessibility and performance checks, and testing of every link and button on desktop and mobile.
@@ -112,7 +112,7 @@ The developer can start on layout, responsive behavior, CMS structure, forms, ro
 - Refund rule for cancellations made more than 24 hours ahead
 - Whether the balance is kept on a no-show
 - Legal review of all terms, required before the payment flow goes live
-- Whether the search icon stays (only if it searches Blog and TAP IN)
+- Whether the search icon stays (only if it searches Blog and T.A.P IN)
 
 ### Content
 

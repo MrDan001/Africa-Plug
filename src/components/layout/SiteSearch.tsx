@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 type SearchItem = { title: string; description: string; href: string; keywords?: string };
 
 const SHORTCUTS = [
-  { label: "TAP IN", href: "/tap-in" },
+  { label: "T.A.P IN", href: "/tap-in" },
   { label: "Work With FK", href: "/work-with-fk" },
   { label: "The Store", href: "/store" },
   { label: "The Blog", href: "/blog" },

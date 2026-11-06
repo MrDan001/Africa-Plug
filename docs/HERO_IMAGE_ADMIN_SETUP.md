@@ -16,7 +16,7 @@ Add these to Vercel Project Settings → Environment Variables for Production (a
 - `ADMIN_SESSION_SECRET`: a long random secret (at least 32 random characters) used to sign the admin session.
 - `BLOB_READ_WRITE_TOKEN`: provided by the connected public Blob store. Do not expose it in client code.
 
-The hero manager does not require Supabase Storage. Supabase remains the database behind TAP IN and the CMS.
+The hero manager does not require Supabase Storage. Supabase remains the database behind T.A.P IN and the CMS.
 
 Redeploy after configuring the variables. Use the service-role key only on the server. Keep it out of Git, browser code, screenshots, and messages.
 

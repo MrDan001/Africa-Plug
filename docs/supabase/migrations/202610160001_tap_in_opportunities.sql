@@ -1,5 +1,5 @@
--- TAP IN managed opportunities.
--- Apply this migration in the Supabase SQL editor before enabling the TAP IN manager.
+-- T.A.P IN managed opportunities.
+-- Apply this migration in the Supabase SQL editor before enabling the T.A.P IN manager.
 create extension if not exists pgcrypto;
 
 create table if not exists public.tap_in_opportunities (

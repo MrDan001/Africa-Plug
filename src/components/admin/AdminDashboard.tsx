@@ -79,7 +79,7 @@ export default function AdminDashboard() {
     };
     const cms = (module: string) => get(`/api/admin/cms/${module}`, (data) => (Array.isArray(data.records) ? data.records : []) as CmsRow[]);
     const jobs = [
-      { name: "TAP IN", run: get("/api/admin/tap-in/opportunities", (data) => (Array.isArray(data.opportunities) ? data.opportunities : []) as Opportunity[]) },
+      { name: "T.A.P IN", run: get("/api/admin/tap-in/opportunities", (data) => (Array.isArray(data.opportunities) ? data.opportunities : []) as Opportunity[]) },
       { name: "Applications", run: cms("work-with-fk") },
       { name: "Enquiries", run: cms("enquiries") },
       { name: "Subscribers", run: cms("subscribers") },
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
   const stats = [
     { label: "Total Listings", value: counts.total, tone: "pink", icon: "tapin" as IconName, note: loading ? "Loading…" : `${counts.thisWeek} new in last 7 days`, trend: delta === 0 ? "flat" : delta > 0 ? "up" : "down", trendText: delta === 0 ? "No change" : `${delta > 0 ? "↑ +" : "↓ "}${delta} vs prior week` },
     { label: "Pending Review", value: counts.draft, tone: "amber", icon: "review" as IconName, note: "drafts needing attention", trend: counts.draft ? "warn" : "flat", trendText: counts.draft ? "Needs attention" : "All clear" },
-    { label: "Approved", value: counts.live, tone: "green", icon: "blog" as IconName, note: "live on TAP IN", trend: "up", trendText: `${counts.liveRate}% of listings` },
+    { label: "Approved", value: counts.live, tone: "green", icon: "blog" as IconName, note: "live on T.A.P IN", trend: "up", trendText: `${counts.liveRate}% of listings` },
     { label: "Rejected", value: counts.closed, tone: "red", icon: "enquiries" as IconName, note: "closed or archived", trend: "flat", trendText: counts.total ? `${Math.round((counts.closed / counts.total) * 100)}% of listings` : "—" },
   ];
 
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
               <section className="apd-card">
                 <div className="apd-card-head"><h2>Latest Listings</h2><Link href="/admin/tap-in">View all</Link></div>
                 {loading ? <p className="apd-empty">Loading listings…</p> : latest.length === 0 ? (
-                  <p className="apd-empty">No TAP IN listings yet. <Link href="/admin/tap-in" className="apd-inline">Create the first one →</Link></p>
+                  <p className="apd-empty">No T.A.P IN listings yet. <Link href="/admin/tap-in" className="apd-inline">Create the first one →</Link></p>
                 ) : (
                   <div className="apd-listings">
                     {latest.map((item) => (

@@ -116,7 +116,7 @@ function fallbackSettings(navigation: { label: string; href: string }[]): Public
 }
 
 const DEFAULT_PUBLIC_NAVIGATION = [
-  { label: "TAP IN", href: "/tap-in" },
+  { label: "T.A.P IN", href: "/tap-in" },
   { label: "STORE", href: "/store" },
   { label: "BLOG", href: "/blog" },
   { label: "CONTACT", href: "/contact" },

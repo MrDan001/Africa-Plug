@@ -61,7 +61,7 @@ const STATUS_LABEL: Record<Status, string> = { draft: "Draft", live: "Open", clo
 
 const NAV: { href: string; label: string; icon: string; active?: boolean }[] = [
   { href: "/admin", label: "Dashboard", icon: "grid" },
-  { href: "/admin/tap-in", label: "TAP IN", icon: "briefcase", active: true },
+  { href: "/admin/tap-in", label: "T.A.P IN", icon: "briefcase", active: true },
   { href: "/admin/blog", label: "Blog & Editorial", icon: "edit" },
   { href: "/admin/store", label: "Store Products", icon: "store" },
   { href: "/admin/work-with-fk", label: "Work With FK", icon: "link" },
@@ -144,12 +144,12 @@ export default function TapInManager() {
       const response = await fetch("/api/admin/tap-in/opportunities", { cache: "no-store" });
       const data = await response.json() as { opportunities?: Opportunity[]; error?: string };
       if (!response.ok) {
-        setNotice({ tone: "error", text: data.error || "Could not load the TAP IN listings." });
+        setNotice({ tone: "error", text: data.error || "Could not load the T.A.P IN listings." });
         return;
       }
       setItems(Array.isArray(data.opportunities) ? data.opportunities : []);
     } catch {
-      setNotice({ tone: "error", text: "Could not connect to the TAP IN manager. Please try again." });
+      setNotice({ tone: "error", text: "Could not connect to the T.A.P IN manager. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -233,7 +233,7 @@ export default function TapInManager() {
       if (!response.ok) { setNotice({ tone: "error", text: data.error || "Could not save this listing." }); return; }
       await loadItems();
       closeEditor();
-      setNotice({ tone: "success", text: editingId ? "Listing updated." : draft.status === "live" ? "Listing created and open on TAP IN." : "Listing saved as a draft." });
+      setNotice({ tone: "success", text: editingId ? "Listing updated." : draft.status === "live" ? "Listing created and open on T.A.P IN." : "Listing saved as a draft." });
     } catch {
       setNotice({ tone: "error", text: "Could not save this listing. Please try again." });
     } finally {
@@ -294,7 +294,7 @@ export default function TapInManager() {
           <BrandLogo height={60} />
         </Link>
         <div className="tapin-topActions">
-          <Link className="tapin-viewLink" href="/tap-in" target="_blank" rel="noreferrer"><Icon name="eye" size={16} /> <span>View TAP IN Page</span> <span aria-hidden="true">↗</span></Link>
+          <Link className="tapin-viewLink" href="/tap-in" target="_blank" rel="noreferrer"><Icon name="eye" size={16} /> <span>View T.A.P IN Page</span> <span aria-hidden="true">↗</span></Link>
           <div className="tapin-profile">
             <button type="button" className="tapin-profileButton" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
               <span className="tapin-avatar">A</span><span className="tapin-profileName">Admin</span><span aria-hidden="true">⌄</span>
@@ -323,14 +323,14 @@ export default function TapInManager() {
             <>
               <section className="tapin-heading">
                 <div>
-                  <span className="tapin-chip">TAP IN</span>
+                  <span className="tapin-chip">T.A.P IN</span>
                   <h1>Manage Opportunities</h1>
-                  <p>Create, edit and manage TAP IN listings. These opportunities help connect talented Africans with global opportunities.</p>
+                  <p>Create, edit and manage T.A.P IN listings. These opportunities help connect talented Africans with global opportunities.</p>
                 </div>
                 <p className="tapin-script" aria-hidden="true">Real Opportunities.<br />Real Impact.</p>
               </section>
 
-              <nav className="tapin-actions" aria-label="TAP IN submissions" style={{ margin: "0 0 18px" }}>
+              <nav className="tapin-actions" aria-label="T.A.P IN submissions" style={{ margin: "0 0 18px" }}>
                 <Link className="tapin-soft" href="/admin/enquiries"><Icon name="mail" size={14} /> Interest &amp; opportunity submissions</Link>
                 <Link className="tapin-soft" href="/admin/subscribers"><Icon name="send" size={14} /> Alert subscribers</Link>
               </nav>
@@ -368,8 +368,8 @@ export default function TapInManager() {
               {loading ? <p className="tapin-empty">Loading listings…</p> : null}
               {!loading && !visible.length ? (
                 <div className="tapin-empty">
-                  <strong>{items.length ? "No listings match your search." : "No TAP IN listings yet."}</strong>
-                  <p>{items.length ? "Try a different search or status." : "Create your first listing to put an opportunity on TAP IN."}</p>
+                  <strong>{items.length ? "No listings match your search." : "No T.A.P IN listings yet."}</strong>
+                  <p>{items.length ? "Try a different search or status." : "Create your first listing to put an opportunity on T.A.P IN."}</p>
                 </div>
               ) : null}
 
@@ -426,9 +426,9 @@ export default function TapInManager() {
             <form onSubmit={save} noValidate>
               <section className="tapin-heading">
                 <div>
-                  <span className="tapin-chip">TAP IN</span>
+                  <span className="tapin-chip">T.A.P IN</span>
                   <h1>{editingId ? "Edit Listing" : "Create New Listing"}</h1>
-                  <p>Share opportunities with African talent. Fill in the details below to {editingId ? "update this" : "create a"} TAP IN listing.</p>
+                  <p>Share opportunities with African talent. Fill in the details below to {editingId ? "update this" : "create a"} T.A.P IN listing.</p>
                 </div>
                 <p className="tapin-script" aria-hidden="true">Real Opportunities.<br />Real Impact.</p>
               </section>
@@ -483,7 +483,7 @@ export default function TapInManager() {
                     <h2><span className="tapin-step">3</span><span>Images &amp; Sharing<small>Optional. Add a listing image and a social share image.</small></span></h2>
                     <div className="tapin-twoCol">
                       {(["image_url", "share_image_url"] as const).map((field) => (
-                        <Field key={field} label={field === "image_url" ? "Listing image (shown on the TAP IN card)" : "Share image (social previews)"} hint="optional">
+                        <Field key={field} label={field === "image_url" ? "Listing image (shown on the T.A.P IN card)" : "Share image (social previews)"} hint="optional">
                           <input type="url" value={draft[field]} placeholder="https://…" onChange={(event) => update(field, event.target.value)} />
                           <span className="tapin-uploadRow">
                             <span className="tapin-uploadBtn"><Icon name="upload" size={15} /> {uploading === field ? "Uploading…" : "Upload image"}
@@ -506,7 +506,7 @@ export default function TapInManager() {
                       <label className="tapin-switchRow">
                         <input type="checkbox" role="switch" checked={draft.status === "live"} onChange={(event) => update("status", event.target.checked ? "live" : "draft")} />
                         <span className="tapin-switch" aria-hidden="true" />
-                        <span><b>Open on TAP IN immediately</b><small>Leave off to save as a draft and open it later.</small></span>
+                        <span><b>Open on T.A.P IN immediately</b><small>Leave off to save as a draft and open it later.</small></span>
                       </label>
                     ) : (
                       <Field label="Status"><select value={draft.status} onChange={(event) => update("status", event.target.value as Status)}>
@@ -523,7 +523,7 @@ export default function TapInManager() {
                 <aside className="tapin-side">
                   <section className="tapin-card">
                     <h2 className="tapin-previewTitle"><Icon name="eye" size={17} /> Listing Preview</h2>
-                    <p className="tapin-muted">This is how your listing will appear on the TAP IN page.</p>
+                    <p className="tapin-muted">This is how your listing will appear on the T.A.P IN page.</p>
                     <div className="tapin-preview">
                       <div className="tapin-previewImage">
                         {draft.image_url ? (
@@ -557,7 +557,7 @@ export default function TapInManager() {
 
       <nav className="tapin-tabbar" aria-label="Admin quick navigation">
         <Link href="/admin"><Icon name="home" size={20} /><span>Home</span></Link>
-        <Link href="/admin/tap-in" className="tapin-tabActive"><Icon name="send" size={20} /><span>TAP IN</span></Link>
+        <Link href="/admin/tap-in" className="tapin-tabActive"><Icon name="send" size={20} /><span>T.A.P IN</span></Link>
         <Link href="/admin/blog"><Icon name="edit" size={20} /><span>Blog</span></Link>
         <Link href="/admin/store"><Icon name="store" size={20} /><span>Store</span></Link>
         <Link href="/admin"><Icon name="more" size={20} /><span>More</span></Link>
