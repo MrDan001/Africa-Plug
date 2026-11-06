@@ -607,6 +607,31 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     }
   }
 
+  async function releaseStoreProduct(record: CmsRecord) {
+    if (!record.slug || typeof record.data?.productFileReference !== "string" || !record.data.productFileReference.startsWith(record.slug + "/")) {
+      setNotice({ tone: "error", text: "Upload the protected guide file before releasing this product." });
+      return;
+    }
+    if (!window.confirm(`Release “${record.title}” and email private download links to every paid preorder customer?`)) return;
+    setUploading(true);
+    setNotice(null);
+    try {
+      const response = await fetch("/api/admin/store-release", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: record.slug }),
+      });
+      const result = await response.json() as { error?: string; emailed?: number; skipped?: number };
+      if (!response.ok) throw new Error(result.error || "The guide could not be released.");
+      setNotice({ tone: "success", text: `Guide released. ${result.emailed ?? 0} preorder customer(s) emailed.` });
+      await loadRecords();
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "The guide could not be released." });
+    } finally {
+      setUploading(false);
+    }
+  }
+
   function recordSummary(record: CmsRecord) {
     const data = record.data ?? {};
     const fields = [data.email, data.organisation, data.organization, data.opportunityName, data.productTitle, data.category, data.excerpt, data.summary, data.path, data.eventName];
@@ -825,6 +850,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
                 <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button>
                 <button type="button" className="apm-btn" disabled={record.status === "archived"} onClick={() => void setStatus(record, "archived")}>Archive</button>
                 <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit details</button>
+                {record.data?.productType === "Guide" && record.data?.availability !== "available" ? <button type="button" className="apm-btn apm-btn-ok" disabled={uploading || typeof record.data?.productFileReference !== "string" || !record.data.productFileReference.startsWith((record.slug || "") + "/")} onClick={() => void releaseStoreProduct(record)}>Release guide & email preorders</button> : null}
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
