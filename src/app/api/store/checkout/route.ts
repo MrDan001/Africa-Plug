@@ -21,6 +21,10 @@ export async function POST(request: Request) {
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Your cart is invalid. Please refresh the Store and try again." }, { status: 400 });
 
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Secure payment confirmation is not fully configured yet. Please try again later." }, { status: 503 });
+  }
+
   try {
     const records = await getPublicCmsRecords("products");
     const items = await Promise.all(parsed.data.items.map(async (item) => {
