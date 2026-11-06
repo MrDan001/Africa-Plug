@@ -39,7 +39,7 @@ export default async function TapInPage() {
         <div className="ti-hero-img" aria-hidden="true" />
         <div className="ti-wrap ti-hero-inner">
           <p className="ti-label">LIVE BUSINESS AND INVESTMENT OPPORTUNITIES</p>
-          <h1 id="ti-h1" className="text-white">TAP IN.</h1>
+          <h1 id="ti-h1" className="text-white">T.A.P IN.</h1>
           <p className="ti-hero-sub text-gray-200">
             Business and investment opportunities across Africa.<br />
             Find one or put yours forward, and TAP makes the introduction.

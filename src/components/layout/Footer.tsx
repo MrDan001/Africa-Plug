@@ -6,7 +6,7 @@ import CookieSettingsLink from "@/components/layout/CookieSettingsLink";
 import "./site-chrome.css";
 
 const FOOTER_LINKS = [
-  { label: "TAP IN", href: "/tap-in" },
+  { label: "T.A.P IN", href: "/tap-in" },
   { label: "Work With FK", href: "/work-with-fk" },
   { label: "Store", href: "/store" },
   { label: "Blog", href: "/blog" },

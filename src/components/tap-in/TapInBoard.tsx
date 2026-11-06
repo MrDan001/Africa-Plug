@@ -11,7 +11,7 @@ import {
   type PublicListing,
 } from "@/lib/tap-in/public";
 import { AlertsSignup, ExpressInterestDialog, RegisterInterestDialog, SubmitOpportunityDialog } from "./TapInDialogs";
-import { COUNTRIES } from "@/lib/work-with-fk/application-schema";
+import { AFRICAN_COUNTRIES } from "@/lib/work-with-fk/application-schema";
 
 const DISCLAIMER = "Listings are shared for information only and are not an offer, recommendation or endorsement. Carry out your own due diligence before entering any agreement.";
 
@@ -149,7 +149,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
                 <label className="ti-filter-select">Country
                   <select value={country} onChange={(event) => setCountry(event.target.value)}>
                     <option value="">All countries</option>
-                    {COUNTRIES.filter((item) => item !== "Other").map((item) => <option key={item} value={item}>{item}</option>)}
+                    {AFRICAN_COUNTRIES.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
                 </label>
                 <label className="ti-filter-select">Region
@@ -219,7 +219,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
             <h2 id="ti-submit-h2">HAVE AN OPPORTUNITY TO PUT FORWARD?</h2>
           </div>
           <div className="ti-submit-copy">
-            <p>A business, product or project looking for the right commercial partner? Send The Africa Plug the details for consideration. We’ll review and may feature it on TAP IN.</p>
+            <p>A business, product or project looking for the right commercial partner? Send The Africa Plug the details for consideration. We’ll review and may feature it on T.A.P IN.</p>
             <button type="button" className="ti-btn ti-btn-primary" onClick={() => setDialog("submit")}>SUBMIT AN OPPORTUNITY <span aria-hidden="true">→</span></button>
           </div>
         </div>
