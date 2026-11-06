@@ -636,3 +636,15 @@ EMAIL_FK=fk@
 
 - [x] Changed the homepage “AFRICA COMMERCIAL DEAL CONSULTANCY” eyebrow label to TAP pink (#c21e67).
 - [x] Kept the label text, typography, spacing, and surrounding section unchanged.
+
+
+## Contact and Ask The Africa Plug routing — 6 November 2026
+
+- [x] The Ask The Africa Plug page displays `ask@theafricaplug.com` as its Official Email and describes it as the address for questions to The Africa Plug.
+- [x] General, partnership, T.A.P IN and Store enquiries retain the public `connect@theafricaplug.com` address.
+- [x] Replaced the general Contact form's “What is this about?” choices with the approved five options, in the requested order.
+- [x] Selecting “Ask The Africa Plug” opens `/contact?type=ask`; submissions use the Ask handler and `ask@` destination.
+- [x] Selecting “Partnership” opens `/contact?type=partner`; the Partner page's separate Partnership area dropdown remains unchanged.
+- [x] Added the Work With FK application prompt above the general Contact form, linking to `/work-with-fk/apply`.
+- [x] Kept `fk@` private to server-side routing; it is not displayed in public page or form copy.
+- [ ] Verify each option, successful form submission, persistent admin record and actual email delivery in production. Delivery depends on production Resend configuration.
