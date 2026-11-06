@@ -91,7 +91,7 @@ export default async function HomeSections() {
 
     <section className="homepage-contact-section" id="partner-with-tap">
       <div className="homepage-contact-panel">
-        <div className="homepage-contact-column"><p className="eyebrow">PARTNER WITH TAP</p><h2>Put your brand where Africa’s deals are discussed.</h2><p>Brand partnerships, events and content collaborations.</p><PartnershipTrigger className="button button-pink">EXPLORE PARTNERSHIPS <span>→</span></PartnershipTrigger></div>
+        <div className="homepage-contact-column"><p className="eyebrow">PARTNER WITH TAP</p><h2>Put your brand where Africa’s deals are discussed.</h2><p>Brand partnerships, events, guests and content collaborations.</p><PartnershipTrigger className="button button-pink">EXPLORE PARTNERSHIPS <span>→</span></PartnershipTrigger></div>
         <div className="homepage-contact-divider" aria-hidden="true" />
         <div className="homepage-contact-column" id="contact"><p className="eyebrow">CONTACT</p><h2>Start a conversation.</h2><p>For general enquiries, questions or partnership proposals, contact the team.</p><Link className="button button-outline" href="/contact">CONTACT THE AFRICA PLUG <span>→</span></Link><a className="homepage-contact-email" href={`mailto:${contactEmail}`}>{contactEmail}</a></div>
       </div>
