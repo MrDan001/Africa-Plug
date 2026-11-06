@@ -649,3 +649,20 @@ EMAIL_FK=fk@
 - [x] Kept `fk@` private to server-side routing; it is not displayed in public page or form copy.
 - [x] Removed the private Work With FK inbox address from the public scheduler error state; the public fallback uses `connect@theafricaplug.com`.
 - [ ] Verify each option, successful form submission, persistent admin record and actual email delivery in production. Delivery depends on production Resend configuration.
+
+
+## Store guide preorder and Work With FK timeframe — 6 November 2026
+
+- [x] Set Explore Africa Like an Insider to £39 and The Unwritten Rules of Doing Business in Africa to £49 in the live Supabase product records.
+- [x] Set both guides to the same `coming-soon` state while retaining the prices.
+- [x] Store cards show the price, Coming soon label and PREORDER path for both guides.
+- [x] Guide detail pages show the price and PREORDER action; removed the “Price to be confirmed” and “A protected guide download is being prepared” fallbacks for these two guide products.
+- [x] Added the required checkout consent checkbox and server-side validation before Stripe Checkout creation; consent text and timestamp are stored with paid orders.
+- [x] Added private download-link storage with hashed tokens, 30-day expiry, five-download cap, first-open timestamp, and email-delivery tracking.
+- [x] Added an authenticated admin release endpoint at `POST /api/admin/store-release` with JSON body `{"slug":"<guide-slug>"}`. It requires the protected guide file to be uploaded first, marks the guide available, and emails paid preorder customers their private links.
+- [x] Added the private download endpoint `/api/store/download/[token]`; it validates the link, signs the private Storage file, and atomically records the first open and download count.
+- [x] Updated the paid thank-you page to show a private link for released products.
+- [x] Added “Later than 6 months” to the Work With FK timeframe options and validation schema.
+- [ ] Upload each final guide file in Admin → Store before release. The two guides are intentionally still Coming soon until their final files are uploaded and FK releases them.
+- [ ] Confirm production Stripe webhook secret, service-role credential, Resend API key and sender address; run a real test-mode preorder, release and five-download/30-day expiry QA before accepting live money.
+- [ ] Add a visible Admin Store “Release guide” control for the authenticated release endpoint; current release workflow is API-backed but does not yet expose a dashboard button.
