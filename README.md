@@ -55,3 +55,8 @@ The homepage title and description are managed in Admin → Site Settings. Core 
 ## Delivery standard
 
 Before any client-facing launch, verify the live deployment on desktop and mobile, confirm production environment variables and connected services, review public content for accuracy, test forms and enquiry flows, and confirm that all published products and opportunities are approved for public use.
+
+
+## T.A.P IN opportunity locations
+
+T.A.P IN opportunity records retain their optional African Region and required Country fields. The region remains available as listing context; clean opportunity links use the listing slug without appending a region. The Admin → T.A.P IN country selector uses the shared `AFRICAN_COUNTRIES` list so new and edited opportunities can only select African countries.
