@@ -31,6 +31,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
   const [mounted, setMounted] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [preorderConsent, setPreorderConsent] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -95,7 +96,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
       const response = await fetch("/api/store/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: items.map((item) => ({ slug: item.slug, quantity: item.quantity })) }),
+        body: JSON.stringify({ items: items.map((item) => ({ slug: item.slug, quantity: item.quantity })), preorderConsent }),
       });
       const result = (await response.json()) as { url?: string; error?: string };
       if (!response.ok || !result.url) throw new Error(result.error || "Checkout is temporarily unavailable.");
@@ -166,8 +167,9 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
                   ? "Your cart contains different currencies. Remove products until only one currency remains to continue."
                   : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Your download links appear as soon as payment is confirmed."}
               </p>
+              <label className="tapcart-preorder-consent"><input type="checkbox" checked={preorderConsent} onChange={(event) => setPreorderConsent(event.target.checked)} /><span>I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is.</span></label>
               {checkoutError ? <p role="alert" className={"tapcart-error"}>{checkoutError}</p> : null}
-              <button type="button" className={"tapcart-checkout"} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies}>
+              <button type="button" className={"tapcart-checkout"} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies || !preorderConsent}>
                 {checkingOut ? "CONNECTING TO STRIPE…" : "CONTINUE TO SECURE CHECKOUT"} <span aria-hidden="true">→</span>
               </button>
               <button type="button" className={"tapcart-continue"} onClick={close}>CONTINUE BROWSING</button>
