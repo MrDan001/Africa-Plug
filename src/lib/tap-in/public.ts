@@ -6,7 +6,6 @@ export type PublicListing = {
     slug: string;
     title: string;
     country: string;
-    region: string;
     sector: string;
     opportunity_type: string;
     description: string;
@@ -26,15 +25,15 @@ export type PublicListing = {
     return "";
   }
   
-  export function placeLabel(item: Pick<PublicListing, "country" | "region">) {
-    return [item.region, item.country].filter(Boolean).join(" · ");
+  export function placeLabel(item: Pick<PublicListing, "country">) {
+    return item.country;
   }
   
   export function metaLine(item: PublicListing) {
     return [item.sector, placeLabel(item), item.opportunity_type].filter(Boolean).join(" · ");
   }
   
-  /** Descriptive alt text, for example "Excavator Hire, construction opportunity in West Africa". */
+  /** Descriptive alt text based on the listing title, sector and country. */
   export function altText(item: PublicListing) {
     const place = placeLabel(item);
     return `${item.title}, ${item.sector.toLowerCase()} opportunity${place ? ` in ${place}` : ""}`;
