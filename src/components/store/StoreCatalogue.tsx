@@ -60,7 +60,10 @@ export default async function StoreCatalogue({ category }: Props) {
               <h2><Link href={`/store/${product.slug}`}>{product.title}</Link></h2>
               <p className="store-product-summary">{product.summary}</p>
               <div className="store-product-action">
-                {available ? <>
+                {isGuidePreorder ? <>
+                  <strong className="store-product-price">{formatter(product.price, product.currency)}</strong>
+                  <Link className="store-product-cta" href={"/store/" + product.slug}>PREORDER <span aria-hidden="true">→</span></Link>
+                </> : available ? <>
                   {product.price > 0 ? <strong className="store-product-price">{formatter(product.price, product.currency)}</strong> : null}
                   {isGuide
                     ? product.downloadReady
