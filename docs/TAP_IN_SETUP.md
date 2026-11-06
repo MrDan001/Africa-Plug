@@ -1,4 +1,4 @@
-# TAP IN Opportunity Manager Setup
+# T.A.P IN Opportunity Manager Setup
 
 This setup note belongs to `MrDan001/Africa-Plug`. The implementation lives at `/admin/tap-in` and uses Supabase for persistent opportunity records.
 
@@ -34,10 +34,10 @@ The CMS bridge uses `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `CMS_BRIDGE_SECRET`
 5. Edit listings as needed. **Close** stops accepting interest and keeps the unique URL accessible. **Archive** removes the listing from the live index but retains the record and URL.
 6. Use the admin search and status filter to find records.
 
-Drafts are not publicly listed or accessible from a public detail URL. Only Live listings appear on the TAP IN index. Closed and archived detail URLs remain available without a public status label, and the page directs visitors to current opportunities instead. Posting dates and principal-identifying fields are not exposed.
+Drafts are not publicly listed or accessible from a public detail URL. Only Live listings appear on the T.A.P IN index. Closed and archived detail URLs remain available without a public status label, and the page directs visitors to current opportunities instead. Posting dates and principal-identifying fields are not exposed.
 
 ## Current boundary
 
 This slice implements listing persistence and management, statuses, and public listing/detail routes. The full listing-specific Expression of Interest form and durable enquiry capture are addressed separately in working-brief Section 5. Until that workflow is connected, live listing pages have a basic contact fallback rather than a listing-bound EOI form. Do not publish listings until the business is comfortable with this temporary limitation.
 
-If the database migration has not been applied, the public TAP IN page shows no listings instead of demo content, and the admin interface reports a configuration/setup error. Applying a GitHub commit alone does not create the Supabase table.
+If the database migration has not been applied, the public T.A.P IN page shows no listings instead of demo content, and the admin interface reports a configuration/setup error. Applying a GitHub commit alone does not create the Supabase table.
