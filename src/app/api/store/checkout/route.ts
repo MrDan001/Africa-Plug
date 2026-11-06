@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 const requestSchema = z.object({
   items: z.array(z.object({ slug: z.string().min(1).max(180), quantity: z.number().int().min(1).max(10) })).min(1).max(30),
   email: z.string().email().max(254).optional(),
+  preorderConsent: z.literal(true),
 }).strict();
 
 export async function POST(request: Request) {
@@ -29,19 +30,6 @@ export async function POST(request: Request) {
       if (product.price <= 0) throw new Error("This product has no confirmed purchase price yet.");
       if (!Number.isSafeInteger(Math.round(product.price * 100))) throw new Error("A product price is invalid.");
       if (!/^[A-Z]{3}$/.test(product.currency)) throw new Error("A product currency is invalid.");
-      // Verify a private delivery file exists before accepting payment. The short-lived
-      // URL is discarded here; customers receive a fresh, session-verified link after payment.
-      let delivery: { url?: string };
-      try {
-        delivery = await cmsBridge<{ url?: string }>({
-          action: "store.createSignedDownload",
-          module: "products",
-          slug: product.slug,
-        });
-      } catch {
-        throw new Error("This product is not ready for secure delivery yet. Please try another product or come back later.");
-      }
-      if (!delivery.url) throw new Error("This product is not ready for secure delivery yet. Please try another product or come back later.");
       return { product, quantity: item.quantity };
     }));
     const currencies = new Set(items.map(({ product }) => product.currency.toLowerCase()));
@@ -68,7 +56,7 @@ export async function POST(request: Request) {
       automatic_tax: { enabled: process.env.STRIPE_TAX_ENABLED === "true" },
       allow_promotion_codes: true,
       client_reference_id: crypto.randomUUID(),
-      metadata: { store: "africa-plug", product_slugs: items.map(({ product }) => product.slug).join(",").slice(0, 500) },
+      metadata: { store: "africa-plug", product_slugs: items.map(({ product }) => product.slug).join(",").slice(0, 500), preorder_consent: "true", preorder_consent_text: "I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is." },
       success_url: `${origin}/store/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/store/checkout/cancel`,
     });
