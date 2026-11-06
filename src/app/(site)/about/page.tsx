@@ -26,11 +26,6 @@ export default function AboutPage() {
       <img className="about-founder-photo" src="/images/fk.jpg" alt="FK, founder of The Africa Plug" />
       <div><p className="standard-eyebrow">MEET THE FOUNDER</p><h2>FK</h2><p>FK is the founder of The Africa Plug. She moved to Nigeria a decade ago, when few people understood why. Today, Africa is making that case on its own.</p><p>What she has built is a platform for the people, opportunities and stories shaping the continent, with a perspective that extends beyond any one country, industry or individual.</p></div>
     </section>
-    <section className="about-partner">
-      <p className="standard-eyebrow">PARTNER WITH TAP</p>
-      <h2>For brands, events, guests and organisations whose work fits The Africa Plug.</h2>
-      <PartnershipTrigger className="about-partner-link">EXPLORE PARTNERSHIPS <span aria-hidden="true">→</span></PartnershipTrigger>
-    </section>
   </ContentPage>;
 }
 
