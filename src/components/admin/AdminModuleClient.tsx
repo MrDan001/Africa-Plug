@@ -845,7 +845,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <div className="apm-actions">
               {editable && moduleKey !== "store" ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
               {moduleKey === "store" ? <>
-                <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button>
+                {record.data?.productType !== "Guide" ? <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button> : null}
                 <button type="button" className={`apm-btn${record.data?.availability !== "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability !== "available"} onClick={() => void setProductAvailability(record, "coming-soon")}>Coming soon</button>
                 <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button>
                 <button type="button" className="apm-btn" disabled={record.status === "archived"} onClick={() => void setStatus(record, "archived")}>Archive</button>
