@@ -145,11 +145,11 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
             <label><span>Budget range <small>Optional at this stage</small></span><input name="budgetRange" maxLength={120} placeholder="Range and currency, if known" /></label>
           </> : storeEnquiryTitle ? null : <label className="enquiry-full-width">
             <span>What is this about? <b>*</b></span>
-            <select name="enquiryType" defaultValue={kind === "ask" ? "Question for The Africa Plug" : kind === "interest" ? "TAP IN opportunity" : "General enquiry"} required>
+            <select name="enquiryType" defaultValue={kind === "ask" ? "Question for The Africa Plug" : kind === "interest" ? "T.A.P IN opportunity" : "General enquiry"} required>
               <option>General enquiry</option>
               <option>Question for The Africa Plug</option>
               <option>Store or Africa Starter Guide</option>
-              <option>TAP IN opportunity</option>
+              <option>T.A.P IN opportunity</option>
             </select>
           </label>}
           {opportunityName || storeEnquiryTitle ? <input type="hidden" name="opportunityName" value={storeEnquiryTitle || opportunityName} /> : null}

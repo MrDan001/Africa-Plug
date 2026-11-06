@@ -22,7 +22,7 @@ export const ADMIN_NAV: NavGroup[] = [
   { label: null, items: [
     { title: "Dashboard", href: "/admin", icon: "dashboard", detail: "Overview of everything" },
     { title: "Homepage", href: "/admin/homepage", icon: "home", detail: "Hero slides, imagery and video" },
-    { title: "TAP IN", href: "/admin/tap-in", icon: "tapin", detail: "Create, review and publish listings", badgeKey: "tapin" },
+    { title: "T.A.P IN", href: "/admin/tap-in", icon: "tapin", detail: "Create, review and publish listings", badgeKey: "tapin" },
     { title: "Blog & Editorial", href: "/admin/blog", icon: "blog", detail: "Articles, categories and SEO" },
     { title: "Store Products", href: "/admin/store", icon: "store", detail: "Products, prices and files" },
     { title: "Store Waitlists", href: "/admin/store-waitlists", icon: "store", detail: "Product-specific launch audiences" },
@@ -138,11 +138,11 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     const term = query.trim().toLowerCase();
     if (!term) return null;
     const modules = ALL_ITEMS.filter((item) => `${item.title} ${item.detail}`.toLowerCase().includes(term)).map((item) => ({ key: item.href, label: item.title, hint: "Module", href: item.href }));
-    const found = listings.filter((item) => `${item.title} ${item.country} ${item.sector}`.toLowerCase().includes(term)).slice(0, 4).map((item) => ({ key: item.id, label: item.title, hint: "TAP IN listing", href: "/admin/tap-in" }));
+    const found = listings.filter((item) => `${item.title} ${item.country} ${item.sector}`.toLowerCase().includes(term)).slice(0, 4).map((item) => ({ key: item.id, label: item.title, hint: "T.A.P IN listing", href: "/admin/tap-in" }));
     return [...modules, ...found].slice(0, 8);
   }, [query, listings]);
 
-  // TAP IN and Homepage managers render their own <main>, so the shell uses a plain wrapper there to avoid nested landmarks.
+  // T.A.P IN and Homepage managers render their own <main>, so the shell uses a plain wrapper there to avoid nested landmarks.
   const ownsMain = pathname.startsWith("/admin/tap-in") || pathname.startsWith("/admin/homepage");
 
   return (
@@ -206,7 +206,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               {bellOpen ? (
                 <div className="apd-pop" role="menu">
                   <p className="apd-pop-title">Needs your attention</p>
-                  <Link href="/admin/tap-in" role="menuitem"><span>Draft TAP IN listings</span><b>{counts.draft}</b></Link>
+                  <Link href="/admin/tap-in" role="menuitem"><span>Draft T.A.P IN listings</span><b>{counts.draft}</b></Link>
                   <Link href="/admin/review-required" role="menuitem"><span>Applications to review</span><b>{counts.reviewApps}</b></Link>
                   <Link href="/admin/enquiries" role="menuitem"><span>New enquiries</span><b>{counts.newEnquiries}</b></Link>
                 </div>
@@ -233,7 +233,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       {/* ---------------- Mobile bottom nav ---------------- */}
       <nav className="apd-bottom" aria-label="Primary">
         <Link href="/admin" className={pathname === "/admin" ? "is-active" : undefined}><Icon name="home" size={21} /><span>Home</span></Link>
-        <Link href="/admin/tap-in" className={pathname.startsWith("/admin/tap-in") ? "is-active" : undefined}><Icon name="tapin" size={21} /><span>TAP IN</span>{counts.draft > 0 ? <em className="apd-badge apd-badge-float">{counts.draft}</em> : null}</Link>
+        <Link href="/admin/tap-in" className={pathname.startsWith("/admin/tap-in") ? "is-active" : undefined}><Icon name="tapin" size={21} /><span>T.A.P IN</span>{counts.draft > 0 ? <em className="apd-badge apd-badge-float">{counts.draft}</em> : null}</Link>
         <Link href="/admin/blog" className={pathname.startsWith("/admin/blog") ? "is-active" : undefined}><Icon name="blog" size={21} /><span>Blog</span></Link>
         <Link href="/admin/store" className={pathname === "/admin/store" ? "is-active" : undefined}><Icon name="store" size={21} /><span>Store</span></Link>
         <button type="button" className={!["/admin","/admin/tap-in","/admin/blog","/admin/store"].some((p) => p === "/admin" ? pathname === p : pathname.startsWith(p)) ? "is-active" : undefined} onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen}><Icon name="more" size={21} /><span>More</span></button>

@@ -99,7 +99,7 @@ export default function ExpressionOfInterestForm({ slug, listingTitle, questions
 
   return <section className="enquiry-panel tap-in-eoi-panel" aria-labelledby="tap-in-eoi-title">
     <header className="enquiry-panel-heading">
-      <p className="standard-eyebrow">TAP IN · EXPRESSION OF INTEREST</p>
+      <p className="standard-eyebrow">T.A.P IN · EXPRESSION OF INTEREST</p>
       <h2 id="tap-in-eoi-title">Interested in this opportunity?</h2>
       <p>Your response will be linked to <strong>{listingTitle}</strong>. Please only share information relevant to the opportunity.</p>
     </header>

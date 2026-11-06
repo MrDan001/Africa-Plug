@@ -14,8 +14,8 @@ const DETAILS: Record<ModuleKey, { title: string; description: string; db: strin
   store: { title: "Store products", description: "Manage product descriptions, imagery, prices and catalogue status. Paid digital checkout is only available when a private download file is configured and Stripe is set up in production.", db: "products" },
   "work-with-fk": { title: "Work With FK", description: "Review incoming applications and keep every decision recorded in the admin inbox.", db: "applications" },
   "review-required": { title: "Review required", description: "Applications waiting for a decision. Approve or decline each one to keep the queue current.", db: "applications" },
-  enquiries: { title: "Enquiries & forms", description: "Track Contact, Partner With TAP, Ask TAP and TAP IN expressions of interest in one persistent inbox.", db: "enquiries" },
-  subscribers: { title: "Subscribers", description: "Manage Stay Plugged In, TAP IN alerts and the separate Blog readers list. Export confirmed Blog readers when needed.", db: "subscribers" },
+  enquiries: { title: "Enquiries & forms", description: "Track Contact, Partner With TAP, Ask TAP and T.A.P IN expressions of interest in one persistent inbox.", db: "enquiries" },
+  subscribers: { title: "Subscribers", description: "Manage Stay Plugged In, T.A.P IN alerts and the separate Blog readers list. Export confirmed Blog readers when needed.", db: "subscribers" },
   analytics: { title: "Analytics & funnel", description: "Review page views, content views, form-related events and UTM/source information captured by the website.", db: "analytics" },
   media: { title: "Media library", description: "Upload reusable public images and PDFs and copy their asset URLs into articles and product records. Do not upload confidential or paid-download files here.", db: "media" },
   settings: { title: "Commercial settings", description: "Keep the current fees, meeting length, booking rules and draft commercial terms together. Payment automation should only be enabled after terms are approved.", db: "commercial-settings" },
@@ -70,7 +70,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
   ],
   "site-settings": [
     { key: "siteTitle", label: "Site title", type: "text" },
-    { key: "navigationText", label: "Navigation links (one per line: label | /path)", type: "textarea", rows: 6, help: "Use internal paths only, e.g. TAP IN | /tap-in. Leave blank to use the standard navigation." },
+    { key: "navigationText", label: "Navigation links (one per line: label | /path)", type: "textarea", rows: 6, help: "Use internal paths only, e.g. T.A.P IN | /tap-in. Leave blank to use the standard navigation." },
     { key: "siteDescription", label: "Default SEO description", type: "textarea", rows: 3 },
     { key: "contactEmail", label: "Public contact email", type: "text" },
     { key: "whatsappUrl", label: "WhatsApp URL", type: "url" },
@@ -91,7 +91,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "potmUrl", label: "Product of the Month: external link (https://)", type: "url", help: "Your affiliate or partner link. Shown with the disclosure “TAP may earn a commission.”" },
     { key: "potmDiscountCode", label: "Product of the Month: discount code (optional)", type: "text" },
     { key: "potmDiscountNote", label: "Product of the Month: discount note (optional)", type: "text", placeholder: "10% off until 30 November" },
-    { key: "tapInFilterThreshold", label: "Show TAP IN filters at this many live listings", type: "number", help: "Filters remain hidden below this count. Enter a whole number from 1 to 100." },
+    { key: "tapInFilterThreshold", label: "Show T.A.P IN filters at this many live listings", type: "number", help: "Filters remain hidden below this count. Enter a whole number from 1 to 100." },
   ],
 };
 
@@ -113,7 +113,7 @@ const STATUS_OPTIONS: Partial<Record<ModuleKey, { value: string; label: string }
   "site-settings": [{ value: "active", label: "Current settings" }],
 };
 
-/** TAP IN submissions arrive in the shared enquiries inbox. These labels and filters make them easy to tell apart. */
+/** T.A.P IN submissions arrive in the shared enquiries inbox. These labels and filters make them easy to tell apart. */
 const TAP_IN_KINDS: { value: string; label: string }[] = [
   { value: "interest", label: "Express Interest" },
   { value: "register", label: "Register Interest" },
@@ -132,7 +132,7 @@ function subscriberList(record: CmsRecord): string {
 }
 
 function subscriberListLabel(record: CmsRecord): string {
-  return subscriberList(record) === "tap-in-alerts" ? "TAP IN alerts" : subscriberList(record) === "blog" ? "Blog readers" : "Stay Plugged In";
+  return subscriberList(record) === "tap-in-alerts" ? "T.A.P IN alerts" : subscriberList(record) === "blog" ? "Blog readers" : "Stay Plugged In";
 }
 
 function text(value: unknown) {
@@ -174,7 +174,7 @@ function defaultSiteSettings(): Draft {
     title: "Site settings",
     slug: "site-settings",
     status: "active",
-    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/", instagramUrl: "https://www.instagram.com/theafricaplug/", youtubeUrl: "https://www.youtube.com/watch?v=KnY5dnnuLc4", footerYoutubeUrl: "https://www.youtube.com/@TheAfricaPlugYT", tiktokUrl: "https://www.tiktok.com/@theafricaplug", facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013", navigationText: ["TAP IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
+    data: { siteTitle: "The Africa Plug", siteDescription: "", contactEmail: "", whatsappUrl: "", linkedinUrl: "https://www.linkedin.com/company/the-africa-plug/", instagramUrl: "https://www.instagram.com/theafricaplug/", youtubeUrl: "https://www.youtube.com/watch?v=KnY5dnnuLc4", footerYoutubeUrl: "https://www.youtube.com/@TheAfricaPlugYT", tiktokUrl: "https://www.tiktok.com/@theafricaplug", facebookUrl: "https://www.facebook.com/profile.php?id=61595019957013", navigationText: ["T.A.P IN | /tap-in", "WORK WITH FK | /work-with-fk", "STORE | /store", "BLOG | /blog", "CONTACT | /contact", "ABOUT | /about"].join("\n"), enableNewsletter: false, enableSearch: true, enableSelectedWork: true, enableProductOfMonth: false, tapInFilterThreshold: 6 },
   };
 }
 
@@ -323,7 +323,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { document.title = `${meta.title} | Africa Plug Admin`; void loadRecords(); }, [loadRecords, meta.title]);
 
-  // Enquiries can be narrowed to one TAP IN form, and subscribers to the TAP IN alerts list.
+  // Enquiries can be narrowed to one T.A.P IN form, and subscribers to the T.A.P IN alerts list.
   const shown = useMemo(() => {
     if (groupFilter === "all") return records;
     if (moduleKey === "enquiries") return records.filter((record) => enquiryKind(record) === groupFilter);
@@ -779,7 +779,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         {moduleKey === "enquiries" || moduleKey === "subscribers" ? <div className="apm-chips" role="group" aria-label={moduleKey === "enquiries" ? "Filter by form" : "Filter by list"} style={{ marginBottom: 14 }}>
           {(moduleKey === "enquiries"
             ? [{ value: "all", label: "All forms" }, ...TAP_IN_KINDS, { value: "article-pitch", label: "Article pitches" }, { value: "other", label: "Other forms" }]
-            : [{ value: "all", label: "All lists" }, { value: "blog", label: "Blog readers" }, { value: "tap-in-alerts", label: "TAP IN alerts" }, { value: "other", label: "Stay Plugged In" }]
+            : [{ value: "all", label: "All lists" }, { value: "blog", label: "Blog readers" }, { value: "tap-in-alerts", label: "T.A.P IN alerts" }, { value: "other", label: "Stay Plugged In" }]
           ).map((option) => <button type="button" key={option.value} className={`apm-chip${groupFilter === option.value ? " is-on" : ""}`} aria-pressed={groupFilter === option.value} onClick={() => setGroupFilter(option.value)}>{option.label}</button>)}
         </div> : null}
         {moduleKey === "subscribers" && groupFilter === "blog" ? <div style={{ marginBottom: 14 }}><button type="button" className="apm-btn" onClick={exportBlogReaders} disabled={!shown.length}>Export Blog readers CSV</button></div> : null}
