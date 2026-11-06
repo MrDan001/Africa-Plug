@@ -24,6 +24,7 @@ export default async function TapInPage() {
       slug: item.slug,
       title: item.title,
       country: item.country,
+      region: item.region,
       sector: item.sector,
       opportunity_type: item.opportunity_type,
       description: item.description,
