@@ -24,14 +24,28 @@ export default async function ContactPage({ searchParams }: Props) {
         <span className="contact-email-mark" aria-hidden="true">✉</span>
         <div>
           <p className="standard-eyebrow">OFFICIAL EMAIL</p>
-          <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a>
-          <p>Business, partnership, website and general enquiries.</p>
+          {kind === "ask" ? (
+            <>
+              <a href="mailto:ask@theafricaplug.com">ask@theafricaplug.com</a>
+              <p>The address for questions to The Africa Plug.</p>
+            </>
+          ) : (
+            <>
+              <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a>
+              <p>Business, partnership, website and general enquiries.</p>
+            </>
+          )}
           <div className="contact-social-links">
             {whatsappUrl ? <a href={whatsappUrl} target="_blank" rel="noreferrer">WhatsApp ↗</a> : null}
             {linkedinUrl ? <a href={linkedinUrl} target="_blank" rel="noreferrer">LinkedIn ↗</a> : null}
           </div>
         </div>
       </div>
+      {kind === "contact" ? (
+        <p className="contact-work-with-fk-prompt">
+          Looking to work with FK? Start your application. <a href="/work-with-fk/apply">Apply here →</a>
+        </p>
+      ) : null}
       <EnquiryForm kind={kind} />
     </ContentPage>
   );
