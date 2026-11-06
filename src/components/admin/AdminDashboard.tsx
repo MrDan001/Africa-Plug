@@ -233,7 +233,7 @@ export default function AdminDashboard() {
                           <span className={`apd-status is-${item.status}`}>{statusLabel(item.status)}</span>
                         </div>
                         <h3>{item.title}</h3>
-                        <p className="apd-loc">{[item.region, item.country].filter(Boolean).join(", ") || "Location not set"}</p>
+                        <p className="apd-loc">{item.country || "Location not set"}</p>
                         <div className="apd-chips">
                           {item.sector ? <span>{item.sector}</span> : null}
                           {item.opportunity_type ? <span>{item.opportunity_type}</span> : null}
