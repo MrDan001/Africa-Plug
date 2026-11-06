@@ -510,3 +510,18 @@ Final handover, post-launch support and revision limits are **not in scope for t
 - Do not invent opportunities, products, prices, testimonials, client work or other factual content to fill layouts.
 - Keep TAP pink as an accent and use the light, warm-stone/off-white visual direction specified in Section 1.
 - Keep disabled launch features disabled; record Product of the Month and the community/WhatsApp waitlist as Phase 2 if they are not included in this build.
+
+
+---
+
+## 22. Contact and Ask routing clarification — 6 November 2026
+
+The approved developer notes refine Sections 14 and 15:
+
+- Ask The Africa Plug submissions must be delivered to `ask@theafricaplug.com`, not `connect@`.
+- The Ask page's Official Email box must show `ask@theafricaplug.com` and describe it as the address for questions to The Africa Plug.
+- `connect@theafricaplug.com` remains the public email everywhere else that the site displays its general/business contact address.
+- The general Contact form's “What is this about?” options, in order, are: General enquiry; Ask The Africa Plug; Partnership; T.A.P IN opportunity; Store order or service.
+- Selecting Ask The Africa Plug opens `/contact?type=ask`; selecting Partnership opens `/contact?type=partner`. The Partner page's own Partnership area dropdown remains unchanged.
+- Above the general Contact form, show: “Looking to work with FK? Start your application.” Link the application CTA to `/work-with-fk/apply`.
+- Never display the private `fk@` address in public website UI or copy.
