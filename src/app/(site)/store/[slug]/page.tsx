@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : null;
   if (product) {
     const rawTitle = product.seoTitle || product.title;
-    const cleanTitle = rawTitle.replace(/(?:\\s*\\|\\s*The Africa Plug)+$/i, "").trim();
+    const cleanTitle = rawTitle.replace(/(?:\s*\|\s*The Africa Plug)+$/i, "").trim();
     return {
       title: { absolute: `${cleanTitle} | The Africa Plug` },
       description: product.seoDescription || product.summary,
