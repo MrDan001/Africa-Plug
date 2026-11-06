@@ -1,6 +1,7 @@
 ## T.A.P IN region removal — 6 November 2026
 
 - [x] Removed the region value from every existing opportunity record in Supabase; country values were preserved.
+- [x] Removed `-west-africa` from the Excavator Hire listing slug (`excavator-hire`); the previous URL redirects to the clean slug.
 - [x] Removed region from the public T.A.P IN listing metadata and image alt-text location labels.
 - [x] Removed the region selector from the Admin T.A.P IN listing editor to prevent region labels being reintroduced.
 - [x] Updated the Admin dashboard opportunity cards to show country only.
