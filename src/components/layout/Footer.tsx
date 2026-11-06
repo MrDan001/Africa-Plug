@@ -51,7 +51,15 @@ function FacebookIcon() {
 export default async function Footer() {
   const settings = await getPublicSiteSettings();
   const contactEmail = settings.contactEmail || "connect@theafricaplug.com";
-  const exploreLinks = settings.navigation?.length ? settings.navigation : FOOTER_LINKS;
+  const configuredExploreLinks = settings.navigation?.length ? settings.navigation : FOOTER_LINKS;
+  // Keep the Work With FK destination visible even when CMS navigation settings omit it.
+  const exploreLinks = configuredExploreLinks.some((item) => item.href === "/work-with-fk")
+    ? configuredExploreLinks
+    : [
+        ...configuredExploreLinks.slice(0, 1),
+        { label: "Work With FK", href: "/work-with-fk" },
+        ...configuredExploreLinks.slice(1),
+      ];
   const socialLinks = [
     { label: "LinkedIn", href: settings.linkedinUrl ?? "", icon: <LinkedInIcon />, className: "is-linkedin" },
     { label: "Instagram", href: settings.instagramUrl ?? "", icon: <InstagramIcon />, className: "is-instagram" },
