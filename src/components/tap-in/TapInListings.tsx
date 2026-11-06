@@ -55,7 +55,7 @@ export default function TapInListings({ opportunities, filterThreshold = 6 }: Pr
   }
 
   return <>
-    {showFilters ? <section className="tap-in-filter-shell" aria-label="Filter TAP IN opportunities">
+    {showFilters ? <section className="tap-in-filter-shell" aria-label="Filter T.A.P IN opportunities">
       <div className="tap-in-filter-heading">
         <p className="standard-eyebrow">FIND A RELEVANT OPPORTUNITY</p>
         <button type="button" className="tap-in-filter-toggle" aria-expanded={mobileFiltersOpen} aria-controls="tap-in-filter-panel" onClick={() => setMobileFiltersOpen((open) => !open)}>

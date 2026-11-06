@@ -14,7 +14,7 @@ function unauthorised() {
 }
 
 function dbErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "The TAP IN database is unavailable.";
+  return error instanceof Error ? error.message : "The T.A.P IN database is unavailable.";
 }
 
 export async function GET() {

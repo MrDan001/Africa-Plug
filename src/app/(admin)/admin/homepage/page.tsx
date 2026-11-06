@@ -9,8 +9,8 @@ import { parseYouTubeId } from "@/lib/youtube";
 const SLOTS = [
   { slot: 1, variant: "desktop", index: 0, title: "Slide 1 — Desktop / Work With FK", note: "Landscape crop recommended: 2400 × 1200 px or larger." },
   { slot: 1, variant: "mobile", index: 1, title: "Slide 1 — Mobile / Work With FK", note: "Portrait/tall mobile crop. Keep FK or the main commercial subject visible behind the copy." },
-  { slot: 2, variant: "desktop", index: 2, title: "Slide 2 — Desktop / TAP IN", note: "Show a real commercial asset, industry or opportunity at scale." },
-  { slot: 2, variant: "mobile", index: 3, title: "Slide 2 — Mobile / TAP IN", note: "Use a dedicated portrait crop; do not rely on a resized desktop image." },
+  { slot: 2, variant: "desktop", index: 2, title: "Slide 2 — Desktop / T.A.P IN", note: "Show a real commercial asset, industry or opportunity at scale." },
+  { slot: 2, variant: "mobile", index: 3, title: "Slide 2 — Mobile / T.A.P IN", note: "Use a dedicated portrait crop; do not rely on a resized desktop image." },
   { slot: 3, variant: "desktop", index: 4, title: "Slide 3 — Desktop / Ask The Africa Plug", note: "People, place and on-the-ground context from Africa." },
   { slot: 3, variant: "mobile", index: 5, title: "Slide 3 — Mobile / Ask The Africa Plug", note: "Use a separate mobile crop with the key subject clear of the text." },
 ] as const;
@@ -193,7 +193,7 @@ export default function AdminPage() {
           <p className="tap-admin-eyebrow">HOMEPAGE CONTROL</p>
           <h1>Hero image manager.</h1>
           <p>Replace the desktop and mobile photo for each slide without editing code. Hero copy remains live website text; no words are baked into these images.</p>
-          <p><Link className="tap-admin-primary" href="/admin/tap-in">Manage TAP IN opportunities →</Link></p>
+          <p><Link className="tap-admin-primary" href="/admin/tap-in">Manage T.A.P IN opportunities →</Link></p>
         </section>
 
         {notice ? <p className={`tap-admin-notice tap-admin-notice--${notice.tone}`} role="status">{notice.text}</p> : null}

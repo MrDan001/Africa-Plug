@@ -28,7 +28,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     }
     return Response.json({ opportunity }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "The TAP IN database is unavailable.";
+    const message = error instanceof Error ? error.message : "The T.A.P IN database is unavailable.";
     return Response.json({ error: message }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }
