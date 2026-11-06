@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 export const DEAL_STAGES = ["Before we commit", "While it’s moving", "It has stalled"] as const;
-export const TIMEFRAMES = ["Now", "Within 3 months", "Within 6 months"] as const;
+export const TIMEFRAMES = ["Now", "Within 3 months", "Within 6 months", "Later than 6 months"] as const;
 export const HEAR_ABOUT = ["LinkedIn", "Instagram", "YouTube", "Search", "Referral", "Other"] as const;
 
 export const COUNTRIES = [
