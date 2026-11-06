@@ -1,3 +1,11 @@
+## T.A.P IN region removal — 6 November 2026
+
+- [x] Removed the region value from every existing opportunity record in Supabase; country values were preserved.
+- [x] Removed region from the public T.A.P IN listing metadata and image alt-text location labels.
+- [x] Removed the region selector from the Admin T.A.P IN listing editor to prevent region labels being reintroduced.
+- [x] Updated the Admin dashboard opportunity cards to show country only.
+- [ ] Verify the public T.A.P IN page and admin views after the Vercel production deployment.
+
 ## SEO metadata and T.A.P IN data review — 6 November 2026
 
 - [x] Updated the Supabase Admin → Site Settings record with the approved homepage title: `The Africa Plug | Africa Commercial Deal Consultant, Market Entry and Investment`.
