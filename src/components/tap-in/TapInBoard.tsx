@@ -148,7 +148,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
                 </label>
                 <label className="ti-filter-select">Country
                   <select value={country} onChange={(event) => setCountry(event.target.value)}>
-                    <option value="">All African countries</option>
+                    <option value="">African countries</option>
                     {AFRICAN_COUNTRIES.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
                 </label>
