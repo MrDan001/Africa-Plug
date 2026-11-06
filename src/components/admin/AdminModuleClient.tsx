@@ -632,6 +632,23 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     }
   }
 
+  async function viewStoreDownloadActivity(record: CmsRecord) {
+    if (!record.slug) return;
+    try {
+      const response = await fetch(`/api/admin/store-downloads?slug=${encodeURIComponent(record.slug)}`, { cache: "no-store" });
+      const result = await response.json() as { error?: string; records?: Array<{ customer_email: string; download_count: number; first_opened_at: string | null; expires_at: string; email_sent_at: string | null }> };
+      if (!response.ok) throw new Error(result.error || "Could not load download activity.");
+      const rows = result.records ?? [];
+      const opened = rows.filter((row) => row.first_opened_at);
+      const summary = rows.length
+        ? rows.map((row) => `${row.customer_email}: ${row.download_count}/5 downloads; first opened ${row.first_opened_at ? new Date(row.first_opened_at).toLocaleString("en-GB") : "not opened"}; expires ${new Date(row.expires_at).toLocaleDateString("en-GB")}`).join(" | ")
+        : "No preorder download links have been issued yet.";
+      setNotice({ tone: "success", text: `Download activity: ${opened.length} opened of ${rows.length} issued. ${summary}` });
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not load download activity." });
+    }
+  }
+
   function recordSummary(record: CmsRecord) {
     const data = record.data ?? {};
     const fields = [data.email, data.organisation, data.organization, data.opportunityName, data.productTitle, data.category, data.excerpt, data.summary, data.path, data.eventName];
@@ -851,6 +868,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
                 <button type="button" className="apm-btn" disabled={record.status === "archived"} onClick={() => void setStatus(record, "archived")}>Archive</button>
                 <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit details</button>
                 {record.data?.productType === "Guide" && record.data?.availability !== "available" ? <button type="button" className="apm-btn apm-btn-ok" disabled={uploading || typeof record.data?.productFileReference !== "string" || !record.data.productFileReference.startsWith((record.slug || "") + "/")} onClick={() => void releaseStoreProduct(record)}>Release guide & email preorders</button> : null}
+                {record.data?.productType === "Guide" ? <button type="button" className="apm-btn" onClick={() => void viewStoreDownloadActivity(record)}>Download activity</button> : null}
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
