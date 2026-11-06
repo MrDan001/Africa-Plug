@@ -60,6 +60,13 @@ export async function POST(request: Request) {
         released_at: now.toISOString(),
       }, { onConflict: "order_id,product_slug", ignoreDuplicates: true });
       if (linkError) throw linkError;
+      const { data: savedLink, error: readLinkError } = await db.from("store_download_links")
+        .select("email_sent_at")
+        .eq("order_id", order.id)
+        .eq("product_slug", slug)
+        .maybeSingle();
+      if (readLinkError) throw readLinkError;
+      if (savedLink?.email_sent_at) { skipped++; continue; }
       const link = `${baseUrl()}/api/store/download/${token}`;
       const result = await resend.emails.send({
         from,
@@ -68,7 +75,12 @@ export async function POST(request: Request) {
         text: `Your preorder is ready. Download ${product.title} using your private link: ${link}\n\nThis link allows up to five downloads and expires 30 days after release.`,
         html: `<div style="font-family:Arial,sans-serif;line-height:1.7;color:#292a2c"><p>Your preorder is ready.</p><p><strong>${product.title}</strong> is now available.</p><p><a href="${link}" style="display:inline-block;background:#c21e67;color:#fff;padding:13px 20px;text-decoration:none">DOWNLOAD YOUR GUIDE</a></p><p>This private link allows up to five downloads and expires 30 days after release.</p><p>The Africa Plug</p></div>`,
       });
-      if (result.error) throw new Error(result.error.message);
+      if (result.error) {
+        await db.from("store_download_links").update({ email_last_error: result.error.message }).eq("order_id", order.id).eq("product_slug", slug);
+        throw new Error(result.error.message);
+      }
+      const { error: markSentError } = await db.from("store_download_links").update({ email_sent_at: new Date().toISOString(), email_last_error: null }).eq("order_id", order.id).eq("product_slug", slug);
+      if (markSentError) throw markSentError;
       sent++;
     }
 
