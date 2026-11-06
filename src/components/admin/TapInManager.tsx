@@ -55,7 +55,6 @@ const BLANK: Draft = {
   slug: "", title: "", opportunity_type: "", who_this_is_for: "", description: "", sector: "", country: "", region: "",
   image_url: "", share_image_url: "", enquiry_questions: [], seo_title: "", seo_description: "", status: "draft",
 };
-const REGIONS = ["North Africa", "West Africa", "Central Africa", "East Africa", "Southern Africa"] as const;
 const SECTOR_SUGGESTIONS = ["Agriculture", "Construction", "Energy", "Fintech", "Health", "Logistics", "Manufacturing", "Mining", "Technology", "Trade"];
 const STATUS_LABEL: Record<Status, string> = { draft: "Draft", live: "Open", closed: "Closed", archived: "Archived" };
 
@@ -110,8 +109,8 @@ function toDraft(item: Opportunity): Draft {
   };
 }
 
-function place(item: { country: string; region?: string }) {
-  return [item.region, item.country].filter(Boolean).join(" · ");
+function place(item: { country: string }) {
+  return item.country;
 }
 
 function Field({ label, required, hint, count, max, children, className }: { label: string; required?: boolean; hint?: string; count?: number; max?: number; children: ReactNode; className?: string }) {
@@ -172,7 +171,7 @@ export default function TapInManager() {
     const phrase = search.trim().toLowerCase();
     const filtered = items.filter((item) => {
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-      const matchesSearch = !phrase || [item.title, item.sector, item.country, item.region, item.opportunity_type].some((value) => value.toLowerCase().includes(phrase));
+      const matchesSearch = !phrase || [item.title, item.sector, item.country, item.opportunity_type].some((value) => value.toLowerCase().includes(phrase));
       return matchesStatus && matchesSearch;
     });
     return filtered.sort((a, b) => {
@@ -464,12 +463,6 @@ export default function TapInManager() {
                         <input list="tap-in-sectors" value={draft.sector} maxLength={120} placeholder="e.g. Agriculture, Energy, Fintech" onChange={(event) => update("sector", event.target.value)} />
                         <datalist id="tap-in-sectors">{[...new Set([...SECTOR_SUGGESTIONS, ...items.map((item) => item.sector).filter(Boolean)])].map((sector) => <option key={sector} value={sector} />)}</datalist>
                       </Field>
-                      <Field label="African Region" hint="optional">
-                        <select value={draft.region} onChange={(event) => update("region", event.target.value)}>
-                          <option value="">Select a region</option>
-                          {REGIONS.map((region) => <option key={region} value={region}>{region}</option>)}
-                        </select>
-                      </Field>
                       <Field label="Country" required>
                         <select value={draft.country} onChange={(event) => update("country", event.target.value)}>
                           <option value="">Select a country</option>
@@ -544,7 +537,7 @@ export default function TapInManager() {
                     <ul>
                       <li>Use a clear and specific title</li>
                       <li>Say plainly who the opportunity is for</li>
-                      <li>Choose the right type, sector, region and country</li>
+                      <li>Choose the right type, sector and country</li>
                       <li>Add an image so the listing stands out</li>
                     </ul>
                   </section>
