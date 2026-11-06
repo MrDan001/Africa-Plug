@@ -694,3 +694,11 @@ EMAIL_FK=fk@
 - [ ] Configure the Stripe webhook endpoint `/api/store/webhook` for `checkout.session.completed` and `checkout.session.async_payment_succeeded`, then add its signing secret to Vercel as `STRIPE_WEBHOOK_SECRET`.
 - [ ] Upload the two final guide files, run a Stripe test-mode preorder and release, verify email delivery, first-open tracking, and five-download/30-day expiry.
 - [ ] Confirm the latest Vercel production build completes and visually inspect the Store and Work With FK form.
+
+
+## T.A.P IN link and African country filter correction — 6 November 2026
+
+- [x] Keep the African region field and region labels in opportunity records and listing details; the requested removal applies to the Excavator Hire URL only.
+- [x] Use the clean `/tap-in/excavator-hire` link instead of including `-west-africa` in the slug.
+- [x] Restrict the Admin → T.A.P IN country selector to the shared `AFRICAN_COUNTRIES` list; preserve the optional African Region selector.
+- [ ] Verify the clean link, listing location display, and admin country selector after the production deployment.
