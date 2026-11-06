@@ -54,6 +54,9 @@ export async function POST(request: Request) {
         tax_amount: session.total_details?.amount_tax ?? 0,
         product_slugs: productSlugs,
         order_items: orderItems,
+        preorder_consent: session.metadata?.preorder_consent === "true",
+        preorder_consent_text: session.metadata?.preorder_consent_text || null,
+        preorder_consent_at: session.metadata?.preorder_consent === "true" ? new Date(session.created * 1000).toISOString() : null,
         checkout_completed_at: new Date(session.created * 1000).toISOString(),
         updated_at: new Date().toISOString(),
       }, { onConflict: "stripe_session_id" });
