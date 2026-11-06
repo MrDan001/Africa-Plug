@@ -310,3 +310,8 @@
 .tap-store-add-button.tap-store-add-button--compact { width: 42px; height: 42px; padding: 0; }
 .tap-store-add-button.is-added, .tap-store-add-button.is-added:hover { background: #15803d; box-shadow: none; transform: none; }
 @media (prefers-reduced-motion: reduce) { .tap-store-add-button { transition: none; } }
+
+
+.tapcart-preorder-consent{display:flex;align-items:flex-start;gap:11px;margin:16px 0 14px;padding:13px 14px;border:1px solid #dedbd4;background:#faf8f5;color:#3b3937;font-size:12px;line-height:1.6;cursor:pointer}
+.tapcart-preorder-consent input{flex:0 0 auto;width:17px;height:17px;margin:2px 0 0;accent-color:#c21e67}
+.tapcart-checkout:disabled{opacity:.48;cursor:not-allowed}
