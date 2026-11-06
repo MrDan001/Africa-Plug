@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       automatic_tax: { enabled: process.env.STRIPE_TAX_ENABLED === "true" },
       allow_promotion_codes: true,
       client_reference_id: crypto.randomUUID(),
-      metadata: { store: "africa-plug", product_slugs: items.map(({ product }) => product.slug).join(",").slice(0, 500), preorder_consent: "true", preorder_consent_text: "I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is." },
+      metadata: { store: "africa-plug", product_slugs: items.map(({ product }) => product.slug).join(",").slice(0, 500), preorder_consent: "true", preorder_consent_at: new Date().toISOString(), preorder_consent_text: "I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is." },
       success_url: `${origin}/store/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/store/checkout/cancel`,
     });
