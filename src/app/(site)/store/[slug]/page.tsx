@@ -20,8 +20,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = record ? cmsRecordToPublicProduct(record) : process.env.NODE_ENV === "development"
     ? DEMO_STORE_PRODUCTS.find((item) => item.slug === slug) ?? null
     : null;
-  if (product) return { title: product.seoTitle || product.title, description: product.seoDescription || product.summary };
-  return { title: "The Store | The Africa Plug" };
+  if (product) {
+    const rawTitle = product.seoTitle || product.title;
+    const cleanTitle = rawTitle.replace(/(?:\\s*\\|\\s*The Africa Plug)+$/i, "").trim();
+    return {
+      title: { absolute: `${cleanTitle} | The Africa Plug` },
+      description: product.seoDescription || product.summary,
+      alternates: { canonical: `/store/${encodeURIComponent(slug)}` },
+    };
+  }
+  return { title: { absolute: "The Store | The Africa Plug" }, alternates: { canonical: `/store/${encodeURIComponent(slug)}` } };
 }
 
 export async function generateStaticParams() {
@@ -43,7 +51,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span><StoreCartButton /></div>
       <section className="tap-product-detail-layout" aria-labelledby="tap-product-title">
         <div className="tap-product-detail-art">
-          {product.imageUrl ? <img src={product.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">KNOWLEDGE • TOOLS • RESEARCH</span></div>}
+          {product.imageUrl ? <img src={product.imageUrl} alt={`${product.title} product image`} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">KNOWLEDGE • TOOLS • RESEARCH</span></div>}
         </div>
         <div className="tap-product-detail-copy">
           <p className="tap-book-category">{getStoreCategory(product.category).singular}{isGuidePreorder || !available ? " · Coming soon" : ""}</p><h1 id="tap-product-title">{product.title}</h1><p className="tap-product-detail-summary">{product.description}</p>
