@@ -542,3 +542,7 @@ The approved developer notes refine Sections 14 and 15:
 - Supabase tables: `store_orders` and `store_download_links`; the latter uses hashed tokens, a database-side atomic download counter, first-open timestamp and email delivery tracking.
 - Release endpoint: authenticated `POST /api/admin/store-release` with `{"slug":"explore-africa-like-an-insider"}` or `{"slug":"the-unwritten-rules-of-doing-business-in-africa"}`.
 - Do not mark the guides released until their final protected files are uploaded and the email/payment configuration has been tested.
+
+- The Admin Store screen now includes “Release guide & email preorders” after a protected file has been uploaded, plus “Download activity” for first-open timestamps, download counts and expiry.
+- The private Supabase Storage bucket `store-downloads` has been created.
+- Checkout is deliberately blocked until `STRIPE_WEBHOOK_SECRET` is present in Vercel. Configure Stripe to send `checkout.session.completed` and `checkout.session.async_payment_succeeded` to `https://theafricaplug.com/api/store/webhook`, then add the Stripe signing secret to Vercel. Do not accept live preorder payments until this is complete.
