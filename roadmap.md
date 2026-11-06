@@ -647,4 +647,5 @@ EMAIL_FK=fk@
 - [x] Selecting “Partnership” opens `/contact?type=partner`; the Partner page's separate Partnership area dropdown remains unchanged.
 - [x] Added the Work With FK application prompt above the general Contact form, linking to `/work-with-fk/apply`.
 - [x] Kept `fk@` private to server-side routing; it is not displayed in public page or form copy.
+- [x] Removed the private Work With FK inbox address from the public scheduler error state; the public fallback uses `connect@theafricaplug.com`.
 - [ ] Verify each option, successful form submission, persistent admin record and actual email delivery in production. Delivery depends on production Resend configuration.
