@@ -11,8 +11,8 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicSiteSettings();
-  const title = settings.siteTitle || "The Africa Plug | Investment • Business • Entertainment";
-  const description = settings.siteDescription || "The Africa Plug connects commercial ambition with context, relationships and opportunities across African markets.";
+  const title = settings.siteTitle || "The Africa Plug | Africa Commercial Deal Consultant, Market Entry and Investment";
+  const description = settings.siteDescription || "FK, Africa Commercial Deal Consultant, helps companies with market entry, regulatory approvals and commercial deals across Africa. Investment, business and entertainment from The Africa Plug.";
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app"),
     title: { default: title, template: `%s | ${settings.siteTitle || "Africa Plug"}` },
