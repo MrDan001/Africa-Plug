@@ -1,3 +1,14 @@
+## SEO metadata and T.A.P IN data review — 6 November 2026
+
+- [x] Updated the Supabase Admin → Site Settings record with the approved homepage title: `The Africa Plug | Africa Commercial Deal Consultant, Market Entry and Investment`.
+- [x] Updated the homepage site description with the approved FK, market-entry, regulatory-approvals and commercial-deals wording.
+- [x] Added explicit homepage metadata and a canonical homepage URL so the root title is not modified by the shared title template.
+- [x] Added distinct absolute SEO titles, descriptions and canonical paths for Contact, Privacy Policy, Cookie Policy, Terms of Use and Refund Policy.
+- [x] Normalized Store product page titles so the brand is appended once even when a product SEO title already includes it.
+- [x] Added canonical URLs to Store product pages and descriptive alt text to the product-detail image.
+- [ ] Run a production build and inspect rendered title, description, canonical and image alt tags on the live site after Vercel deploy.
+- [ ] **FK confirmation required:** the Excavator Hire record currently stores country `Antigua and Barbuda`, region `North Africa`, while its slug is `excavator-hire-west-africa`. This is an inconsistent record. No location field has been changed pending FK's confirmation of the correct country and region.
+
 # The Africa Plug Website: Full Roadmap
 
 **Footer navigation fix (6 November 2026):** The footer now always includes **Work With FK** (`/work-with-fk`), even when saved CMS navigation settings omit that item. Existing configured footer links and their order are preserved; the missing link is inserted after the first Explore link.
