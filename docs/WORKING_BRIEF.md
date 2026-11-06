@@ -525,3 +525,20 @@ The approved developer notes refine Sections 14 and 15:
 - Selecting Ask The Africa Plug opens `/contact?type=ask`; selecting Partnership opens `/contact?type=partner`. The Partner page's own Partnership area dropdown remains unchanged.
 - Above the general Contact form, show: “Looking to work with FK? Start your application.” Link the application CTA to `/work-with-fk/apply`.
 - Never display the private `fk@` address in public website UI or copy.
+
+
+---
+
+## 23. Store preorder and release workflow — 6 November 2026
+
+- Explore Africa Like an Insider: GBP £39.
+- The Unwritten Rules of Doing Business in Africa: GBP £49.
+- Both products display Coming soon and PREORDER while awaiting release; payment is collected through Stripe at preorder.
+- Checkout must collect the required consent: “I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is.”
+- Paid order rows retain the consent value, wording and timestamp.
+- Once FK uploads the final private guide and releases it, paid preorder customers receive a unique private link. Each link is limited to five downloads and expires 30 days after release. The first successful link open is timestamped for admin tracking.
+- Purchases after release receive a private link on the thank-you page.
+- The Work With FK timeframe choices include “Later than 6 months”.
+- Supabase tables: `store_orders` and `store_download_links`; the latter uses hashed tokens, a database-side atomic download counter, first-open timestamp and email delivery tracking.
+- Release endpoint: authenticated `POST /api/admin/store-release` with `{"slug":"explore-africa-like-an-insider"}` or `{"slug":"the-unwritten-rules-of-doing-business-in-africa"}`.
+- Do not mark the guides released until their final protected files are uploaded and the email/payment configuration has been tested.
