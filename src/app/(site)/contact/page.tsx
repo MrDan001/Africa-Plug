@@ -3,7 +3,11 @@ import ContentPage from "@/components/layout/ContentPage";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
 
-export const metadata: Metadata = { title: { absolute: "Contact | The Africa Plug" }, alternates: { canonical: "/contact" } };
+export const metadata: Metadata = {
+  title: { absolute: "Contact | The Africa Plug" },
+  description: "Contact The Africa Plug about African markets, commercial opportunities, partnerships, research and working with FK.",
+  alternates: { canonical: "/contact" },
+};
 
 type Props = { searchParams: Promise<{ type?: string }> };
 
