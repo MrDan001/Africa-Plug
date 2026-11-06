@@ -46,7 +46,7 @@ export default function SchedulerClient({ token }: { token: string }) {
 
   const card = { maxWidth: 720, margin: "0 auto", padding: "clamp(22px, 4vw, 40px)" } as const;
 
-  if (error && !info) return <section className="standard-card" style={card}><p className="enquiry-status error" role="alert">{error}</p><p style={{ marginTop: 16 }}>Email <a href="mailto:fk@theafricaplug.com">fk@theafricaplug.com</a> if you need a new link.</p></section>;
+  if (error && !info) return <section className="standard-card" style={card}><p className="enquiry-status error" role="alert">{error}</p><p style={{ marginTop: 16 }}>Email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a> if you need a new link.</p></section>;
   if (!info) return <section className="standard-card" style={card}><p>Checking your private link…</p></section>;
 
   return (
