@@ -160,11 +160,23 @@ export default function AdminPage() {
       formData.set("slot", String(slot.slot));
       formData.set("variant", slot.variant);
       formData.set("image", file);
-      const response = await fetch("/api/admin/hero-images", { method: "POST", body: formData });
-      const data = await response.json() as { ok?: boolean; error?: string; slot?: number; variant?: Variant; imageUrl?: string };
+      let response: Response;
+      try {
+        response = await fetch("/api/admin/hero-images", { method: "POST", body: formData });
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : "Network request failed";
+        throw new Error("The upload API could not be reached. Check that this site is running and try again. (" + reason + ")");
+      }
+      const responseText = await response.text();
+      let data: { ok?: boolean; error?: string; slot?: number; variant?: Variant; imageUrl?: string };
+      try {
+        data = JSON.parse(responseText) as typeof data;
+      } catch {
+        const detail = responseText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+        throw new Error("The upload API returned an unreadable response (HTTP " + response.status + "). " + (detail || "Check the server logs."));
+      }
       if (!response.ok || !data.ok || !data.imageUrl) {
-        setNotice({ tone: "error", text: data.error || "Upload failed. Please try again." });
-        return;
+        throw new Error(data.error || ("Image upload failed (HTTP " + response.status + ")."));
       }
       setImages((current) => current.map((url, currentIndex) => currentIndex === index ? data.imageUrl! : url));
       setFiles((current) => current.map((fileValue, currentIndex) => currentIndex === index ? null : fileValue));
@@ -172,8 +184,10 @@ export default function AdminPage() {
       const input = document.getElementById(`hero-image-${slot.slot}-${slot.variant}`) as HTMLInputElement | null;
       if (input) input.value = "";
       setNotice({ tone: "success", text: `Hero ${slot.slot} ${slot.variant} crop uploaded. The homepage will use it automatically.` });
-    } catch {
-      setNotice({ tone: "error", text: "Could not connect to image storage. Please try again." });
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : "Unknown upload error";
+      console.error("Homepage hero image upload failed:", error);
+      setNotice({ tone: "error", text: reason });
     } finally {
       setBusySlot(null);
     }

@@ -20,11 +20,24 @@ The hero manager does not require Supabase Storage. Supabase remains the databas
 
 Redeploy after configuring the variables. Use the service-role key only on the server. Keep it out of Git, browser code, screenshots, and messages.
 
-### 3. Open the admin
+### 4. Open the admin
 
 Visit `https://africa-plug.vercel.app/admin`, enter the admin password, and choose an image for Hero 1, Hero 2, or Hero 3. Supported formats: JPG, PNG, WebP and AVIF; maximum 10 MB per image.
 
-The files are stored at fixed private-write/public-read paths inside the bucket. Replacing a slide image changes only that slide's image; the headline and button destinations remain as they are.
+The files are uploaded to the connected public Vercel Blob store. Replacing a slide image changes only that slide's image; the headline and button destinations remain as they are.
+
+### 3. Local development setup
+
+The production deployment can upload successfully while `localhost` fails if your local process does not have the Blob token. From the linked project root, pull the Development environment variables into the ignored local file:
+
+```bash
+vercel link --project africa-plug
+vercel env pull .env.local --environment=development
+```
+
+Restart `npm run dev` after pulling the variables. Confirm that `BLOB_READ_WRITE_TOKEN` is present in `.env.local` without printing or sharing its value. Do not commit `.env.local`.
+
+If the API is reachable but the token is missing, the upload endpoint returns a configuration error. If the browser cannot reach the API or receives a non-JSON server response, the admin page now displays the HTTP status and diagnostic response instead of hiding it behind a generic storage message.
 
 ## Security notes
 
