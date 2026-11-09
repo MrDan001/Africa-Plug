@@ -5,6 +5,8 @@ import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 export type HeroImageState = {
   images: (string | null)[];
   mobileImages: (string | null)[];
+  githubImages: (string | null)[];
+  githubMobileImages: (string | null)[];
   storage: "not-configured" | "vercel-blob" | "github" | "error";
 };
 
@@ -53,7 +55,7 @@ export async function getHeroImageState(): Promise<HeroImageState> {
   }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return { images: githubDesktop, mobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "not-configured" };
+    return { images: githubDesktop, mobileImages: githubMobile, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "not-configured" };
   }
 
   try {
@@ -77,9 +79,9 @@ export async function getHeroImageState(): Promise<HeroImageState> {
       if (blob && (!desktopBlob || new Date(blob.uploadedAt).getTime() >= new Date(desktopBlob.uploadedAt).getTime())) return versionedUrl(blob);
       return githubMobile[index] ?? (desktopBlob ? null : githubDesktop[index]);
     });
-    return { images, mobileImages, storage: "vercel-blob" };
+    return { images, mobileImages, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: "vercel-blob" };
   } catch (error) {
     console.error("Could not list homepage hero images:", error instanceof Error ? error.message : "Unknown error");
-    return { images: githubDesktop, mobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "error" };
+    return { images: githubDesktop, mobileImages: githubMobile, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "error" };
   }
 }
