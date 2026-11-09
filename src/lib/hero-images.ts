@@ -22,12 +22,12 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     const { blobs } = await list({ prefix: "homepage/hero-slide-" });
     const latestFor = (slot: number, variant: "desktop" | "mobile"): HeroBlob | null => {
       const extensions = "(jpg|png|webp|avif)";
-      const variantPattern = new RegExp(`^homepage/hero-slide-${slot}-${variant}(?:-[^/]*)?\\\\.${extensions}$`, "i");
+      const variantPattern = new RegExp(`^homepage/hero-slide-${slot}-${variant}(?:-[^/]*)?\\.${extensions}$`, "i");
       let candidates = blobs.filter((blob) => variantPattern.test(blob.pathname));
       // Older uploads used the slide number without a desktop/mobile suffix. Treat them as desktop only.
       if (variant === "desktop" && !candidates.length) {
-        const legacyPattern = new RegExp(`^homepage/hero-slide-${slot}(?:-[^/]*)?\\\\.${extensions}$`, "i");
-        candidates = blobs.filter((blob) => legacyPattern.test(blob.pathname) && !new RegExp(`^homepage/hero-slide-${slot}-mobile(?:-|\\\\.)`, "i").test(blob.pathname));
+        const legacyPattern = new RegExp(`^homepage/hero-slide-${slot}(?:-[^/]*)?\\.${extensions}$`, "i");
+        candidates = blobs.filter((blob) => legacyPattern.test(blob.pathname) && !new RegExp(`^homepage/hero-slide-${slot}-mobile(?:-|\\.)`, "i").test(blob.pathname));
       }
       return candidates.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime())[0] ?? null;
     };
