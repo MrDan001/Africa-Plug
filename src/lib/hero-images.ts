@@ -15,7 +15,7 @@ type HeroBlob = { url: string; pathname: string; uploadedAt: string | Date };
 const listHomepageHeroBlobs = unstable_cache(
   async (): Promise<HeroBlob[]> => {
     if (!process.env.BLOB_READ_WRITE_TOKEN) return [];
-    const blobs = await listHomepageHeroBlobs();
+    const { blobs } = await list({ prefix: "homepage/hero-slide-" });
     return blobs.map((blob) => ({ url: blob.url, pathname: blob.pathname, uploadedAt: blob.uploadedAt }));
   },
   ["africa-plug-homepage-hero-blob-list-v1"],
