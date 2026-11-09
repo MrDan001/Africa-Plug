@@ -172,7 +172,7 @@ export default function AdminPage() {
       try {
         data = JSON.parse(responseText) as typeof data;
       } catch {
-        const detail = responseText.replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim().slice(0, 180);
+        const detail = responseText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
         throw new Error("The upload API returned an unreadable response (HTTP " + response.status + "). " + (detail || "Check the server logs."));
       }
       if (!response.ok || !data.ok || !data.imageUrl) {
