@@ -88,7 +88,7 @@ export default function AdminPage() {
       if (!response.ok) throw new Error(result.error || "Could not save the GitHub image path.");
       await loadVideo();
       await refreshImages();
-      setNotice({ tone: "success", text: value ? "GitHub hero path saved. It is used whenever no newer Blob image exists." : "GitHub hero fallback cleared." });
+      setNotice({ tone: "success", text: value ? "GitHub hero path saved. It now takes priority for this slide; clear it to return to Blob." : "GitHub hero path cleared. The slide now uses Blob or its committed default." });
     } catch (error) {
       setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not save the GitHub image path." });
     } finally {
