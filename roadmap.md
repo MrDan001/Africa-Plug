@@ -728,3 +728,11 @@ EMAIL_FK=fk@
 - [ ] Test uploads below and above 4.5 MB from the live admin; confirm the uploaded image appears on the homepage and refreshes without stale cache.
 
 **Vercel environment audit:** The active public Blob store is `africa-plug-hero-media` (available, quota not exceeded, token not expired). Its `BLOB_READ_WRITE_TOKEN` is now marked Sensitive for all three Vercel environments. The project also has a separate public store `tap-hero-public-2026` with its own `BLOB_STORE_ID` and webhook key; the hero upload route does not read `BLOB_STORE_ID`, so that integration-managed variable was not overwritten. Production runtime logs are not retained for the requested time window on the current Hobby observability tier; the new route now emits a precise diagnostic if the next upload fails.
+
+
+## About and Store SEO title correction — 9 November 2026
+
+- [x] Set the About page title to the exact approved text: `About The Africa Plug | Your Connection to Africa | The Africa Plug`.
+- [x] Set the Store page title to the exact approved text: `The Africa Plug Store | Africa Travel and Business Guides | The Africa Plug`.
+- [x] Used Next.js `title.absolute` metadata for both routes so the root layout's shared title template does not append the long homepage title a second time.
+- [ ] Verify the rendered `<title>` values on the live About and Store pages after production deployment.
