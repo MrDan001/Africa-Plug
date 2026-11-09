@@ -479,7 +479,7 @@ This mechanism lets the team build features now and launch them later.
 
 ### A. A real CMS needs a content/data backend
 
-The repo does not yet have the full CMS specified above. The current `/admin` route now has a password-protected hero-image manager with upload API and Supabase Storage integration. It can replace the three carousel images after the one-time environment and bucket setup. The wider content management system, opportunity/article/product editors, application review workflows, payments dashboard and other CMS areas are still not implemented.
+The repo does not yet have the full CMS specified above. The current `/admin` route has a password-protected hero-image manager with an upload API backed by a connected public Vercel Blob store. It replaces the three homepage carousel images; it does not use Supabase Storage. Production and local development each need the `BLOB_READ_WRITE_TOKEN` environment variable. The wider content management system, opportunity/article/product editors, application review workflows, payments dashboard and other CMS areas are still not implemented.
 
 A persistent content/data system is needed for:
 
