@@ -484,22 +484,6 @@
   background: #292a2c;
 }
 @media (max-width: 760px) {
-  .homepage-store-banner { padding: 18px 12px 32px; }
-  .homepage-store-banner-inner {
-    min-height: 230px;
-    grid-template-columns: minmax(110px, .75fr) minmax(0, 1.25fr);
-    gap: 4px;
-    padding: 18px 14px;
-  }
-  .homepage-store-banner-copy h2 { margin-bottom: 12px; font-size: clamp(22px, 6vw, 32px); }
-  .homepage-store-banner-copy .button { min-height: 34px; padding: 0 10px; font-size: 8px; }
-  .homepage-store-banner-art { min-height: 190px; }
-  .homepage-store-banner-phone { border-width: 3px; border-radius: 10px; padding: 6px; }
-  .homepage-store-banner-tablet { border-width: 4px; border-radius: 6px; padding: 8px; }
-  .homepage-store-banner-phone span,
-  .homepage-store-banner-tablet span { font-size: 8px; }
-  .homepage-store-banner-phone small,
-  .homepage-store-banner-tablet small { font-size: 6px; }
   .homepage-tapin-section { padding: 36px 18px; }
   .homepage-opportunity-row {
     grid-template-columns: 78px minmax(0, 1fr) 18px;
@@ -520,9 +504,6 @@
   .featured-blog-section-home .featured-blog-card-copy { padding: 20px; }
 }
 @media (max-width: 420px) {
-  .homepage-store-banner-inner { grid-template-columns: 1fr; min-height: 0; }
-  .homepage-store-banner-copy { z-index: 4; }
-  .homepage-store-banner-art { min-height: 190px; }
   .homepage-opportunity-row { grid-template-columns: 70px minmax(0, 1fr) 16px; gap: 9px; }
   .homepage-opportunity-row > img,
   .homepage-opportunity-placeholder { width: 70px; height: 54px; }
