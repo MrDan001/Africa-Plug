@@ -92,7 +92,7 @@ export default function WorkWithFkPage() {
       {/* 2. When to bring FK in */}
       <section className="wfk-when" aria-labelledby="wfk-when-h2">
         <div className="wfk-wrap">
-          <p className="wfk-label">WHEN TO BRING FK IN</p>
+          <p className="wfk-label">AT ANY STAGE OF THE DEAL</p>
           <h2 id="wfk-when-h2">WHEN TO BRING FK IN</h2>
           <div className="wfk-when-grid">
             {WHEN.map((item) => (

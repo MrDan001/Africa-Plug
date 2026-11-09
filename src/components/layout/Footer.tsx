@@ -72,7 +72,7 @@ export default async function Footer() {
   return <footer className="site-footer">
     <div className="footer-accent" aria-hidden="true"/>
     <div className="tap-footer-grid">
-      <div className="tap-footer-brand"><FooterBrand/><p className="tap-footer-tagline">Your connection to Africa.</p><a className="tap-footer-email" href={`mailto:${contactEmail}`}>{contactEmail}</a></div>
+      <div className="tap-footer-brand"><FooterBrand/><p className="tap-footer-tagline">Your connection to Africa.</p></div>
       <nav className="tap-footer-column" aria-label="Explore links"><h2>EXPLORE</h2>{exploreLinks.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}</nav>
       <div className="tap-footer-contact"><p className="tap-footer-kicker">THE AFRICA PLUG</p><p className="tap-footer-description"></p><p className="tap-footer-contact-note">For general, business and partnership enquiries, write to <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.</p>{socialLinks.length ? <nav className="tap-footer-socials" aria-label="Social links">{socialLinks.map((item) => <a key={item.label} className={`tap-footer-social ${item.className}`} href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label} title={item.label}>{item.icon}<span>{item.label}</span></a>)}</nav> : null}</div>
     </div>
