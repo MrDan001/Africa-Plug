@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [images, setImages] = useState<(string | null)[]>(blankImages());
+  const [githubPaths, setGithubPaths] = useState<(string | null)[]>(blankImages());
   const [files, setFiles] = useState<(File | null)[]>(blankFiles());
   const [previews, setPreviews] = useState<(string | null)[]>(blankImages());
   const [busySlot, setBusySlot] = useState<number | null>(null);
@@ -40,12 +41,58 @@ export default function AdminPage() {
   async function refreshImages() {
     try {
       const response = await fetch("/api/hero-images", { cache: "no-store" });
-      const data = await response.json() as { images?: (string | null)[]; mobileImages?: (string | null)[] };
+      const data = await response.json() as { images?: (string | null)[]; mobileImages?: (string | null)[]; githubImages?: (string | null)[]; githubMobileImages?: (string | null)[] };
       const desktop = Array.isArray(data.images) ? data.images : [null, null, null];
       const mobile = Array.isArray(data.mobileImages) ? data.mobileImages : [null, null, null];
       setImages(SLOTS.map(({ slot, variant }) => variant === "desktop" ? desktop[slot - 1] ?? null : mobile[slot - 1] ?? null));
+      const githubDesktop = Array.isArray(data.githubImages) ? data.githubImages : [null, null, null];
+      const githubMobile = Array.isArray(data.githubMobileImages) ? data.githubMobileImages : [null, null, null];
+      setGithubPaths(SLOTS.map(({ slot, variant }) => variant === "desktop" ? githubDesktop[slot - 1] ?? null : githubMobile[slot - 1] ?? null));
     } catch {
       setNotice({ tone: "error", text: "Could not load the current hero images. Check your connection and refresh." });
+    }
+  }
+
+  async function saveGithubHeroPath(index: number) {
+    if (!settingsRecord) {
+      setNotice({ tone: "error", text: "Site settings are still loading. Refresh the page and try again." });
+      return;
+    }
+    const slot = SLOTS[index];
+    const value = (githubPaths[index] ?? "").trim();
+    if (value && (!/^\/(?:Image|images)\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) || value.includes("..") || value.includes("//"))) {
+      setNotice({ tone: "error", text: "Use a valid repository path such as /Image/Hero/Home/slide-1.jpg." });
+      return;
+    }
+    const existing = (settingsRecord.data?.heroImagePaths ?? {}) as { desktop?: string[]; mobile?: string[] };
+    const heroImagePaths = {
+      desktop: [...(existing.desktop ?? [ "", "", "" ])],
+      mobile: [...(existing.mobile ?? [ "", "", "" ])],
+    };
+    heroImagePaths[slot.variant][slot.slot - 1] = value;
+    setVideoBusy(true);
+    setNotice(null);
+    try {
+      const record = {
+        title: settingsRecord.title || "Site settings",
+        slug: "site-settings",
+        status: settingsRecord.status || "active",
+        data: { ...(settingsRecord.data ?? {}), heroImagePaths },
+      };
+      const response = await fetch("/api/admin/cms/site-settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: settingsRecord.id, record }),
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error || "Could not save the GitHub image path.");
+      await loadVideo();
+      await refreshImages();
+      setNotice({ tone: "success", text: value ? "GitHub hero path saved. It is used whenever no newer Blob image exists." : "GitHub hero fallback cleared." });
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not save the GitHub image path." });
+    } finally {
+      setVideoBusy(false);
     }
   }
 
@@ -259,6 +306,16 @@ export default function AdminPage() {
                     <span className="tap-admin-preview-badge">{previews[index] ? "Selected preview" : images[index] ? "Custom image active" : "Default image"}</span>
                   </div>
                   <p className="tap-admin-card-note">{note}</p>
+                  <label className="tap-admin-file-label" htmlFor={`hero-github-path-${slot}-${variant}`}>GitHub image path (fallback)</label>
+                  <input
+                    id={`hero-github-path-${slot}-${variant}`}
+                    type="text"
+                    value={githubPaths[index] ?? ""}
+                    placeholder="/Image/Hero/Home/slide-1.jpg"
+                    onChange={(event) => setGithubPaths((current) => current.map((value, currentIndex) => currentIndex === index ? event.target.value : value))}
+                    style={{ width: "100%", padding: 10, marginBottom: 10 }}
+                  />
+                  <button className="tap-admin-secondary" type="button" disabled={videoBusy} onClick={() => void saveGithubHeroPath(index)}>Save GitHub path</button>
                   <label className="tap-admin-file-label" htmlFor={`hero-image-${slot}-${variant}`}>Choose {variant} image</label>
                   <input className="tap-admin-file-input" id={`hero-image-${slot}-${variant}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => chooseFile(index, event.target.files?.[0] ?? null)} />
                   {files[index] ? <p className="tap-admin-filename">{files[index]!.name}</p> : <p className="tap-admin-filename">No new image selected</p>}
