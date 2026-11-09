@@ -37,7 +37,7 @@ const SLIDES: Slide[] = [
     highlight: "OPPORTUNITY",
     support: "Active business and investment opportunities you can take part in.",
     activeButton: 1,
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=88",
+    image: "/images/tap-in/tap-in-hero.jpg",
     location: "Across Africa",
   },
   {
@@ -46,7 +46,7 @@ const SLIDES: Slide[] = [
     highlight: "QUESTION",
     support: "Trying to understand a market, place, issue or opportunity in Africa?",
     activeButton: 2,
-    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2400&q=88",
+    image: "/images/fk.jpg",
     location: "On the ground in Africa",
   },
 ];
