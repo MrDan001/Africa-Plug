@@ -510,7 +510,7 @@
 }
 
 
-/* Homepage Store banner — keep the supplied composite artwork intact as one seamless link. */
+/* Homepage Store banner — the artwork stays static; only its visible CTA is linked. */
 .homepage-store-banner {
   width: 100%;
   padding: clamp(22px, 3.2vw, 42px) clamp(12px, 4vw, 58px);
@@ -518,6 +518,7 @@
 }
 
 .homepage-store-banner-inner {
+  position: relative;
   display: block;
   width: min(100%, 960px);
   min-height: 0;
@@ -525,18 +526,6 @@
   padding: 0;
   overflow: visible;
   background: transparent;
-}
-
-.homepage-store-banner-link {
-  display: block;
-  width: 100%;
-  line-height: 0;
-  text-decoration: none;
-}
-
-.homepage-store-banner-link:focus-visible {
-  outline: 3px solid var(--signal);
-  outline-offset: 4px;
 }
 
 .homepage-store-banner-image {
@@ -553,6 +542,37 @@
   box-shadow: none;
   object-fit: contain;
   object-position: center;
+}
+
+/* Transparent hit-area sits over the pink "GO TO OUR STORE" button in the artwork. */
+.homepage-store-banner-cta-link {
+  position: absolute;
+  z-index: 2;
+  left: 5.3%;
+  top: 53.5%;
+  width: 23%;
+  height: 12%;
+  display: block;
+  border-radius: 8px;
+  background: transparent;
+  text-decoration: none;
+}
+
+.homepage-store-banner-cta-link:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.homepage-store-banner-cta-link .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 760px) {
