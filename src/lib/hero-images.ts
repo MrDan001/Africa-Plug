@@ -1,4 +1,5 @@
 import { list } from "@vercel/blob";
+import { unstable_cache } from "next/cache";
 
 export type HeroImageState = {
   images: (string | null)[];
@@ -7,6 +8,18 @@ export type HeroImageState = {
 };
 
 type HeroBlob = { url: string; pathname: string; uploadedAt: string | Date };
+
+// Blob list() is an advanced operation. Cache the result across requests so normal
+// homepage visits do not consume one advanced operation each.
+const listHomepageHeroBlobs = unstable_cache(
+  async (): Promise<HeroBlob[]> => {
+    if (!process.env.BLOB_READ_WRITE_TOKEN) return [];
+    const blobs = await listHomepageHeroBlobs();
+    return blobs.map((blob) => ({ url: blob.url, pathname: blob.pathname, uploadedAt: blob.uploadedAt }));
+  },
+  ["africa-plug-homepage-hero-blob-list-v1"],
+  { revalidate: 600 },
+);
 
 function versionedUrl(blob: HeroBlob) {
   const version = new Date(blob.uploadedAt).getTime();
