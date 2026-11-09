@@ -702,3 +702,15 @@ EMAIL_FK=fk@
 - [x] Use the clean `/tap-in/excavator-hire` link instead of including `-west-africa` in the slug.
 - [x] Restrict the Admin → T.A.P IN country selector to the shared `AFRICAN_COUNTRIES` list; preserve the optional African Region selector.
 - [ ] Verify the clean link, listing location display, and admin country selector after the production deployment.
+
+
+## Homepage Store reference styling and carousel upload diagnostics — 9 November 2026
+
+- [x] Matched the homepage Store section surrounding band to the warm ivory reference treatment while preserving the 912:383 artwork ratio, centered 1,240px maximum width, crisp HTML heading, pink Store CTA and responsive scaling.
+- [x] Replaced the carousel upload form generic network/storage catch message with explicit diagnostics for unreachable API requests, non-JSON API responses, HTTP status codes and server-returned upload errors.
+- [x] Updated the hero-image setup guide to explain that carousel uploads use Vercel Blob (not Supabase Storage) and document how to pull the Development environment into local `.env.local` for localhost uploads.
+- [x] Corrected the CMS requirements note so it no longer incorrectly describes the carousel image manager as using Supabase Storage.
+- [ ] Verify the Store section against the supplied reference on desktop and mobile after deployment.
+- [ ] Test carousel image uploads from both localhost and the production admin using the configured public Blob store; confirm the exact response and that the new image appears on the homepage.
+
+**Storage audit:** The Vercel `africa-plug` project has a public Blob store named `africa-plug-hero-media`, with an active `BLOB_READ_WRITE_TOKEN` attached for Production, Preview and Development. The token is not absent in Vercel project configuration. The user screenshot/context includes localhost, where Vercel environment variables are not automatically loaded into the local Next.js process; run `vercel env pull .env.local --environment=development` and restart the dev server. Recent production runtime logs did not contain a matching upload error, so the exact request failure still needs a fresh retry with the improved diagnostic message.
