@@ -1,3 +1,12 @@
+## Homepage hero upload visibility fix — 9 November 2026
+
+- [x] Make the most recently published desktop hero image appear on both desktop and mobile when it is newer than the saved mobile crop.
+- [x] Preserve a dedicated mobile crop when it was uploaded after the desktop image; a newer mobile crop continues to take precedence on phones.
+- [x] Keep the existing Vercel Blob upload paths, signed client upload flow, cache-busting URLs and slide copy unchanged.
+- [ ] Verify Slide 2 after production deployment: publish a desktop image, confirm it appears on the public homepage on desktop and mobile, then publish a newer mobile crop and confirm the mobile crop takes precedence.
+
+**Root cause addressed:** the homepage always preferred any saved mobile crop, regardless of age. Replacing a slide's desktop image therefore left an older mobile image active on phones, making the Admin upload appear not to update the public homepage. The API now compares upload timestamps and only serves the mobile crop when it is at least as recent as the desktop image.
+
 ## T.A.P IN region removal — 6 November 2026
 
 - [x] Removed the region value from every existing opportunity record in Supabase; country values were preserved.
