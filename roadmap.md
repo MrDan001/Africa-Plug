@@ -747,3 +747,15 @@ EMAIL_FK=fk@
 - [ ] Verify the live homepage on desktop and mobile after the production deployment; compare against the user's supplied reference image.
 
 **Implementation correction:** The previous JSX placed a 43–45% opaque gradient backplate and a second HTML heading/CTA over the image. This hid/altered content embedded in the artwork. The section now displays only the original banner file, scaled proportionally inside a centred max-width wrapper.
+
+
+## Homepage Store section layout correction — 9 November 2026
+
+- [x] Restored the original two-part composition: "THE STORE" heading and pink "GO TO OUR STORE" button on the left; supplied Store artwork on the right.
+- [x] Kept the text and CTA as live HTML elements so they remain clear, accessible and clickable.
+- [x] Reduced the artwork display size (700px desktop maximum) and used its natural 912:383 aspect ratio with `height: auto` and `object-fit: contain`.
+- [x] The full image remains visible: no cropping, stretching, background-cover treatment, overlays or edits to the image file.
+- [x] Centre the content in the warm cream section; stack copy above artwork on narrow mobile screens while preserving the image ratio.
+- [ ] Verify the production homepage after deployment on desktop and mobile.
+
+**Design clarification:** The intended layout is not an image-only banner. It is the original left-side heading/button plus the smaller complete artwork on the right. This revision preserves both.
