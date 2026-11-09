@@ -3,7 +3,7 @@ import ContentPage from "@/components/layout/ContentPage";
 import { PartnershipTrigger } from "@/components/forms/PartnershipDialog";
 
 export const metadata: Metadata = {
-  title: "About The Africa Plug | Your Connection to Africa",
+  title: { absolute: "About The Africa Plug | Your Connection to Africa | The Africa Plug" },
   description: "The Africa Plug brings Africa and the world together through investment, business and entertainment. Founded by FK, Africa Commercial Deal Consultant.",
 };
 
