@@ -32,6 +32,11 @@ function versionedUrl(blob: HeroBlob) {
 export async function getHeroImageState(): Promise<HeroImageState> {
   // Repository paths are the zero-operation fallback. Blob remains the preferred
   // source when it is available and has a published crop for a slot.
+  const fallbackDesktop: (string | null)[] = [
+    "/Image/Hero/Work-with-FK/work-with-fk-hero.jpg",
+    "/Image/Hero/Tap-in/tap-in-hero.jpg",
+    "/Image/Hero/Home/fk.jpg",
+  ];
   let githubDesktop: (string | null)[] = [null, null, null];
   let githubMobile: (string | null)[] = [null, null, null];
   try {
@@ -55,7 +60,13 @@ export async function getHeroImageState(): Promise<HeroImageState> {
   }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return { images: githubDesktop, mobileImages: githubMobile, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "not-configured" };
+    return {
+      images: githubDesktop.map((path, index) => path ?? fallbackDesktop[index]),
+      mobileImages: githubMobile.map((path, index) => path ?? githubDesktop[index] ?? fallbackDesktop[index]),
+      githubImages: githubDesktop,
+      githubMobileImages: githubMobile,
+      storage: "github",
+    };
   }
 
   try {
@@ -73,15 +84,24 @@ export async function getHeroImageState(): Promise<HeroImageState> {
 
     const desktop = [1, 2, 3].map((slot) => latestFor(slot, "desktop"));
     const mobile = [1, 2, 3].map((slot) => latestFor(slot, "mobile"));
-    const images = desktop.map((blob, index) => blob ? versionedUrl(blob) : githubDesktop[index]);
+    // An explicitly saved GitHub path takes priority for that slot. Otherwise
+    // retain Blob as the primary source and use the committed image as fallback.
+    const images = desktop.map((blob, index) => githubDesktop[index] ?? (blob ? versionedUrl(blob) : fallbackDesktop[index]));
     const mobileImages = mobile.map((blob, index) => {
       const desktopBlob = desktop[index];
+      if (githubMobile[index]) return githubMobile[index];
       if (blob && (!desktopBlob || new Date(blob.uploadedAt).getTime() >= new Date(desktopBlob.uploadedAt).getTime())) return versionedUrl(blob);
-      return githubMobile[index] ?? (desktopBlob ? null : githubDesktop[index]);
+      return githubDesktop[index] ?? (desktopBlob ? versionedUrl(desktopBlob) : fallbackDesktop[index]);
     });
     return { images, mobileImages, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: "vercel-blob" };
   } catch (error) {
     console.error("Could not list homepage hero images:", error instanceof Error ? error.message : "Unknown error");
-    return { images: githubDesktop, mobileImages: githubMobile, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "error" };
+    return {
+      images: githubDesktop.map((path, index) => path ?? fallbackDesktop[index]),
+      mobileImages: githubMobile.map((path, index) => path ?? githubDesktop[index] ?? fallbackDesktop[index]),
+      githubImages: githubDesktop,
+      githubMobileImages: githubMobile,
+      storage: "github",
+    };
   }
 }
