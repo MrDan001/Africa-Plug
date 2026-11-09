@@ -1,48 +1,43 @@
-# Africa Plug — Hero Image Admin Setup
+# Homepage hero image manager setup
 
-The `/admin` page lets the site owner sign in and replace the three homepage carousel images without editing code.
+The homepage hero manager is available at `/admin/homepage`. It replaces three desktop and three mobile hero images without editing source code.
 
-## One-time configuration
+## Vercel Blob configuration
 
-### 1. Confirm the Vercel Blob store
+The production project uses the public Vercel Blob store `africa-plug-hero-media`.
 
-The deployed hero image manager uses the connected **public Vercel Blob store** named `africa-plug-hero-media`. The project must have a valid `BLOB_READ_WRITE_TOKEN` scoped to that public store. Do not use a private Blob token for public hero assets.
+Required environment variable:
 
-### 2. Add server-only environment variables
+- `BLOB_READ_WRITE_TOKEN` — a Vercel Blob read/write token, stored as a **Sensitive** server-only environment variable for Production, Preview and Development.
 
-Add these to Vercel Project Settings → Environment Variables for Production (and Preview if needed):
+Do not expose this token in a `NEXT_PUBLIC_*` variable or client bundle. The admin page uses Vercel Blob's signed client-upload flow: the browser requests a short-lived upload token from `POST /api/admin/hero-images`, the server checks the signed-in admin session and constrains the path, MIME types and 10 MB size limit, then the browser sends the image bytes directly to Blob.
 
-- `ADMIN_PASSWORD`: a strong, unique password for the single admin.
-- `ADMIN_SESSION_SECRET`: a long random secret (at least 32 random characters) used to sign the admin session.
-- `BLOB_READ_WRITE_TOKEN`: provided by the connected public Blob store. Do not expose it in client code.
+This direct-upload flow is intentional. Vercel-hosted server-side uploads are limited by the Functions request-body ceiling (4.5 MB); sending the image through a normal multipart POST to a Route Handler can fail before application code runs. The direct client-upload flow avoids that limit while keeping the read/write token on the server.
 
-The hero manager does not require Supabase Storage. Supabase remains the database behind T.A.P IN and the CMS.
+## Upload rules
 
-Redeploy after configuring the variables. Use the service-role key only on the server. Keep it out of Git, browser code, screenshots, and messages.
+- Accepted formats: JPG, PNG, WebP and AVIF.
+- Maximum size: 10 MB per image.
+- Six separate crops: three slides, each with desktop and mobile variants.
+- Each upload receives a random suffix so a new image does not collide with a cached previous version.
+- The homepage reads the latest image for each slide/variant from the connected Blob store.
+- Only an authenticated admin can request an upload token. Blob validates the signed completion callback.
 
-### 4. Open the admin
+## Environment variable warning
 
-Visit `https://africa-plug.vercel.app/admin`, enter the admin password, and choose an image for Hero 1, Hero 2, or Hero 3. Supported formats: JPG, PNG, WebP and AVIF; maximum 10 MB per image.
+In Vercel → Project → Settings → Environment Variables, confirm `BLOB_READ_WRITE_TOKEN` is marked **Sensitive** and is scoped to Production, Preview and Development. If its value is changed or the variable is newly connected, create a fresh deployment so running functions receive the updated value.
 
-The files are uploaded to the connected public Vercel Blob store. Replacing a slide image changes only that slide's image; the headline and button destinations remain as they are.
+The active Blob store must remain **Public** because homepage carousel photos are public assets. Do not change it to Private.
 
-### 3. Local development setup
+## Troubleshooting
 
-The production deployment can upload successfully while `localhost` fails if your local process does not have the Blob token. From the linked project root, pull the Development environment variables into the ignored local file:
+If the admin reports that the token is missing, reconnect the public Blob store to the `africa-plug` project and redeploy. If the admin reports an expired session, sign in again. If the upload handshake returns an HTTP error, the admin notice now shows the actual response rather than masking it with a generic storage message.
+
+For local development, link the correct Vercel project and pull Development variables into the ignored local file:
 
 ```bash
-vercel link --project africa-plug
-vercel env pull .env.local --environment=development
+vercel link --yes --project africa-plug
+vercel env pull .env.local --environment=development --yes
 ```
 
-Restart `npm run dev` after pulling the variables. Confirm that `BLOB_READ_WRITE_TOKEN` is present in `.env.local` without printing or sharing its value. Do not commit `.env.local`.
-
-If the API is reachable but the token is missing, the upload endpoint returns a configuration error. If the browser cannot reach the API or receives a non-JSON server response, the admin page now displays the HTTP status and diagnostic response instead of hiding it behind a generic storage message.
-
-## Security notes
-
-- Uploads require the HttpOnly admin session cookie.
-- The storage service-role key stays on the server.
-- SVG uploads are rejected.
-- The bucket is public-read so visitors can see hero images, but no anonymous upload permission should be enabled.
-- The admin page changes imagery only; editing slide text and destinations is intentionally out of scope for this page.
+Restart the development server after pulling variables. Never commit `.env.local`.

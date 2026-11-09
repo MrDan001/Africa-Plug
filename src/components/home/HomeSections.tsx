@@ -69,11 +69,12 @@ export default async function HomeSections() {
     <section className="homepage-store-banner" id="store" aria-label="The Africa Plug Store">
       <div className="homepage-store-banner-frame">
         <Image
-          src="/images/homepage-store-banner.jpg"
+          src="/images/homepage-store-banner.jpg?v=20261109-store-reference"
           alt="The Explore Africa Like an Insider guide displayed beside phone and tablet previews."
           width={912}
           height={383}
           priority
+          unoptimized
           sizes="(max-width: 760px) 100vw, (max-width: 1300px) 92vw, 1240px"
           className="homepage-store-banner-image"
         />

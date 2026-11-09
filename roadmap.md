@@ -714,3 +714,17 @@ EMAIL_FK=fk@
 - [ ] Test carousel image uploads from both localhost and the production admin using the configured public Blob store; confirm the exact response and that the new image appears on the homepage.
 
 **Storage audit:** The Vercel `africa-plug` project has a public Blob store named `africa-plug-hero-media`, with an active `BLOB_READ_WRITE_TOKEN` attached for Production, Preview and Development. The token is not absent in Vercel project configuration. The user screenshot/context includes localhost, where Vercel environment variables are not automatically loaded into the local Next.js process; run `vercel env pull .env.local --environment=development` and restart the dev server. Recent production runtime logs did not contain a matching upload error, so the exact request failure still needs a fresh retry with the improved diagnostic message.
+
+
+## Store hero reference and direct Blob uploads — 9 November 2026
+
+- [x] Refined the homepage Store band to the supplied original reference: warm cream canvas, centred horizontal artwork, complete composition visible without cropping, crisp HTML heading and separate TAP-pink Store CTA.
+- [x] Bypassed Next/Image optimization for the Store hero and added an asset version query so stale optimized/cached variants cannot keep the previous artwork rendering.
+- [x] Replaced the admin carousel's server-side multipart upload with Vercel Blob signed client uploads. The previous server route accepted files up to 10 MB but Vercel Functions server-side requests are capped at 4.5 MB, so larger image requests could be rejected before the route could report a useful error.
+- [x] The new upload handshake checks the admin session before issuing a client token, restricts uploads to the six allowed hero paths, accepts only JPG/PNG/WebP/AVIF, enforces a 10 MB maximum and keeps the Blob read/write token server-side.
+- [x] Updated the hero setup guide with the direct-upload architecture and required Vercel environment configuration.
+- [x] Changed the Vercel `BLOB_READ_WRITE_TOKEN` variable type to Sensitive and retained Production, Preview and Development targets. Its prior Vercel metadata flagged it as a readable secret.
+- [ ] Run a fresh production build and verify the live Store hero at desktop/mobile sizes; the supplied screenshot is the visual acceptance reference.
+- [ ] Test uploads below and above 4.5 MB from the live admin; confirm the uploaded image appears on the homepage and refreshes without stale cache.
+
+**Vercel environment audit:** The active public Blob store is `africa-plug-hero-media` (available, quota not exceeded, token not expired). Its `BLOB_READ_WRITE_TOKEN` is now marked Sensitive for all three Vercel environments. The project also has a separate public store `tap-hero-public-2026` with its own `BLOB_STORE_ID` and webhook key; the hero upload route does not read `BLOB_STORE_ID`, so that integration-managed variable was not overwritten. Production runtime logs are not retained for the requested time window on the current Hobby observability tier; the new route now emits a precise diagnostic if the next upload fails.

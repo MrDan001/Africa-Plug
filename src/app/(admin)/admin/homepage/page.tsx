@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { upload as uploadToBlob } from "@vercel/blob/client";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { useEffect, useState, type FormEvent } from "react";
 import { parseYouTubeId } from "@/lib/youtube";
@@ -156,29 +157,27 @@ export default function AdminPage() {
     setBusySlot(index);
     setNotice(null);
     try {
-      const formData = new FormData();
-      formData.set("slot", String(slot.slot));
-      formData.set("variant", slot.variant);
-      formData.set("image", file);
-      let response: Response;
-      try {
-        response = await fetch("/api/admin/hero-images", { method: "POST", body: formData });
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : "Network request failed";
-        throw new Error("The upload API could not be reached. Check that this site is running and try again. (" + reason + ")");
-      }
-      const responseText = await response.text();
-      let data: { ok?: boolean; error?: string; slot?: number; variant?: Variant; imageUrl?: string };
-      try {
-        data = JSON.parse(responseText) as typeof data;
-      } catch {
-        const detail = responseText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
-        throw new Error("The upload API returned an unreadable response (HTTP " + response.status + "). " + (detail || "Check the server logs."));
-      }
-      if (!response.ok || !data.ok || !data.imageUrl) {
-        throw new Error(data.error || ("Image upload failed (HTTP " + response.status + ")."));
-      }
-      setImages((current) => current.map((url, currentIndex) => currentIndex === index ? data.imageUrl! : url));
+      const extensionByType: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+        "image/avif": "avif",
+      };
+      const extension = extensionByType[file.type];
+      if (!extension) throw new Error("Use a JPG, PNG, WebP or AVIF image.");
+      if (file.size <= 0 || file.size > 10 * 1024 * 1024) throw new Error("The image must be smaller than 10 MB.");
+
+      const blob = await uploadToBlob(
+        `homepage/hero-slide-${slot.slot}-${slot.variant}.${extension}`,
+        file,
+        {
+          access: "public",
+          handleUploadUrl: "/api/admin/hero-images",
+          clientPayload: JSON.stringify({ slot: slot.slot, variant: slot.variant }),
+          multipart: file.size > 4 * 1024 * 1024,
+        },
+      );
+      setImages((current) => current.map((url, currentIndex) => currentIndex === index ? blob.url : url));
       setFiles((current) => current.map((fileValue, currentIndex) => currentIndex === index ? null : fileValue));
       setPreviews((current) => current.map((preview, currentIndex) => currentIndex === index ? null : preview));
       const input = document.getElementById(`hero-image-${slot.slot}-${slot.variant}`) as HTMLInputElement | null;
