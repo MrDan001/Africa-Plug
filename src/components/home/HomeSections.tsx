@@ -68,20 +68,21 @@ export default async function HomeSections() {
 
     <section className="homepage-store-banner" id="store" aria-label="The Africa Plug Store">
       <div className="homepage-store-banner-inner">
+        <Image
+          src="/images/homepage-store-banner.jpg?v=20261109-button-only-link"
+          alt="The Store promotional banner featuring the Explore Africa guide, phone and tablet previews."
+          width={912}
+          height={383}
+          unoptimized
+          sizes="(max-width: 996px) calc(100vw - 24px), 960px"
+          className="homepage-store-banner-image"
+        />
         <Link
           href="/store"
-          className="homepage-store-banner-link"
-          aria-label="Go to The Africa Plug Store"
+          className="homepage-store-banner-cta-link"
+          aria-label="Go to our store"
         >
-          <Image
-            src="/images/homepage-store-banner.jpg?v=20261109-seamless-full-banner"
-            alt="The Store. Go to our Store. Explore Africa guide displayed alongside phone and tablet previews."
-            width={912}
-            height={383}
-            unoptimized
-            sizes="(max-width: 996px) calc(100vw - 24px), 960px"
-            className="homepage-store-banner-image"
-          />
+          <span className="sr-only">Go to our store</span>
         </Link>
       </div>
     </section>
