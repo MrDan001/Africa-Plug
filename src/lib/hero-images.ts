@@ -21,7 +21,7 @@ const listHomepageHeroBlobs = unstable_cache(
     return blobs.map((blob) => ({ url: blob.url, pathname: blob.pathname, uploadedAt: blob.uploadedAt }));
   },
   ["africa-plug-homepage-hero-blob-list-v1"],
-  { revalidate: 600 },
+  { revalidate: 600, tags: ["africa-plug-homepage-hero-blob-list"] },
 );
 
 function versionedUrl(blob: HeroBlob) {
