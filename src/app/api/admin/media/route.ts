@@ -20,7 +20,34 @@ export async function GET() {
 
 export async function POST(request: Request) {
   if (!await isAdminAuthenticated()) return Response.json({ error: "Please sign in to the admin workspace." }, { status: 401 });
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return Response.json({ error: "Media storage is not connected to this deployment." }, { status: 503 });
+
+  // Register a repository-hosted image without making a Blob request.
+  if (request.headers.get("content-type")?.includes("application/json")) {
+    let input: { url?: string; title?: string };
+    try { input = await request.json() as typeof input; }
+    catch { return Response.json({ error: "Submit a valid GitHub image path." }, { status: 400 }); }
+    const url = typeof input.url === "string" ? input.url.trim() : "";
+    if (!/^\/(?:Image|images)\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(url) || url.includes("..") || url.includes("//")) {
+      return Response.json({ error: "Use a repository image path such as /Image/Store/cover.jpg. Paths must point inside the public image library." }, { status: 400 });
+    }
+    try {
+      const result = await cmsBridge<{ record: CmsRecord }>({
+        action: "cms.save",
+        module: "media",
+        record: {
+          title: (input.title || url.split("/").pop() || "GitHub image").slice(0, 240),
+          slug: `asset-${crypto.randomUUID()}`,
+          status: "active",
+          data: { url, source: "github", pathname: url, fileName: url.split("/").pop(), contentType: "image", size: 0, uploadedAt: new Date().toISOString() },
+        },
+      });
+      return Response.json({ ok: true, record: result.record }, { status: 201, headers: { "Cache-Control": "no-store" } });
+    } catch (error) {
+      return Response.json({ error: error instanceof Error ? error.message : "Could not register the GitHub image." }, { status: 503 });
+    }
+  }
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) return Response.json({ error: "Vercel Blob is currently unavailable or not connected. You can still register an image from the GitHub Image library." }, { status: 503 });
   let form: FormData;
   try { form = await request.formData(); }
   catch { return Response.json({ error: "Choose an asset to upload." }, { status: 400 }); }
