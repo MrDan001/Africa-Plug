@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         action: "cms.save",
         module: "media",
         record: {
-          title: (input.title || url.split("/").pop() || "GitHub image").slice(0, 240),
+          title: (typeof input.title === "string" && input.title.trim() ? input.title.trim() : url.split("/").pop() || "GitHub image").slice(0, 240),
           slug: `asset-${crypto.randomUUID()}`,
           status: "active",
           data: { url, source: "github", pathname: url, fileName: url.split("/").pop(), contentType: "image", size: 0, uploadedAt: new Date().toISOString() },
