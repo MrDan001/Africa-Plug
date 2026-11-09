@@ -484,7 +484,7 @@ export default function TapInManager() {
                     <div className="tapin-twoCol">
                       {(["image_url", "share_image_url"] as const).map((field) => (
                         <Field key={field} label={field === "image_url" ? "Listing image (shown on the T.A.P IN card)" : "Share image (social previews)"} hint="optional">
-                          <input type="url" value={draft[field]} placeholder="https://…" onChange={(event) => update(field, event.target.value)} />
+                          <input type="text" value={draft[field]} placeholder="/Image/Tap-in/listing.jpg or https://…" onChange={(event) => update(field, event.target.value)} />
                           <span className="tapin-uploadRow">
                             <span className="tapin-uploadBtn"><Icon name="upload" size={15} /> {uploading === field ? "Uploading…" : "Upload image"}
                               <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading !== null} onChange={(event) => { void uploadImage(field, event.target.files?.[0]); event.target.value = ""; }} />
