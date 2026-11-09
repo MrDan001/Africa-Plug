@@ -1,71 +1,26 @@
-/* Homepage Store banner: keep the original text/button layout and contain the full supplied artwork on the right. */
+/* Homepage Store banner: show the supplied artwork intact, centred and smaller than its section. */
 .homepage-store-banner {
+  display: flex;
   width: 100%;
-  padding: clamp(30px, 4.2vw, 54px) clamp(18px, 4vw, 58px);
+  justify-content: center;
+  padding: clamp(28px, 4.5vw, 56px) clamp(16px, 4vw, 58px);
   background: #f3f1eb;
 }
 
-.homepage-store-banner-inner {
-  display: grid;
-  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
-  align-items: center;
-  gap: clamp(22px, 4vw, 64px);
-  width: min(100%, 1160px);
+.homepage-store-banner-link {
+  display: block;
+  width: min(100%, 960px);
   margin: 0 auto;
-}
-
-.homepage-store-banner-copy {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-}
-
-.homepage-store-banner-copy h2 {
-  margin: 0 0 18px;
-  color: #111;
-  font-size: clamp(2rem, 4.1vw, 3.25rem);
-  font-weight: 800;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-}
-
-.homepage-store-banner-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 46px;
-  padding: 0 20px;
-  border-radius: 5px;
-  background: #b51d68;
-  color: #fff;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.055em;
-  line-height: 1;
+  line-height: 0;
   text-decoration: none;
-  transition: background-color 160ms ease, transform 160ms ease;
-}
-
-.homepage-store-banner-cta:hover {
-  background: #941653;
-  transform: translateY(-1px);
-}
-
-.homepage-store-banner-artwork {
-  display: flex;
-  min-width: 0;
-  justify-content: flex-end;
-  align-items: center;
 }
 
 .homepage-store-banner-image {
   position: static;
   display: block;
   width: 100%;
-  max-width: 700px;
+  max-width: 100%;
   height: auto;
-  max-height: none;
   margin: 0;
   object-fit: contain;
   object-position: center;
@@ -73,25 +28,10 @@
 
 @media (max-width: 760px) {
   .homepage-store-banner {
-    padding: 28px 18px 32px;
+    padding: 22px 14px 30px;
   }
 
-  .homepage-store-banner-inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-  }
-
-  .homepage-store-banner-copy h2 {
-    margin-bottom: 14px;
-    font-size: clamp(2rem, 9vw, 2.7rem);
-  }
-
-  .homepage-store-banner-artwork {
-    justify-content: center;
-  }
-
-  .homepage-store-banner-image {
-    width: 100%;
-    max-width: 640px;
+  .homepage-store-banner-link {
+    width: min(100%, 640px);
   }
 }
