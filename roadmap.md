@@ -759,3 +759,11 @@ EMAIL_FK=fk@
 - [ ] Verify the production homepage after deployment on desktop and mobile.
 
 **Design clarification:** The intended layout is not an image-only banner. It is the original left-side heading/button plus the smaller complete artwork on the right. This revision preserves both.
+
+
+## Restore PR #8 Store section for comparison — 9 November 2026
+
+- [x] Restored the homepage Store section markup and styles exactly from merged PR #8.
+- [x] This is the PR #8 image-only version: centred, complete artwork at up to 960px, with no crop, overlay, heading or CTA.
+- [x] Kept the original artwork aspect ratio and responsive sizing.
+- [ ] Compare this live version with the reference and decide whether to retain or revise the heading/button layout.
