@@ -1,5 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { revalidateTag } from "next/cache";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
       onUploadCompleted: async ({ blob, tokenPayload }) => {
         // Blob verifies the callback signature before this handler runs.
         // The homepage reads the newest matching image directly from this Blob store.
+        revalidateTag("africa-plug-homepage-hero-blob-list", "max");
         console.info("Homepage hero image upload completed:", blob.pathname, tokenPayload ? "metadata attached" : "");
       },
     });
