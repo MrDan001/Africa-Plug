@@ -736,3 +736,14 @@ EMAIL_FK=fk@
 - [x] Set the Store page title to the exact approved text: `The Africa Plug Store | Africa Travel and Business Guides | The Africa Plug`.
 - [x] Used Next.js `title.absolute` metadata for both routes so the root layout's shared title template does not append the long homepage title a second time.
 - [ ] Verify the rendered `<title>` values on the live About and Store pages after production deployment.
+
+ 
+## Homepage Store artwork sizing and integrity correction — 9 November 2026
+
+- [x] Removed the separate HTML heading, CTA overlay and cream backplate that covered the left side of the supplied Store banner artwork.
+- [x] Render the complete source artwork as-is, preserving its original 912:383 aspect ratio and every pixel/content element; no crop, overlay, stretching or object-fit cover.
+- [x] Centre the artwork in the warm cream section and constrain it to a 960px maximum width on desktop so it no longer fills the entire section. On mobile it scales to the available content width while retaining its natural ratio.
+- [x] Keep the artwork crisp and directly served with Next Image optimization bypassed; make the artwork a single link to /store.
+- [ ] Verify the live homepage on desktop and mobile after the production deployment; compare against the user's supplied reference image.
+
+**Implementation correction:** The previous JSX placed a 43–45% opaque gradient backplate and a second HTML heading/CTA over the image. This hid/altered content embedded in the artwork. The section now displays only the original banner file, scaled proportionally inside a centred max-width wrapper.
