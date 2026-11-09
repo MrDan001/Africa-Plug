@@ -291,6 +291,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [coverPreview, setCoverPreview] = useState("");
+  const [githubAssetPath, setGithubAssetPath] = useState("");
   const [dirty, setDirty] = useState(false);
   const [tab, setTab] = useState(SETTINGS_TABS[0].id);
   const [search, setSearch] = useState("");
@@ -539,6 +540,32 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     } finally { setUploading(false); }
   }
 
+  async function registerGithubAsset() {
+    const url = githubAssetPath.trim();
+    if (!/^\/(?:Image|images)\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(url) || url.includes("..") || url.includes("//")) {
+      setNotice({ tone: "error", text: "Enter a valid public image path, e.g. /Image/Store/cover.jpg." });
+      return;
+    }
+    setUploading(true);
+    setNotice(null);
+    try {
+      const response = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error || "Could not register the GitHub image.");
+      setGithubAssetPath("");
+      setNotice({ tone: "success", text: "GitHub image path added to the media library. No Blob operation was used." });
+      await loadRecords();
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not register the GitHub image." });
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function uploadProductCover(event: ChangeEvent<HTMLInputElement>, fieldKey = "imageUrl") {
     const input = event.currentTarget;
     const file = input.files?.[0];
@@ -678,6 +705,16 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event, field.key)} />
             </label>
           </div>
+          <label className="apm-label" htmlFor={`github-image-path-${field.key}`}>Or use a GitHub Image Library path</label>
+          <input
+            id={`github-image-path-${field.key}`}
+            className="apm-input"
+            value={text(value).startsWith("/Image/") || text(value).startsWith("/images/") ? text(value) : ""}
+            onChange={(event) => updateField(field.key, event.target.value)}
+            placeholder="/Image/Store/cover.jpg"
+            aria-label={`GitHub image path for ${field.label}`}
+          />
+          <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Blob upload remains available above.</small>
           {field.help ? <small className="apm-help">{field.help}</small> : null}
         </div>
       );
@@ -827,12 +864,20 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         {moduleKey === "subscribers" && groupFilter === "blog" ? <div style={{ marginBottom: 14 }}><button type="button" className="apm-btn" onClick={exportBlogReaders} disabled={!shown.length}>Export Blog readers CSV</button></div> : null}
 
         {moduleKey === "media" ? <section className="apm-card apm-upload">
-          <h3>Upload a reusable asset</h3>
-          <p className="apm-muted">Images and PDFs up to 20 MB. Uploaded library assets are public URLs for use on the website.</p>
+          <h3>Use either image source</h3>
+          <p className="apm-muted">Blob uploads remain available when Vercel Blob is active. Repository images can be registered by path without using Blob operations.</p>
           <label className="apm-btn apm-btn-primary">
-            {uploading ? "Uploading…" : "Choose and upload file"}
+            {uploading ? "Uploading…" : "Choose and upload to Vercel Blob"}
             <input type="file" accept="image/jpeg,image/png,image/webp,image/avif,application/pdf" disabled={uploading} onChange={(event) => void uploadAsset(event)} style={{ display: "none" }} />
           </label>
+          <div className="apm-form-fields" style={{ marginTop: 18 }}>
+            <label className="is-wide">
+              <span className="apm-label">GitHub Image Library path</span>
+              <input className="apm-input" value={githubAssetPath} onChange={(event) => setGithubAssetPath(event.target.value)} placeholder="/Image/Store/cover.jpg" />
+              <small className="apm-help">Add the image to the repository's public/Image folder first, then register its path here. Supported paths begin with /Image/ or /images/.</small>
+            </label>
+          </div>
+          <button type="button" className="apm-btn" disabled={uploading || !githubAssetPath.trim()} onClick={() => void registerGithubAsset()}>Add GitHub image path</button>
         </section> : null}
 
         {moduleKey === "analytics" && records.length ? <div className="apm-stats">
