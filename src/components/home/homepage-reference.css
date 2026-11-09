@@ -655,8 +655,8 @@
 /* Homepage Store banner: editorial heading and a distinct HTML call-to-action. */
 .homepage-store-banner {
   width: 100%;
-  padding: clamp(14px, 2.8vw, 34px) clamp(14px, 4vw, 58px);
-  background: #fff;
+  padding: clamp(16px, 2.8vw, 34px) clamp(16px, 4vw, 58px);
+  background: #f0eee9;
 }
 .homepage-store-banner-frame {
   position: relative;
