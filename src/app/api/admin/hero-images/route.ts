@@ -1,56 +1,77 @@
-import { put } from "@vercel/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = new Map([
-  ["image/jpeg", "jpg"],
-  ["image/png", "png"],
-  ["image/webp", "webp"],
-  ["image/avif", "avif"],
-]);
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+const IMAGE_PATH = /^homepage\/hero-slide-([123])-(desktop|mobile)\.(jpg|png|webp|avif)$/i;
 
 export async function POST(request: Request) {
-  if (!await isAdminAuthenticated()) {
-    return Response.json({ error: "Please sign in to the admin workspace." }, { status: 401, headers: { "Cache-Control": "no-store" } });
-  }
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return Response.json({ error: "Vercel Blob is not connected to this deployment. Connect a Blob store and redeploy." }, { status: 503 });
+    return Response.json(
+      { error: "Vercel Blob is not connected to this deployment. Check the BLOB_READ_WRITE_TOKEN environment variable and redeploy." },
+      { status: 503, headers: { "Cache-Control": "no-store" } },
+    );
   }
-  let formData: FormData;
-  try { formData = await request.formData(); }
-  catch { return Response.json({ error: "The upload could not be read. Please select an image and try again." }, { status: 400 }); }
 
-  const slotValue = formData.get("slot");
-  const file = formData.get("image");
-  const variantValue = formData.get("variant") === "mobile" ? "mobile" : formData.get("variant") === "desktop" ? "desktop" : "desktop";
-  if (slotValue !== "1" && slotValue !== "2" && slotValue !== "3") return Response.json({ error: "Choose Hero 1, Hero 2, or Hero 3." }, { status: 400 });
-  if (!(file instanceof File)) return Response.json({ error: "Select an image to upload." }, { status: 400 });
-  const extension = ACCEPTED_IMAGE_TYPES.get(file.type);
-  if (!extension) return Response.json({ error: "Use a JPG, PNG, WebP, or AVIF image. SVG files are not accepted." }, { status: 415 });
-  if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) return Response.json({ error: "The image must be smaller than 10 MB." }, { status: 413 });
+  let body: HandleUploadBody;
+  try {
+    body = await request.json() as HandleUploadBody;
+  } catch {
+    return Response.json({ error: "The upload request was not valid JSON. Please refresh the admin page and try again." }, { status: 400 });
+  }
 
   try {
-    const blob = await put(`homepage/hero-slide-${slotValue}-${variantValue}.${extension}`, file, {
-      access: "public",
-      addRandomSuffix: true,
-      contentType: file.type,
-      cacheControlMaxAge: 60 * 60,
+    const result = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        if (!await isAdminAuthenticated()) {
+          throw new Error("Your admin session has expired. Sign in again before uploading.");
+        }
+
+        const match = IMAGE_PATH.exec(pathname);
+        if (!match) throw new Error("The requested image destination is not allowed.");
+
+        let payload: { slot?: number; variant?: string };
+        try {
+          payload = JSON.parse(clientPayload ?? "{}") as { slot?: number; variant?: string };
+        } catch {
+          throw new Error("The upload metadata was invalid. Refresh the page and try again.");
+        }
+
+        const slot = Number(match[1]);
+        const variant = match[2].toLowerCase();
+        if (payload.slot !== slot || payload.variant !== variant) {
+          throw new Error("The selected hero slot did not match the upload destination.");
+        }
+
+        return {
+          allowedContentTypes: ACCEPTED_IMAGE_TYPES,
+          maximumSizeInBytes: MAX_IMAGE_BYTES,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify({ slot, variant }),
+        };
+      },
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // Blob verifies the callback signature before this handler runs.
+        // The homepage reads the newest matching image directly from this Blob store.
+        console.info("Homepage hero image upload completed:", blob.pathname, tokenPayload ? "metadata attached" : "");
+      },
     });
-    return Response.json(
-      { ok: true, slot: Number(slotValue), variant: variantValue, imageUrl: blob.url },
-      { headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } },
-    );
+
+    return Response.json(result, {
+      headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown Blob upload error";
-    console.error("Hero image Blob upload failed:", message);
-    const privateStore = /private store/i.test(message);
-    return Response.json({
-      error: privateStore
-        ? "This Blob store is configured as Private. Homepage hero images need a Public Blob store. Change the tapin store access to Public in Vercel Storage, then retry."
-        : `Vercel Blob could not save this image: ${message}`,
-    }, { status: 502, headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } });
+    console.error("Homepage hero client-upload handshake failed:", message);
+    const unauthorized = /admin session|sign in|unauthorized|authentication/i.test(message);
+    return Response.json(
+      { error: message },
+      { status: unauthorized ? 401 : 502, headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } },
+    );
   }
 }
