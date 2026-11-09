@@ -1,10 +1,11 @@
 import { list } from "@vercel/blob";
 import { unstable_cache } from "next/cache";
+import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 
 export type HeroImageState = {
   images: (string | null)[];
   mobileImages: (string | null)[];
-  storage: "not-configured" | "vercel-blob" | "error";
+  storage: "not-configured" | "vercel-blob" | "github" | "error";
 };
 
 type HeroBlob = { url: string; pathname: string; uploadedAt: string | Date };
@@ -27,17 +28,40 @@ function versionedUrl(blob: HeroBlob) {
 }
 
 export async function getHeroImageState(): Promise<HeroImageState> {
+  // Repository paths are the zero-operation fallback. Blob remains the preferred
+  // source when it is available and has a published crop for a slot.
+  let githubDesktop: (string | null)[] = [null, null, null];
+  let githubMobile: (string | null)[] = [null, null, null];
+  try {
+    const settings = await cmsBridge<{ records?: CmsRecord[] }>({
+      action: "cms.list",
+      module: "site-settings",
+      status: "active",
+    });
+    const record = settings.records?.find((item) => item.slug === "site-settings") ?? settings.records?.[0];
+    const paths = record?.data?.heroImagePaths as { desktop?: unknown[]; mobile?: unknown[] } | undefined;
+    const safePath = (value: unknown) =>
+      typeof value === "string" &&
+      /^\/(?:Image|images)\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) &&
+      !value.includes("..") && !value.includes("//")
+        ? value
+        : null;
+    githubDesktop = [0, 1, 2].map((index) => safePath(paths?.desktop?.[index]));
+    githubMobile = [0, 1, 2].map((index) => safePath(paths?.mobile?.[index]));
+  } catch {
+    // A missing CMS configuration must not prevent repository-hosted defaults.
+  }
+
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return { images: [null, null, null], mobileImages: [null, null, null], storage: "not-configured" };
+    return { images: githubDesktop, mobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "not-configured" };
   }
 
   try {
-    const { blobs } = await list({ prefix: "homepage/hero-slide-" });
+    const blobs = await listHomepageHeroBlobs();
     const latestFor = (slot: number, variant: "desktop" | "mobile"): HeroBlob | null => {
       const extensions = "(jpg|png|webp|avif)";
       const variantPattern = new RegExp(`^homepage/hero-slide-${slot}-${variant}(?:-[^/]*)?\\.${extensions}$`, "i");
       let candidates = blobs.filter((blob) => variantPattern.test(blob.pathname));
-      // Older uploads used the slide number without a desktop/mobile suffix. Treat them as desktop only.
       if (variant === "desktop" && !candidates.length) {
         const legacyPattern = new RegExp(`^homepage/hero-slide-${slot}(?:-[^/]*)?\\.${extensions}$`, "i");
         candidates = blobs.filter((blob) => legacyPattern.test(blob.pathname) && !new RegExp(`^homepage/hero-slide-${slot}-mobile(?:-|\\.)`, "i").test(blob.pathname));
@@ -47,21 +71,15 @@ export async function getHeroImageState(): Promise<HeroImageState> {
 
     const desktop = [1, 2, 3].map((slot) => latestFor(slot, "desktop"));
     const mobile = [1, 2, 3].map((slot) => latestFor(slot, "mobile"));
-
-    return {
-      images: desktop.map((blob) => blob ? versionedUrl(blob) : null),
-      // A desktop upload is the newest published artwork and must appear on every device.
-      // Keep a dedicated mobile crop only when it was uploaded after the desktop image.
-      mobileImages: mobile.map((blob, index) => {
-        const desktopBlob = desktop[index];
-        if (!blob) return null;
-        if (desktopBlob && new Date(desktopBlob.uploadedAt).getTime() > new Date(blob.uploadedAt).getTime()) return null;
-        return versionedUrl(blob);
-      }),
-      storage: "vercel-blob",
-    };
+    const images = desktop.map((blob, index) => blob ? versionedUrl(blob) : githubDesktop[index]);
+    const mobileImages = mobile.map((blob, index) => {
+      const desktopBlob = desktop[index];
+      if (blob && (!desktopBlob || new Date(blob.uploadedAt).getTime() >= new Date(desktopBlob.uploadedAt).getTime())) return versionedUrl(blob);
+      return githubMobile[index] ?? (desktopBlob ? null : githubDesktop[index]);
+    });
+    return { images, mobileImages, storage: "vercel-blob" };
   } catch (error) {
     console.error("Could not list homepage hero images:", error instanceof Error ? error.message : "Unknown error");
-    return { images: [null, null, null], mobileImages: [null, null, null], storage: "error" };
+    return { images: githubDesktop, mobileImages: githubMobile, storage: githubDesktop.some(Boolean) || githubMobile.some(Boolean) ? "github" : "error" };
   }
 }
