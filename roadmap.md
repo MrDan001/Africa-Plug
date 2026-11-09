@@ -767,3 +767,11 @@ EMAIL_FK=fk@
 - [x] This is the PR #8 image-only version: centred, complete artwork at up to 960px, with no crop, overlay, heading or CTA.
 - [x] Kept the original artwork aspect ratio and responsive sizing.
 - [ ] Compare this live version with the reference and decide whether to retain or revise the heading/button layout.
+
+## Homepage CSS recovery and PR #9 Store restoration — 9 November 2026
+
+- [x] Restored the full homepage reference stylesheet from the known-good PR #6 baseline (PR #7 changed SEO metadata only).
+- [x] Preserved the PR #9 homepage Store composition: heading and CTA on the left, complete proportional artwork on the right, stacked on mobile.
+- [x] Kept the homepage sections' layout, responsive breakpoints, opportunity cards, featured-story styling and contact panel rules.
+- [ ] Run the production build and inspect every homepage section at desktop, tablet and mobile widths before merging.
+- [ ] Verify the production deployment after merge.
