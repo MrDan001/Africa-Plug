@@ -11,6 +11,18 @@ import { useState } from "react";
 export default function IntroVideo({ videoId }: { videoId: string }) {
   const [playing, setPlaying] = useState(false);
 
+  function playVideo() {
+    // Choosing to play this video is the visitor's explicit choice to load
+    // embedded content. Save the same consent key used by CookieConsent.
+    try {
+      localStorage.setItem("tap-consent-v2", "embedded");
+    } catch {
+      // The video can still play when browser storage is unavailable.
+    }
+    window.dispatchEvent(new Event("tap:consent-changed"));
+    setPlaying(true);
+  }
+
   if (playing) {
     return (
       <iframe
@@ -28,7 +40,7 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
     <button
       type="button"
       className="intro-video-poster"
-      onClick={() => setPlaying(true)}
+      onClick={playVideo}
       aria-label="Play the introduction video"
       style={{
         backgroundImage: "linear-gradient(135deg, rgba(8, 8, 8, .96), rgba(50, 12, 34, .90))",
