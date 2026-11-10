@@ -1,7 +1,7 @@
 // FILE PATH: src/components/work-with-fk/WorkApplyForm.tsx
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useTurnstile } from "./useTurnstile";
 import { COUNTRIES, DEAL_STAGES, HEAR_ABOUT, TIMEFRAMES } from "@/lib/work-with-fk/application-schema";
 import "./work-with-fk.css";
@@ -9,29 +9,11 @@ import "./work-with-fk.css";
 export default function WorkApplyForm() {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const { widgetRef, token } = useTurnstile(siteKey);
-  const started = useRef(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [goalLength, setGoalLength] = useState(0);
   const [obstacleLength, setObstacleLength] = useState(0);
-
-  function markStarted() {
-    if (started.current) return;
-    started.current = true;
-    const params = new URLSearchParams(window.location.search);
-    void fetch("/api/analytics/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        eventName: "application_started",
-        path: window.location.pathname,
-        source: params.get("utm_source") || document.referrer || "direct",
-        referrer: document.referrer,
-        utm: Object.fromEntries(["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].map((key) => [key, params.get(key) || ""])),
-      }),
-    }).catch(() => undefined);
-  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -83,7 +65,7 @@ export default function WorkApplyForm() {
 
   return (
     <section className="enquiry-panel wfk-form-panel">
-      <form className="enquiry-form" onSubmit={submit} onFocusCapture={markStarted}>
+      <form className="enquiry-form" onSubmit={submit}>
         <div className="enquiry-form-grid">
           <label><span>Full name <b>*</b></span><input name="fullName" autoComplete="name" required maxLength={120} /></label>
           <label><span>Role <b>*</b></span><input name="role" autoComplete="organization-title" required maxLength={120} /></label>
