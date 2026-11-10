@@ -43,8 +43,10 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
       onClick={playVideo}
       aria-label="Play the introduction video"
       style={{
-        backgroundImage: "linear-gradient(135deg, rgba(8, 8, 8, .96), rgba(50, 12, 34, .90))",
+        backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, .42), transparent 34%, transparent 66%, rgba(0, 0, 0, .32)), url("https://img.youtube.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg")`,
         backgroundColor: "#080808",
+        backgroundSize: "cover, cover",
+        backgroundPosition: "center, center",
         color: "#ffffff",
       }}
     >
