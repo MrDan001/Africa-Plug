@@ -4,27 +4,12 @@
 import { useState } from "react";
 
 /**
- * Click-to-play YouTube embed. The privacy-enhanced iframe is mounted only
- * after the visitor has allowed optional embedded content.
+ * Click-to-play YouTube embed. Clicking the play control is the visitor's
+ * choice to load this video, so it opens directly in privacy-enhanced mode
+ * without forcing the visitor into cookie settings first.
  */
 export default function IntroVideo({ videoId }: { videoId: string }) {
   const [playing, setPlaying] = useState(false);
-
-  function playVideo() {
-    let allowed = false;
-    try {
-      allowed = localStorage.getItem("tap-consent-v1") === "embedded";
-    } catch {
-      allowed = false;
-    }
-
-    if (allowed) {
-      setPlaying(true);
-      return;
-    }
-
-    window.dispatchEvent(new Event("tap:open-cookie-settings"));
-  }
 
   if (playing) {
     return (
@@ -43,12 +28,11 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
     <button
       type="button"
       className="intro-video-poster"
-      onClick={playVideo}
+      onClick={() => setPlaying(true)}
       aria-label="Play the introduction video"
       style={{
-        backgroundImage: "linear-gradient(180deg, rgba(0,0,0,.48), transparent 30%, transparent 70%, rgba(0,0,0,.38)), url(\"/images/work-with-fk-hero.jpg\")",
-        backgroundSize: "cover, cover",
-        backgroundPosition: "center, center",
+        backgroundImage: "linear-gradient(135deg, rgba(8, 8, 8, .96), rgba(50, 12, 34, .90))",
+        backgroundColor: "#080808",
         color: "#ffffff",
       }}
     >
