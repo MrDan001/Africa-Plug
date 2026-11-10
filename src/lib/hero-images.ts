@@ -33,9 +33,9 @@ export async function getHeroImageState(): Promise<HeroImageState> {
   // Repository paths are the zero-operation fallback. Blob remains the preferred
   // source when it is available and has a published crop for a slot.
   const fallbackDesktop: (string | null)[] = [
-    "/Image/Hero/Work-with-FK/work-with-fk-hero.jpg",
-    "/Image/Hero/Tap-in/tap-in-hero.jpg",
-    "/Image/Hero/Home/ask-fk.jpg",
+    "/images/Hero/work-with-fk-hero.jpg",
+    "/images/Hero/tap-in-hero.jpg",
+    "/images/Hero/ask-fk.jpg",
   ];
   let githubDesktop: (string | null)[] = [null, null, null];
   let githubMobile: (string | null)[] = [null, null, null];
