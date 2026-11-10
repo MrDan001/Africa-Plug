@@ -11,11 +11,10 @@ type LegalPageProps = {
   eyebrow: string;
   title: string;
   intro: string;
-  notice: string;
   sections: LegalSection[];
 };
 
-function LegalPage({ eyebrow, title, intro, notice, sections }: LegalPageProps) {
+function LegalPage({ eyebrow, title, intro, sections }: LegalPageProps) {
   return (
     <article className="legal-page">
       <div className="legal-page-shell">
@@ -29,7 +28,6 @@ function LegalPage({ eyebrow, title, intro, notice, sections }: LegalPageProps) 
           <span>Effective date: 30 November 2026</span>
           <span>Last reviewed: 30 November 2026</span>
         </div>
-        <p className="legal-page-notice">{notice}</p>
         <div className="legal-page-sections">
           {sections.map((section) => (
             <section className="legal-page-section" key={section.heading}>
@@ -46,11 +44,10 @@ function LegalPage({ eyebrow, title, intro, notice, sections }: LegalPageProps) 
           ))}
         </div>
         <div className="legal-page-contact">
-          <h2>Questions about this policy?</h2>
+          <h2>Questions?</h2>
           <p>
-            Contact The Africa Plug at{" "}
-            <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a>.
-            Please do not send full payment-card details or sensitive identity documents by email.
+            Email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a>.
+            Please do not send card details.
           </p>
         </div>
       </div>
@@ -58,86 +55,131 @@ function LegalPage({ eyebrow, title, intro, notice, sections }: LegalPageProps) 
   );
 }
 
+export function RefundPolicy() {
+  const sections: LegalSection[] = [
+    {
+      heading: "1. Digital products",
+      paragraphs: [
+        "Our guides, ebooks and other digital products are downloads, available straight after purchase or, for a preorder, on release. At checkout, you’ll be asked to request immediate access and to confirm you understand that this ends your 14 day right to cancel. Once a digital product has been downloaded or accessed, we don’t offer refunds. You can cancel a preorder for a full refund at any time before the guide is released.",
+        "If a digital product is faulty, can’t be accessed or is materially different from its description, email us and we’ll fix the problem or refund you, as the law requires."
+      ]
+    },
+    {
+      heading: "2. Calls, consultations and booked services",
+      paragraphs: [
+        "You can cancel within 14 days of booking for a full refund, as long as your session hasn’t taken place. If your session is within those 14 days, you’ll be asked to confirm you want it to go ahead early, and that you lose the right to cancel once it has taken place.",
+        "Rescheduling: one free reschedule with at least 48 hours’ notice.",
+        "Missed sessions: a session missed without 48 hours’ notice can’t be refunded or rescheduled.",
+        "Credits: where a fee can be credited against a later service, the credit is valid for the period stated at booking and can’t be exchanged for cash."
+      ]
+    },
+    {
+      heading: "3. Commercial consulting",
+      paragraphs: [
+        "This covers the Deal Diagnostic and consulting engagements for businesses. Fees, payment, cancellation and rescheduling terms are set out in your approval email or proposal and agreed before you pay. Unless agreed otherwise, you get one free reschedule with at least 48 hours’ notice, and fees aren’t refundable for cancellations within 48 hours of a session or for a missed session."
+      ]
+    },
+    {
+      heading: "4. How to cancel or request a refund",
+      paragraphs: [
+        "Email connect@theafricaplug.com with your name, booking or order reference, what you bought, the date and your reason. Please don’t send card details. Approved refunds go back to your original payment method within 14 days."
+      ]
+    },
+    {
+      heading: "5. Your statutory rights",
+      paragraphs: ["Nothing in this policy affects your statutory rights."]
+    }
+  ];
+
+  return (
+    <LegalPage
+      eyebrow="ORDERS AND CANCELLATIONS"
+      title="REFUNDS POLICY"
+      intro="How cancellations and refunds work for our digital products, consultations and consulting services."
+      sections={sections}
+    />
+  );
+}
+
 export function PrivacyPolicy() {
   const sections: LegalSection[] = [
     {
-      heading: "1. Who we are and what this policy covers",
+      heading: "1. Who we are",
       paragraphs: [
-        "The Africa Plug (referred to as “The Africa Plug”, “we”, “us” or “our”) operates this website and its public pages. This policy explains how we handle personal information when you browse the website, contact us, submit an enquiry or use a feature described here.",
-        "For data-protection questions, contact connect@theafricaplug.com. The precise contracting legal entity and registered business address must be shown in the relevant business documents and completed here before paid services launch; this website does not invent those details."
+        "The Africa Plug has offices in Victoria Island, Lagos, Nigeria and London, United Kingdom. For any privacy question, email connect@theafricaplug.com."
       ]
     },
     {
-      heading: "2. Information we may collect",
+      heading: "2. What we collect",
       paragraphs: [
-        "The information we receive depends on how you interact with the website. We aim to collect only information reasonably relevant to the enquiry or service."
+        "Enquiries and applications: your name, email, company, role, country, phone number if given, and what you tell us in a form, including Work With FK applications and T.A.P IN submissions or expressions of interest.",
+        "Purchases and bookings: what you bought or booked, the date, and your billing details. Card payments are handled by Stripe; we never see or store your full card number.",
+        "Digital products: when your download link was opened, so we can manage access and refund requests.",
+        "Email updates: your email address if you sign up for T.A.P IN opportunity alerts, new blog articles, a product waitlist or general updates.",
+        "Technical information: your IP address, browser, device, pages visited and similar data recorded by our hosting and security services.",
+        "Cookie choices: whether you accepted or declined optional embedded content."
+      ]
+    },
+    {
+      heading: "3. Why we use it",
+      paragraphs: [
+        "To respond to enquiries, assess applications, deliver products and services, take payments, send updates you asked for, keep the site secure and meet our legal obligations. Under UK and Nigerian data protection law, our legal grounds are: taking steps at your request before a contract, performing a contract, our legitimate interest in running the business, your consent where needed, and legal obligations."
+      ]
+    },
+    {
+      heading: "4. Who we share it with",
+      paragraphs: [
+        "We never sell your information. We share only what’s needed with the services that run the site:"
       ],
       bullets: [
-        "Contact and enquiry details: name, email address, organisation, role, country, phone number if supplied, and the message or information you choose to send.",
-        "Opportunity or service enquiry details: the market, project, requirements, experience, timing, budget range or other answers you include in a form.",
-        "Store waitlist details: the product you selected, your request for an availability notification, whether you separately opted in to receive that product-specific email, the date of that choice and any later unsubscribe request.",
-        "Blog subscription details: your email address, the Blog-only list you chose, confirmation status and dates, and any later unsubscribe request. Blog subscription preferences are kept separate from other Africa Plug email lists.",
-        "Communications: information in emails and follow-up correspondence so that we can understand and respond to a request.",
-        "Technical information: information that hosting, security and delivery services may record, such as IP address, browser/device information, requested pages, timestamps, referrer information and diagnostic logs.",
-        "Preference information: your choice to accept or reject optional analytics storage through the site privacy banner."
+        "Vercel (hosting)",
+        "Resend (email)",
+        "Cloudflare Turnstile (spam protection)",
+        "Stripe (payments)",
+        "Google (calendar bookings, invites and video calls)",
+        "[email updates tool — name to be confirmed before launch]"
       ]
     },
     {
-      heading: "3. Why we use information and our legal grounds",
+      heading: "5. T.A.P IN",
       paragraphs: [
-        "Depending on the context and applicable law, we process personal information to respond to requests, provide information you ask for, assess enquiries, send a Blog email only after you confirm your subscription, send a product-availability email only where you have expressly opted in for that specific Store item, maintain security, troubleshoot the site, keep appropriate records and meet legal obligations.",
-        "Where UK GDPR applies, the relevant legal ground may be taking steps at your request before entering a contract, performing a contract, our legitimate interests in operating and securing the website and responding to business enquiries, consent where required, or compliance with a legal obligation. We consider the purpose and impact before relying on legitimate interests."
+        "When you express interest in an opportunity, we don’t pass your details to the lister automatically. We review interest and make introductions ourselves, with your agreement."
       ]
     },
     {
-      heading: "4. Who may receive information",
+      heading: "6. International transfers",
       paragraphs: [
-        "We do not sell personal information. We may share the minimum relevant information with service providers that help operate the website and handle communications, subject to appropriate controls and applicable law."
-      ],
-      bullets: [
-        "Website hosting and deployment providers, including Vercel, for delivering the site and related technical operations.",
-        "Email delivery providers, including Resend where configured, so that enquiries can be received and answered, Blog subscriptions can be confirmed, and product-specific availability notifications can be delivered to people who opted in.",
-        "Anti-spam or security services, including Cloudflare Turnstile if enabled, to help distinguish genuine submissions from automated abuse.",
-        "Payment or digital-delivery providers only if those functions are introduced and activated in the future. The Store does not currently take online payments.",
-        "Professional advisers, regulators, courts or law-enforcement bodies when disclosure is lawful or necessary to protect rights, safety or comply with law."
+        "Some of these services process data outside your country. Where the law requires it, we use appropriate safeguards, such as approved contract terms."
       ]
     },
     {
-      heading: "5. International transfers",
+      heading: "7. How long we keep it",
       paragraphs: [
-        "Some website or communications providers may process information in countries outside the country where you live. Where data-protection law requires safeguards for an international transfer, we will use an appropriate mechanism, such as an adequacy decision or approved contractual protections, and take reasonable steps to protect the information."
+        "Enquiries and applications: up to 24 months after our last contact. Purchase, booking and payment records: as long as tax and accounting law requires. Email updates: until you unsubscribe."
       ]
     },
     {
-      heading: "6. How long we keep information",
+      heading: "8. Security",
       paragraphs: [
-        "We keep personal information only for as long as reasonably necessary for the purpose it was collected, including to respond to an enquiry, maintain appropriate business records, resolve disputes and meet legal requirements. Retention periods depend on the type of information and the context; we periodically review information and securely delete or anonymise it when it is no longer needed.",
-        "For example, we may retain an ordinary enquiry and its correspondence for up to 24 months after the last meaningful contact where that is reasonably needed to manage the relationship. Blog subscription records are kept while the subscription is active; if you unsubscribe, we stop Blog emails and retain the preference record needed to prevent further sends. Store waitlist records are kept while the product update remains relevant; if you unsubscribe, we stop those messages and retain the preference record needed to prevent another send. Records related to contracts, tax or accounting may need to be kept longer where the law requires it. These are working guidelines, not a promise that every record is removed on a fixed date."
+        "We use reasonable measures to protect your information, though no system is completely secure. Please don’t send card details, passwords or sensitive documents by email."
       ]
     },
     {
-      heading: "7. Security",
+      heading: "9. Your rights",
       paragraphs: [
-        "We use reasonable technical and organisational measures intended to protect information against unauthorised access, loss, misuse or alteration. No internet transmission or storage system can be guaranteed completely secure. Please avoid sending payment-card details, passwords or highly sensitive information through ordinary email or a general enquiry form."
+        "You can ask to access, correct or delete your information, object to or restrict how we use it, receive a copy, or withdraw consent. Email connect@theafricaplug.com; we may need to confirm your identity. You can also complain to the Information Commissioner’s Office in the UK, the Nigeria Data Protection Commission, or the regulator where you live."
       ]
     },
     {
-      heading: "8. Your privacy rights",
+      heading: "10. Children",
       paragraphs: [
-        "Depending on your location and the applicable law, you may have rights to request access to personal information, correct it, delete it, restrict or object to certain processing, receive a portable copy, withdraw consent where processing relies on consent, or complain to a data-protection regulator. These rights are subject to legal conditions and exceptions.",
-        "To exercise a right, email connect@theafricaplug.com and explain your request. You can unsubscribe from The Blog using the unsubscribe link in a Blog email; this does not change other Africa Plug email preferences. You can also unsubscribe from an individual product waitlist using the unsubscribe link in its availability email; this does not unsubscribe you from the general newsletter. We may need to verify your identity before acting. If UK data-protection law applies, you can also contact the Information Commissioner's Office (ICO) through its official website. You may contact your local regulator where another law applies."
+        "Our services are for adults and businesses. We don’t knowingly collect information from anyone under 18."
       ]
     },
     {
-      heading: "9. Children",
+      heading: "11. Other websites and changes",
       paragraphs: [
-        "This website and its business enquiries are intended for a general audience and are not designed to collect information from children. Please do not submit a child's personal information unless you are authorised to do so and it is genuinely necessary."
-      ]
-    },
-    {
-      heading: "10. External websites and changes",
-      paragraphs: [
-        "The website may link to services or websites operated by other organisations. Their privacy practices are controlled by them, so read their own policies before sharing information. We may update this policy as the website or applicable law changes. The effective date above indicates the version currently published."
+        "Links to other websites are covered by their own privacy policies. We’ll update this policy as our services change, and the date above shows the current version."
       ]
     }
   ];
@@ -146,8 +188,7 @@ export function PrivacyPolicy() {
     <LegalPage
       eyebrow="YOUR INFORMATION"
       title="PRIVACY POLICY"
-      intro="A clear explanation of the personal information that may be handled when you visit The Africa Plug, contact us or explore our services."
-      notice="This policy is a working draft. The Store is not currently taking online payments. Optional analytics are sent only after a visitor accepts analytics in the privacy banner. Review this policy against the final data providers and business details before launch."
+      intro="How The Africa Plug handles your personal information."
       sections={sections}
     />
   );
@@ -158,68 +199,67 @@ export function TermsOfUse() {
     {
       heading: "1. About these terms",
       paragraphs: [
-        "This website is operated by Fadekemi Oba (known as FK), trading as The Africa Plug, with offices in Victoria Island, Lagos, Nigeria and London, United Kingdom. These terms govern use of the website, its forms, T.A.P IN and the Store. By using the site, you agree to these terms. If you do not agree, please stop using it.",
-        "Our content covers business, investment, culture, travel and opportunities across Africa for general information only. It is not legal, tax, financial, investment or other regulated advice. Markets and rules change, so check important facts and take qualified advice before committing money, signing a contract or entering a market. These website terms do not replace a separate written agreement for any consulting, advisory or other paid service."
+        "This website is run by The Africa Plug, with offices in Victoria Island, Lagos, Nigeria and London, United Kingdom. By using the site, you agree to these terms. If you don't agree, please don't use the site."
       ]
     },
     {
-      heading: "2. Information is not professional or investment advice",
+      heading: "2. Information, not advice",
       paragraphs: [
-        "Website content is provided for general information and educational purposes. It is not legal, tax, financial, investment, immigration or other regulated professional advice, and it should not be the only basis for a commercial decision.",
-        "Markets, rules, opportunities, costs and local circumstances can change and may differ by location. You should independently verify important facts and seek advice from appropriately qualified professionals before committing money, signing a contract or entering a market. We do not promise that an opportunity, investment, introduction or commercial result will be available, suitable or successful."
+        "Our content covers business, investment, culture, travel and opportunities across Africa, for general information only. It isn't legal, tax, financial, investment or other regulated advice. Markets and rules change, so check important facts and take qualified advice before committing money, signing a contract or entering a market. We don't promise that any opportunity, introduction or result will be available, suitable or successful."
       ]
     },
     {
-      heading: "3. Website access and acceptable use",
+      heading: "3. T.A.P IN",
       paragraphs: [
-        "We aim to keep the website available and information useful, but we do not guarantee uninterrupted access, that every page will always be error-free, or that all material will remain available indefinitely. We may change, suspend or withdraw features for operational, security or business reasons.",
-        "You must not misuse the website, interfere with its operation, attempt unauthorised access, introduce malicious code, harvest personal information, send abusive or unlawful submissions, infringe another person's rights, or use the site in a way that violates applicable law."
+        "T.A.P IN listings are shared for information only and are not an offer, recommendation or endorsement. We don't guarantee the accuracy of any listing or the people behind it. Carry out your own due diligence before entering any agreement. Submitting or expressing interest in an opportunity doesn't commit either side, and any introduction is made at our discretion."
       ]
     },
     {
-      heading: "4. Intellectual property and permitted use",
+      heading: "4. Enquiries, applications and services",
       paragraphs: [
-        "Unless otherwise indicated, website text, brand assets, designs, original graphics and other materials are owned by or licensed to The Africa Plug and are protected by intellectual-property laws. The Africa Plug name, logo and visual identity may not be copied or used to suggest endorsement without written permission.",
-        "You may access and print reasonable portions for your personal or internal business reference, provided you do not remove notices or misrepresent the source. You must not republish, sell, systematically copy, modify or distribute website materials commercially without prior permission. Third-party names, marks and materials remain the property of their respective owners."
+        "Sending an enquiry or application doesn't create a client relationship or commit either side. We may ask for more information or decline. Paid services, including calls, the Deal Diagnostic and consulting engagements, are governed by the terms agreed at booking or in writing before work begins. Please only share information you have permission to share. Questions sent through Ask The Africa Plug may be used as the starting point for our research and content, without your name or any detail that identifies you."
       ]
     },
     {
-      heading: "5. Enquiries and business relationships",
+      heading: "5. Purchases and digital products",
       paragraphs: [
-        "T.A.P IN listings are shared for information only and are not an offer, recommendation or endorsement. We do not guarantee the accuracy of any listing or the people behind it. Carry out your own due diligence before entering any agreement. Submitting or expressing interest in an opportunity does not commit either side, and any introduction is made at our discretion. We may request further information, decline an enquiry or be unable to respond. Any agreed service, scope, fee, timetable, confidentiality obligation and cancellation rule should be set out separately in writing before work begins.",
-        "Please ensure that information you submit is accurate to the best of your knowledge and that you have permission to share any third-party personal or confidential information included in your message."
+        "Prices, currency and what's included are shown before you pay. Payments are processed securely by Stripe. When you buy a guide or other digital product, you get a personal licence to use it for yourself or your own business. You may not share, resell, copy or publish it, in whole or in part. Preorders are paid when you order and delivered when the guide is released. Cancellations and refunds are covered by our Refunds Policy."
       ]
     },
     {
-      heading: "6. Store catalogue and product information",
+      heading: "6. Using the site properly",
       paragraphs: [
-        "Prices, currency and what's included are shown before you pay. Payments are processed securely by Stripe. When you buy a guide or other digital product, you get a personal licence to use it for yourself or your own business. You may not share, resell, copy or publish it, in whole or in part. Cancellations and refunds are covered by our Refunds Policy.",
-        "If online sales are enabled later, each product page, checkout and order confirmation will set out the actual product, price, currency, delivery method, applicable taxes and any product-specific terms. A separate order is accepted only when the checkout and confirmation process says it is accepted."
+        "Don't misuse the site, interfere with how it works, attempt unauthorised access, introduce harmful code, collect other people's information, send abusive or unlawful submissions, or break any law in using it."
       ]
     },
     {
-      heading: "7. Third-party links and information",
+      heading: "7. Our content and brand",
       paragraphs: [
-        "Links to third-party websites, providers, listings, organisations or resources are supplied for convenience or context. We do not control every external page and are not responsible for its content, security, availability or privacy practices. A link does not necessarily mean that we endorse the linked organisation or guarantee an opportunity."
+        "The site's text, designs, graphics, guides and The Africa Plug name and logo belong to us or our licensors. You may view and print reasonable parts for personal or internal business reference. You may not copy, republish, sell or adapt them commercially, or use our brand to suggest our endorsement, without written permission. Other companies' names and marks belong to their owners."
       ]
     },
     {
-      heading: "8. Responsibility and consumer rights",
+      heading: "8. Other websites",
       paragraphs: [
-        "Nothing in these terms excludes or limits liability where the law does not allow it, including applicable mandatory consumer rights. Subject to that, the website and general information are supplied without a promise that they will meet every visitor's individual needs. To the extent permitted by law, we exclude implied warranties that may otherwise apply to the site's availability or suitability for a particular purpose.",
-        "You remain responsible for evaluating information and making your own decisions. Any liability arising from a separately agreed paid service will be governed by that service's written agreement and applicable law."
+        "Links to other websites are provided for convenience. We don't control them and aren't responsible for their content, security or privacy practices."
       ]
     },
     {
-      heading: "9. Privacy and cookies",
+      heading: "9. Our responsibility",
       paragraphs: [
-        "Our Privacy Policy and Cookie Policy explain how information and relevant technologies are handled. Please read them alongside these terms."
+        "Nothing in these terms limits liability where the law doesn't allow it, or affects your statutory rights. Otherwise, the site and its general information are provided as they are, and you remain responsible for your own decisions. Liability for paid services is governed by the terms agreed for that service."
       ]
     },
     {
-      heading: "10. Changes and governing law",
+      heading: "10. Privacy, cookies and refunds",
       paragraphs: [
-        "We may update these terms when the website, services or legal requirements change. The version published on this page applies from its stated effective date. These terms are intended to be governed by the law of England and Wales where legally appropriate, without removing any mandatory consumer protections that apply where you live. If a court finds one provision unenforceable, the remaining provisions continue to apply."
+        "Please read our Privacy Policy, Cookie Policy and Refunds Policy alongside these terms."
+      ]
+    },
+    {
+      heading: "11. Changes and governing law",
+      paragraphs: [
+        "We may update these terms as the site and our services change; the date above shows the current version. These terms are governed by the law of England and Wales, without removing any consumer protections that apply where you live. If any part is found unenforceable, the rest still applies."
       ]
     }
   ];
@@ -228,8 +268,7 @@ export function TermsOfUse() {
     <LegalPage
       eyebrow="USING THIS WEBSITE"
       title="TERMS OF USE"
-      intro="The ground rules for browsing The Africa Plug, reading its information and using the website's enquiry forms and Store."
-      notice="These terms are an editable first draft based on the current website. The legal operator identity and any future paid-service or checkout terms should be confirmed before commercial launch."
+      intro="The terms for using The Africa Plug website, its forms, T.A.P IN and the Store."
       sections={sections}
     />
   );
@@ -238,41 +277,36 @@ export function TermsOfUse() {
 export function CookiePolicy() {
   const sections: LegalSection[] = [
     {
-      heading: "1. What cookies and similar technologies are",
+      heading: "1. What cookies are",
       paragraphs: [
-        "Cookies are small files saved by a browser. Similar technologies can store or read information on a device, recognise a browser, maintain a session or help a service understand technical activity. This policy uses “cookies” as a convenient term for cookies and similar tools."
+        "Cookies are small files your browser stores when you visit a website. Similar technologies, like local storage, work in a similar way. We call them all “cookies” here."
       ]
     },
     {
-      heading: "2. What the current website uses",
+      heading: "2. The cookies we use",
       paragraphs: [
-        "The website requires technical services to deliver pages, protect them from abuse and keep the site operating. Hosting, security or form-protection providers may process technical information or use strictly necessary storage as part of those functions.",
-        "The site uses first-party analytics events through its analytics endpoint. These events are sent only after you accept analytics in the cookie banner. We do not use advertising cookies. Embedded content, including YouTube videos, may make requests to the relevant provider when you choose to play or use it, and that provider may set cookies under its own policy. Hosting and security providers may also process technical information needed to deliver and protect the site."
+        "Essential — keeps the site secure, protects forms from spam (Cloudflare Turnstile), processes payments safely (Stripe) and remembers your cookie choice. These are always on, as the site can’t work properly without them.",
+        "Analytics — we don't use analytics cookies or an analytics tool at present. If we add an analytics tool, we'll name it here and only activate it if you accept.",
+        "Embedded content — videos from YouTube may set their own cookies when you play them. Embedded content is loaded only if you accept, or when you choose to use it.",
+        "We don’t use advertising cookies."
       ]
     },
     {
-      heading: "3. Essential technologies",
+      heading: "3. Changing your choice",
       paragraphs: [
-        "Where a cookie or similar technology is strictly necessary to provide a service you have requested, maintain security or support a function you actively use, it may be used without optional marketing consent where the applicable law permits that treatment. We will not describe a technology as essential merely because it is convenient to us."
+        "When you first visit, you can accept or decline optional embedded content. You can change your choice at any time using the Cookie settings link at the bottom of every page. You can also block or delete cookies in your browser settings, though some features may not work properly."
       ]
     },
     {
-      heading: "4. Analytics, advertising and other optional technologies",
+      heading: "4. Other providers",
       paragraphs: [
-        "Analytics, personalisation and advertising technologies are not part of the intended current front-end implementation reviewed for this policy. If we add technologies that require consent, we intend to provide a clear consent choice before they are set or activated, explain their purposes, and make it possible to change or withdraw the choice. We should update this policy with the actual provider names, purposes, lifetimes and any international-transfer details before enabling them."
+        "Stripe and YouTube set cookies under their own policies, which we encourage you to read."
       ]
     },
     {
-      heading: "5. Managing preferences",
+      heading: "5. Changes",
       paragraphs: [
-        "Your browser settings usually allow you to view, block or delete cookies. Blocking all cookies may affect features or how some pages work. Browser controls are not always a substitute for a consent mechanism where one is legally required.",
-        "A privacy banner is provided on public pages so you can accept or reject optional analytics. Essential site functions remain available regardless of that choice. Your selection is stored in this browser. Use the “Cookie settings” link in the footer to reopen the banner and change your choice at any time."
-      ]
-    },
-    {
-      heading: "6. Third-party services and changes",
-      paragraphs: [
-        "Some content or features may be delivered by providers outside our control. Their technologies are subject to their own terms and policies. We may revise this page when the website changes and will review it before introducing analytics, advertising, embedded media or other tracking features."
+        "We’ll update this policy if the cookies we use change. The date above shows the current version."
       ]
     }
   ];
@@ -281,68 +315,7 @@ export function CookiePolicy() {
     <LegalPage
       eyebrow="DEVICE PREFERENCES"
       title="COOKIE POLICY"
-      intro="How cookies and similar technologies can support website operation, security and optional features."
-      notice="This policy describes the website's current cookie choices and technologies as reviewed on 30 November 2026. Optional analytics are sent only after you accept them. Embedded content may set its own cookies when you choose to play or use it."
-      sections={sections}
-    />
-  );
-}
-
-export function RefundPolicy() {
-  const sections: LegalSection[] = [
-    {
-      heading: "1. Current store status",
-      paragraphs: [
-        "Online sales in The Africa Plug Store are not yet enabled. Until checkout is live, no payment is taken on this site and no order can be placed. Please do not send card or bank details by email."
-      ]
-    },
-    {
-      heading: "2. General approach to refunds",
-      paragraphs: [
-        "When paid products or services are made available, refund and cancellation rights will depend on the type of purchase, the contract, the circumstances and the consumer law that applies. Nothing in this policy is intended to remove or reduce a mandatory statutory right. Product-specific terms and the final checkout information must be reviewed and published before online sales start."
-      ]
-    },
-    {
-      heading: "3. Digital guides, downloads and workbooks",
-      paragraphs: [
-        "Where digital content is sold, we will provide the product description, format, delivery method, price and any relevant access requirements before you purchase. If a download is faulty, inaccessible or materially different from its description, contact us so we can investigate and provide a remedy required by applicable law, which may include correcting the problem or a refund.",
-        "For online digital content, consumers may have a 14-day cancellation period under UK distance-selling rules, subject to the type of contract and applicable exceptions. Where the law permits an immediate digital supply to remove that cancellation right, we will obtain the required express consent and acknowledgement before supply. We will not treat a generic “no refunds” statement as overriding statutory rights."
-      ]
-    },
-    {
-      heading: "4. Consulting, bookings and deposits",
-      paragraphs: [
-        "The current site does not take consulting deposits or booking payments through the store. If a paid consulting engagement or booking is offered, the written proposal or booking terms will explain the service, fee, what any deposit covers, cancellation/rescheduling windows, no-show consequences and the method for requesting a refund before payment is made.",
-        "We will not assume that every deposit is automatically non-refundable. The treatment of a deposit depends on the agreed terms, work already performed, expenses properly incurred and mandatory law. If the terms for a particular engagement are unclear, ask for clarification in writing before paying."
-      ]
-    },
-    {
-      heading: "5. Physical products, if introduced",
-      paragraphs: [
-        "If physical items are introduced, the order page will explain delivery costs, dispatch estimates and the applicable cancellation, return and refund process. Consumer cancellation rights and exceptions vary by product and law. Faulty, damaged or misdescribed products will be handled in accordance with the legal rights that apply."
-      ]
-    },
-    {
-      heading: "6. How to request help or a refund",
-      paragraphs: [
-        "Email connect@theafricaplug.com with your name, order reference (if one exists), product or service name, purchase date and a clear description of the issue. Please do not include full card numbers, security codes, passwords or other sensitive payment credentials. We may ask for reasonable information to identify the transaction or understand the issue.",
-        "Where a refund is approved or legally due, it will normally be returned through the original payment method unless the law requires otherwise or another method is agreed. The processing time can depend on the payment provider and bank; any mandatory statutory deadline will apply."
-      ]
-    },
-    {
-      heading: "7. Policy updates and mandatory rights",
-      paragraphs: [
-        "We may update this policy before launching real checkout or new products. The version and any order-specific terms presented at purchase will be relevant to that purchase, subject always to mandatory law. This policy does not limit statutory rights that cannot legally be excluded."
-      ]
-    }
-  ];
-
-  return (
-    <LegalPage
-      eyebrow="ORDERS AND CANCELLATIONS"
-      title="REFUNDS POLICY"
-      intro="How cancellation and refund requests will be handled for guides, downloads, consulting services and any future store products."
-      notice="Online checkout is not yet enabled and the site does not take payments. This policy is an editable framework, not a statement that a live checkout, order system or booking-payment workflow is already active."
+      intro="How The Africa Plug uses cookies and similar technologies."
       sections={sections}
     />
   );
