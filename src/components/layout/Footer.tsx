@@ -70,6 +70,26 @@ export default async function Footer() {
   ].filter((item) => /^https:\/\//i.test(item.href));
 
   return <footer className="site-footer">
+    <section className="tap-whatsapp-channel" aria-labelledby="tap-whatsapp-channel-title">
+      <div className="tap-whatsapp-channel-copy">
+        <span className="tap-whatsapp-channel-icon" aria-hidden="true"><WhatsAppIcon /></span>
+        <div className="tap-whatsapp-channel-text">
+          <h2 id="tap-whatsapp-channel-title">STAY CONNECTED WITH AFRICA PLUG</h2>
+          <p>Get the latest updates, opportunities, announcements and community news.</p>
+        </div>
+      </div>
+      <a
+        className="tap-whatsapp-channel-link"
+        href="https://whatsapp.com/channel/0029VbEDkUb42DcZQM6mub1a"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Join the Africa Plug WhatsApp Channel"
+      >
+        <WhatsAppIcon />
+        <span>Join Our WhatsApp Channel</span>
+        <span className="tap-whatsapp-channel-arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
     <div className="footer-accent" aria-hidden="true"/>
     <div className="tap-footer-grid">
       <div className="tap-footer-brand"><FooterBrand/><p className="tap-footer-tagline">Your connection to Africa.</p></div>
