@@ -35,7 +35,7 @@ export async function getHeroImageState(): Promise<HeroImageState> {
   const fallbackDesktop: (string | null)[] = [
     "/Image/Hero/Work-with-FK/work-with-fk-hero.jpg",
     "/Image/Hero/Tap-in/tap-in-hero.jpg",
-    "/Image/Hero/Home/fk.jpg",
+    "/Image/Hero/Home/ask-fk.jpg",
   ];
   let githubDesktop: (string | null)[] = [null, null, null];
   let githubMobile: (string | null)[] = [null, null, null];
