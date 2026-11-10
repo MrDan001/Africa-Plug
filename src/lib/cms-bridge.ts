@@ -97,7 +97,7 @@ export type PublicSiteSettings = {
   navigation?: { label: string; href: string }[];
 };
 
-const DEFAULT_VIDEO_URL = "https://www.youtube.com/watch?v=KnY5dnnuLc4";
+const DEFAULT_VIDEO_URL = "https://youtu.be/8QLMpUuav4w";
 
 function fallbackSettings(navigation: { label: string; href: string }[]): PublicSiteSettings {
   return {
