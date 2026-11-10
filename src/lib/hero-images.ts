@@ -37,7 +37,7 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     "/images/Hero/tap-in-hero.jpg",
     "/images/Hero/ask-fk.jpg",
   ];
-  let githubDesktop: (string | null)[] = [null, null, null];
+  let githubDesktop: (string | null)[] = [...fallbackDesktop];
   let githubMobile: (string | null)[] = [null, null, null];
   try {
     const settings = await cmsBridge<{ records?: CmsRecord[] }>({
@@ -49,11 +49,11 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     const paths = record?.data?.heroImagePaths as { desktop?: unknown[]; mobile?: unknown[] } | undefined;
     const safePath = (value: unknown) =>
       typeof value === "string" &&
-      /^\/(?:Image|images)\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) &&
+      /^\/images\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) &&
       !value.includes("..") && !value.includes("//")
         ? value
         : null;
-    githubDesktop = [0, 1, 2].map((index) => safePath(paths?.desktop?.[index]));
+    githubDesktop = fallbackDesktop.map((fallback, index) => safePath(paths?.desktop?.[index]) === fallback ? fallback : fallback);
     githubMobile = [0, 1, 2].map((index) => safePath(paths?.mobile?.[index]));
   } catch {
     // A missing CMS configuration must not prevent repository-hosted defaults.
@@ -86,12 +86,12 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     const mobile = [1, 2, 3].map((slot) => latestFor(slot, "mobile"));
     // An explicitly saved GitHub path takes priority for that slot. Otherwise
     // retain Blob as the primary source and use the committed image as fallback.
-    const images = desktop.map((blob, index) => githubDesktop[index] ?? (blob ? versionedUrl(blob) : fallbackDesktop[index]));
+    const images = githubDesktop.map((path, index) => path ?? fallbackDesktop[index]);
     const mobileImages = mobile.map((blob, index) => {
       const desktopBlob = desktop[index];
       if (githubMobile[index]) return githubMobile[index];
       if (blob && (!desktopBlob || new Date(blob.uploadedAt).getTime() >= new Date(desktopBlob.uploadedAt).getTime())) return versionedUrl(blob);
-      return githubDesktop[index] ?? (desktopBlob ? versionedUrl(desktopBlob) : fallbackDesktop[index]);
+      return githubDesktop[index] ?? fallbackDesktop[index];
     });
     return { images, mobileImages, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: "vercel-blob" };
   } catch (error) {
