@@ -28,7 +28,7 @@ const SLIDES: Slide[] = [
     highlight: "BUSINESS",
     support: "For businesses entering, expanding or already operating in Africa.",
     activeButton: 0,
-    image: "/images/work-with-fk-hero.jpg",
+    image: "/images/Hero/work-with-fk-hero.jpg",
     location: "AFRICA ⇄ THE WORLD",
   },
   {
@@ -37,7 +37,7 @@ const SLIDES: Slide[] = [
     highlight: "OPPORTUNITY",
     support: "Active business and investment opportunities you can take part in.",
     activeButton: 1,
-    image: "/images/home/hero-opportunity.jpg",
+    image: "/images/Hero/tap-in-hero.jpg",
     location: "Across Africa",
   },
   {
@@ -46,7 +46,7 @@ const SLIDES: Slide[] = [
     highlight: "QUESTION",
     support: "Trying to understand a market, place, issue or opportunity in Africa?",
     activeButton: 2,
-    image: "/images/home/hero-question.jpg",
+    image: "/images/Hero/ask-fk.jpg",
     location: "On the ground in Africa",
   },
 ];
