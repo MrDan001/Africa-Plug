@@ -53,7 +53,7 @@ export async function getHeroImageState(): Promise<HeroImageState> {
       !value.includes("..") && !value.includes("//")
         ? value
         : null;
-    githubDesktop = fallbackDesktop.map((fallback, index) => safePath(paths?.desktop?.[index]) === fallback ? fallback : fallback);
+    githubDesktop = [...fallbackDesktop];
     githubMobile = [0, 1, 2].map((index) => safePath(paths?.mobile?.[index]));
   } catch {
     // A missing CMS configuration must not prevent repository-hosted defaults.
@@ -84,8 +84,8 @@ export async function getHeroImageState(): Promise<HeroImageState> {
 
     const desktop = [1, 2, 3].map((slot) => latestFor(slot, "desktop"));
     const mobile = [1, 2, 3].map((slot) => latestFor(slot, "mobile"));
-    // An explicitly saved GitHub path takes priority for that slot. Otherwise
-    // retain Blob as the primary source and use the committed image as fallback.
+    // Keep the committed desktop assets authoritative; uploaded Blob images are
+    // only considered for mobile crops below.
     const images = githubDesktop.map((path, index) => path ?? fallbackDesktop[index]);
     const mobileImages = mobile.map((blob, index) => {
       const desktopBlob = desktop[index];
