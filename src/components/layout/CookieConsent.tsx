@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 
-type Consent = "analytics" | "necessary";
+type Consent = "embedded" | "necessary";
 
 const CONSENT_KEY = "tap-consent-v1";
 
@@ -22,7 +22,7 @@ function getSnapshot(): "needed" | "saved" | "hidden" {
   if (window.location.pathname.startsWith("/admin")) return "hidden";
   try {
     const saved = localStorage.getItem(CONSENT_KEY);
-    return saved === "analytics" || saved === "necessary" ? "saved" : "needed";
+    return saved === "embedded" || saved === "necessary" ? "saved" : "needed";
   } catch {
     return "needed";
   }
@@ -56,12 +56,12 @@ export default function CookieConsent() {
       <div className="tap-cookie-copy">
         <p className="tap-cookie-eyebrow">YOUR PRIVACY</p>
         <h2 id="tap-cookie-heading">Your choices matter.</h2>
-        <p>Essential storage keeps the site secure and working. Optional analytics help us understand how visitors use the site and are only enabled if you accept. Embedded content, such as YouTube videos, is loaded when you choose to use it.</p>
+        <p>Essential technologies keep the site secure and working. We do not use analytics or advertising cookies. YouTube videos are optional embedded content and are loaded only when you allow them or choose to play them.</p>
         <a href="/cookies">Read the cookie policy</a>
       </div>
       <div className="tap-cookie-actions">
         <button type="button" className="tap-cookie-reject" onClick={() => save("necessary")}>Reject optional</button>
-        <button type="button" className="tap-cookie-accept" onClick={() => save("analytics")}>Accept analytics</button>
+        <button type="button" className="tap-cookie-accept" onClick={() => save("embedded")}>Allow embedded content</button>
       </div>
     </aside>
   );
