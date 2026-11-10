@@ -90,7 +90,6 @@ export default async function Footer() {
         <span className="tap-whatsapp-channel-arrow" aria-hidden="true">→</span>
       </a>
     </section>
-    <div className="footer-accent" aria-hidden="true"/>
     <div className="tap-footer-grid">
       <div className="tap-footer-brand"><FooterBrand/><p className="tap-footer-tagline">Your connection to Africa.</p></div>
       <nav className="tap-footer-column" aria-label="Explore links"><h2>EXPLORE</h2>{exploreLinks.map((item)=><a key={item.href} href={item.href}>{item.label}</a>)}</nav>
