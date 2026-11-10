@@ -74,7 +74,7 @@ export default async function Footer() {
       <div className="tap-whatsapp-channel-copy">
         <span className="tap-whatsapp-channel-icon" aria-hidden="true"><WhatsAppIcon /></span>
         <div className="tap-whatsapp-channel-text">
-          <h2 id="tap-whatsapp-channel-title">STAY CONNECTED WITH AFRICA PLUG</h2>
+          <h2 id="tap-whatsapp-channel-title">STAY CONNECTED WITH THE AFRICA PLUG</h2>
           <p>Get the latest updates, opportunities, announcements and community news.</p>
         </div>
       </div>
