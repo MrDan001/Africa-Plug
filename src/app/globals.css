@@ -229,14 +229,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   background: #030405;
   border-top: 1px solid rgba(255,255,255,.12);
 }
-.footer-accent {
-  position: absolute;
-  top: -1px;
-  left: max(28px, calc((100vw - 1380px) / 2));
-  width: 76px;
-  height: 3px;
-  background: var(--signal);
-}
 .tap-footer-grid {
   display: grid;
   grid-template-columns: 1.35fr .65fr .95fr 1.35fr;
@@ -308,7 +300,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 @media (max-width: 680px) {
   .site-footer { padding: 38px 19px 20px; }
-  .footer-accent { left: 19px; }
   .tap-footer-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 33px 20px; }
   .tap-footer-brand, .tap-footer-contact { grid-column: 1 / -1; }
   .tap-footer-brand { padding-bottom: 4px; }
