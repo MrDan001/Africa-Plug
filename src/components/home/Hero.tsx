@@ -37,7 +37,7 @@ const SLIDES: Slide[] = [
     highlight: "OPPORTUNITY",
     support: "Active business and investment opportunities you can take part in.",
     activeButton: 1,
-    image: "/images/tap-in/tap-in-hero.jpg",
+    image: "/images/home/hero-opportunity.jpg",
     location: "Across Africa",
   },
   {
@@ -46,7 +46,7 @@ const SLIDES: Slide[] = [
     highlight: "QUESTION",
     support: "Trying to understand a market, place, issue or opportunity in Africa?",
     activeButton: 2,
-    image: "/images/fk.jpg",
+    image: "/images/home/hero-question.jpg",
     location: "On the ground in Africa",
   },
 ];
