@@ -35,14 +35,6 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
   const [token, setToken] = useState("");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
-  const applicationStarted = useRef(false);
-
-  function markStarted() {
-    if (kind !== "work" || applicationStarted.current) return;
-    applicationStarted.current = true;
-    void fetch("/api/analytics/event", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ eventName: "application_started", path: window.location.pathname, source: new URLSearchParams(window.location.search).get("utm_source") || document.referrer || "direct", referrer: document.referrer, utm: Object.fromEntries(["utm_source","utm_medium","utm_campaign","utm_content","utm_term"].map((key) => [key, new URLSearchParams(window.location.search).get(key) || ""])) }) }).catch(() => undefined);
-  }
-
   useEffect(() => {
     if (!siteKey || !widgetRef.current) return;
     let cancelled = false;
@@ -115,7 +107,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
         <h2>{storeWaitlist ? `Join the waitlist for ${storeEnquiryTitle}` : storeEnquiryTitle ? `Enquire about ${storeEnquiryTitle}` : form.title}</h2>
         <p>{storeWaitlist ? "Leave your details and we will let you know when this guide is ready." : storeEnquiryTitle ? "Send FK a few details and she will follow up by email." : form.description}</p>
       </header>
-      <form className="enquiry-form" onSubmit={submit} onFocusCapture={markStarted}>
+      <form className="enquiry-form" onSubmit={submit}>
         <div className="enquiry-form-grid">
           <label><span>Your name <b>*</b></span><input name="name" autoComplete="name" required minLength={2} maxLength={120} /></label>
           <label><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
