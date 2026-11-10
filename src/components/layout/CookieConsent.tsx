@@ -4,8 +4,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 type Consent = "embedded" | "necessary";
-
-const CONSENT_KEY = "tap-consent-v1";
+const CONSENT_KEY = "tap-consent-v2";
 
 function subscribe(onChange: () => void) {
   window.addEventListener("tap:consent-changed", onChange);
@@ -56,7 +55,7 @@ export default function CookieConsent() {
       <div className="tap-cookie-copy">
         <p className="tap-cookie-eyebrow">YOUR PRIVACY</p>
         <h2 id="tap-cookie-heading">Your choices matter.</h2>
-        <p>Essential technologies keep the site secure and working. We do not use analytics or advertising cookies. YouTube videos are optional embedded content and are loaded only when you allow them or choose to play them.</p>
+        <p>Essential cookies keep the site secure and working. We don’t use analytics or advertising cookies. YouTube videos are loaded in privacy-enhanced mode when you choose to play them.</p>
         <a href="/cookies">Read the cookie policy</a>
       </div>
       <div className="tap-cookie-actions">
