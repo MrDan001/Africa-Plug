@@ -4,11 +4,27 @@
 import { useState } from "react";
 
 /**
- * Click-to-play YouTube embed with an immediate visual preview thumbnail.
- * Nothing heavy is requested from YouTube until the visitor presses play.
+ * Click-to-play YouTube embed. The privacy-enhanced iframe is mounted only
+ * after the visitor has allowed optional embedded content.
  */
 export default function IntroVideo({ videoId }: { videoId: string }) {
   const [playing, setPlaying] = useState(false);
+
+  function playVideo() {
+    let allowed = false;
+    try {
+      allowed = localStorage.getItem("tap-consent-v1") === "embedded";
+    } catch {
+      allowed = false;
+    }
+
+    if (allowed) {
+      setPlaying(true);
+      return;
+    }
+
+    window.dispatchEvent(new Event("tap:open-cookie-settings"));
+  }
 
   if (playing) {
     return (
@@ -24,15 +40,15 @@ export default function IntroVideo({ videoId }: { videoId: string }) {
   }
 
   return (
-    <button 
-      type="button" 
-      className="intro-video-poster" 
-      onClick={() => setPlaying(true)} 
+    <button
+      type="button"
+      className="intro-video-poster"
+      onClick={playVideo}
       aria-label="Play the introduction video"
       style={{
-        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.48), transparent 30%, transparent 70%, rgba(0,0,0,.38)), url("https://img.youtube.com/vi/${videoId}/hqdefault.jpg"), url("/images/work-with-fk-hero.jpg")`,
-        backgroundSize: "cover, cover, cover",
-        backgroundPosition: "center, center, center",
+        backgroundImage: "linear-gradient(180deg, rgba(0,0,0,.48), transparent 30%, transparent 70%, rgba(0,0,0,.38)), url(\"/images/work-with-fk-hero.jpg\")",
+        backgroundSize: "cover, cover",
+        backgroundPosition: "center, center",
         color: "#ffffff",
       }}
     >
