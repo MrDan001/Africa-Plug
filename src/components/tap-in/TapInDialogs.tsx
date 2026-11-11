@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
-import { COUNTRIES, REGISTER_COUNTRIES, INTEREST_TIMEFRAMES, IMAGE_MAX_BYTES } from "@/lib/tap-in/forms";
+import { INTEREST_TIMEFRAMES, IMAGE_MAX_BYTES } from "@/lib/tap-in/forms";
+import { AFRICAN_COUNTRIES } from "@/lib/work-with-fk/application-schema";
 import type { PublicListing } from "@/lib/tap-in/public";
 import { useTurnstile } from "@/components/work-with-fk/useTurnstile";
 
@@ -109,7 +110,7 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
           <label><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           <label><span>Phone or WhatsApp <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={30} pattern="\+[0-9][0-9 ()\-]{5,28}" placeholder="+234 (0) 913 - XXX - XXXX" title="Include your country code, for example +234" /></label>
           <label className="ti-full"><span>Country you’re based in <b>*</b></span>
-            <select name="country" defaultValue="" required><option value="" disabled>Select a country</option>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
+            <select name="country" defaultValue="" required><option value="" disabled>Select a country</option>{AFRICAN_COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}</select>
           </label>
           <label className="ti-full"><span>What are you looking for? <b>*</b></span>
             <textarea name="looking" rows={4} required maxLength={500} onChange={(e) => setLength(e.target.value.length)} />
@@ -150,7 +151,7 @@ export function RegisterInterestDialog({ onClose }: { onClose: () => void }) {
           <label className="ti-full"><span>Email address <b>*</b></span><input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
           <label className="ti-full"><span>What you’re looking for <b>*</b></span><textarea name="looking" rows={4} required maxLength={1000} /></label>
           <label className="ti-full"><span>Country of interest <b>*</b></span>
-            <select name="country" defaultValue="" required><option value="" disabled>Select a country</option>{REGISTER_COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}</select>
+            <select name="country" defaultValue="" required><option value="" disabled>Select a country</option>{AFRICAN_COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}</select>
           </label>
           <Consent>I agree to {policyLinks}.</Consent>
           <Honeypot />
