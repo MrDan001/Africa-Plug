@@ -1,33 +1,26 @@
 import { ImageResponse } from "next/og";
+import logo from "../../public/images/the-africa-plug-logo.jpg";
 
 export const alt = "The Africa Plug — Your connection to Africa";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OpenGraphImage() {
-  const logoUrl = new URL(
-    "/images/the-africa-plug-logo.jpg",
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://theafricaplug.com",
-  ).toString();
-
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 76, background: "#f7f5f1", color: "#292a2c", fontFamily: "Arial, Helvetica, sans-serif" }}>
       <div style={{ display: "flex", alignItems: "center", height: 58 }}>
-        <div style={{ width: 40, height: 58, position: "relative", overflow: "hidden", display: "flex", flex: "none", background: "#000", aspectRatio: "721 / 1055" }}>
-          <img
-            src={logoUrl}
-            width={1254}
-            height={1254}
-            style={{
-              position: "absolute",
-              display: "block",
-                height: "auto",
-              width: `${(1254 / 721) * 100}%`,
-              left: `${-(266 / 721) * 100}%`,
-              top: `${-(96 / 1055) * 100}%`,
-            }}
-          />
-        </div>
+        <img
+          src={logo.src}
+          width={logo.width}
+          height={logo.height}
+          style={{
+            display: "block",
+            width: 250,
+            height: 58,
+            objectFit: "contain",
+            objectPosition: "left center",
+          }}
+        />
       </div>
       <div style={{ display: "flex", flexDirection: "column", maxWidth: 930 }}>
         <div style={{ width: 68, height: 5, background: "#d51f6d", marginBottom: 26 }} />
