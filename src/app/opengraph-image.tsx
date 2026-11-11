@@ -7,21 +7,36 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
+  // Use the same approved source image and crop as the website's BrandLogo component.
   const logoBytes = await readFile(
-    join(process.cwd(), "public", "images", "logo.svg"),
+    join(process.cwd(), "public", "images", "the-africa-plug-logo.jpg"),
   );
-  const logoSrc = `data:image/svg+xml;base64,${logoBytes.toString("base64")}`;
+  const logoSrc = `data:image/jpeg;base64,${logoBytes.toString("base64")}`;
+
+  const sourceSize = 1254;
+  const crop = { x: 266, y: 96, width: 721, height: 1055 };
+  const logoHeight = 58;
+  const logoWidth = (crop.width / crop.height) * logoHeight;
 
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 76, background: "#f7f5f1", color: "#292a2c", fontFamily: "Arial, Helvetica, sans-serif" }}>
       <div style={{ display: "flex", alignItems: "center", height: 64 }}>
-        <img
-          src={logoSrc}
-          alt="The Africa Plug"
-          width={64}
-          height={64}
-          style={{ display: "block", width: 64, height: 64, objectFit: "contain" }}
-        />
+        <div style={{ width: logoWidth, height: logoHeight, position: "relative", overflow: "hidden", display: "flex", flex: "none", background: "#000" }}>
+          <img
+            src={logoSrc}
+            alt="The Africa Plug"
+            width={sourceSize}
+            height={sourceSize}
+            style={{
+              position: "absolute",
+              display: "block",
+              height: "auto",
+              width: `${(sourceSize / crop.width) * 100}%`,
+              left: `${-(crop.x / crop.width) * 100}%`,
+              top: `${-(crop.y / crop.height) * 100}%`,
+            }}
+          />
+        </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", maxWidth: 930 }}>
         <div style={{ width: 68, height: 5, background: "#d51f6d", marginBottom: 26 }} />
