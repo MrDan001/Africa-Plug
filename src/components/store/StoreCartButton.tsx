@@ -45,9 +45,7 @@ export default function StoreCartButton({ mobileFloating = false, validProductSl
     window.addEventListener(STORE_CART_EVENT, refresh);
     window.addEventListener("storage", refresh);
     // Returning from Stripe with the browser Back button restores this page from cache.
-    const resetOnReturn = (event: PageTransitionEvent) => {
-      if (event.persisted) { setCheckingOut(false); refresh(); }
-    };
+    const resetOnReturn = () => { setCheckingOut(false); refresh(); };
     window.addEventListener("pageshow", resetOnReturn);
     window.addEventListener("focus", resetOnReturn);
     return () => {
