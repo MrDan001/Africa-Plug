@@ -37,6 +37,11 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     "/images/Hero/tap-in-hero.jpg",
     "/images/Hero/ask-fk.jpg",
   ];
+  const fallbackMobile: (string | null)[] = [
+    "/images/Hero/mobile/work-with-fk-mobile.jpg",
+    "/images/Hero/mobile/tap-in-mobile.jpg",
+    "/images/Hero/mobile/ask-fk-mobile.jpg",
+  ];
   let githubDesktop: (string | null)[] = [...fallbackDesktop];
   let githubMobile: (string | null)[] = [null, null, null];
   try {
@@ -59,12 +64,14 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     // A missing CMS configuration must not prevent repository-hosted defaults.
   }
 
+  const displayGithubMobile = githubMobile.map((path, index) => path ?? fallbackMobile[index]);
+
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return {
       images: githubDesktop.map((path, index) => path ?? fallbackDesktop[index]),
-      mobileImages: githubMobile.map((path, index) => path ?? githubDesktop[index] ?? fallbackDesktop[index]),
+      mobileImages: displayGithubMobile.map((path, index) => path ?? githubDesktop[index] ?? fallbackDesktop[index]),
       githubImages: githubDesktop,
-      githubMobileImages: githubMobile,
+      githubMobileImages: displayGithubMobile,
       storage: "github",
     };
   }
@@ -91,16 +98,16 @@ export async function getHeroImageState(): Promise<HeroImageState> {
       const desktopBlob = desktop[index];
       if (githubMobile[index]) return githubMobile[index];
       if (blob && (!desktopBlob || new Date(blob.uploadedAt).getTime() >= new Date(desktopBlob.uploadedAt).getTime())) return versionedUrl(blob);
-      return githubDesktop[index] ?? fallbackDesktop[index];
+      return fallbackMobile[index] ?? githubDesktop[index] ?? fallbackDesktop[index];
     });
-    return { images, mobileImages, githubImages: githubDesktop, githubMobileImages: githubMobile, storage: "vercel-blob" };
+    return { images, mobileImages, githubImages: githubDesktop, githubMobileImages: displayGithubMobile, storage: "vercel-blob" };
   } catch (error) {
     console.error("Could not list homepage hero images:", error instanceof Error ? error.message : "Unknown error");
     return {
       images: githubDesktop.map((path, index) => path ?? fallbackDesktop[index]),
-      mobileImages: githubMobile.map((path, index) => path ?? githubDesktop[index] ?? fallbackDesktop[index]),
+      mobileImages: githubMobile.map((path, index) => path ?? fallbackMobile[index] ?? githubDesktop[index] ?? fallbackDesktop[index]),
       githubImages: githubDesktop,
-      githubMobileImages: githubMobile,
+      githubMobileImages: displayGithubMobile,
       storage: "github",
     };
   }
