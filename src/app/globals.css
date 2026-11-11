@@ -2413,3 +2413,6 @@ body:has(.blog-index-page) { background: #f8f5ef; }
 .tap-product-action-row{display:flex;align-items:center;flex-wrap:wrap;gap:22px;margin-top:18px}
 .tap-product-action-row .tap-product-back-link{display:inline-flex;align-items:center;padding:10px 0;text-underline-offset:4px}
 @media(max-width:760px){.tap-product-action-row{gap:24px;margin-top:20px}.tap-product-action-row .tap-product-back-link{padding:12px 0}}
+
+/* Mobile label legibility refinements requested for the Store and Blog. */
+@media (max-width: 760px) { .blog-index-card-category { font-size: 10px; } }
