@@ -13,7 +13,7 @@ export default function OpenGraphImage() {
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 76, background: "#f7f5f1", color: "#292a2c", fontFamily: "Arial, Helvetica, sans-serif" }}>
       <div style={{ display: "flex", alignItems: "center", height: 58 }}>
-        <div style={{ width: 40, height: 58, position: "relative", overflow: "hidden", flex: "none", background: "#000", aspectRatio: "721 / 1055" }}>
+        <div style={{ width: 40, height: 58, position: "relative", overflow: "hidden", display: "flex", flex: "none", background: "#000", aspectRatio: "721 / 1055" }}>
           <img
             src={logoUrl}
             width={1254}
@@ -21,8 +21,7 @@ export default function OpenGraphImage() {
             style={{
               position: "absolute",
               display: "block",
-              maxWidth: "none",
-              height: "auto",
+                height: "auto",
               width: `${(1254 / 721) * 100}%`,
               left: `${-(266 / 721) * 100}%`,
               top: `${-(96 / 1055) * 100}%`,
