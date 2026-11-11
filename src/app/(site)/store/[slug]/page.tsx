@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: Props) {
     const available = product.availability === "available";
     const isService = product.category === "services";
     return <div className="tap-product-detail-page">
-      <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span><StoreCartButton /></div>
+      <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span><div className="tapcart-desktop-only"><StoreCartButton /></div></div>
       <section className="tap-product-detail-layout" aria-labelledby="tap-product-title">
         <div className="tap-product-detail-art">
           {product.imageUrl ? <img src={product.imageUrl} alt={`${product.title} product image`} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">KNOWLEDGE • TOOLS • RESEARCH</span></div>}
