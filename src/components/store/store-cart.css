@@ -1,6 +1,8 @@
 /* FILE PATH: src/components/store/StoreCart.tapcart-module.tapcart-css */
 
 .tapcart-root { display: inline-flex; }
+.tapcart-desktop-only { display: inline-flex; }
+@media (max-width: 800px) { .tapcart-desktop-only { display: none; } }
 
 /* ---------- Trigger ---------- */
 .tapcart-trigger {
