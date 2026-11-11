@@ -7,6 +7,7 @@ import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
 import StoreCartButton from "@/components/store/StoreCartButton";
 import StoreEnquiryButton from "@/components/store/StoreEnquiryButton";
+import "@/components/store/store-page.css";
 import "@/components/store/store-categories.css";
 import { getStoreCategory } from "@/lib/store-categories";
 import { DEMO_STORE_PRODUCTS } from "@/lib/store-demo-products";
