@@ -24,9 +24,9 @@ function BagIcon({ size = 22 }: { size?: number }) {
   );
 }
 
-type Props = { mobileFloating?: boolean };
+type Props = { mobileFloating?: boolean; validProductSlugs?: string[] };
 
-export default function StoreCartButton({ mobileFloating = false }: Props) {
+export default function StoreCartButton({ mobileFloating = false, validProductSlugs }: Props) {
   const router = useRouter();
   const [items, setItems] = useState<StoreCartItem[]>([]);
   const [open, setOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
 
   useEffect(() => {
     setMounted(true);
-    const refresh = () => setItems(readStoreCart());
+    const refresh = () => setItems(readStoreCart(validProductSlugs));
     refresh();
     window.addEventListener(STORE_CART_EVENT, refresh);
     window.addEventListener("storage", refresh);
@@ -49,12 +49,14 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
       if (event.persisted) { setCheckingOut(false); refresh(); }
     };
     window.addEventListener("pageshow", resetOnReturn);
+    window.addEventListener("focus", resetOnReturn);
     return () => {
       window.removeEventListener(STORE_CART_EVENT, refresh);
       window.removeEventListener("storage", refresh);
       window.removeEventListener("pageshow", resetOnReturn);
+      window.removeEventListener("focus", resetOnReturn);
     };
-  }, []);
+  }, [validProductSlugs]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -172,7 +174,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
               <p className={"tapcart-note"}>
                 {mixedCurrencies
                   ? "Your cart contains different currencies. Remove products until only one currency remains to continue."
-                  : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Your download links appear as soon as payment is confirmed."}
+                  : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Available guides download straight after payment. Preorders are emailed to you the moment they’re released."}
               </p>
               <label className="tapcart-preorder-consent"><input type="checkbox" checked={preorderConsent} onChange={(event) => setPreorderConsent(event.target.checked)} /><span>I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is.</span></label>
               {checkoutError ? <p role="alert" className={"tapcart-error"}>{checkoutError}</p> : null}
