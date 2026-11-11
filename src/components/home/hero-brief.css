@@ -60,6 +60,8 @@
    
    @media (max-width: 680px) {
      .hero.hero-brief { min-height: 0; height: auto; padding-top: 0; }
+     /* Use the separately uploaded mobile crop on phones; desktop keeps item.image. */
+     .hero.hero-brief .hero-photo { background-image: var(--hero-mobile-image); }
      .hero.hero-brief .hero-photo.hero-photo-slide-1 { background-position: 61% 22%; }
      .hero.hero-brief .hero-photo.hero-photo-slide-2 { background-position: 61% 40%; }
      .hero.hero-brief .hero-photo.hero-photo-slide-3 { background-position: 61% 20%; }
