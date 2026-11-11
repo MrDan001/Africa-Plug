@@ -1,11 +1,9 @@
 // FILE PATH: src/lib/tap-in/forms.ts
 // Validation shared by the T.A.P IN forms (browser options and server routes).
 import { z } from "zod";
-import { AFRICAN_COUNTRIES, COUNTRIES } from "@/lib/work-with-fk/application-schema";
+import { AFRICAN_COUNTRIES } from "@/lib/work-with-fk/application-schema";
 
-export { COUNTRIES };
 export const INTEREST_TIMEFRAMES = ["Now", "Within 3 months", "Exploring"] as const;
-export const REGISTER_COUNTRIES = AFRICAN_COUNTRIES;
 
 const text = (label: string, max: number) =>
   z.string().trim().min(1, `Please enter ${label}.`).max(max, `${label[0].toUpperCase()}${label.slice(1)} is too long.`);
@@ -22,7 +20,7 @@ export const interestSchema = z.object({
   company: optionalText(160),
   email,
   phone: z.string().trim().max(30).regex(/^\+[0-9][0-9 ()-]{5,28}$/, "Please include your country code, for example +234.").optional().or(z.literal("")),
-  country: z.enum(COUNTRIES, { message: "Please choose the country you are based in." }),
+  country: z.enum(AFRICAN_COUNTRIES, { message: "Please choose an African country." }),
   looking: text("what you are looking for", 500),
   timeframe: z.enum(INTEREST_TIMEFRAMES).optional().or(z.literal("")),
   consent,
