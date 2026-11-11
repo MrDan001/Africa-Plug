@@ -1,6 +1,7 @@
 // FILE PATH: src/components/store/StoreCartButton.tsx
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   changeStoreCartQuantity,
@@ -26,6 +27,7 @@ function BagIcon({ size = 22 }: { size?: number }) {
 type Props = { mobileFloating?: boolean };
 
 export default function StoreCartButton({ mobileFloating = false }: Props) {
+  const router = useRouter();
   const [items, setItems] = useState<StoreCartItem[]>([]);
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -58,6 +60,11 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
     setOpen(false);
     triggerRef.current?.focus();
   }, []);
+
+  const continueBrowsing = useCallback(() => {
+    setOpen(false);
+    router.push("/store");
+  }, [router]);
 
   // Escape to close, simple focus trap, and page scroll lock while the drawer is open.
   useEffect(() => {
@@ -131,7 +138,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
               <div className={"tapcart-empty-icon"}><BagIcon size={34} /></div>
               <h3>Your cart is empty.</h3>
               <p>Add a TAP product and it will be kept here while you browse.</p>
-              <button type="button" className={"tapcart-checkout"} onClick={close}>EXPLORE PRODUCTS</button>
+              <button type="button" className={"tapcart-checkout"} onClick={continueBrowsing}>EXPLORE PRODUCTS</button>
             </div>
           </div>
         ) : (
@@ -172,7 +179,7 @@ export default function StoreCartButton({ mobileFloating = false }: Props) {
               <button type="button" className={"tapcart-checkout"} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies || !preorderConsent}>
                 {checkingOut ? "CONNECTING TO STRIPE…" : "CONTINUE TO SECURE CHECKOUT"} <span aria-hidden="true">→</span>
               </button>
-              <button type="button" className={"tapcart-continue"} onClick={close}>CONTINUE BROWSING</button>
+              <button type="button" className={"tapcart-continue"} onClick={continueBrowsing}>CONTINUE BROWSING</button>
             </footer>
           </>
         )}
