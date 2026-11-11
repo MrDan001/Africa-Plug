@@ -39,7 +39,7 @@ function LegalPage({ eyebrow, title, intro, sections }: LegalPageProps) {
         </div>
         <div className="legal-page-contact">
           <h2>Questions?</h2>
-          <p>Email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a>. Please do not send full payment-card details.</p>
+          <p>Email <a href="mailto:connect@theafricaplug.com">connect@theafricaplug.com</a>. Please do not send full payment card details.</p>
         </div>
       </div>
     </article>
@@ -85,7 +85,7 @@ export function PrivacyPolicy() {
     ]},
     { heading: "4. Who we share it with", paragraphs: ["We never sell your information. We share only what’s needed with the services that run the site:"], bullets: [
       "Vercel (hosting)", "Resend (email)", "Cloudflare Turnstile (spam protection)", "Stripe (payments)",
-      "Google (calendar bookings, invites and video calls)", "[email updates tool]"
+      "Google (calendar bookings, invites and video calls)"
     ]},
     { heading: "5. T.A.P IN", paragraphs: ["When you express interest in an opportunity, we don’t pass your details to the lister automatically. We review interest and make introductions ourselves, with your agreement."] },
     { heading: "6. International transfers", paragraphs: ["Some of these services process data outside your country. Where the law requires it, we use appropriate safeguards, such as approved contract terms."] },
@@ -132,7 +132,7 @@ export function CookiePolicy() {
     ]},
     { heading: "3. Changing your choice", paragraphs: ["When you first visit, you can accept or decline optional cookies. You can change your choice at any time using the Cookie settings link at the bottom of every page. You can also block or delete cookies in your browser settings, though some features may not work properly."] },
     { heading: "4. Other providers", paragraphs: ["Stripe and YouTube set cookies under their own policies, which we encourage you to read."] },
-    { heading: "5. Changes", paragraphs: ["We’ll update this policy if the cookies we use change. The date above shows the current version.", "For any questions, email connect@theafricaplug.com."] }
+    { heading: "5. Changes", paragraphs: ["We’ll update this policy if the cookies we use change. The date above shows the current version."] }
   ];
   return <LegalPage eyebrow="DEVICE PREFERENCES" title="COOKIE POLICY" intro="How The Africa Plug uses cookies and similar technologies." sections={sections} />;
 }
