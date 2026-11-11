@@ -114,7 +114,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
           {!storeEnquiryTitle ? <label><span>Organisation <small>Optional</small></span><input name="organisation" autoComplete="organization" maxLength={160} /></label> : null}
           <label><span>{storeEnquiryTitle ? "Phone or WhatsApp" : "Phone"} <small>Optional</small></span><input name="phone" type="tel" autoComplete="tel" maxLength={50} /></label>
           {storeEnquiryTitle ? <><input type="hidden" name="enquiryType" value={storeWaitlist ? "Store waitlist" : "Store enquiry"} /><input type="hidden" name="storeProductId" value={storeProductId} /><input type="hidden" name="storeProductSlug" value={storeProductSlug} /></> : null}
-          {kind === "contact" ? <label className="enquiry-full-width">
+          {kind === "contact" && !storeEnquiryTitle ? <label className="enquiry-full-width">
             <span>What is this about? <b>*</b></span>
             <select
               name="enquiryType"
