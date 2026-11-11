@@ -8,24 +8,19 @@ export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
   const logoBytes = await readFile(
-    join(process.cwd(), "public", "images", "the-africa-plug-logo.jpg"),
+    join(process.cwd(), "public", "images", "logo.svg"),
   );
-  const logoSrc = `data:image/jpeg;base64,${logoBytes.toString("base64")}`;
+  const logoSrc = `data:image/svg+xml;base64,${logoBytes.toString("base64")}`;
 
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 76, background: "#f7f5f1", color: "#292a2c", fontFamily: "Arial, Helvetica, sans-serif" }}>
-      <div style={{ display: "flex", alignItems: "center", height: 58 }}>
+      <div style={{ display: "flex", alignItems: "center", height: 64 }}>
         <img
           src={logoSrc}
-          width={250}
-          height={58}
-          style={{
-            display: "block",
-            width: 250,
-            height: 58,
-            objectFit: "contain",
-            objectPosition: "left center",
-          }}
+          alt="The Africa Plug"
+          width={64}
+          height={64}
+          style={{ display: "block", width: 64, height: 64, objectFit: "contain" }}
         />
       </div>
       <div style={{ display: "flex", flexDirection: "column", maxWidth: 930 }}>
