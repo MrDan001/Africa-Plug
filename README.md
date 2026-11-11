@@ -59,4 +59,4 @@ Before any client-facing launch, verify the live deployment on desktop and mobil
 
 ## T.A.P IN opportunity locations
 
-T.A.P IN opportunity records retain their optional African Region and required Country fields. The region remains available as listing context; clean opportunity links use the listing slug without appending a region. The Admin → T.A.P IN country selector uses the shared `AFRICAN_COUNTRIES` list so new and edited opportunities can only select African countries.
+T.A.P IN opportunity records retain their optional African Region and required Country fields. The region remains available as listing context; clean opportunity links use the listing slug without appending a region. All country dropdowns across public forms, T.A.P IN filters and admin opportunity management use the shared `AFRICAN_COUNTRIES` list. The same list is enforced by the relevant server-side validation.
