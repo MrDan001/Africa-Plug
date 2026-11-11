@@ -30,6 +30,7 @@ export default async function OpenGraphImage() {
             style={{
               position: "absolute",
               display: "block",
+              maxWidth: "none",
               height: "auto",
               width: `${(sourceSize / crop.width) * 100}%`,
               left: `${-(crop.x / crop.width) * 100}%`,
