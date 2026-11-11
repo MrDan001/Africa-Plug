@@ -61,7 +61,7 @@ export default async function HomeSections() {
             <span className="homepage-opportunity-copy"><strong>{item.title}</strong><small>{item.opportunity_type || item.sector}</small><span>{item.description}</span></span>
             <span className="homepage-opportunity-arrow" aria-hidden="true">→</span>
           </Link>;
-        })}<div className="homepage-opportunity-about"><Link href="/about">ABOUT TAP <span aria-hidden="true">＋</span></Link></div></div> : <div className="homepage-opportunity-empty"><strong>New opportunities are on the way.</strong><span>Check back soon for current business and investment opportunities across Africa.</span></div>}
+        })}</div> : <div className="homepage-opportunity-empty"><strong>New opportunities are on the way.</strong><span>Check back soon for current business and investment opportunities across Africa.</span></div>}
         <Link className="homepage-section-link" href="/tap-in">EXPLORE T.A.P IN <span>→</span></Link>
       </div>
     </section>
