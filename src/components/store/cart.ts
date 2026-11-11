@@ -14,7 +14,7 @@ export function readStoreCart(validSlugs?: readonly string[]): StoreCartItem[] {
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.flatMap((candidate): StoreCartItem[] => {
+    const cleaned = parsed.flatMap((candidate): StoreCartItem[] => {
       if (!candidate || typeof candidate !== "object") return [];
       const item = candidate as Record<string, unknown>;
       if (typeof item.slug !== "string" || (validSlugs && !validSlugs.includes(item.slug)) || typeof item.title !== "string" ||
@@ -32,6 +32,10 @@ export function readStoreCart(validSlugs?: readonly string[]): StoreCartItem[] {
           : "GBP",
       }];
     });
+    if (validSlugs && cleaned.length !== parsed.length) {
+      window.localStorage.setItem(STORE_CART_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return [];
   }
