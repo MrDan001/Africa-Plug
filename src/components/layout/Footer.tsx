@@ -57,7 +57,7 @@ export default async function Footer() {
     ? configuredExploreLinks
     : [
         ...configuredExploreLinks.slice(0, 1),
-        { label: "Work With FK", href: "/work-with-fk" },
+        { label: "WORK WITH FK", href: "/work-with-fk" },
         ...configuredExploreLinks.slice(1),
       ];
   const socialLinks = [
