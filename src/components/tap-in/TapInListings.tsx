@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AFRICAN_COUNTRIES } from "@/lib/work-with-fk/application-schema";
 
 export type PublicTapInOpportunity = {
   id: string;
@@ -27,7 +28,7 @@ export default function TapInListings({ opportunities, filterThreshold = 6 }: Pr
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const showFilters = opportunities.length >= Math.min(100, Math.max(1, Math.floor(filterThreshold)));
 
-  const countries = useMemo(() => choices(opportunities.map((item) => item.country)), [opportunities]);
+  const countries = AFRICAN_COUNTRIES;
   const sectors = useMemo(() => choices(opportunities.map((item) => item.sector)), [opportunities]);
   const opportunityTypes = useMemo(() => choices(opportunities.map((item) => item.opportunity_type)), [opportunities]);
   const filtered = useMemo(() => opportunities.filter((item) =>
