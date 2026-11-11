@@ -622,3 +622,5 @@
   .homepage-store-banner-copy h2 { font-size: clamp(26px, 8vw, 36px); }
   .homepage-store-banner-cta { min-height: 48px; padding: 0 22px; gap: 12px; border-radius: 3px; font-size: 13px; letter-spacing: .06em; }
 }
+/* Mobile featured-story category labels remain comfortably readable. */
+@media (max-width: 760px) { .featured-blog-section-home .featured-blog-card-category { font-size: 10px; } }
