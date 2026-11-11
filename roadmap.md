@@ -31,7 +31,7 @@
 
 **Footer navigation fix (6 November 2026):** The footer now always includes **Work With FK** (`/work-with-fk`), even when saved CMS navigation settings omit that item. Existing configured footer links and their order are preserved; the missing link is inserted after the first Explore link.
 
-**Update (6 November 2026):** Standardized public-facing opportunity branding as **T.A.P IN** across navigation, search, page headings, the admin workspace, forms, metadata and documentation. The public opportunity country filter now offers African countries only; the broader country choices used by Work With FK remain unchanged.
+**Update (11 November 2026):** Standardized the country source across T.A.P IN, Work With FK and admin opportunity management. Every country dropdown now uses the single African-only `AFRICAN_COUNTRIES` list, and the API schemas validate against that same list.
 
 
 Commercial headquarters of FK's Africa Commercial Deal Consultancy.
