@@ -3,7 +3,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useTurnstile } from "./useTurnstile";
-import { COUNTRIES, DEAL_STAGES, HEAR_ABOUT, TIMEFRAMES } from "@/lib/work-with-fk/application-schema";
+import { AFRICAN_COUNTRIES, DEAL_STAGES, HEAR_ABOUT, TIMEFRAMES } from "@/lib/work-with-fk/application-schema";
 import "./work-with-fk.css";
 
 export default function WorkApplyForm() {
@@ -79,7 +79,7 @@ export default function WorkApplyForm() {
             <span>Country you’re based in <b>*</b></span>
             <select name="country" defaultValue="" required>
               <option value="" disabled>Select a country</option>
-              {COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}
+              {AFRICAN_COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}
             </select>
           </label>
           <label className="enquiry-full-width"><span>Market or markets involved <b>*</b></span><input name="markets" required maxLength={200} /></label>
