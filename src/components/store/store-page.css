@@ -35,6 +35,10 @@
 .store-product-cta { display: inline-flex; min-width: 236px; min-height: 44px; align-items: center; justify-content: center; gap: 10px; padding: 0 20px; border: 0; border-radius: 1px; background: #ed0065; color: #fff; font-family: Georgia,"Times New Roman",serif; font-size: 10px; font-weight: 800; letter-spacing: .12em; line-height: 1; text-decoration: none; cursor: pointer; }
 .store-product-cta:hover { background: #bd0051; color: #fff; }
 .store-product-cta:focus-visible { outline: 2px solid #292a2c; outline-offset: 3px; }
+.tap-product-action-row .tap-store-add-button { min-width: 220px; min-height: 44px; border-radius: 1px; background: #ed0065; color: #fff; font-family: Georgia, "Times New Roman", serif; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.tap-product-action-row .tap-store-add-button:hover { background: #bd0051; }
+.tap-product-detail-topline > span { font-size: 12px; letter-spacing: .12em; }
+@media (max-width: 760px) { .tap-product-detail-topline > span { font-size: 11px; } .store-product-kicker { font-size: 12px; } }
 .store-product-coming-soon, .store-product-coming-soon:disabled { background: #ed0065; color: #fff; opacity: 1; cursor: default; }
 .store-product-coming-soon:hover, .store-product-coming-soon:disabled:hover { background: #ed0065; color: #fff; }
 .store-more-guides { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0 0; padding: 16px 0 0; border-top: 1px solid #eeeae5; text-align: center; }

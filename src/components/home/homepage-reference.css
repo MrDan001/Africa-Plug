@@ -50,7 +50,7 @@
 .homepage-case-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; text-align: left; }
 .homepage-case-grid article { min-width: 0; padding: 21px 21px 23px; border: 1px solid #dedbd4; border-bottom: 3px solid #aa8d62; background: #fff; }
 .homepage-case-grid article > span { color: #aa8d62; font-size: 11px; font-weight: 850; letter-spacing: .12em; }
-.homepage-case-grid .homepage-case-type { min-height: 25px; margin: 17px 0 7px; color: #77736c; font-size: 8px; font-weight: 850; letter-spacing: .13em; line-height: 1.5; }
+.homepage-case-grid .homepage-case-type { min-height: 25px; margin: 17px 0 7px; color: #77736c; font-size: 10px; font-weight: 850; letter-spacing: .13em; line-height: 1.5; }
 .homepage-case-grid h3 { margin: 0; color: #292a2c; font-family: Georgia, "Times New Roman", serif; font-size: clamp(17px, 1.55vw, 21px); line-height: 1.15; }
 .homepage-case-grid article > p:not(.homepage-case-type) { margin: 12px 0 0; color: #626469; font-size: 12px; line-height: 1.6; }
 .homepage-case-grid article > strong { display: block; margin-top: 13px; color: #292a2c; font-size: 12px; line-height: 1.6; }
@@ -112,7 +112,7 @@
 .featured-blog-section-home .featured-blog-view-all { font-size: 9px; letter-spacing: .1em; }
 .featured-blog-section-home .featured-blog-card { min-height: 200px; border: 1px solid #dedbd4; border-radius: 0; background: transparent; box-shadow: none; }
 .featured-blog-section-home .featured-blog-card-copy { justify-content: flex-start; padding: 18px; background: transparent; }
-.featured-blog-section-home .featured-blog-card-category { margin-bottom: 8px; color: #a91b58; font-size: 8px; }
+.featured-blog-section-home .featured-blog-card-category { margin-bottom: 8px; color: #a91b58; font-size: 10px; }
 .featured-blog-section-home .featured-blog-card-title { max-width: 520px; color: #292a2c; font-family: Georgia, "Times New Roman", serif; font-size: clamp(20px, 2.2vw, 27px); line-height: 1.08; }
 .featured-blog-section-home .featured-blog-card-excerpt { max-width: 510px; margin-top: 8px; padding: 0; color: #6b6c6d; font-size: 11px; line-height: 1.5; }
 .featured-blog-section-home .featured-blog-card-arrow { position: static; display: inline-flex; width: auto; height: auto; justify-content: flex-start; gap: 7px; margin-top: 13px; border: 0; color: var(--signal); font-size: 8px; font-weight: 900; letter-spacing: .12em; }
@@ -615,13 +615,12 @@
    are nudged up a little so they stay readable and still clear the phone. */
 @media (max-width: 760px) {
   .homepage-store-banner { padding: 16px 12px 24px; }
-  .homepage-store-banner-inner { padding-left: 4.5%; }
-  .homepage-store-banner-copy { gap: 3.4cqw; }
-  .homepage-store-banner-copy h2 { font-size: 4.4cqw; }
-  .homepage-store-banner-cta {
-    min-height: 6.4cqw;
-    padding: 0 2cqw;
-    gap: 1.2cqw;
-    font-size: 1.65cqw;
-  }
+  .homepage-store-banner-inner { display: flex; flex-direction: column; align-items: stretch; aspect-ratio: auto; padding: 0; overflow: hidden; }
+  .homepage-store-banner-artwork { position: relative; inset: auto; width: 100%; height: auto; aspect-ratio: 2 / 1; -webkit-mask-image: none; mask-image: none; }
+  .homepage-store-banner-image { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .homepage-store-banner-copy { order: 2; align-items: flex-start; gap: 16px; padding: 22px 20px 24px; }
+  .homepage-store-banner-copy h2 { font-size: clamp(26px, 8vw, 36px); }
+  .homepage-store-banner-cta { min-height: 48px; padding: 0 22px; gap: 12px; border-radius: 3px; font-size: 13px; letter-spacing: .06em; }
 }
+/* Mobile featured-story category labels remain comfortably readable. */
+@media (max-width: 760px) { .featured-blog-section-home .featured-blog-card-category { font-size: 10px; } }

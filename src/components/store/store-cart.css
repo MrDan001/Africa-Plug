@@ -47,8 +47,8 @@
 .tapcart-floating {
   position: fixed;
   right: 16px;
-  bottom: 18px;
-  z-index: 900;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 950;
   display: none;
 }
 .tapcart-floating .tapcart-trigger {
