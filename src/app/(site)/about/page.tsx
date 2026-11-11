@@ -5,6 +5,7 @@ import { PartnershipTrigger } from "@/components/forms/PartnershipDialog";
 export const metadata: Metadata = {
   title: { absolute: "About The Africa Plug | Your Connection to Africa | The Africa Plug" },
   description: "The Africa Plug brings Africa and the world together through investment, business and entertainment. Founded by FK, Africa Commercial Deal Consultant.",
+  alternates: { canonical: "/about" },
 };
 
 const territories = [
@@ -24,7 +25,7 @@ export default function AboutPage() {
     </section>
     <section className="about-founder" id="founder">
       <img className="about-founder-photo" src="/images/fk.jpg" alt="FK, founder of The Africa Plug" />
-      <div><p className="standard-eyebrow">MEET THE FOUNDER</p><h2>FK</h2><p>FK is the founder of The Africa Plug. She moved to Nigeria a decade ago, when few people understood why. Today, Africa is making that case on its own.</p><p>What she has built is a platform for the people, opportunities and stories shaping the continent, with a perspective that extends beyond any one country, industry or individual.</p></div>
+      <div><p className="standard-eyebrow">MEET THE FOUNDER</p><h2>FK</h2><p>FK is the founder of The Africa Plug. She moved to Nigeria a decade ago, when few people understood why. Today, Africa is making that case on its own.</p><p style={{ marginTop: "1.25rem" }}>What she has built is a platform for the people, opportunities and stories shaping the continent, with a perspective that extends beyond any one country, industry or individual.</p></div>
     </section>
   </ContentPage>;
 }
