@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
@@ -30,7 +30,7 @@ function storageConfig() {
   return { url, anonKey, serviceKey };
 }
 
-async function ensurePublicMediaBucket(storage: ReturnType<typeof createClient>) {
+async function ensurePublicMediaBucket(storage: SupabaseClient<any, "public", "public", any, any>) {
   const options = {
     public: true,
     fileSizeLimit: MAX_IMAGE_BYTES,
