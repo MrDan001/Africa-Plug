@@ -1,4 +1,3 @@
-/* FILE PATH: src/components/admin/TapInManager.css */
 /* Plain global stylesheet, all classes prefixed "tapin-". Not a CSS module: next.config.ts routes every .css file through the Tailwind loader, which disables module class hashing. */
 .tapin-page{--ink:#16213a;--muted:#6b7285;--line:#eee5df;--pink:#e5266f;--pink-dark:#c81b5e;--pink-soft:#fde9f1;--card:#fff;min-height:100vh;background:linear-gradient(180deg,#fbf7f4,#f6f1ed);color:var(--ink);font-family:Inter,"Segoe UI",Arial,Helvetica,sans-serif;line-height:1.5}
 .tapin-page *{box-sizing:border-box}
