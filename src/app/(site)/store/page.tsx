@@ -1,4 +1,3 @@
-// FILE PATH: src/app/(site)/store/page.tsx
 import type { Metadata } from "next";
 import StoreCatalogue from "@/components/store/StoreCatalogue";
 export const dynamic = "force-dynamic";
