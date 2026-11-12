@@ -494,6 +494,16 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   }
 
   async function setProductAvailability(record: CmsRecord, availability: "available" | "coming-soon") {
+    if (availability === "available" && record.data?.productType === "Guide") {
+      const fileRef = text(record.data?.productFileReference);
+      if (!record.slug || !fileRef.startsWith(record.slug + "/")) {
+        setNotice({ tone: "error", text: "Upload and save this guide's protected PDF, EPUB or ZIP file before marking it Available. The release action also emails paid preorder customers their private links." });
+        return;
+      }
+      await releaseStoreProduct(record);
+      return;
+    }
+
     try {
       const response = await fetch("/api/admin/cms/store", {
         method: "PATCH",
@@ -927,7 +937,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               ) : null}
               <div className={moduleKey === "store" ? "apm-store-row-details" : undefined}>
               <div className="apm-row-meta">
-                <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
+                <span className={`apm-tag ${moduleKey === "store" && record.status === "draft" ? "is-neutral" : `is-${tone(record.status)}`}`}>{moduleKey === "store" && record.status === "draft" ? "Not listed (draft)" : record.status.replace(/-/g, " ")}</span>
                 {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label || (enquiryKind(record) === "article-pitch" ? "Article pitch" : "Other")}</span> : null}
                 {moduleKey === "subscribers" && subscriberList(record) !== "other" ? <span className="apm-tag is-neutral">{subscriberListLabel(record)}</span> : null}
                 <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
@@ -937,7 +947,10 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {moduleKey === "blog" || moduleKey === "store" ? <small className="apm-url">URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
               {moduleKey === "blog" && record.data?.featureOnHomepage === true ? <span className="apm-tag is-neutral">Homepage feature</span> : null}
               {moduleKey === "blog" && record.status === "published" && text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now() ? <span className="apm-tag is-warn">Scheduled</span> : null}
-              {moduleKey === "store" ? <><span className="apm-tag is-neutral">{record.data?.availability === "available" ? "Available" : "Coming soon"}</span><small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small></> : null}
+              {moduleKey === "store" ? <>
+                <span className={`apm-tag ${record.data?.availability === "available" ? "is-ok" : "is-warn"}`}>{record.data?.availability === "available" ? "Available" : "Coming soon"}</span>
+                <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small>
+              </> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
               {moduleKey === "analytics" ? <details className="apm-details"><summary>View source and UTM details</summary><pre className="apm-pre">{JSON.stringify(record.data, null, 2)}</pre></details> : null}
@@ -947,12 +960,11 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <div className="apm-actions">
               {editable && moduleKey !== "store" ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
               {moduleKey === "store" ? <>
-                {record.data?.productType !== "Guide" ? <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button> : null}
+                <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button>
                 <button type="button" className={`apm-btn${record.data?.availability !== "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability !== "available"} onClick={() => void setProductAvailability(record, "coming-soon")}>Coming soon</button>
                 <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button>
                 <button type="button" className="apm-btn" disabled={record.status === "archived"} onClick={() => void setStatus(record, "archived")}>Archive</button>
                 <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit details</button>
-                {record.data?.productType === "Guide" && record.data?.availability !== "available" ? <button type="button" className="apm-btn apm-btn-ok" disabled={uploading || typeof record.data?.productFileReference !== "string" || !record.data.productFileReference.startsWith((record.slug || "") + "/")} onClick={() => void releaseStoreProduct(record)}>Release guide & email preorders</button> : null}
                 {record.data?.productType === "Guide" ? <button type="button" className="apm-btn" onClick={() => void viewStoreDownloadActivity(record)}>Download activity</button> : null}
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
