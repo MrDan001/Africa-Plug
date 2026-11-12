@@ -7,7 +7,7 @@ export type HeroImageState = {
   mobileImages: (string | null)[];
   githubImages: (string | null)[];
   githubMobileImages: (string | null)[];
-  storage: "not-configured" | "vercel-blob" | "github" | "error";
+  storage: "not-configured" | "vercel-blob" | "supabase" | "github" | "error";
 };
 
 type HeroBlob = { url: string; pathname: string; uploadedAt: string | Date };
@@ -52,13 +52,25 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     });
     const record = settings.records?.find((item) => item.slug === "site-settings") ?? settings.records?.[0];
     const paths = record?.data?.heroImagePaths as { desktop?: unknown[]; mobile?: unknown[] } | undefined;
-    const safePath = (value: unknown) =>
-      typeof value === "string" &&
-      /^\/images\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) &&
-      !value.includes("..") && !value.includes("//")
-        ? value
-        : null;
-    githubDesktop = [...fallbackDesktop];
+    const safePath = (value: unknown) => {
+      if (typeof value !== "string" || value.includes("..")) return null;
+      if (/^\\/images\\/[a-zA-Z0-9_./-]+\\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) && !value.includes("//")) return value;
+      try {
+        const candidate = new URL(value);
+        const configured = process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL) : null;
+        if (
+          candidate.protocol === "https:" &&
+          configured &&
+          candidate.origin === configured.origin &&
+          candidate.pathname.startsWith("/storage/v1/object/public/africa-plug-media/") &&
+          !candidate.pathname.includes("//")
+        ) return value;
+      } catch {
+        return null;
+      }
+      return null;
+    };
+    githubDesktop = [0, 1, 2].map((index) => safePath(paths?.desktop?.[index]) ?? fallbackDesktop[index]);
     githubMobile = [0, 1, 2].map((index) => safePath(paths?.mobile?.[index]));
   } catch {
     // A missing CMS configuration must not prevent repository-hosted defaults.
