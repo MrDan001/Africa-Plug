@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     if (!(IMAGE_TYPES as readonly string[]).includes(file.type)) return json({ error: "Please upload a JPG, PNG or WebP image." }, 415);
     if (file.size > IMAGE_MAX_BYTES) return json({ error: "The image must be smaller than 5 MB." }, 413);
     try {
-      const supabaseUrl = process.env.SUPABASE_URL?.replace(/\\/+$/, "");
+      const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/+$/, "");
       const serviceKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
       if (!supabaseUrl || !serviceKey) throw new Error("Supabase media storage is not configured.");
       const storage = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
