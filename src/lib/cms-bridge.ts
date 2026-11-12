@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/cms-bridge.ts
 import "server-only";
 import { parseYouTubeId } from "@/lib/youtube";
 
