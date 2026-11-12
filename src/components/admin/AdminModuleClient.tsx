@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
 type ModuleKey = "blog" | "store" | "work-with-fk" | "review-required" | "enquiries" | "subscribers" | "analytics" | "media" | "settings" | "site-settings";
@@ -44,7 +45,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
-    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be saved to the media library and attached to this product." },
+    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
     { key: "imageAlt", label: "Product image alt text", type: "text" },
     { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
@@ -586,11 +587,41 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     setUploading(true);
     setNotice(null);
     try {
-      const form = new FormData();
-      form.set("file", file);
-      const response = await fetch("/api/admin/media", { method: "POST", body: form });
-      const result = await response.json() as { error?: string; record?: CmsRecord };
-      if (!response.ok) throw new Error(result.error || "Cover image upload failed.");
+      const prepareResponse = await fetch("/api/admin/store-covers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create-upload", fileName: file.name, contentType: file.type, size: file.size }),
+      });
+      const prepared = await prepareResponse.json() as { error?: string; bucket?: string; path?: string; token?: string; supabaseUrl?: string; anonKey?: string };
+      if (!prepareResponse.ok) throw new Error(prepared.error || "Could not prepare the product cover upload.");
+      if (!prepared.bucket || !prepared.path || !prepared.token || !prepared.supabaseUrl || !prepared.anonKey) {
+        throw new Error("Supabase did not return a complete signed upload.");
+      }
+
+      const storageClient = createClient(prepared.supabaseUrl, prepared.anonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { error: storageError } = await storageClient.storage
+        .from(prepared.bucket)
+        .uploadToSignedUrl(prepared.path, prepared.token, file, {
+          contentType: file.type,
+          cacheControl: "3600",
+        });
+      if (storageError) throw new Error(storageError.message || "Supabase could not store the product cover.");
+
+      const finishResponse = await fetch("/api/admin/store-covers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "finalize-upload",
+          path: prepared.path,
+          fileName: file.name,
+          contentType: file.type,
+          size: file.size,
+        }),
+      });
+      const result = await finishResponse.json() as { error?: string; record?: CmsRecord };
+      if (!finishResponse.ok) throw new Error(result.error || "The uploaded cover could not be attached to the media library.");
       const url = text(result.record?.data?.url);
       if (!url) throw new Error("The image uploaded but no public image URL was returned.");
       updateField(fieldKey, url);
@@ -714,7 +745,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             placeholder="/Image/Store/cover.jpg"
             aria-label={`GitHub image path for ${field.label}`}
           />
-          <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Blob upload remains available above.</small>
+          <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Uploaded covers are stored in the separate public Supabase media bucket; paid guide files remain private.</small>
           {field.help ? <small className="apm-help">{field.help}</small> : null}
         </div>
       );
@@ -886,7 +917,15 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
         {shown.length ? <div className="apm-card apm-list">
           {shown.map((record) => <article key={record.id} className="apm-row">
-            <div className="apm-row-main">
+            <div className={moduleKey === "store" ? "apm-row-main apm-row-main-store" : "apm-row-main"}>
+              {moduleKey === "store" ? (
+                <div className="apm-store-row-image">
+                  {text(record.data?.imageUrl).trim()
+                    ? <img src={text(record.data.imageUrl).trim()} alt={`Cover for ${record.title}`} loading="lazy" />
+                    : <span>No cover image</span>}
+                </div>
+              ) : null}
+              <div className={moduleKey === "store" ? "apm-store-row-details" : undefined}>
               <div className="apm-row-meta">
                 <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
                 {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label || (enquiryKind(record) === "article-pitch" ? "Article pitch" : "Other")}</span> : null}
@@ -903,6 +942,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
               {moduleKey === "analytics" ? <details className="apm-details"><summary>View source and UTM details</summary><pre className="apm-pre">{JSON.stringify(record.data, null, 2)}</pre></details> : null}
               {moduleKey === "subscribers" ? <><p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p>{record.data?.consentText ? <details className="apm-details"><summary>View consent record</summary><dl><div className="apm-dl-row"><dt>Wording</dt><dd>{text(record.data.consentText)}</dd></div><div className="apm-dl-row"><dt>Version</dt><dd>{text(record.data.consentVersion)}</dd></div><div className="apm-dl-row"><dt>Consented at</dt><dd>{text(record.data.consentedAt)}</dd></div></dl></details> : null}</> : null}
+              </div>
             </div>
             <div className="apm-actions">
               {editable && moduleKey !== "store" ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
