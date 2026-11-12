@@ -1,4 +1,3 @@
-// FILE PATH: src/components/store/StoreAddToCartButton.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { addStoreCartItem, parseBookPrice } from "./cart";
