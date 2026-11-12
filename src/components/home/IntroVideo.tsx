@@ -1,4 +1,3 @@
-// FILE PATH: src/components/home/IntroVideo.tsx
 "use client";
 
 import { useState } from "react";
