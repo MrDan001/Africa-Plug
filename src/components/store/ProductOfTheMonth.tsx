@@ -1,4 +1,3 @@
-// FILE PATH: src/components/store/ProductOfTheMonth.tsx
 import { getPublicSiteSettings, type PublicSiteSettings } from "@/lib/cms-bridge";
 import "./product-of-the-month.css";
 
