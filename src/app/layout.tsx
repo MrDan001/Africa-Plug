@@ -1,5 +1,5 @@
 // FILE PATH: src/app/layout.tsx
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
@@ -7,6 +7,11 @@ import "./globals.css";
 import { getPublicSiteSettings } from "@/lib/cms-bridge";
 
 export const dynamic = "force-dynamic";
+
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#f7f5f1",
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicSiteSettings();
