@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/blog-posts.ts
 export type BlogChecklistItem = { label: string; detail: string };
 export type BlogSection = {
   heading: string;
