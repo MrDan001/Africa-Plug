@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/work-with-fk/scheduler.ts
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
