@@ -93,7 +93,29 @@ export async function PATCH(request: Request, context: { params: Promise<{ modul
       return Response.json({ record: result.record }, { headers: { "Cache-Control": "no-store" } });
     }
     if (!input.id || !input.status) return Response.json({ error: "Record ID and new status are required." }, { status: 400 });
-    const result = await cmsBridge<{ record: CmsRecord }>({ action: "cms.status", module, id: input.id, status: input.status });
+
+    // Read the current record and save its new status through the same operation
+    // used by the editor, preserving all existing content and metadata.
+    const found = await cmsBridge<{ records?: CmsRecord[] }>({
+      action: "cms.list",
+      module,
+      status: "all",
+      id: input.id,
+    });
+    const existing = found.records?.find((record) => record.id === input.id);
+    if (!existing) return Response.json({ error: "This record could not be found. Refresh the list and try again." }, { status: 404 });
+
+    const result = await cmsBridge<{ record: CmsRecord }>({
+      action: "cms.save",
+      module,
+      record: {
+        id: existing.id,
+        title: existing.title,
+        slug: existing.slug,
+        status: input.status,
+        data: existing.data ?? {},
+      },
+    });
     return Response.json({ record: result.record }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return serverError(error);
