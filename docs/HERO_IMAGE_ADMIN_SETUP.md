@@ -19,7 +19,7 @@ The server validates the service-role credential against the configured Supabase
 - Accepted formats: JPG, PNG, WebP and AVIF.
 - Maximum size: 10 MB per hero image.
 - Six separate crops: three slides, each with desktop and mobile variants.
-- New uploads are stored under `homepage-hero/` within `africa-plug-media` (or the shared CMS media path when uploaded through the Media Library).
+- New uploads are stored under `cms-media/` within `africa-plug-media` and are recorded in the Media Library.
 - The homepage settings record stores the public Supabase URL for each uploaded crop.
 
 ## Legacy compatibility
