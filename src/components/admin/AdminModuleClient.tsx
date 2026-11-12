@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
 type ModuleKey = "blog" | "store" | "work-with-fk" | "review-required" | "enquiries" | "subscribers" | "analytics" | "media" | "settings" | "site-settings";
@@ -11,7 +12,7 @@ type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | 
 
 const DETAILS: Record<ModuleKey, { title: string; description: string; db: string }> = {
   blog: { title: "Blog & editorial", description: "Write, schedule and publish articles. Choose the territory, homepage feature, images, byline and search previews, then email confirmed Blog readers when a story is live.", db: "articles" },
-  store: { title: "Store products", description: "Manage product descriptions, imagery, prices and catalogue status. Paid digital checkout is only available when a private download file is configured and Stripe is set up in production.", db: "products" },
+  store: { title: "Store products", description: "Add and manage Store products, upload cover images, set prices and control catalogue visibility. Product listings and image uploads work independently of payment setup.", db: "products" },
   "work-with-fk": { title: "Work With FK", description: "Review incoming applications and keep every decision recorded in the admin inbox.", db: "applications" },
   "review-required": { title: "Review required", description: "Applications waiting for a decision. Approve or decline each one to keep the queue current.", db: "applications" },
   enquiries: { title: "Enquiries & forms", description: "Track Contact, Partner With TAP, Ask TAP and T.A.P IN expressions of interest in one persistent inbox.", db: "enquiries" },
@@ -44,7 +45,7 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
-    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be saved to the media library and attached to this product." },
+    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
     { key: "imageAlt", label: "Product image alt text", type: "text" },
     { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
@@ -493,6 +494,16 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   }
 
   async function setProductAvailability(record: CmsRecord, availability: "available" | "coming-soon") {
+    if (availability === "available" && record.data?.productType === "Guide") {
+      const fileRef = text(record.data?.productFileReference);
+      if (!record.slug || !fileRef.startsWith(record.slug + "/")) {
+        setNotice({ tone: "error", text: "Upload and save this guide's protected PDF, EPUB or ZIP file before marking it Available. The release action also emails paid preorder customers their private links." });
+        return;
+      }
+      await releaseStoreProduct(record);
+      return;
+    }
+
     try {
       const response = await fetch("/api/admin/cms/store", {
         method: "PATCH",
@@ -586,11 +597,41 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     setUploading(true);
     setNotice(null);
     try {
-      const form = new FormData();
-      form.set("file", file);
-      const response = await fetch("/api/admin/media", { method: "POST", body: form });
-      const result = await response.json() as { error?: string; record?: CmsRecord };
-      if (!response.ok) throw new Error(result.error || "Cover image upload failed.");
+      const prepareResponse = await fetch("/api/admin/store-covers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create-upload", fileName: file.name, contentType: file.type, size: file.size }),
+      });
+      const prepared = await prepareResponse.json() as { error?: string; bucket?: string; path?: string; token?: string; supabaseUrl?: string; anonKey?: string };
+      if (!prepareResponse.ok) throw new Error(prepared.error || "Could not prepare the product cover upload.");
+      if (!prepared.bucket || !prepared.path || !prepared.token || !prepared.supabaseUrl || !prepared.anonKey) {
+        throw new Error("Supabase did not return a complete signed upload.");
+      }
+
+      const storageClient = createClient(prepared.supabaseUrl, prepared.anonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { error: storageError } = await storageClient.storage
+        .from(prepared.bucket)
+        .uploadToSignedUrl(prepared.path, prepared.token, file, {
+          contentType: file.type,
+          cacheControl: "3600",
+        });
+      if (storageError) throw new Error(storageError.message || "Supabase could not store the product cover.");
+
+      const finishResponse = await fetch("/api/admin/store-covers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "finalize-upload",
+          path: prepared.path,
+          fileName: file.name,
+          contentType: file.type,
+          size: file.size,
+        }),
+      });
+      const result = await finishResponse.json() as { error?: string; record?: CmsRecord };
+      if (!finishResponse.ok) throw new Error(result.error || "The uploaded cover could not be attached to the media library.");
       const url = text(result.record?.data?.url);
       if (!url) throw new Error("The image uploaded but no public image URL was returned.");
       updateField(fieldKey, url);
@@ -714,7 +755,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             placeholder="/Image/Store/cover.jpg"
             aria-label={`GitHub image path for ${field.label}`}
           />
-          <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Blob upload remains available above.</small>
+          <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Uploaded covers are stored in the separate public Supabase media bucket; paid guide files remain private.</small>
           {field.help ? <small className="apm-help">{field.help}</small> : null}
         </div>
       );
@@ -886,9 +927,17 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
         {shown.length ? <div className="apm-card apm-list">
           {shown.map((record) => <article key={record.id} className="apm-row">
-            <div className="apm-row-main">
+            <div className={moduleKey === "store" ? "apm-row-main apm-row-main-store" : "apm-row-main"}>
+              {moduleKey === "store" ? (
+                <div className="apm-store-row-image">
+                  {text(record.data?.imageUrl).trim()
+                    ? <img src={text(record.data.imageUrl).trim()} alt={`Cover for ${record.title}`} loading="lazy" />
+                    : <span>No cover image</span>}
+                </div>
+              ) : null}
+              <div className={moduleKey === "store" ? "apm-store-row-details" : undefined}>
               <div className="apm-row-meta">
-                <span className={`apm-tag is-${tone(record.status)}`}>{record.status.replace(/-/g, " ")}</span>
+                <span className={`apm-tag ${moduleKey === "store" && record.status === "draft" ? "is-neutral" : `is-${tone(record.status)}`}`}>{moduleKey === "store" && record.status === "draft" ? "Not listed (draft)" : record.status.replace(/-/g, " ")}</span>
                 {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label || (enquiryKind(record) === "article-pitch" ? "Article pitch" : "Other")}</span> : null}
                 {moduleKey === "subscribers" && subscriberList(record) !== "other" ? <span className="apm-tag is-neutral">{subscriberListLabel(record)}</span> : null}
                 <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
@@ -898,21 +947,24 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {moduleKey === "blog" || moduleKey === "store" ? <small className="apm-url">URL: /{moduleKey === "blog" ? "blog" : "store"}/{record.slug}</small> : null}
               {moduleKey === "blog" && record.data?.featureOnHomepage === true ? <span className="apm-tag is-neutral">Homepage feature</span> : null}
               {moduleKey === "blog" && record.status === "published" && text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now() ? <span className="apm-tag is-warn">Scheduled</span> : null}
-              {moduleKey === "store" ? <><span className="apm-tag is-neutral">{record.data?.availability === "available" ? "Available" : "Coming soon"}</span><small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small></> : null}
+              {moduleKey === "store" ? <>
+                <span className={`apm-tag ${record.data?.availability === "available" ? "is-ok" : "is-warn"}`}>{record.data?.availability === "available" ? "Available" : "Coming soon"}</span>
+                <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small>
+              </> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
               {moduleKey === "analytics" ? <details className="apm-details"><summary>View source and UTM details</summary><pre className="apm-pre">{JSON.stringify(record.data, null, 2)}</pre></details> : null}
               {moduleKey === "subscribers" ? <><p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p>{record.data?.consentText ? <details className="apm-details"><summary>View consent record</summary><dl><div className="apm-dl-row"><dt>Wording</dt><dd>{text(record.data.consentText)}</dd></div><div className="apm-dl-row"><dt>Version</dt><dd>{text(record.data.consentVersion)}</dd></div><div className="apm-dl-row"><dt>Consented at</dt><dd>{text(record.data.consentedAt)}</dd></div></dl></details> : null}</> : null}
+              </div>
             </div>
             <div className="apm-actions">
               {editable && moduleKey !== "store" ? <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit</button> : null}
               {moduleKey === "store" ? <>
-                {record.data?.productType !== "Guide" ? <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button> : null}
+                <button type="button" className={`apm-btn${record.data?.availability === "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability === "available"} onClick={() => void setProductAvailability(record, "available")}>Available</button>
                 <button type="button" className={`apm-btn${record.data?.availability !== "available" ? " apm-btn-ok" : ""}`} aria-pressed={record.data?.availability !== "available"} onClick={() => void setProductAvailability(record, "coming-soon")}>Coming soon</button>
                 <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button>
                 <button type="button" className="apm-btn" disabled={record.status === "archived"} onClick={() => void setStatus(record, "archived")}>Archive</button>
                 <button type="button" className="apm-btn" onClick={() => editRecord(record)}>Edit details</button>
-                {record.data?.productType === "Guide" && record.data?.availability !== "available" ? <button type="button" className="apm-btn apm-btn-ok" disabled={uploading || typeof record.data?.productFileReference !== "string" || !record.data.productFileReference.startsWith((record.slug || "") + "/")} onClick={() => void releaseStoreProduct(record)}>Release guide & email preorders</button> : null}
                 {record.data?.productType === "Guide" ? <button type="button" className="apm-btn" onClick={() => void viewStoreDownloadActivity(record)}>Download activity</button> : null}
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
@@ -939,7 +991,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <label><span className="apm-label">Status</span><select className="apm-input" value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value }))}>{(STATUS_OPTIONS[moduleKey] ?? [{ value: "draft", label: "Draft" }, { value: "active", label: "Active" }, { value: "archived", label: "Archived" }]).map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
           </div>
           <div className="apm-form-grid apm-form-fields">{fields.map(renderField)}</div>
-          {moduleKey === "store" ? <p className="apm-warn">Publishing a product updates the catalogue. Paid checkout works only when a protected file is uploaded and Stripe is configured in production.</p> : null}
           {moduleKey === "settings" ? <p className="apm-warn">These values are saved for operational reference. Payment and scheduling automation must not go live until the legal and commercial rules are approved.</p> : null}
           <div className="apm-editor-foot">
             <button type="button" className="apm-btn" onClick={() => setEditorOpen(false)}>Cancel</button>

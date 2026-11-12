@@ -54,6 +54,7 @@ export default function MobileMenu({ items }: { items: NavItem[] }) {
               ))}
             </ul>
           </nav>
+          <a href="/work-with-fk" onClick={() => setOpen(false)} className="mobile-menu-link mobile-menu-cta">WORK WITH FK</a>
         </div>
       )}
     </>

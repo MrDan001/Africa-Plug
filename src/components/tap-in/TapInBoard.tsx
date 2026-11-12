@@ -260,7 +260,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
               <h3>How to enquire</h3>
               {selected.open ? (
                 <>
-                  <p className="ti-panel-text">Click the button below to express your interest. We’ll review your intrest and with your agreement, introduce you to the opportunity owner.</p>
+                  <p className="ti-panel-text">We'll review your interest and, with your agreement, introduce you to the opportunity owner.</p>
                   <button type="button" className="ti-btn ti-btn-primary" onClick={() => setDialog("interest")}>EXPRESS INTEREST <span aria-hidden="true">→</span></button>
                 </>
               ) : (

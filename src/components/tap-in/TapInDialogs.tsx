@@ -86,7 +86,6 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const { widgetRef, token } = useTurnstile(siteKey);
   const [length, setLength] = useState(0);
-  const link = typeof window !== "undefined" ? `${window.location.origin}/tap-in#${listing.slug}` : `/tap-in#${listing.slug}`;
   const { busy, error, done, onSubmit } = useSubmit((form, turnstileToken) => {
     const data = new FormData(form);
     const body = {
@@ -99,11 +98,10 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
 
   return (
     <Modal title="Express interest" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} /> : (
+      {done ? <Done onClose={onClose} text="We’ll review your interest and be in touch." /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label className="ti-full"><span>Opportunity <b>*</b></span>
             <input value={listing.title} readOnly aria-readonly="true" className="ti-readonly" />
-            <small className="ti-hint"><a href={link}>{link}</a></small>
           </label>
           <label><span>Full name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>
@@ -144,7 +142,7 @@ export function RegisterInterestDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Register your interest" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} /> : (
+      {done ? <Done onClose={onClose} text="We’ll let you know when matching opportunities go live." /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label><span>Name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>
@@ -179,7 +177,7 @@ export function SubmitOpportunityDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Submit an opportunity" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} /> : (
+      {done ? <Done onClose={onClose} text="We’ll review it and be in touch if it’s a fit." /> : (
         <form className="ti-form" onSubmit={(event) => { if (fileError) { event.preventDefault(); return; } void onSubmit(event); }}>
           <label><span>Name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>

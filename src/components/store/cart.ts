@@ -7,17 +7,17 @@ function announceCartChange() {
   if (typeof window !== "undefined") window.dispatchEvent(new Event(STORE_CART_EVENT));
 }
 
-export function readStoreCart(): StoreCartItem[] {
+export function readStoreCart(validSlugs?: readonly string[]): StoreCartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORE_CART_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.flatMap((candidate): StoreCartItem[] => {
+    const cleaned = parsed.flatMap((candidate): StoreCartItem[] => {
       if (!candidate || typeof candidate !== "object") return [];
       const item = candidate as Record<string, unknown>;
-      if (typeof item.slug !== "string" || typeof item.title !== "string" ||
+      if (typeof item.slug !== "string" || (validSlugs && !validSlugs.includes(item.slug)) || typeof item.title !== "string" ||
         typeof item.price !== "number" || !Number.isFinite(item.price) || item.price < 0 ||
         typeof item.quantity !== "number" || !Number.isInteger(item.quantity) || item.quantity < 1 ||
         typeof item.cover !== "string") return [];
@@ -32,6 +32,10 @@ export function readStoreCart(): StoreCartItem[] {
           : "GBP",
       }];
     });
+    if (validSlugs && cleaned.length !== parsed.length) {
+      window.localStorage.setItem(STORE_CART_KEY, JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return [];
   }
