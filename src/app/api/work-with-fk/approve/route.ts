@@ -28,10 +28,15 @@ export async function POST(request: Request) {
     }
 
     const result = await cmsBridge<{ record: CmsRecord }>({
-      action: "cms.status",
+      action: "cms.save",
       module: "applications",
-      id: input.id,
-      status: input.decision,
+      record: {
+        id: application.id,
+        title: application.title,
+        slug: application.slug,
+        status: input.decision,
+        data: application.data ?? {},
+      },
     });
 
     return Response.json({
