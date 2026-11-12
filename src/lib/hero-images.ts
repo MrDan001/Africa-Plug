@@ -54,7 +54,7 @@ export async function getHeroImageState(): Promise<HeroImageState> {
     const paths = record?.data?.heroImagePaths as { desktop?: unknown[]; mobile?: unknown[] } | undefined;
     const safePath = (value: unknown) => {
       if (typeof value !== "string" || value.includes("..")) return null;
-      if (/^\\/images\\/[a-zA-Z0-9_./-]+\\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) && !value.includes("//")) return value;
+      if (/^\/images\/[a-zA-Z0-9_./-]+\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(value) && !value.includes("//")) return value;
       try {
         const candidate = new URL(value);
         const configured = process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL) : null;
