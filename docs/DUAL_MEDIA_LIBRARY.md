@@ -12,8 +12,8 @@ The Admin Media Library and Homepage Manager upload through short-lived Supabase
 ## Existing assets and compatibility
 
 - Existing Vercel Blob URLs remain valid and are not deleted as part of the migration.
-- The homepage retains legacy Blob read support until previously uploaded hero assets have been copied into Supabase and verified.
-- T.A.P IN public opportunity submissions still use their existing image-upload path until that separate public-form migration is completed.
+- The homepage retains legacy Blob read support for previously uploaded hero assets. Existing Blob objects remain in their original stores; no historical files are copied or deleted.
+- New T.A.P IN opportunity submission images are uploaded directly to Supabase Storage.
 - GitHub repository images under `public/Image/` remain supported and can be registered in the Media Library by their site path.
 
 ## Folder map
@@ -30,5 +30,6 @@ The Admin Media Library and Homepage Manager upload through short-lived Supabase
 ## Important
 
 - Never place confidential or paid-download files in the public media bucket.
-- Never delete legacy Blob objects until they have been copied and verified.
+- Keep legacy Blob objects and their read support intact; do not migrate or delete historical assets as part of the new-upload transition.
+- All new public/admin media uploads must use the `africa-plug-media` Supabase bucket; Vercel Blob is read-only for legacy assets.
 - Keep the `store-downloads` bucket private.
