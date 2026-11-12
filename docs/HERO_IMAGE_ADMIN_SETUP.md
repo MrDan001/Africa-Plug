@@ -24,7 +24,7 @@ The server validates the service-role credential against the configured Supabase
 
 ## Legacy compatibility
 
-Previously uploaded hero images remain in the legacy Blob store and can still be read by the homepage while the migration is in progress. Do not remove the legacy Blob token, store, or read implementation until all existing hero images have been copied into Supabase and verified.
+Previously uploaded hero images remain in their existing Vercel Blob stores and continue to be read by the homepage. They will not be copied, moved or deleted. All new hero uploads go directly to Supabase Storage. Keep the legacy Blob token, stores, package and read implementation so those existing images remain discoverable.
 
 ## Troubleshooting
 
