@@ -12,7 +12,7 @@ type Field = { key: string; label: string; type?: "text" | "textarea" | "url" | 
 
 const DETAILS: Record<ModuleKey, { title: string; description: string; db: string }> = {
   blog: { title: "Blog & editorial", description: "Write, schedule and publish articles. Choose the territory, homepage feature, images, byline and search previews, then email confirmed Blog readers when a story is live.", db: "articles" },
-  store: { title: "Store products", description: "Manage product descriptions, imagery, prices and catalogue status. Paid digital checkout is only available when a private download file is configured and Stripe is set up in production.", db: "products" },
+  store: { title: "Store products", description: "Add and manage Store products, upload cover images, set prices and control catalogue visibility. Product listings and image uploads work independently of payment setup.", db: "products" },
   "work-with-fk": { title: "Work With FK", description: "Review incoming applications and keep every decision recorded in the admin inbox.", db: "applications" },
   "review-required": { title: "Review required", description: "Applications waiting for a decision. Approve or decline each one to keep the queue current.", db: "applications" },
   enquiries: { title: "Enquiries & forms", description: "Track Contact, Partner With TAP, Ask TAP and T.A.P IN expressions of interest in one persistent inbox.", db: "enquiries" },
@@ -991,7 +991,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
             <label><span className="apm-label">Status</span><select className="apm-input" value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value }))}>{(STATUS_OPTIONS[moduleKey] ?? [{ value: "draft", label: "Draft" }, { value: "active", label: "Active" }, { value: "archived", label: "Archived" }]).map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
           </div>
           <div className="apm-form-grid apm-form-fields">{fields.map(renderField)}</div>
-          {moduleKey === "store" ? <p className="apm-warn">Publishing a product updates the catalogue. Paid checkout works only when a protected file is uploaded and Stripe is configured in production.</p> : null}
           {moduleKey === "settings" ? <p className="apm-warn">These values are saved for operational reference. Payment and scheduling automation must not go live until the legal and commercial rules are approved.</p> : null}
           <div className="apm-editor-foot">
             <button type="button" className="apm-btn" onClick={() => setEditorOpen(false)}>Cancel</button>
