@@ -1,4 +1,3 @@
-// FILE PATH: src/components/layout/CookieConsent.tsx
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
