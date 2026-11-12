@@ -98,7 +98,7 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
 
   return (
     <Modal title="Express interest" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} /> : (
+      {done ? <Done onClose={onClose} text="We’ll let you know when matching opportunities go live." /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label className="ti-full"><span>Opportunity <b>*</b></span>
             <input value={listing.title} readOnly aria-readonly="true" className="ti-readonly" />
