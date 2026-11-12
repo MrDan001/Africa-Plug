@@ -1,5 +1,7 @@
 // FILE PATH: src/app/api/tap-in/enquiry/route.ts
-import { put } from "@vercel/blob";
+import { randomUUID } from "node:crypto";
+import { createClient } from "@supabase/supabase-js";
+import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 import { cmsBridge } from "@/lib/cms-bridge";
 import { IMAGE_MAX_BYTES, IMAGE_TYPES, opportunitySchema, registerSchema } from "@/lib/tap-in/forms";
 import { sendTeamEmail } from "@/lib/tap-in/email";
@@ -43,17 +45,33 @@ export async function POST(request: Request) {
   if (file instanceof File && file.size > 0) {
     if (!(IMAGE_TYPES as readonly string[]).includes(file.type)) return json({ error: "Please upload a JPG, PNG or WebP image." }, 415);
     if (file.size > IMAGE_MAX_BYTES) return json({ error: "The image must be smaller than 5 MB." }, 413);
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-      try {
-        const safeName = file.name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(-80) || "image";
-        const blob = await put(`tap-in-submissions/${Date.now()}-${safeName}`, file, { access: "public", addRandomSuffix: true, contentType: file.type });
-        imageUrl = blob.url;
-      } catch (error) {
-        console.error("T.A.P IN submission image upload failed:", error instanceof Error ? error.message : "Unknown error");
-        imageNote = "Image upload failed; ask the sender to email it.";
+    try {
+      const supabaseUrl = process.env.SUPABASE_URL?.replace(/\\/+$/, "");
+      const serviceKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
+      if (!supabaseUrl || !serviceKey) throw new Error("Supabase media storage is not configured.");
+      const storage = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+      const bucket = "africa-plug-media";
+      const { data: existingBucket, error: bucketError } = await storage.storage.getBucket(bucket);
+      if (bucketError || !existingBucket) {
+        const { error: createError } = await storage.storage.createBucket(bucket, {
+          public: true,
+          fileSizeLimit: 20 * 1024 * 1024,
+          allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif", "application/pdf"],
+        });
+        if (createError && !/already exists|duplicate/i.test(createError.message)) throw createError;
       }
-    } else {
-      imageNote = "Image storage is not connected; ask the sender to email it.";
+      const safeName = file.name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(-80) || "image";
+      const path = `tap-in-submissions/${Date.now()}-${randomUUID()}-${safeName}`;
+      const { error: uploadError } = await storage.storage.from(bucket).upload(path, file, {
+        contentType: file.type,
+        cacheControl: "31536000",
+        upsert: false,
+      });
+      if (uploadError) throw uploadError;
+      imageUrl = storage.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+    } catch (error) {
+      console.error("T.A.P IN submission image upload failed:", error instanceof Error ? error.message : "Unknown error");
+      imageNote = "Image upload failed; ask the sender to email it.";
     }
   }
 
