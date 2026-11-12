@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/tap-in/validation.ts
 import type { OpportunityInput, OpportunityStatus } from "./opportunities";
 import { AFRICAN_COUNTRIES } from "@/lib/work-with-fk/application-schema";
 
