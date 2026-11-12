@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/public-cms-content.ts
 import type { BlogPost, BlogSection } from "@/lib/blog-posts";
 import { getPublicCmsRecords, type CmsRecord } from "@/lib/cms-bridge";
 import { resolveStoreCategory } from "@/lib/store-categories";
