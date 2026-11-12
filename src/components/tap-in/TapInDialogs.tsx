@@ -142,7 +142,7 @@ export function RegisterInterestDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Register your interest" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} /> : (
+      {done ? <Done onClose={onClose} text="We’ll let you know when matching opportunities go live." /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label><span>Name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>
