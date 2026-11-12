@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/store-demo-products.ts
 import type { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 
 type StoreProduct = NonNullable<ReturnType<typeof cmsRecordToPublicProduct>>;
