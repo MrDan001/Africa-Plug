@@ -34,10 +34,8 @@ async function ensurePublicMediaBucket(storage: SupabaseClient<any, "public", "p
     if (error && !/already exists|duplicate/i.test(error.message)) throw error;
     return;
   }
-  if (!bucket.public || bucket.file_size_limit !== MAX_BYTES) {
-    const { error } = await storage.storage.updateBucket(BUCKET, options);
-    if (error) throw error;
-  }
+  const { error: updateError } = await storage.storage.updateBucket(BUCKET, options);
+  if (updateError) throw updateError;
 }
 
 function safeFileName(value: string) {
