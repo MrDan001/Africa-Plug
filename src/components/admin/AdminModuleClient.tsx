@@ -538,12 +538,26 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     setUploading(true);
     setNotice(null);
     try {
-      const form = new FormData();
-      form.set("file", file);
-      const response = await fetch("/api/admin/media", { method: "POST", body: form });
-      const data = await response.json() as { error?: string };
-      if (!response.ok) throw new Error(data.error || "Upload failed.");
-      setNotice({ tone: "success", text: `${file.name} uploaded and added to the media library.` });
+      const createResponse = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create-upload", fileName: file.name, contentType: file.type, size: file.size }),
+      });
+      const upload = await createResponse.json() as { error?: string; bucket?: string; path?: string; token?: string; supabaseUrl?: string; anonKey?: string };
+      if (!createResponse.ok || !upload.bucket || !upload.path || !upload.token || !upload.supabaseUrl || !upload.anonKey) {
+        throw new Error(upload.error || "Could not prepare the Supabase upload.");
+      }
+      const supabase = createClient(upload.supabaseUrl, upload.anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { error: uploadError } = await supabase.storage.from(upload.bucket).uploadToSignedUrl(upload.path, upload.token, file, { contentType: file.type, upsert: false });
+      if (uploadError) throw new Error(uploadError.message || "Supabase could not upload this file.");
+      const finalizeResponse = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "finalize-upload", path: upload.path, fileName: file.name, contentType: file.type, size: file.size }),
+      });
+      const result = await finalizeResponse.json() as { error?: string };
+      if (!finalizeResponse.ok) throw new Error(result.error || "The file uploaded but could not be added to the media library.");
+      setNotice({ tone: "success", text: `${file.name} uploaded to Supabase and added to the media library.` });
       event.target.value = "";
       if (moduleKey === "media") await loadRecords();
     } catch (error) {
