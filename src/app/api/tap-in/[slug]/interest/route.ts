@@ -1,4 +1,3 @@
-// FILE PATH: src/app/api/tap-in/[slug]/interest/route.ts
 import { cmsBridge } from "@/lib/cms-bridge";
 import { findPublicOpportunityBySlug } from "@/lib/tap-in/opportunities";
 import { interestSchema } from "@/lib/tap-in/forms";
