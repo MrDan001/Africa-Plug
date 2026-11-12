@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/tap-in/public.ts
 // Shared (server and browser) helpers for the public T.A.P IN page.
 
 export type PublicListing = {
