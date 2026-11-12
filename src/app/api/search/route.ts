@@ -1,4 +1,3 @@
-// FILE PATH: src/app/api/search/route.ts
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
 import { getBlogPosts, cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import { listLiveOpportunities } from "@/lib/tap-in/opportunities";
