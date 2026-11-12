@@ -1,4 +1,3 @@
-// FILE PATH: src/app/api/tap-in/alerts/route.ts
 import { Resend } from "resend";
 import { cmsBridge } from "@/lib/cms-bridge";
 import { alertsSchema } from "@/lib/tap-in/forms";

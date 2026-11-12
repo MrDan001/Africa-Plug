@@ -1,4 +1,3 @@
-// FILE PATH: src/components/seo/JsonLd.tsx
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app").replace(/\/$/, "");
 
 export default function JsonLd() {

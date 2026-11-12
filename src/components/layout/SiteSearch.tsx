@@ -1,4 +1,3 @@
-// FILE PATH: src/components/layout/SiteSearch.tsx
 "use client";
 
 import Link from "next/link";

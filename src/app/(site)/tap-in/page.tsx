@@ -1,4 +1,3 @@
-// FILE PATH: src/app/(site)/tap-in/page.tsx
 import type { Metadata } from "next";
 import TapInBoard from "@/components/tap-in/TapInBoard";
 import { listAllOpportunities } from "@/lib/tap-in/opportunities";

@@ -1,4 +1,3 @@
-// FILE PATH: src/app/api/work-with-fk/approve/route.ts
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 

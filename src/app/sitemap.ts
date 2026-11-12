@@ -1,4 +1,3 @@
-// FILE PATH: src/app/sitemap.ts
 import type { MetadataRoute } from "next";
 import { getBlogPosts, cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";

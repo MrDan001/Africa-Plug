@@ -1,4 +1,3 @@
-// FILE PATH: src/components/store/ClearStoreCart.tsx
 "use client";
 import { useEffect } from "react";
 import { clearStoreCartForPaidSession } from "./cart";

@@ -1,4 +1,3 @@
-// FILE PATH: src/components/layout/BrandLogo.tsx
 // The official The Africa Plug logo. The image file is used exactly as supplied (public/images/the-africa-plug-logo.jpg);
 // only the empty black border around it is hidden on screen so the logo can be shown at a readable size.
 // Its background is pure black, so it blends into the black header and footer.

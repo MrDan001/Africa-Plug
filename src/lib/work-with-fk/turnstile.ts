@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/work-with-fk/turnstile.ts
 import "server-only";
 
 /** Verifies a Cloudflare Turnstile token. Passes when TURNSTILE_SECRET_KEY is not set (spam check switched off). */

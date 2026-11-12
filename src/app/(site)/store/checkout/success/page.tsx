@@ -1,4 +1,3 @@
-// FILE PATH: src/app/(site)/store/checkout/success/page.tsx
 import Link from "next/link";
 import { createHash, createHmac } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";

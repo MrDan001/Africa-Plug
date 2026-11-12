@@ -1,4 +1,3 @@
-// FILE PATH: src/app/api/work-with-fk/apply/route.ts
 import { Resend } from "resend";
 import { cmsBridge } from "@/lib/cms-bridge";
 import { applicationSchema } from "@/lib/work-with-fk/application-schema";

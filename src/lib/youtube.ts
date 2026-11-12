@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/youtube.ts
 const ID = /^[A-Za-z0-9_-]{11}$/;
 
 /** Returns the 11-character YouTube video ID from a pasted link (or a bare ID), or null. */

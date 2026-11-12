@@ -1,4 +1,3 @@
-// FILE PATH: src/app/(site)/work-with-fk/apply/page.tsx
 import type { Metadata } from "next";
 import ContentPage from "@/components/layout/ContentPage";
 import WorkApplyForm from "@/components/work-with-fk/WorkApplyForm";

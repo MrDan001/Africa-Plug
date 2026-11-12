@@ -1,4 +1,3 @@
-// FILE PATH: src/components/tap-in/TapInDialogs.tsx
 "use client";
 
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";

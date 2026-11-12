@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/work-with-fk/application-schema.ts
 // Shared by the Work With FK application form (client) and its API route (server).
 import { z } from "zod";
 

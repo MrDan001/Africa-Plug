@@ -1,4 +1,3 @@
-// FILE PATH: src/components/analytics/AnalyticsTracker.tsx
 "use client";
 
 import { useEffect } from "react";

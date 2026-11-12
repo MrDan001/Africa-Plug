@@ -1,4 +1,3 @@
-// FILE PATH: src/lib/tap-in/email.ts
 import "server-only";
 import { Resend } from "resend";
 

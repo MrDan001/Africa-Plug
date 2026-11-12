@@ -1,4 +1,3 @@
-// FILE PATH: src/components/work-with-fk/SchedulerClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";

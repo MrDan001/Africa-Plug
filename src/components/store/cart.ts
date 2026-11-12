@@ -1,4 +1,3 @@
-// FILE PATH: src/components/store/cart.ts
 export type StoreCartItem = { slug: string; title: string; price: number; quantity: number; cover: string; currency: string };
 export const STORE_CART_KEY = "tap-store-cart-v1";
 export const STORE_CART_EVENT = "tap-store-cart-updated";

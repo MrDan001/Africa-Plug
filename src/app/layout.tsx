@@ -1,4 +1,3 @@
-// FILE PATH: src/app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { GeistSans } from "geist/font/sans";
