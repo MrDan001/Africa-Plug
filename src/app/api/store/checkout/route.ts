@@ -1,4 +1,3 @@
-// FILE PATH: src/app/api/store/checkout/route.ts
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { cmsBridge, getPublicCmsRecords } from "@/lib/cms-bridge";
