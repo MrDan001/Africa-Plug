@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { upload as uploadToBlob } from "@vercel/blob/client";
+import { createClient } from "@supabase/supabase-js";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { useEffect, useState, type FormEvent } from "react";
 import { parseYouTubeId } from "@/lib/youtube";
@@ -88,7 +88,7 @@ export default function AdminPage() {
       if (!response.ok) throw new Error(result.error || "Could not save the GitHub image path.");
       await loadVideo();
       await refreshImages();
-      setNotice({ tone: "success", text: value ? "GitHub hero path saved. It now takes priority for this slide; clear it to return to Blob." : "GitHub hero path cleared. The slide now uses Blob or its committed default." });
+      setNotice({ tone: "success", text: value ? "GitHub hero path saved. It now takes priority for this slide; clear it to return to the committed default." : "GitHub hero path cleared. The slide now uses Blob or its committed default." });
     } catch (error) {
       setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not save the GitHub image path." });
     } finally {
@@ -200,36 +200,65 @@ export default function AdminPage() {
       setNotice({ tone: "error", text: "Choose an image first." });
       return;
     }
+    if (!settingsRecord) {
+      setNotice({ tone: "error", text: "Site settings are still loading. Refresh the page and try again." });
+      return;
+    }
 
     setBusySlot(index);
     setNotice(null);
     try {
-      const extensionByType: Record<string, string> = {
-        "image/jpeg": "jpg",
-        "image/png": "png",
-        "image/webp": "webp",
-        "image/avif": "avif",
-      };
-      const extension = extensionByType[file.type];
-      if (!extension) throw new Error("Use a JPG, PNG, WebP or AVIF image.");
+      if (![ "image/jpeg", "image/png", "image/webp", "image/avif" ].includes(file.type)) throw new Error("Use a JPG, PNG, WebP or AVIF image.");
       if (file.size <= 0 || file.size > 10 * 1024 * 1024) throw new Error("The image must be smaller than 10 MB.");
 
-      const blob = await uploadToBlob(
-        `homepage/hero-slide-${slot.slot}-${slot.variant}.${extension}`,
-        file,
-        {
-          access: "public",
-          handleUploadUrl: "/api/admin/hero-images",
-          clientPayload: JSON.stringify({ slot: slot.slot, variant: slot.variant }),
-          multipart: file.size > 4 * 1024 * 1024,
-        },
-      );
-      setImages((current) => current.map((url, currentIndex) => currentIndex === index ? blob.url : url));
+      const createResponse = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create-upload", fileName: file.name, contentType: file.type, size: file.size }),
+      });
+      const upload = await createResponse.json() as { error?: string; bucket?: string; path?: string; token?: string; supabaseUrl?: string; anonKey?: string };
+      if (!createResponse.ok || !upload.bucket || !upload.path || !upload.token || !upload.supabaseUrl || !upload.anonKey) {
+        throw new Error(upload.error || "Could not prepare the Supabase upload.");
+      }
+      const supabase = createClient(upload.supabaseUrl, upload.anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { error: uploadError } = await supabase.storage.from(upload.bucket).uploadToSignedUrl(upload.path, upload.token, file, { contentType: file.type, upsert: false });
+      if (uploadError) throw new Error(uploadError.message || "Supabase could not upload this image.");
+
+      const finalizeResponse = await fetch("/api/admin/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "finalize-upload", path: upload.path, fileName: file.name, contentType: file.type, size: file.size }),
+      });
+      const finalized = await finalizeResponse.json() as { error?: string; record?: { data?: { url?: string } } };
+      const imageUrl = finalized.record?.data?.url;
+      if (!finalizeResponse.ok || !imageUrl) throw new Error(finalized.error || "The image uploaded but could not be registered in the media library.");
+
+      const existing = (settingsRecord.data?.heroImagePaths ?? {}) as { desktop?: string[]; mobile?: string[] };
+      const heroImagePaths = {
+        desktop: [...(existing.desktop ?? ["", "", ""])],
+        mobile: [...(existing.mobile ?? ["", "", ""])],
+      };
+      heroImagePaths[slot.variant][slot.slot - 1] = imageUrl;
+      const record = {
+        title: settingsRecord.title || "Site settings",
+        slug: "site-settings",
+        status: settingsRecord.status || "active",
+        data: { ...(settingsRecord.data ?? {}), heroImagePaths },
+      };
+      const saveResponse = await fetch("/api/admin/cms/site-settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: settingsRecord.id, record }),
+      });
+      const saved = await saveResponse.json() as { error?: string; record?: typeof settingsRecord };
+      if (!saveResponse.ok) throw new Error(saved.error || "The image uploaded, but the homepage setting could not be saved.");
+      setSettingsRecord({ ...settingsRecord, data: record.data });
+      setImages((current) => current.map((url, currentIndex) => currentIndex === index ? imageUrl : url));
       setFiles((current) => current.map((fileValue, currentIndex) => currentIndex === index ? null : fileValue));
       setPreviews((current) => current.map((preview, currentIndex) => currentIndex === index ? null : preview));
       const input = document.getElementById(`hero-image-${slot.slot}-${slot.variant}`) as HTMLInputElement | null;
       if (input) input.value = "";
-      setNotice({ tone: "success", text: `Hero ${slot.slot} ${slot.variant} crop uploaded. The homepage will use it automatically.` });
+      setNotice({ tone: "success", text: `Hero ${slot.slot} ${slot.variant} crop uploaded to Supabase and published.` });
     } catch (error) {
       const reason = error instanceof Error ? error.message : "Unknown upload error";
       console.error("Homepage hero image upload failed:", error);
