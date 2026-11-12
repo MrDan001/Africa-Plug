@@ -920,9 +920,9 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
         {moduleKey === "media" ? <section className="apm-card apm-upload">
           <h3>Use either image source</h3>
-          <p className="apm-muted">Blob uploads remain available when Vercel Blob is active. Repository images can be registered by path without using Blob operations.</p>
+          <p className="apm-muted">New media uploads are stored in the Supabase `africa-plug-media` bucket. Existing Vercel Blob assets remain available for display; new uploads no longer use Blob.</p>
           <label className="apm-btn apm-btn-primary">
-            {uploading ? "Uploading…" : "Choose and upload to Vercel Blob"}
+            {uploading ? "Uploading…" : "Choose and upload to Supabase"}
             <input type="file" accept="image/jpeg,image/png,image/webp,image/avif,application/pdf" disabled={uploading} onChange={(event) => void uploadAsset(event)} style={{ display: "none" }} />
           </label>
           <div className="apm-form-fields" style={{ marginTop: 18 }}>
