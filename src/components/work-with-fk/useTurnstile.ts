@@ -1,4 +1,3 @@
-// FILE PATH: src/components/work-with-fk/useTurnstile.ts
 "use client";
 
 import { useEffect, useRef, useState } from "react";
