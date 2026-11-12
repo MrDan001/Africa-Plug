@@ -98,7 +98,7 @@ export function ExpressInterestDialog({ listing, onClose }: { listing: PublicLis
 
   return (
     <Modal title="Express interest" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} text="We’ll let you know when matching opportunities go live." /> : (
+      {done ? <Done onClose={onClose} text="We’ll review your interest and be in touch." /> : (
         <form className="ti-form" onSubmit={onSubmit}>
           <label className="ti-full"><span>Opportunity <b>*</b></span>
             <input value={listing.title} readOnly aria-readonly="true" className="ti-readonly" />
@@ -177,7 +177,7 @@ export function SubmitOpportunityDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Submit an opportunity" onClose={onClose} success={done}>
-      {done ? <Done onClose={onClose} /> : (
+      {done ? <Done onClose={onClose} text="We’ll review it and be in touch if it’s a fit." /> : (
         <form className="ti-form" onSubmit={(event) => { if (fileError) { event.preventDefault(); return; } void onSubmit(event); }}>
           <label><span>Name <b>*</b></span><input name="name" autoComplete="name" required maxLength={120} /></label>
           <label><span>Company or organisation <small>Optional</small></span><input name="company" autoComplete="organization" maxLength={160} /></label>
