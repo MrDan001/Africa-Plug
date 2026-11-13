@@ -592,6 +592,21 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .enquiry-submit-row > p a, .enquiry-status a { color: white; text-decoration: underline; text-decoration-color: var(--signal); text-underline-offset: 3px; }
 .enquiry-status { margin: 20px 0 0; padding: 13px 14px; border: 1px solid rgba(255,255,255,.14); font-size: 12px; line-height: 1.65; }
 .enquiry-status.success { border-color: rgba(83,200,132,.45); background: rgba(83,200,132,.06); color: #b8f0ce; }
+.tap-form-success-wrap { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 20px; }
+.tap-form-success-backdrop { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(8,9,12,.76); cursor: default; animation: tap-form-success-fade .2s ease; }
+.tap-form-success-modal { position: relative; z-index: 1; width: min(440px,100%); padding: 38px 32px 30px; border: 1px solid #eee5e9; border-top: 4px solid var(--signal); border-radius: 18px; background: linear-gradient(160deg,#fff 0%,#fffafd 100%); box-shadow: 0 24px 70px rgba(0,0,0,.4); color: #292a2c; text-align: center; animation: tap-form-success-pop .22s ease; }
+.tap-form-success-close { position: absolute; top: 12px; right: 12px; display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 50%; background: #f5f0f2; color: #292a2c; font-size: 24px; cursor: pointer; }
+.tap-form-success-icon { display: grid; width: 68px; height: 68px; place-items: center; margin: 0 auto 18px; border: 1px solid #cdebd8; border-radius: 50%; background: #eaf7ef; color: #19834b; }
+.tap-form-success-icon svg { width: 30px; height: 30px; }
+.tap-form-success-kicker { display: block; margin-bottom: 8px; color: var(--signal); font-size: 9px; font-weight: 900; letter-spacing: .16em; }
+.tap-form-success-modal h2 { margin: 0 0 10px; color: #292a2c; font-size: 30px; font-weight: 850; letter-spacing: -.045em; line-height: 1.1; }
+.tap-form-success-modal p { max-width: 340px; margin: 0 auto 14px; color: #555963; font-size: 14px; line-height: 1.65; }
+.tap-form-success-modal .tap-form-success-email-note { margin-bottom: 23px; color: #777b84; font-size: 11px; }
+.tap-form-success-done { width: 100%; max-width: 220px; justify-content: center; border-radius: 6px; }
+@keyframes tap-form-success-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tap-form-success-pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .tap-form-success-backdrop, .tap-form-success-modal { animation: none; } }
+@media (max-width: 480px) { .tap-form-success-modal { padding: 36px 24px 26px; } }
 .enquiry-status.error { border-color: rgba(245,0,112,.4); background: rgba(245,0,112,.06); color: #f5b7d1; }
 .enquiry-privacy-note { margin: 15px 0 0; color: #707681; font-size: 9px; line-height: 1.6; }
 .contact-official-email { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; padding: 19px; border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.025); }

@@ -100,6 +100,25 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
     }
   }
 
+  if (notice?.ok) {
+    return (
+      <div className="tap-form-success-wrap" role="dialog" aria-modal="true" aria-labelledby="tap-form-success-title">
+        <button className="tap-form-success-backdrop" type="button" aria-label="Close thank-you message" onClick={() => setNotice(null)} />
+        <section className="tap-form-success-modal">
+          <button type="button" className="tap-form-success-close" aria-label="Close" onClick={() => setNotice(null)}>×</button>
+          <span className="tap-form-success-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.2 16.5 19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
+          <span className="tap-form-success-kicker">MESSAGE RECEIVED</span>
+          <h2 id="tap-form-success-title">Thank you!</h2>
+          <p>{notice.text}</p>
+          <p className="tap-form-success-email-note">If you provided an email address, a confirmation message will be sent there.</p>
+          <button type="button" className="standard-button tap-form-success-done" onClick={() => setNotice(null)}>DONE <span aria-hidden="true">→</span></button>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <section className={`enquiry-panel${modal ? " enquiry-panel-modal" : ""}`}>
       <header className="enquiry-panel-heading">
@@ -163,7 +182,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
         {storeWaitlist ? <p className="enquiry-privacy-note">This only signs you up for updates about this product. It does not subscribe you to the general newsletter or other product lists.</p> : null}
         <label className="enquiry-honeypot" aria-hidden="true">Leave this field empty<input name="website" tabIndex={-1} autoComplete="off" /></label>
         {siteKey ? <div className="enquiry-security"><div ref={widgetRef} /><small>Complete the security check before submitting.</small></div> : null}
-        {notice ? <p className={`enquiry-status ${notice.ok ? "success" : "error"}`} role="status" aria-live="polite">{notice.text}{!notice.ok ? <>{" "}Email <a href={`mailto:${publicReplyEmail}`}>{publicReplyEmail}</a> if you need another route.</> : null}</p> : null}
+        {notice && !notice.ok ? <p className="enquiry-status error" role="alert">{notice.text}{" "}Email <a href={`mailto:${publicReplyEmail}`}>{publicReplyEmail}</a> if you need another route.</p> : null}
         <div className="enquiry-submit-row">
           <button className="standard-button" type="submit" disabled={busy || Boolean(siteKey && !token)}>{busy ? "SENDING…" : storeWaitlist ? "JOIN WAITLIST" : storeEnquiryTitle ? "SEND ENQUIRY" : form.button}<span aria-hidden="true">→</span></button>
           <p>Or email <a href={`mailto:${publicReplyEmail}`}>{publicReplyEmail}</a> directly.</p>

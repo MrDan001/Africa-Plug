@@ -107,7 +107,7 @@ export async function POST(request: Request) {
   const from = process.env.EMAIL_FROM;
   if (!apiKey || !from) return Response.json({ ok: true, emailNotification: "not-configured" });
 
-  const to = process.env.EMAIL_CONNECT || "connect@theafricaplug.com";
+  const to = process.env.EMAIL_FK || "fk@theafricaplug.com";
   const rows: [string, string][] = [
     ["Full name", app.fullName],
     ["Role", app.role],
