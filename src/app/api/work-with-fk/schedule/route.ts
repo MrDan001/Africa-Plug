@@ -53,7 +53,10 @@ export async function POST(request: Request) {
       if (!access.application.data?.meetingBookedAt) {
         await saveApplicationData(access.application, { meetingBookedAt: new Date().toISOString() });
         await recordServerEvent("meeting_booked", "Meeting booked (applicant confirmed)");
-        await notifyTeam(access.application.title);
+        await Promise.all([
+          notifyTeam(access.application.title),
+          notifyApplicantBooking(access.application),
+        ]);
       }
       return Response.json({ ok: true }, { headers });
     } catch (error) {
@@ -117,6 +120,25 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Scheduler action failed:", error instanceof Error ? error.message : "Unknown error");
     return fail("The scheduler could not be updated. Check the CMS connection and try again.", 503);
+  }
+}
+
+async function notifyApplicantBooking(application: { title: string; data?: Record<string, unknown> }) {
+  const email = typeof application.data?.email === "string" ? application.data.email.trim() : "";
+  if (!email || !process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) return;
+  const name = typeof application.data?.name === "string" ? application.data.name.trim() : "there";
+  try {
+    const result = await new Resend(process.env.RESEND_API_KEY).emails.send({
+      from: process.env.EMAIL_FROM,
+      to: [email],
+      replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
+      subject: "Your Work With FK meeting is recorded",
+      text: `Hello ${name},\n\nThank you for confirming your booking. We have recorded that you have selected a meeting time for your Work With FK session. If you need to change anything, please reply to this email.\n\nThe Africa Plug team`,
+      html: `<div style="background:#f7f5f1;padding:24px;font-family:Arial,sans-serif"><div style="max-width:600px;margin:0 auto;border:1px solid #dedbd4;background:#fff;padding:28px"><p style="color:#d51f6d;font-size:11px;font-weight:700;letter-spacing:2px">THE AFRICA PLUG</p><h1 style="color:#292a2c;font-size:24px;margin:0 0 16px">Your meeting is recorded</h1><p style="color:#4d5057;font-size:15px;line-height:1.7">Hello ${name.replace(/[&<>"']/g, "")}, thank you for confirming your booking. We have recorded that you have selected a meeting time for your Work With FK session.</p><p style="color:#777b84;font-size:13px;line-height:1.6">If you need to change anything, please reply to this email.</p><p style="color:#292a2c;font-size:13px;margin-top:24px">The Africa Plug team</p></div></div>`,
+    });
+    if (result.error) console.error("Booking confirmation email was rejected:", result.error.message);
+  } catch (error) {
+    console.error("Booking confirmation email failed:", error instanceof Error ? error.message : "Unknown error");
   }
 }
 
