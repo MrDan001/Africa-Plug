@@ -177,8 +177,8 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
     return Response.json({ ok: true, emailNotification: "not-configured" });
   }
 
+  const resend = new Resend(apiKey);
   try {
-    const resend = new Resend(apiKey);
     const result = await resend.emails.send({
       from,
       to: [to],
@@ -191,6 +191,28 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
   } catch (error) {
     console.error("Email notification could not be sent:", error instanceof Error ? error.message : "Unknown error");
   }
-  // Persisted submissions are accepted even if the optional email notification fails.
+
+  const confirmationCopy: Record<LeadKind, { subject: string; message: string }> = {
+    contact: { subject: "Thank you for contacting The Africa Plug", message: "Thank you for getting in touch with The Africa Plug. We have received your enquiry and our team will review it and respond where a follow-up is needed." },
+    ask: { subject: "We’ve received your question", message: "Thank you for your question. The Africa Plug team has received it and will review it. We may follow up directly or consider it for research and content." },
+    partner: { subject: "Thank you for your partnership enquiry", message: "Thank you for considering a partnership with The Africa Plug. We have received your details and will review the opportunity. If there is a fit, our team will be in touch." },
+    interest: { subject: "We’ve received your T.A.P IN interest", message: `Thank you for your interest${lead.opportunityName ? ` in ${lead.opportunityName}` : ""}. The Africa Plug team has received your submission and will review it.` },
+    work: { subject: "We’ve received your Work With FK enquiry", message: "Thank you for sharing your brief. The Africa Plug team has received it for review and will be in touch if it is a fit. This acknowledgement is not an approval or confirmation of an engagement." },
+  };
+  try {
+    const confirmation = confirmationCopy[kind];
+    const receipt = await resend.emails.send({
+      from,
+      to: [lead.email],
+      replyTo: to,
+      subject: confirmation.subject,
+      text: `Hello ${lead.name},\n\n${confirmation.message}\n\nIf you need to add information, reply to this email.\n\nThe Africa Plug team`,
+      html: `<div style="background:#f7f5f1;padding:24px;font-family:Arial,sans-serif"><div style="max-width:600px;margin:0 auto;border:1px solid #dedbd4;background:#fff;padding:28px"><p style="color:#d51f6d;font-size:11px;font-weight:700;letter-spacing:2px">THE AFRICA PLUG</p><h1 style="color:#292a2c;font-size:24px;margin:0 0 16px">Thank you, ${escapeHtml(lead.name)}</h1><p style="color:#4d5057;font-size:15px;line-height:1.7">${escapeHtml(confirmation.message)}</p><p style="color:#777b84;font-size:13px;line-height:1.6">If you need to add information, simply reply to this email.</p><p style="color:#292a2c;font-size:13px;margin-top:24px">The Africa Plug team</p></div></div>`,
+    });
+    if (receipt.error) console.error("Resend rejected a website enquiry confirmation:", receipt.error.message);
+  } catch (error) {
+    console.error("Website enquiry confirmation could not be sent:", error instanceof Error ? error.message : "Unknown error");
+  }
+  // The lead is already saved; an email failure must not discard the submission.
   return Response.json({ ok: true });
 }
