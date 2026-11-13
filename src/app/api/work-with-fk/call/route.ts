@@ -80,6 +80,7 @@ export async function POST(request: Request) {
   // 2. Email the team, then 3. send the automatic reply.
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
+  const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
   if (apiKey && from) {
     const to = process.env.EMAIL_CONNECT || "connect@theafricaplug.com";
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app").replace(/\/+$/, "");
@@ -99,7 +100,7 @@ export async function POST(request: Request) {
     const resend = new Resend(apiKey);
     try {
       const result = await resend.emails.send({
-        from,
+        from: internalFrom,
         to: [to],
         replyTo: call.email,
         subject: `Call request: ${call.fullName}`.replace(/[\r\n]+/g, " ").slice(0, 200),

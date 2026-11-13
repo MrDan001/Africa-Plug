@@ -18,6 +18,7 @@ export async function sendTeamEmail(options: {
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
+  const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
   if (!apiKey || !from) return "not-configured" as const;
   const to = process.env.EMAIL_CONNECT || "connect@theafricaplug.com";
   const resend = new Resend(apiKey);
@@ -28,7 +29,7 @@ export async function sendTeamEmail(options: {
   ).join("");
   try {
     const result = await resend.emails.send({
-      from,
+      from: internalFrom,
       to: [to],
       replyTo: options.replyTo,
       subject,
