@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     let emailNotification: "sent" | "not-configured" | "failed" = "not-configured";
     if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
       try {
-        const rawName = typeof application.data?.name === "string" ? application.data.name.trim() : "there";
+        const rawName = typeof application.data?.fullName === "string" ? application.data.fullName.trim() : typeof application.data?.name === "string" ? application.data.name.trim() : "there";
         const safeName = rawName.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" })[c] || "");
         const sent = await new Resend(process.env.RESEND_API_KEY).emails.send({
           from: process.env.EMAIL_FROM, to: [email], replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
