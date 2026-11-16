@@ -24,7 +24,10 @@ export async function POST(request: Request) {
     const application = found.records?.find((item) => item.id === input.id);
     if (!application) return Response.json({ error: "This application could not be found." }, { status: 404 });
     const applicationStatus = String(application.status ?? "").trim().toLowerCase();
-    if (applicationStatus === "approved" || applicationStatus === "declined") {
+    // A decision only counts once the applicant has been emailed. Statuses set
+    // without an email (older direct status updates) can still be decided here.
+    const decisionEmailSent = typeof application.data?.decisionEmailSentAt === "string" && application.data.decisionEmailSentAt.length > 0;
+    if ((applicationStatus === "approved" || applicationStatus === "declined") && decisionEmailSent) {
       return Response.json({ error: `This application has already been ${application.status}. Refresh the workspace before taking another action.` }, { status: 409 });
     }
     const email = typeof application.data?.email === "string" ? application.data.email.trim() : "";
