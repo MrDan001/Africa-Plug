@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import EnquiriesWorkspace from "@/components/admin/EnquiriesWorkspace";
 import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
@@ -880,6 +881,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   }
 
   // ---------- All other modules ----------
+  if (moduleKey === "enquiries") return <EnquiriesWorkspace records={records} loading={loading} onStatus={setStatus} onRefresh={() => void loadRecords()} />;
+
   return (
     <div className="apm">
       <div className="apm-head">
@@ -914,11 +917,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
           <button type="button" className="apm-btn" onClick={() => void loadRecords()}>Refresh</button>
         </div>
 
-        {moduleKey === "enquiries" || moduleKey === "subscribers" ? <div className="apm-chips" role="group" aria-label={moduleKey === "enquiries" ? "Filter by form" : "Filter by list"} style={{ marginBottom: 14 }}>
-          {(moduleKey === "enquiries"
-            ? [{ value: "all", label: "All forms" }, ...TAP_IN_KINDS, { value: "article-pitch", label: "Article pitches" }, { value: "other", label: "Other forms" }]
-            : [{ value: "all", label: "All lists" }, { value: "blog", label: "Blog readers" }, { value: "tap-in-alerts", label: "T.A.P IN alerts" }, { value: "other", label: "Stay Plugged In" }]
-          ).map((option) => <button type="button" key={option.value} className={`apm-chip${groupFilter === option.value ? " is-on" : ""}`} aria-pressed={groupFilter === option.value} onClick={() => setGroupFilter(option.value)}>{option.label}</button>)}
+        {moduleKey === "subscribers" ? <div className="apm-chips" role="group" aria-label="Filter by list" style={{ marginBottom: 14 }}>
+          {[{ value: "all", label: "All lists" }, { value: "blog", label: "Blog readers" }, { value: "tap-in-alerts", label: "T.A.P IN alerts" }, { value: "other", label: "Stay Plugged In" }].map((option) => <button type="button" key={option.value} className={`apm-chip${groupFilter === option.value ? " is-on" : ""}`} aria-pressed={groupFilter === option.value} onClick={() => setGroupFilter(option.value)}>{option.label}</button>)}
         </div> : null}
         {moduleKey === "subscribers" && groupFilter === "blog" ? <div style={{ marginBottom: 14 }}><button type="button" className="apm-btn" onClick={exportBlogReaders} disabled={!shown.length}>Export Blog readers CSV</button></div> : null}
 
@@ -956,7 +956,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               <div className={moduleKey === "store" ? "apm-store-row-details" : undefined}>
               <div className="apm-row-meta">
                 <span className={`apm-tag ${moduleKey === "store" && record.status === "draft" ? "is-neutral" : `is-${tone(record.status)}`}`}>{moduleKey === "store" && record.status === "draft" ? "Not listed (draft)" : record.status.replace(/-/g, " ")}</span>
-                {moduleKey === "enquiries" && enquiryKind(record) !== "other" ? <span className="apm-tag is-neutral">{TAP_IN_KINDS.find((item) => item.value === enquiryKind(record))?.label || (enquiryKind(record) === "article-pitch" ? "Article pitch" : "Other")}</span> : null}
                 {moduleKey === "subscribers" && subscriberList(record) !== "other" ? <span className="apm-tag is-neutral">{subscriberListLabel(record)}</span> : null}
                 <small>{new Date(record.updated_at).toLocaleString("en-GB")}</small>
               </div>
@@ -970,7 +969,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
                 <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small>
               </> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
-              {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
               
               {moduleKey === "subscribers" ? <><p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p>{record.data?.consentText ? <details className="apm-details"><summary>View consent record</summary><dl><div className="apm-dl-row"><dt>Wording</dt><dd>{text(record.data.consentText)}</dd></div><div className="apm-dl-row"><dt>Version</dt><dd>{text(record.data.consentVersion)}</dd></div><div className="apm-dl-row"><dt>Consented at</dt><dd>{text(record.data.consentedAt)}</dd></div></dl></details> : null}</> : null}
               </div>
@@ -988,7 +987,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" && record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void createDealDiagnosticPayment(record)}>Create £2,500 payment link</button> : null}
-              {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
               {moduleKey === "subscribers" && record.data?.list === "blog" && record.status === "active" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, "unsubscribed")}>Unsubscribe</button> : null}
               {moduleKey === "subscribers" && record.data?.list !== "blog" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
               {moduleKey === "blog" && record.status === "published" && !(text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now()) ? <button type="button" className="apm-btn" disabled={sendingArticleId === record.id} onClick={() => void sendArticleEmail(record)}>{sendingArticleId === record.id ? "Sending…" : "Email Blog readers"}</button> : null}
