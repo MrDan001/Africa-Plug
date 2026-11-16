@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { cmsBridge } from "@/lib/cms-bridge";
+import { loadApplication, saveApplicationData } from "@/lib/work-with-fk/scheduler";
 import { getStripe, getStripeWebhookSecret } from "@/lib/payments/stripe";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 
@@ -24,6 +25,30 @@ export async function POST(request: Request) {
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object as Stripe.Checkout.Session;
     if (session.payment_status !== "paid") return NextResponse.json({ received: true, pending: true });
+    if (session.metadata?.service === "fk-deal-diagnostic") {
+      const applicationId = session.metadata.application_id;
+      if (!applicationId || session.currency !== "gbp" || session.amount_total !== 250000) {
+        console.error("Deal Diagnostic Stripe session metadata or amount did not match the expected payment.");
+        return NextResponse.json({ error: "Invalid Deal Diagnostic payment details." }, { status: 400 });
+      }
+      try {
+        const application = await loadApplication(applicationId);
+        if (!application || application.status !== "approved") throw new Error("Approved Work With FK application not found.");
+        await saveApplicationData(application, {
+          paymentStatus: "confirmed",
+          paymentPaidAt: new Date().toISOString(),
+          stripeCheckoutSessionId: session.id,
+          stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || "",
+          stripePaymentAmount: session.amount_total,
+          stripePaymentCurrency: session.currency.toUpperCase(),
+          paymentEmailFailure: null,
+        });
+      } catch (error) {
+        console.error("Deal Diagnostic payment confirmation could not be saved:", error instanceof Error ? error.message : "Unknown error");
+        return NextResponse.json({ error: "Payment confirmation could not be saved; Stripe may retry this event." }, { status: 500 });
+      }
+      return NextResponse.json({ received: true, dealDiagnosticPaid: true });
+    }
     const productSlugs = (session.metadata?.product_slugs || "").split(",").filter(Boolean);
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceRoleKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
