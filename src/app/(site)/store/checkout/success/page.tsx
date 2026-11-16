@@ -23,7 +23,8 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
       const session = await getStripe().checkout.sessions.retrieve(sessionId);
       paymentConfirmed = session.payment_status === "paid" && session.metadata?.store === "africa-plug";
       if (paymentConfirmed) {\n        purchasedSlugs = (session.metadata?.product_slugs ?? "").split(",").filter(Boolean);\n        const isPetTravel = purchasedSlugs.some((slug) => /pet[-_]?travel[-_]?consultation/i.test(slug));\n        if (isPetTravel) redirect("https://cal.com/theafricaplug/pet-travel-consultation");\n      }
-    } catch {
+    } catch (error) {
+      if (error && typeof error === "object" && "digest" in error) throw error;
       // Keep the page safe if Stripe configuration or the session lookup is unavailable.
     }
   }
