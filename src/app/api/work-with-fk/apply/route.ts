@@ -105,6 +105,7 @@ export async function POST(request: Request) {
   // 2. Email the team, then 3. send the applicant's automatic reply.
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
+  const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
   if (!apiKey || !from) return Response.json({ ok: true, emailNotification: "not-configured" });
 
   const to = process.env.EMAIL_FK || "fk@theafricaplug.com";
@@ -132,7 +133,7 @@ export async function POST(request: Request) {
   const resend = new Resend(apiKey);
   try {
     const result = await resend.emails.send({
-      from,
+      from: internalFrom,
       to: [to],
       replyTo: app.email,
       subject,

@@ -143,10 +143,11 @@ async function notifyApplicantBooking(application: { title: string; data?: Recor
 }
 
 async function notifyTeam(applicantName: string) {
-  if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) return;
+  const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
+  if (!process.env.RESEND_API_KEY) return;
   try {
     await new Resend(process.env.RESEND_API_KEY).emails.send({
-      from: process.env.EMAIL_FROM,
+      from: internalFrom,
       to: [process.env.EMAIL_FK || "fk@theafricaplug.com"],
       subject: `[Work With FK] Meeting booked: ${applicantName}`.slice(0, 200),
       text: `${applicantName} has confirmed they booked a meeting through the private scheduler. Check the scheduling tool for the time.`,

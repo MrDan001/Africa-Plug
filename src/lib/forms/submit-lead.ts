@@ -171,6 +171,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
+  const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
   const to = kind === "ask" ? (process.env.EMAIL_ASK || "ask@theafricaplug.com") : kind === "work" ? (process.env.EMAIL_FK || "fk@theafricaplug.com") : (process.env.EMAIL_CONNECT || "connect@theafricaplug.com");
   if (!apiKey || !from) {
     // The submission is safely persisted in the admin inbox even if email delivery isn't configured yet.
@@ -180,7 +181,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
   const resend = new Resend(apiKey);
   try {
     const result = await resend.emails.send({
-      from,
+      from: internalFrom,
       to: [to],
       replyTo: lead.email,
       subject: kind === "contact" && (lead.enquiryType === "Store enquiry" || lead.enquiryType === "Store waitlist") ? `${lead.enquiryType === "Store waitlist" ? "Store waitlist" : "Store enquiry"}: ${lead.opportunityName || "Product"}` : kind === "partner" ? lead.enquiryType === "Article pitch" ? `Blog pitch: ${lead.name}` : `Partnership enquiry: ${lead.enquiryType || "Other"}` : `[${labels[kind]}] ${lead.name}`,

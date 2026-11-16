@@ -92,7 +92,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
       }
       currentForm.reset();
       setToken("");
-      setNotice({ ok: true, text: storeWaitlist ? "Thank you. You are on the waitlist and we will be in touch when this guide is ready." : storeEnquiryTitle ? "Thank you. We'll be in touch soon." : kind === "partner" ? "Thank you. We'll be in touch if it's a fit." : kind === "ask" ? "Thanks, we review every question and may select yours for research, content or follow up." : kind === "interest" && opportunityName ? `Thanks, The Africa Plug has received your expression of interest in ${opportunityName}.` : kind === "work" ? "Thanks. Your application has been received for review. This is not an approval or payment confirmation." : "Thank you. Your enquiry has been sent to The Africa Plug." });
+      setNotice({ ok: true, text: storeWaitlist ? "Thank you. You are on the waitlist and we will be in touch when this guide is ready." : storeEnquiryTitle ? "Thank you. We'll be in touch soon." : kind === "partner" ? "Thank you. We'll be in touch if it's a fit." : kind === "ask" ? "We review every question and may select yours for research, content or follow up." : kind === "interest" && opportunityName ? `Thanks, The Africa Plug has received your expression of interest in ${opportunityName}.` : kind === "work" ? "Thanks. Your application has been received for review. This is not an approval or payment confirmation." : "Thank you. Your enquiry has been sent to The Africa Plug." });
     } catch {
       setNotice({ ok: false, text: `We couldn't connect to the form service. Please email ${publicReplyEmail} directly.` });
     } finally {
