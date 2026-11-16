@@ -39,7 +39,6 @@ export async function POST(request: Request) {
     if (!apiKey || !from) return Response.json({ error: "Decision email could not be sent because Resend is not configured. No decision was recorded." }, { status: 503 });
 
     const name = (typeof application.data?.fullName === "string" ? application.data.fullName : typeof application.data?.name === "string" ? application.data.name : "there").trim() || "there";
-    const company = (typeof application.data?.company === "string" ? application.data.company : typeof application.data?.organisation === "string" ? application.data.organisation : "").trim();
     const approved = input.decision === "approved";
     const subject = approved ? "Your Work With FK application has been approved | The Africa Plug" : "An update on your Work With FK application | The Africa Plug";
     const paragraph = approved
