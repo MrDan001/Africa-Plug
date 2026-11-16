@@ -12,9 +12,7 @@ export default async function CallCheckoutSuccess({ searchParams }: Props) {
   if (/^cs_(test|live)_[A-Za-z0-9_]+$/.test(sessionId)) {
     try {
       const session = await getStripe().checkout.sessions.retrieve(sessionId);
-      if (session.payment_status === "paid" && session.metadata?.service === "fk-30-minute-call") {
-        redirect("https://cal.com/theafricaplug/fkcall01");
-      }
+      if (session.payment_status === "paid" && session.metadata?.service === "fk-30-minute-call") redirect("https://cal.com/theafricaplug/fkcall01");
     } catch (error) {
       if (error && typeof error === "object" && "digest" in error) throw error;
     }
