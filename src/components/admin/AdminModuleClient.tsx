@@ -492,7 +492,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if ((status === "declined" || status === "archived") && !window.confirm(`Are you sure you want to ${actionLabel} “${record.title}”?`)) return;
     setNotice(null);
     try {
-      const isApplicationDecision = (moduleKey === "work-with-fk" || moduleKey === "review-required") && (status === "approved" || status === "declined");
+      const isApplicationDecision = moduleKey === "review-required" && (status === "approved" || status === "declined");
       const isBlogOptOut = moduleKey === "subscribers" && record.data?.list === "blog" && status === "unsubscribed";
       const patchBody = isBlogOptOut
         ? {
