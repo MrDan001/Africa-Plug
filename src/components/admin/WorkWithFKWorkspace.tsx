@@ -53,7 +53,7 @@ export default function WorkWithFKWorkspace({ records, loading, onRefresh, onDec
   }
   function exportCsv() {
     const quote=(v:unknown)=>'"'+value(v).replace(/"/g,'""')+'"';
-    const rows=[["Applicant","Email","Company","Application status","Payment status","Submitted"],...visible.map(r=>[value(r.data.fullName)||value(r.data.name)||r.title,value(r.data.email),value(r.data.organisation)||value(r.data.organization),r.status,paymentLabel[paymentState(r)],r.created_at])];
+    const rows=[["Applicant","Email","Company","Application status","Payment status","Submitted"],...visible.map(r=>[value(r.data.fullName)||value(r.data.name)||r.title,value(r.data.email),value(r.data.company)||value(r.data.organisation)||value(r.data.organization),r.status,paymentLabel[paymentState(r)],r.created_at])];
     const blob=new Blob(["\uFEFF"+rows.map(row=>row.map(quote).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="the-africa-plug-work-with-fk.csv"; a.click(); URL.revokeObjectURL(url);
   }
@@ -71,7 +71,7 @@ export default function WorkWithFKWorkspace({ records, loading, onRefresh, onDec
         <div className="apm-wfk-tools"><input className="apm-input" type="search" placeholder="Search name, email or company…" value={query} onChange={e=>setQuery(e.target.value)} aria-label="Search applications"/><select className="apm-input" value={filter} onChange={e=>setFilter(e.target.value)} aria-label="Filter payment status"><option value="all">All payment statuses</option><option value="pending">Pending</option><option value="sent">Link sent</option><option value="paid">Paid</option><option value="failed">Email failed</option><option value="expired">Expired</option></select></div>
         <div className="apm-wfk-tabs">{["all","pending","sent","paid","failed"].map(s=><button type="button" key={s} className={filter===s?"is-active":""} onClick={()=>setFilter(s)}>{s==="all"?"All applications":paymentLabel[s]||s}</button>)}</div>
         {loading?<div className="apm-empty">Loading applications…</div>:visible.length?<div className="apm-wfk-list">{visible.map(r=>{
-          const name=value(r.data.name)||r.title||"Applicant"; const state=paymentState(r);
+          const name=value(r.data.fullName)||value(r.data.name)||r.title||"Applicant"; const state=paymentState(r);
           return <button type="button" key={r.id} className={"apm-wfk-row"+(selectedId===r.id?" is-selected":"")} onClick={()=>{setSelectedId(r.id);setMessage("");}}>
             <span className="apm-wfk-avatar">{name.trim().slice(0,2).toUpperCase()}</span><span className="apm-wfk-copy"><strong>{name}</strong><small>{value(r.data.company)||value(r.data.organisation)||value(r.data.organization)||"Company not supplied"}</small><span>{value(r.data.email)}</span></span><span className="apm-wfk-row-meta"><i className={"apm-wfk-status is-"+tone[state]}>{paymentLabel[state]}</i><small>{dateLabel(r.created_at)}</small></span>
           </button>;
