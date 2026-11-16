@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createHash, createHmac } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
@@ -22,8 +23,13 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
     try {
       const session = await getStripe().checkout.sessions.retrieve(sessionId);
       paymentConfirmed = session.payment_status === "paid" && session.metadata?.store === "africa-plug";
-      if (paymentConfirmed) purchasedSlugs = (session.metadata?.product_slugs ?? "").split(",").filter(Boolean);
-    } catch {
+      if (paymentConfirmed) {
+        purchasedSlugs = (session.metadata?.product_slugs ?? "").split(",").filter(Boolean);
+        const isPetTravel = purchasedSlugs.some((slug) => /pet[-_]?travel[-_]?consultation/i.test(slug));
+        if (isPetTravel) redirect("https://cal.com/theafricaplug/pet-travel-consultation");
+      }
+    } catch (error) {
+      if (error && typeof error === "object" && "digest" in error) throw error;
       // Keep the page safe if Stripe configuration or the session lookup is unavailable.
     }
   }

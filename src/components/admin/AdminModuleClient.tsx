@@ -460,6 +460,24 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     URL.revokeObjectURL(url);
   }
 
+  async function createDealDiagnosticPayment(record: CmsRecord) {
+    setNotice(null);
+    try {
+      const response = await fetch("/api/work-with-fk/deal-diagnostic/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: record.id }),
+      });
+      const result = await response.json() as { error?: string; url?: string };
+      if (!response.ok || !result.url) throw new Error(result.error || "Could not create the Stripe payment link.");
+      await navigator.clipboard.writeText(result.url).catch(() => undefined);
+      window.prompt("Share this £2,500 Deal Diagnostic Stripe checkout link with the approved client:", result.url);
+      setNotice({ tone: "success", text: "Secure £2,500 Stripe checkout link created for this approved application." });
+    } catch (error) {
+      setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not create the Stripe checkout link." });
+    }
+  }
+
   async function setStatus(record: CmsRecord, status: string) {
     const actionLabel = status === "approved" ? "approve" : status === "declined" ? "decline" : status === "resolved" ? "resolve" : status === "unsubscribed" ? "unsubscribe" : "update";
     if ((status === "declined" || status === "archived") && !window.confirm(`Are you sure you want to ${actionLabel} “${record.title}”?`)) return;
@@ -969,6 +987,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" && record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void createDealDiagnosticPayment(record)}>Create £2,500 payment link</button> : null}
               {moduleKey === "enquiries" && record.status !== "resolved" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "new" ? "in-progress" : "resolved")}>{record.status === "new" ? "Start review" : "Resolve"}</button> : null}
               {moduleKey === "subscribers" && record.data?.list === "blog" && record.status === "active" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, "unsubscribed")}>Unsubscribe</button> : null}
               {moduleKey === "subscribers" && record.data?.list !== "blog" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
