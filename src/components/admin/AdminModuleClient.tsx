@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import EnquiriesWorkspace from "@/components/admin/EnquiriesWorkspace";
+import WorkWithFKWorkspace from "@/components/admin/WorkWithFKWorkspace";
 import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
@@ -889,6 +890,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
   // ---------- All other modules ----------
   if (moduleKey === "enquiries") return <EnquiriesWorkspace records={records} loading={loading} onStatus={setStatus} onRefresh={() => void loadRecords()} />;
+  if (moduleKey === "work-with-fk") return <WorkWithFKWorkspace records={records} loading={loading} onRefresh={() => void loadRecords()} onDecision={setStatus} />;
 
   return (
     <div className="apm">
