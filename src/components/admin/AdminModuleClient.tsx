@@ -971,7 +971,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               </> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
               {(moduleKey === "enquiries" || moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
-              {moduleKey === "analytics" ? <details className="apm-details"><summary>View source and UTM details</summary><pre className="apm-pre">{JSON.stringify(record.data, null, 2)}</pre></details> : null}
+              {moduleKey === "analytics" ? null : null}
               {moduleKey === "subscribers" ? <><p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p>{record.data?.consentText ? <details className="apm-details"><summary>View consent record</summary><dl><div className="apm-dl-row"><dt>Wording</dt><dd>{text(record.data.consentText)}</dd></div><div className="apm-dl-row"><dt>Version</dt><dd>{text(record.data.consentVersion)}</dd></div><div className="apm-dl-row"><dt>Consented at</dt><dd>{text(record.data.consentedAt)}</dd></div></dl></details> : null}</> : null}
               </div>
             </div>
