@@ -31,7 +31,7 @@ export default function WorkWithFKWorkspace({ records, loading, onRefresh, onDec
   const [message,setMessage] = useState("");
   const selected = records.find(r=>r.id===selectedId) ?? null;
   const visible = useMemo(()=>records.filter(r=>{
-    const haystack=[r.title,value(r.data.name),value(r.data.email),value(r.data.organisation),value(r.data.organization),value(r.data.mandate)].join(" ").toLowerCase();
+    const haystack=[r.title,value(r.data.fullName)||value(r.data.name),value(r.data.email),value(r.data.company)||value(r.data.organisation)||value(r.data.organization),value(r.data.goal),value(r.data.obstacle)].join(" ").toLowerCase();
     return (!query.trim()||haystack.includes(query.trim().toLowerCase())) && (filter==="all"||paymentState(r)===filter);
   }),[records,query,filter]);
   const stats = useMemo(()=>({
@@ -53,7 +53,7 @@ export default function WorkWithFKWorkspace({ records, loading, onRefresh, onDec
   }
   function exportCsv() {
     const quote=(v:unknown)=>'"'+value(v).replace(/"/g,'""')+'"';
-    const rows=[["Applicant","Email","Company","Application status","Payment status","Submitted"],...visible.map(r=>[value(r.data.name)||r.title,value(r.data.email),value(r.data.organisation)||value(r.data.organization),r.status,paymentLabel[paymentState(r)],r.created_at])];
+    const rows=[["Applicant","Email","Company","Application status","Payment status","Submitted"],...visible.map(r=>[value(r.data.fullName)||value(r.data.name)||r.title,value(r.data.email),value(r.data.organisation)||value(r.data.organization),r.status,paymentLabel[paymentState(r)],r.created_at])];
     const blob=new Blob(["\uFEFF"+rows.map(row=>row.map(quote).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="the-africa-plug-work-with-fk.csv"; a.click(); URL.revokeObjectURL(url);
   }
@@ -73,16 +73,16 @@ export default function WorkWithFKWorkspace({ records, loading, onRefresh, onDec
         {loading?<div className="apm-empty">Loading applications…</div>:visible.length?<div className="apm-wfk-list">{visible.map(r=>{
           const name=value(r.data.name)||r.title||"Applicant"; const state=paymentState(r);
           return <button type="button" key={r.id} className={"apm-wfk-row"+(selectedId===r.id?" is-selected":"")} onClick={()=>{setSelectedId(r.id);setMessage("");}}>
-            <span className="apm-wfk-avatar">{name.trim().slice(0,2).toUpperCase()}</span><span className="apm-wfk-copy"><strong>{name}</strong><small>{value(r.data.organisation)||value(r.data.organization)||"Company not supplied"}</small><span>{value(r.data.email)}</span></span><span className="apm-wfk-row-meta"><i className={"apm-wfk-status is-"+tone[state]}>{paymentLabel[state]}</i><small>{dateLabel(r.created_at)}</small></span>
+            <span className="apm-wfk-avatar">{name.trim().slice(0,2).toUpperCase()}</span><span className="apm-wfk-copy"><strong>{name}</strong><small>{value(r.data.company)||value(r.data.organisation)||value(r.data.organization)||"Company not supplied"}</small><span>{value(r.data.email)}</span></span><span className="apm-wfk-row-meta"><i className={"apm-wfk-status is-"+tone[state]}>{paymentLabel[state]}</i><small>{dateLabel(r.created_at)}</small></span>
           </button>;
         })}</div>:<div className="apm-empty">{records.length?"No applications match this filter.":"No applications have been submitted yet."}</div>}
         <footer className="apm-wfk-foot">Showing {visible.length} of {records.length} applications</footer>
       </section>
       <aside className="apm-card apm-wfk-detail">
-        {selected?<><div className="apm-wfk-detail-head"><div><span className="apm-eyebrow">APPLICATION DETAILS</span><h2>{value(selected.data.name)||selected.title}</h2><p>{value(selected.data.organisation)||value(selected.data.organization)||"Organisation not supplied"}</p></div><button className="apm-wfk-close" type="button" onClick={()=>setSelectedId("")} aria-label="Close details">×</button></div>
+        {selected?<><div className="apm-wfk-detail-head"><div><span className="apm-eyebrow">APPLICATION DETAILS</span><h2>{value(selected.data.fullName)||value(selected.data.name)||selected.title}</h2><p>{value(selected.data.company)||value(selected.data.organisation)||value(selected.data.organization)||"Organisation not supplied"}</p></div><button className="apm-wfk-close" type="button" onClick={()=>setSelectedId("")} aria-label="Close details">×</button></div>
           <div className="apm-wfk-badges"><span className={"apm-wfk-status is-"+tone[paymentState(selected)]}>{paymentLabel[paymentState(selected)]}</span><span className="apm-wfk-app-status">Application: {selected.status.replace(/-/g," ")}</span></div>
-          <div className="apm-wfk-section"><h3>Applicant information</h3><dl>{[["Email",value(selected.data.email)],["Phone",value(selected.data.phone)],["Company",value(selected.data.organisation)||value(selected.data.organization)],["Country",value(selected.data.country)],["Submitted",dateLabel(selected.created_at)]].filter(x=>x[1]).map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></div>
-          <div className="apm-wfk-section"><h3>Mandate / request</h3><p>{value(selected.data.mandate)||value(selected.data.message)||value(selected.data.objective)||"No mandate was supplied."}</p></div>
+          <div className="apm-wfk-section"><h3>Applicant information</h3><dl>{[["Email",value(selected.data.email)],["Phone",value(selected.data.phone)],["Company",value(selected.data.company)||value(selected.data.organisation)||value(selected.data.organization)],["Country",value(selected.data.country)],["Markets",value(selected.data.markets)],["Submitted",dateLabel(selected.created_at)]].filter(x=>x[1]).map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></div>
+          <div className="apm-wfk-section"><h3>What they want to achieve</h3><p>{value(selected.data.goal)||value(selected.data.mandate)||value(selected.data.message)||value(selected.data.objective)||"No mandate was supplied."}</p>{value(selected.data.obstacle)?<><h3 className="apm-wfk-subhead">Main obstacle</h3><p>{value(selected.data.obstacle)}</p></>:null}</div>
           <div className="apm-wfk-payment"><h3>Deal Diagnostic · £2,500</h3><div className="apm-wfk-payment-line"><span>Payment status</span><strong>{paymentLabel[paymentState(selected)]}</strong></div>{value(selected.data.paymentLinkSentAt)?<div className="apm-wfk-payment-line"><span>Last email sent</span><strong>{dateLabel(value(selected.data.paymentLinkSentAt))}</strong></div>:null}{value(selected.data.paymentPaidAt)?<div className="apm-wfk-payment-line"><span>Paid at</span><strong>{dateLabel(value(selected.data.paymentPaidAt))}</strong></div>:null}
             {value(selected.data.paymentCheckoutUrl)?<a className="apm-btn apm-wfk-copy" href={value(selected.data.paymentCheckoutUrl)} target="_blank" rel="noreferrer">Open current Stripe link ↗</a>:null}
             {selected.status==="approved"&&paymentState(selected)!=="paid"?<button type="button" className="apm-btn apm-btn-primary apm-wfk-send" disabled={!!busy} onClick={()=>void paymentAction(selected,paymentState(selected)==="pending"?"create":"resend")}>{busy===selected.id?"Sending…":paymentState(selected)==="pending"?"Generate & send payment link":"Resend payment link"}</button>:null}
