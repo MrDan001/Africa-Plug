@@ -1,6 +1,7 @@
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { loadApplication } from "@/lib/work-with-fk/scheduler";
 import { getPublicSiteUrl, getStripe } from "@/lib/payments/stripe";
+import { Resend } from "resend";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
@@ -25,7 +26,34 @@ export async function POST(request: Request) {
       cancel_url: `${origin}/work-with-fk?payment=cancelled`,
     });
     if (!session.url) return Response.json({ error: "Stripe did not return a checkout URL." }, { status: 502 });
-    return Response.json({ ok: true, url: session.url });
+
+    let emailNotification: "sent" | "not-configured" | "failed" = "not-configured";
+    if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
+      try {
+        const safeName = (typeof application.data?.name === "string" ? application.data.name.trim() : "there")
+          .replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[character] || "");
+        const emailResult = await new Resend(process.env.RESEND_API_KEY).emails.send({
+          from: process.env.EMAIL_FROM,
+          to: [email],
+          replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
+          subject: "Your £2,500 Deal Diagnostic payment link | The Africa Plug",
+          text: `Hello ${typeof application.data?.name === "string" ? application.data.name.trim() : "there"},\\n\\nThank you for your interest in working with FK. Your secure payment link for the £2,500 Deal Diagnostic is ready:\\n\\n${session.url}\\n\\nOnce payment is complete, we will guide you through the next steps. If you have any questions, simply reply to this email.\\n\\nRegards,\\nThe Africa Plug team`,
+          html: `<div style="background:#f7f5f1;padding:24px;font-family:Arial,sans-serif"><div style="max-width:600px;margin:0 auto;border:1px solid #dedbd4;background:#fff;padding:28px"><p style="color:#d51f6d;font-size:11px;font-weight:700;letter-spacing:2px">THE AFRICA PLUG</p><h1 style="color:#292a2c;font-size:24px;margin:0 0 16px">Your Deal Diagnostic payment link</h1><p style="color:#4d5057;font-size:15px;line-height:1.7">Hello ${safeName}, thank you for your interest in working with FK.</p><p style="color:#4d5057;font-size:15px;line-height:1.7">Your secure payment link for the <strong>£2,500 Deal Diagnostic</strong> is ready. Use the button below to complete your payment securely.</p><p style="margin:28px 0"><a href="${session.url}" style="display:inline-block;background:#d51f6d;color:#fff;text-decoration:none;padding:14px 22px;font-weight:700">Pay £2,500 securely</a></p><p style="color:#777b84;font-size:13px;line-height:1.6">Once payment is complete, we will guide you through the next steps. If you have any questions, simply reply to this email.</p><p style="color:#292a2c;font-size:13px;margin-top:24px">The Africa Plug team</p></div></div>`,
+        });
+        emailNotification = emailResult.error ? "failed" : "sent";
+        if (emailResult.error) console.error("Deal Diagnostic payment email was rejected:", emailResult.error.message);
+      } catch (error) {
+        emailNotification = "failed";
+        console.error("Deal Diagnostic payment email failed:", error instanceof Error ? error.message : "Unknown error");
+      }
+    }
+
+    return Response.json({
+      ok: true,
+      url: session.url,
+      emailNotification,
+      message: emailNotification === "sent" ? "Payment link created and emailed to the applicant." : "Payment link created, but applicant email delivery needs attention.",
+    });
   } catch (error) {
     console.error("Deal Diagnostic checkout failed:", error instanceof Error ? error.message : "Unknown error");
     return Response.json({ error: "Could not create the payment session." }, { status: 503 });

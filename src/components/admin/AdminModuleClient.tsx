@@ -469,11 +469,18 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: record.id }),
       });
-      const result = await response.json() as { error?: string; url?: string };
+      const result = await response.json() as { error?: string; url?: string; emailNotification?: "sent" | "not-configured" | "failed" };
       if (!response.ok || !result.url) throw new Error(result.error || "Could not create the Stripe payment link.");
       await navigator.clipboard.writeText(result.url).catch(() => undefined);
-      window.prompt("Share this £2,500 Deal Diagnostic Stripe checkout link with the approved client:", result.url);
-      setNotice({ tone: "success", text: "Secure £2,500 Stripe checkout link created for this approved application." });
+      window.prompt("The £2,500 Stripe payment link was created. It has also been sent to the applicant when email delivery is configured. Copy the link if needed:", result.url);
+      setNotice({
+        tone: result.emailNotification === "sent" ? "success" : "error",
+        text: result.emailNotification === "sent"
+          ? `£2,500 payment link created and emailed to ${text(record.data?.email) || "the applicant"}.`
+          : result.emailNotification === "failed"
+            ? "Payment link created, but the email could not be sent. The link has been copied for you to share manually."
+            : "Payment link created. Email is not configured, so the link has been copied for you to share manually.",
+      });
     } catch (error) {
       setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not create the Stripe checkout link." });
     }
@@ -986,7 +993,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
               {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" && record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void createDealDiagnosticPayment(record)}>Create £2,500 payment link</button> : null}
+              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" && record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void createDealDiagnosticPayment(record)}>Create & email £2,500 payment link</button> : null}
               {moduleKey === "subscribers" && record.data?.list === "blog" && record.status === "active" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, "unsubscribed")}>Unsubscribe</button> : null}
               {moduleKey === "subscribers" && record.data?.list !== "blog" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
               {moduleKey === "blog" && record.status === "published" && !(text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now()) ? <button type="button" className="apm-btn" disabled={sendingArticleId === record.id} onClick={() => void sendArticleEmail(record)}>{sendingArticleId === record.id ? "Sending…" : "Email Blog readers"}</button> : null}
