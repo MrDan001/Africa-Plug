@@ -23,13 +23,10 @@ export async function POST(request: Request) {
     const found = await cmsBridge<{ records?: CmsRecord[] }>({ action: "cms.list", module: "applications", status: "all", id: input.id });
     const application = found.records?.find((item) => item.id === input.id);
     if (!application) return Response.json({ error: "This application could not be found." }, { status: 404 });
-    if (application.status === "approved" || application.status === "declined") {
+    const applicationStatus = String(application.status ?? "").trim().toLowerCase();
+    if (applicationStatus === "approved" || applicationStatus === "declined") {
       return Response.json({ error: `This application has already been ${application.status}. Refresh the workspace before taking another action.` }, { status: 409 });
     }
-    if (!["review-required", "pending", "submitted", "new"].includes(application.status)) {
-      return Response.json({ error: "This application is already closed or in another state." }, { status: 409 });
-    }
-
     const email = typeof application.data?.email === "string" ? application.data.email.trim() : "";
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return Response.json({ error: "This application has no valid applicant email address. Update the application before sending a decision." }, { status: 400 });
