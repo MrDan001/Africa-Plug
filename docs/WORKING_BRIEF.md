@@ -383,7 +383,7 @@ It should also show the agreed WhatsApp and LinkedIn links. On mobile, WhatsApp 
 
 Acknowledgement message:
 
-> Thanks, we review every question and may select yours for research, content or follow up.
+>we review every question and may select yours for research, content or follow up.
 
 ### Partner With TAP
 
