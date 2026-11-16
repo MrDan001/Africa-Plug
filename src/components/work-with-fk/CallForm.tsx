@@ -34,7 +34,7 @@ export default function CallForm() {
         return;
       }
       if (result.paymentUrl) {
-        // Straight to the £350 Stripe Payment Link. Stripe then sends them to FK’s booking page.
+        // Continue to the Stripe Checkout Session created securely by the server.
         window.location.assign(result.paymentUrl);
         return;
       }
