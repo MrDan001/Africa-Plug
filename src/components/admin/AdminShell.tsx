@@ -36,8 +36,8 @@ export const ADMIN_NAV: NavGroup[] = [
     { title: "Analytics & Funnel", href: "/admin/analytics", icon: "analytics", detail: "Sources, UTM and conversions" },
   ]},
   { label: "SITE CONTROL", items: [
-    { title: "Media Library", href: "/admin/media", icon: "media", detail: "Reusable images and documents" },
-    { title: "Commercial Settings", href: "/admin/settings", icon: "commercial", detail: "Fees, meeting length and terms" },
+    // { title: "Media Library", href: "/admin/media", icon: "media", detail: "Reusable images and documents" },
+    // { title: "Commercial Settings", href: "/admin/settings", icon: "commercial", detail: "Fees, meeting length and terms" },
     { title: "Site & SEO Settings", href: "/admin/site-settings", icon: "settings", detail: "Navigation, metadata, modules" },
   ]},
 ];
