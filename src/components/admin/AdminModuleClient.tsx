@@ -474,7 +474,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
       await navigator.clipboard.writeText(result.url).catch(() => undefined);
       window.prompt("The £2,500 Stripe payment link was created. It has also been sent to the applicant when email delivery is configured. Copy the link if needed:", result.url);
       setNotice({
-        tone: result.emailNotification === "sent" ? "success" : "warn",
+        tone: result.emailNotification === "sent" ? "success" : "error",
         text: result.emailNotification === "sent"
           ? `£2,500 payment link created and emailed to ${text(record.data?.email) || "the applicant"}.`
           : result.emailNotification === "failed"
