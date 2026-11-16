@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import "./EnquiriesWorkspace.css";
 
 type Enquiry = {
   id: string;
