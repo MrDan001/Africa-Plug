@@ -4,6 +4,7 @@
 import Link from "next/link";
 import EnquiriesWorkspace from "@/components/admin/EnquiriesWorkspace";
 import WorkWithFKWorkspace from "@/components/admin/WorkWithFKWorkspace";
+import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
@@ -898,6 +899,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   // ---------- All other modules ----------
   if (moduleKey === "enquiries") return <EnquiriesWorkspace records={records} loading={loading} onStatus={setStatus} onRefresh={() => void loadRecords()} />;
   if (moduleKey === "work-with-fk") return <WorkWithFKWorkspace records={records} loading={loading} onRefresh={() => void loadRecords()} onDecision={setStatus} />;
+  if (moduleKey === "analytics") return <AdminAnalytics events={records} loading={loading} onRefresh={() => void loadRecords()} />;
 
   return (
     <div className="apm">
@@ -957,10 +959,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         </section> : null}
         */}
 
-        {moduleKey === "analytics" && records.length ? <div className="apm-stats">
-          {["page_view", "article_view", "product_view", "form_submit"].map((eventName) => <div key={eventName} className="apm-stat"><small>{eventName.replace(/_/g, " ")}</small><strong>{records.filter((r) => r.data?.eventName === eventName).length}</strong></div>)}
-        </div> : null}
-
         {shown.length ? <div className="apm-card apm-list">
           {shown.map((record) => <article key={record.id} className="apm-row">
             <div className={moduleKey === "store" ? "apm-row-main apm-row-main-store" : "apm-row-main"}>
@@ -1011,7 +1009,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
               {(moduleKey === "blog" || moduleKey === "media") ? <button type="button" className="apm-btn apm-btn-danger" onClick={() => void removeRecord(record)}>Delete</button> : null}
             </div>
           </article>)}
-        </div> : <div className="apm-card apm-empty">{loading ? "Loading records…" : moduleKey === "analytics" ? "No tracked events yet. Page-view events will appear as visitors browse the site." : moduleKey === "review-required" ? "Nothing is waiting for review right now. New Work With FK applications will appear here." : moduleKey === "media" ? "Your media library is empty. Upload a reusable image or PDF above." : moduleKey === "settings" ? "No saved settings yet. Use the settings button to create the first record." : "No records yet. Add the first record or refresh to check for new submissions."}</div>}
+        </div> : <div className="apm-card apm-empty">{loading ? "Loading records…" : moduleKey === "review-required" ? "Nothing is waiting for review right now. New Work With FK applications will appear here." : moduleKey === "media" ? "Your media library is empty. Upload a reusable image or PDF above." : moduleKey === "settings" ? "No saved settings yet. Use the settings button to create the first record." : "No records yet. Add the first record or refresh to check for new submissions."}</div>}
       </section>
 
       {editorOpen && editable ? <div role="dialog" aria-modal="true" aria-labelledby="cms-editor-heading" className="apm-modal">
