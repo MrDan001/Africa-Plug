@@ -5,6 +5,7 @@ import "./EnquiriesWorkspace.css";
 
 type Enquiry = {
   id: string;
+  module: string;
   title: string;
   slug: string | null;
   status: string;
