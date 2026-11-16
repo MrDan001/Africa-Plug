@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import EnquiriesWorkspace from "@/components/admin/EnquiriesWorkspace";
+import WorkWithFKWorkspace from "@/components/admin/WorkWithFKWorkspace";
 import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
@@ -491,7 +492,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     if ((status === "declined" || status === "archived") && !window.confirm(`Are you sure you want to ${actionLabel} “${record.title}”?`)) return;
     setNotice(null);
     try {
-      const isApplicationDecision = (moduleKey === "work-with-fk" || moduleKey === "review-required") && (status === "approved" || status === "declined");
+      const isApplicationDecision = moduleKey === "review-required" && (status === "approved" || status === "declined");
       const isBlogOptOut = moduleKey === "subscribers" && record.data?.list === "blog" && status === "unsubscribed";
       const patchBody = isBlogOptOut
         ? {
@@ -889,6 +890,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
 
   // ---------- All other modules ----------
   if (moduleKey === "enquiries") return <EnquiriesWorkspace records={records} loading={loading} onStatus={setStatus} onRefresh={() => void loadRecords()} />;
+  if (moduleKey === "work-with-fk") return <WorkWithFKWorkspace records={records} loading={loading} onRefresh={() => void loadRecords()} onDecision={setStatus} />;
 
   return (
     <div className="apm">
@@ -976,7 +978,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
                 <small className={`apm-file ${record.data?.productFileReference ? "is-ok" : "is-warn"}`}>{record.data?.productFileReference ? "Protected file uploaded" : "No protected file uploaded yet"}</small>
               </> : null}
               {moduleKey === "media" && typeof record.data?.url === "string" ? <a className="apm-link" href={record.data.url} target="_blank" rel="noreferrer">Open asset ↗</a> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
+              {moduleKey === "review-required" ? <details className="apm-details"><summary>Read submission details</summary><dl>{Object.entries(record.data ?? {}).filter(([key, value]) => value !== null && value !== "" && !["turnstileToken", "website"].includes(key) && typeof value !== "object").map(([key, value]) => <div key={key} className="apm-dl-row"><dt>{key.replace(/([A-Z])/g, " $1")}</dt><dd>{String(value)}</dd></div>)}</dl></details> : null}
               
               {moduleKey === "subscribers" ? <><p className="apm-url">{text(record.data?.source) || "Source not recorded"}</p>{record.data?.consentText ? <details className="apm-details"><summary>View consent record</summary><dl><div className="apm-dl-row"><dt>Wording</dt><dd>{text(record.data.consentText)}</dd></div><div className="apm-dl-row"><dt>Version</dt><dd>{text(record.data.consentVersion)}</dd></div><div className="apm-dl-row"><dt>Consented at</dt><dd>{text(record.data.consentedAt)}</dd></div></dl></details> : null}</> : null}
               </div>
@@ -992,8 +994,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
                 {record.data?.productType === "Guide" ? <button type="button" className="apm-btn" onClick={() => void viewStoreDownloadActivity(record)}>Download activity</button> : null}
               </> : null}
               {moduleKey === "store" ? <label className={`apm-btn apm-btn-file${uploading ? " is-busy" : ""}`}>{uploading ? "Uploading…" : "Upload protected file"}<input type="file" accept=".pdf,.epub,.zip,application/pdf,application/epub+zip,application/zip" disabled={uploading} onChange={(event) => void uploadStoreProductFile(event, record)} style={{ display: "none" }} /></label> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
-              {(moduleKey === "work-with-fk" || moduleKey === "review-required") && record.status === "approved" && record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void createDealDiagnosticPayment(record)}>Create & email £2,500 payment link</button> : null}
+              {moduleKey === "review-required" && ["review-required", "pending", "submitted", "new"].includes(record.status) ? <><button type="button" className="apm-btn apm-btn-ok" onClick={() => void setStatus(record, "approved")}>Approve</button><button type="button" className="apm-btn apm-btn-danger" onClick={() => void setStatus(record, "declined")}>Decline</button></> : null}
+              {moduleKey === "review-required" && record.status === "approved" && record.data?.paymentStatus !== "confirmed" ? <button type="button" className="apm-btn apm-btn-ok" onClick={() => void createDealDiagnosticPayment(record)}>Create & email £2,500 payment link</button> : null}
               {moduleKey === "subscribers" && record.data?.list === "blog" && record.status === "active" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, "unsubscribed")}>Unsubscribe</button> : null}
               {moduleKey === "subscribers" && record.data?.list !== "blog" ? <button type="button" className="apm-btn" onClick={() => void setStatus(record, record.status === "active" ? "unsubscribed" : "active")}>{record.status === "active" ? "Unsubscribe" : "Reactivate"}</button> : null}
               {moduleKey === "blog" && record.status === "published" && !(text(record.data?.publishedAt) && Date.parse(text(record.data.publishedAt)) > Date.now()) ? <button type="button" className="apm-btn" disabled={sendingArticleId === record.id} onClick={() => void sendArticleEmail(record)}>{sendingArticleId === record.id ? "Sending…" : "Email Blog readers"}</button> : null}

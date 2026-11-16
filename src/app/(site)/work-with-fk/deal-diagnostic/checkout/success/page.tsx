@@ -15,7 +15,7 @@ export default async function DealDiagnosticCheckoutSuccess({ searchParams }: Pr
       if (session.payment_status === "paid" && session.metadata?.service === "fk-deal-diagnostic" && session.currency === "gbp" && session.amount_total === 250000 && applicationId && session.client_reference_id === applicationId) {
         const application = await loadApplication(applicationId);
         if (application?.status === "approved") {
-          if (!paymentConfirmed(application) || application.data?.paymentMethod !== "stripe") await saveApplicationData(application, { paymentStatus: "confirmed", paymentMethod: "stripe", paymentConfirmedAt: new Date().toISOString(), stripeCheckoutSessionId: session.id });
+          if (!paymentConfirmed(application) || application.data?.paymentMethod !== "stripe") await saveApplicationData(application, { paymentStatus: "confirmed", paymentMethod: "stripe", paymentPaidAt: new Date().toISOString(), paymentConfirmedAt: new Date().toISOString(), stripeCheckoutSessionId: session.id });
           redirect("https://cal.com/theafricaplug/deal01");
         }
       }
