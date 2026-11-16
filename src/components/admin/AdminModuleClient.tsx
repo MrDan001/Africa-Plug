@@ -30,25 +30,28 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "category", label: "Territory", type: "select", options: [{ value: "Business", label: "Business" }, { value: "Investment", label: "Investment" }, { value: "Entertainment", label: "Entertainment" }] },
     { key: "excerpt", label: "One-line article summary", type: "textarea", rows: 2, help: "This appears on the Blog card." },
     { key: "author", label: "Byline", type: "text", placeholder: "FK" },
-    { key: "image", label: "Main article image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF image. This image appears on the Blog card and at the top of the article." },
-    { key: "imageAlt", label: "Main image alt text", type: "text" },
-    { key: "imageCredit", label: "Image credit (optional)", type: "text" },
+    // Temporarily disabled: article image upload and image metadata fields.
+    // { key: "image", label: "Main article image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF image. This image appears on the Blog card and at the top of the article." },
+    // { key: "imageAlt", label: "Main image alt text", type: "text" },
+    // { key: "imageCredit", label: "Image credit (optional)", type: "text" },
     { key: "publishedAt", label: "Publish date and time", type: "datetime-local", help: "Set a future date and time to schedule an article. It will appear publicly when that time arrives." },
     { key: "featureOnHomepage", label: "Feature this article on the homepage", type: "checkbox" },
     { key: "tagsText", label: "Tags (comma separated)", type: "text" },
     { key: "takeaway", label: "Article takeaway (optional)", type: "textarea", rows: 3 },
-    { key: "body", label: "Article body", type: "textarea", rows: 18, help: "Separate paragraphs with a blank line. Use ## Heading for section headings, > Quote for pull quotes, ![Alt text](https://image-url) for inline images, then Caption: words below an image, and YouTube: https://youtu.be/... for privacy-enhanced embeds. Inline links use [link text](https://url)." },
+    { key: "body", label: "Article body", type: "textarea", rows: 18, help: "Separate paragraphs with a blank line. Use ## Heading for section headings, > Quote for pull quotes, and YouTube: https://youtu.be/... for privacy-enhanced embeds. Inline links use [link text](https://url)." },
     { key: "seoTitle", label: "SEO title", type: "text" },
     { key: "seoDescription", label: "SEO description", type: "textarea", rows: 3 },
-    { key: "shareImage", label: "Social sharing image URL (optional)", type: "url", help: "Leave blank to use the main article image." },
+    // Temporarily disabled: social sharing image field.
+    // { key: "shareImage", label: "Social sharing image URL (optional)", type: "url", help: "Leave blank to use the main article image." },
   ],
   store: [
     { key: "summary", label: "Short product summary", type: "textarea", rows: 3 },
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
-    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
-    { key: "imageAlt", label: "Product image alt text", type: "text" },
+    // Temporarily disabled: Store product cover image upload and alt-text fields.
+    // { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
+    // { key: "imageAlt", label: "Product image alt text", type: "text" },
     { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
     { key: "productFileReference", label: "Private download file path", type: "text", help: "Use Upload Protected File on the saved product row below. Files are stored privately. Never paste a public download URL here." },
@@ -90,7 +93,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "potmPartner", label: "Product of the Month: partner / brand", type: "text" },
     { key: "potmMonthLabel", label: "Product of the Month: month label", type: "text", placeholder: "November 2026" },
     { key: "potmWriteUp", label: "Product of the Month: TAP write-up", type: "textarea", rows: 6, help: "Separate paragraphs with a blank line." },
-    { key: "potmImageUrl", label: "Product of the Month: image URL", type: "url", help: "Upload in Media library and paste the public https:// URL." },
+    // Temporarily disabled: Product of the Month image field.
+    // { key: "potmImageUrl", label: "Product of the Month: image URL", type: "url", help: "Upload in Media library and paste the public https:// URL." },
     { key: "potmUrl", label: "Product of the Month: external link (https://)", type: "url", help: "Your affiliate or partner link. Shown with the disclosure “TAP may earn a commission.”" },
     { key: "potmDiscountCode", label: "Product of the Month: discount code (optional)", type: "text" },
     { key: "potmDiscountNote", label: "Product of the Month: discount note (optional)", type: "text", placeholder: "10% off until 30 November" },
@@ -104,7 +108,7 @@ const SETTINGS_TABS: { id: string; label: string; blurb: string; keys: string[] 
   { id: "social", label: "Footer social links", blurb: "Edit the public social links shown in the footer. Keep the order shown here; clear a URL to hide that platform.", keys: ["linkedinUrl", "instagramUrl", "footerYoutubeUrl", "tiktokUrl", "facebookUrl"] },
   { id: "navigation", label: "Navigation", blurb: "The links shown in the main site menu.", keys: ["navigationText"] },
   { id: "seo", label: "SEO", blurb: "What search engines and link previews show by default.", keys: ["siteDescription"] },
-  { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the homepage.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmImageUrl", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
+  { id: "store", label: "Store & Product of the Month", blurb: "Feature one partner product on the homepage.", keys: ["enableProductOfMonth", "potmName", "potmPartner", "potmMonthLabel", "potmWriteUp", "potmUrl", "potmDiscountCode", "potmDiscountNote"] },
   { id: "switches", label: "Features & switches", blurb: "Turn site features on or off.", keys: ["enableNewsletter", "enableSearch", "enableSelectedWork", "tapInFilterThreshold"] },
 ];
 
@@ -753,40 +757,43 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   /** One form control, used by both the modal editor and the inline Site & SEO form. */
   function renderField(field: Field) {
     const value = draft.data[field.key];
-    if (field.type === "image-upload") {
-      const imageSrc = coverPreview || text(value);
-      return (
-        <div key={field.key} className="apm-cover-field">
-          <span className="apm-label">{field.label}</span>
-          <div className="apm-cover-upload">
-            {imageSrc ? (
-              <div className="apm-cover-preview">
-                <img src={imageSrc} alt={text(draft.data.imageAlt) || "Product cover preview"} />
-                <div className="apm-cover-actions">
-                  <span className="apm-help">{coverPreview ? "Previewing selected image" : "Current product cover"}</span>
-                  <button type="button" className="apm-btn" onClick={() => { clearCoverPreview(); updateField(field.key, ""); }}>Remove image</button>
-                </div>
+    /* Temporarily disabled: image upload / image-path editor. Kept here for later reactivation.
+        if (field.type === "image-upload") {
+          const imageSrc = coverPreview || text(value);
+          return (
+            <div key={field.key} className="apm-cover-field">
+              <span className="apm-label">{field.label}</span>
+              <div className="apm-cover-upload">
+                {imageSrc ? (
+                  <div className="apm-cover-preview">
+                    <img src={imageSrc} alt={text(draft.data.imageAlt) || "Product cover preview"} />
+                    <div className="apm-cover-actions">
+                      <span className="apm-help">{coverPreview ? "Previewing selected image" : "Current product cover"}</span>
+                      <button type="button" className="apm-btn" onClick={() => { clearCoverPreview(); updateField(field.key, ""); }}>Remove image</button>
+                    </div>
+                  </div>
+                ) : <p className="apm-muted">No cover image selected yet.</p>}
+                <label className={`apm-btn apm-btn-primary${uploading ? " is-busy" : ""}`}>
+                  {uploading ? "Uploading cover…" : imageSrc ? "Replace cover image" : "Upload product cover"}
+                  <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event, field.key)} />
+                </label>
               </div>
-            ) : <p className="apm-muted">No cover image selected yet.</p>}
-            <label className={`apm-btn apm-btn-primary${uploading ? " is-busy" : ""}`}>
-              {uploading ? "Uploading cover…" : imageSrc ? "Replace cover image" : "Upload product cover"}
-              <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={uploading} onChange={(event) => void uploadProductCover(event, field.key)} />
-            </label>
-          </div>
-          <label className="apm-label" htmlFor={`github-image-path-${field.key}`}>Or use a GitHub Image Library path</label>
-          <input
-            id={`github-image-path-${field.key}`}
-            className="apm-input"
-            value={text(value).startsWith("/Image/") || text(value).startsWith("/images/") ? text(value) : ""}
-            onChange={(event) => updateField(field.key, event.target.value)}
-            placeholder="/Image/Store/cover.jpg"
-            aria-label={`GitHub image path for ${field.label}`}
-          />
-          <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Uploaded covers are stored in the separate public Supabase media bucket; paid guide files remain private.</small>
-          {field.help ? <small className="apm-help">{field.help}</small> : null}
-        </div>
-      );
-    }
+              <label className="apm-label" htmlFor={`github-image-path-${field.key}`}>Or use a GitHub Image Library path</label>
+              <input
+                id={`github-image-path-${field.key}`}
+                className="apm-input"
+                value={text(value).startsWith("/Image/") || text(value).startsWith("/images/") ? text(value) : ""}
+                onChange={(event) => updateField(field.key, event.target.value)}
+                placeholder="/Image/Store/cover.jpg"
+                aria-label={`GitHub image path for ${field.label}`}
+              />
+              <small className="apm-help">Use a path committed under public/Image (or an existing public/images asset). Uploaded covers are stored in the separate public Supabase media bucket; paid guide files remain private.</small>
+              {field.help ? <small className="apm-help">{field.help}</small> : null}
+            </div>
+          );
+        }
+    
+    */
     return (
       <label key={field.key} className={field.type === "textarea" ? "is-wide" : undefined}>
         {field.type === "checkbox" ? (
@@ -931,6 +938,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
         </div> : null}
         {moduleKey === "subscribers" && groupFilter === "blog" ? <div style={{ marginBottom: 14 }}><button type="button" className="apm-btn" onClick={exportBlogReaders} disabled={!shown.length}>Export Blog readers CSV</button></div> : null}
 
+        {/* Temporarily disabled: admin media image uploads and GitHub image registration.
         {moduleKey === "media" ? <section className="apm-card apm-upload">
           <h3>Use either image source</h3>
           <p className="apm-muted">Blob uploads remain available when Vercel Blob is active. Repository images can be registered by path without using Blob operations.</p>
@@ -947,6 +955,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
           </div>
           <button type="button" className="apm-btn" disabled={uploading || !githubAssetPath.trim()} onClick={() => void registerGithubAsset()}>Add GitHub image path</button>
         </section> : null}
+        */}
 
         {moduleKey === "analytics" && records.length ? <div className="apm-stats">
           {["page_view", "article_view", "product_view", "form_submit"].map((eventName) => <div key={eventName} className="apm-stat"><small>{eventName.replace(/_/g, " ")}</small><strong>{records.filter((r) => r.data?.eventName === eventName).length}</strong></div>)}

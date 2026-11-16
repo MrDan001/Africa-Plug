@@ -479,6 +479,7 @@ export default function TapInManager() {
                     </div>
                   </section>
 
+                  {/* Temporarily disabled: T.A.P IN listing and social-share image controls.
                   <section className="tapin-card">
                     <h2><span className="tapin-step">3</span><span>Images &amp; Sharing<small>Optional. Add a listing image and a social share image.</small></span></h2>
                     <div className="tapin-twoCol">
@@ -495,6 +496,8 @@ export default function TapInManager() {
                       ))}
                     </div>
                   </section>
+                  */}
+
 
                   <section className="tapin-card">
                     <h2><span className="tapin-step">4</span><span>SEO &amp; Visibility <i>(optional)</i><small>Help your listing get discovered on search engines.</small></span></h2>
