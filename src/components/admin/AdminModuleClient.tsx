@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import EnquiriesWorkspace from "@/components/admin/EnquiriesWorkspace";
 import { createClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 
@@ -880,6 +881,8 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   }
 
   // ---------- All other modules ----------
+  if (moduleKey === "enquiries") return <EnquiriesWorkspace records={records} loading={loading} onStatus={setStatus} onRefresh={() => void loadRecords()} />;
+
   return (
     <div className="apm">
       <div className="apm-head">
