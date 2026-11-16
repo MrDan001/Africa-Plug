@@ -284,6 +284,8 @@ export default function AdminPage() {
                 {savedVideoUrl ? <button className="tap-admin-secondary" type="button" disabled={videoBusy} onClick={() => void saveVideo(true)}>Remove video</button> : null}
               </div>
             </section>
+            <section className="tap-admin-card"><h2>Homepage image uploads temporarily disabled</h2><p className="tap-admin-card-note">Existing homepage images remain active. The admin upload and image-path controls are commented out for now.</p></section>
+            {/* Temporarily disabled: homepage hero image upload and image-path management.
             <div className="tap-admin-toolbar">
               <div><strong>Three slides · six image crops</strong><span>JPG, PNG, WebP or AVIF · Maximum 10 MB per image</span></div>
               <button className="tap-admin-secondary" type="button" onClick={() => void refreshImages()}>Refresh images</button>
@@ -323,6 +325,7 @@ export default function AdminPage() {
               ))}
             </div>
             <p className="tap-admin-footnote">Replace one crop at a time. Headline, supporting line, caption and route buttons remain live and are not baked into the photos.</p>
+            */}
           </>
         )}
 
