@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getStripe } from "@/lib/payments/stripe";
+import { CAL_LINKS } from "@/lib/emails/links";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Confirming your call payment | The Africa Plug", robots: { index: false, follow: false } };
@@ -13,7 +14,7 @@ export default async function CallCheckoutSuccess({ searchParams }: Props) {
     try {
       const session = await getStripe().checkout.sessions.retrieve(sessionId);
       if (session.payment_status === "paid" && session.metadata?.service === "fk-30-minute-call") {
-        redirect("https://cal.com/theafricaplug/fkcall01");
+        redirect(CAL_LINKS.call);
       }
     } catch (error) {
       if (error && typeof error === "object" && "digest" in error) throw error;

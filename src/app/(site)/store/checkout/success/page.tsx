@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 import { getStripe } from "@/lib/payments/stripe";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
+import { CAL_LINKS } from "@/lib/emails/links";
 import ClearStoreCart from "@/components/store/ClearStoreCart";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
       if (paymentConfirmed) {
         purchasedSlugs = (session.metadata?.product_slugs ?? "").split(",").filter(Boolean);
         const isPetTravel = purchasedSlugs.some((slug) => /pet[-_]?travel[-_]?consultation/i.test(slug));
-        if (isPetTravel) redirect("https://cal.com/theafricaplug/pet-travel-consultation");
+        if (isPetTravel) redirect(CAL_LINKS.petTravel);
       }
     } catch (error) {
       if (error && typeof error === "object" && "digest" in error) throw error;

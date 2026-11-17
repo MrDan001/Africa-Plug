@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getStripe } from "@/lib/payments/stripe";
+import { CAL_LINKS } from "@/lib/emails/links";
 import { loadApplication, paymentConfirmed, saveApplicationData } from "@/lib/work-with-fk/scheduler";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Confirming Deal Diagnostic payment | The Africa Plug", robots: { index: false, follow: false } };
@@ -16,7 +17,7 @@ export default async function DealDiagnosticCheckoutSuccess({ searchParams }: Pr
         const application = await loadApplication(applicationId);
         if (application?.status === "approved") {
           if (!paymentConfirmed(application) || application.data?.paymentMethod !== "stripe") await saveApplicationData(application, { paymentStatus: "confirmed", paymentMethod: "stripe", paymentPaidAt: new Date().toISOString(), paymentConfirmedAt: new Date().toISOString(), stripeCheckoutSessionId: session.id });
-          redirect("https://cal.com/theafricaplug/deal01");
+          redirect(CAL_LINKS.dealDiagnostic);
         }
       }
     } catch (error) {
