@@ -259,7 +259,7 @@ export async function POST(request: Request) {
             const { data: savedLink, error: savedLinkError } = await database.from("store_download_links").select("email_sent_at").eq("order_id", storeOrderId).eq("product_slug", slug).maybeSingle();
             if (savedLinkError) throw savedLinkError;
             if (!savedLink?.email_sent_at) {
-              const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com").replace(/\\/+$/, "");
+              const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com").replace(/\/+$/, "");
               sent = await sendClientEmail("guideReady", clientEmail, {
                 firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
                 guideTitle: title,
