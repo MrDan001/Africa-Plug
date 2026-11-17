@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { createHash, createHmac } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { cmsBridge, getPublicCmsRecords } from "@/lib/cms-bridge";
@@ -22,6 +23,50 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Stripe webhook signature verification failed:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "Invalid webhook signature." }, { status: 400 });
+  }
+
+
+  if (event.type === "charge.refunded") {
+    const charge = event.data.object as Stripe.Charge;
+    const paymentIntentId = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id || "";
+    if (!paymentIntentId) return NextResponse.json({ received: true, ignored: true });
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceRoleKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
+    if (!supabaseUrl || !serviceRoleKey) return NextResponse.json({ error: "Refund processing is temporarily unavailable." }, { status: 500 });
+    try {
+      const database = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { data: order, error: lookupError } = await database.from("store_orders")
+        .select("id,stripe_session_id,customer_email,product_slugs,status")
+        .eq("stripe_payment_intent_id", paymentIntentId).maybeSingle();
+      if (lookupError) throw lookupError;
+      if (!order) return NextResponse.json({ received: true, ignored: true, reason: "No matching Store order." });
+      const refundedAt = new Date().toISOString();
+      const status = charge.refunded || charge.amount_refunded >= charge.amount ? "refunded" : "partially_refunded";
+      const { error: updateError } = await database.from("store_orders").update({
+        status,
+        stripe_event_id: event.id,
+        updated_at: refundedAt,
+      }).eq("id", order.id);
+      if (updateError) throw updateError;
+      const { error: revokeError } = await database.from("store_download_links")
+        .update({ expires_at: refundedAt }).eq("order_id", order.id);
+      if (revokeError) throw revokeError;
+      const orderSlug = `stripe-${order.stripe_session_id}`.toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 180);
+      try {
+        const previous = await cmsBridge<{ records?: Array<{ id: string; title: string; slug: string | null; status: string; data?: Record<string, unknown> }> }>({ action: "cms.list", module: "enquiries", slug: orderSlug });
+        const existing = previous.records?.find((record) => record.slug === orderSlug);
+        if (existing) await cmsBridge({ action: "cms.save", module: "enquiries", record: {
+          id: existing.id, title: existing.title, slug: existing.slug, status,
+          data: { ...(existing.data || {}), paymentStatus: status, refundedAt, stripeRefundEventId: event.id, stripeAmountRefunded: charge.amount_refunded },
+        } });
+      } catch (error) {
+        console.error("Refunded Store order CMS mirror could not be updated:", error instanceof Error ? error.message : "Unknown error");
+      }
+      return NextResponse.json({ received: true, storeOrderRefunded: true, status });
+    } catch (error) {
+      console.error("Stripe Store refund could not be recorded:", error instanceof Error ? error.message : "Unknown error");
+      return NextResponse.json({ error: "Store refund could not be recorded; Stripe may retry this event." }, { status: 500 });
+    }
   }
 
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
@@ -85,8 +130,14 @@ export async function POST(request: Request) {
       console.error("Store order database has no valid service-role credential for the configured Supabase project.");
       return NextResponse.json({ error: "Order persistence is temporarily unavailable." }, { status: 500 });
     }
+    let storeOrderId = "";
     try {
       const database = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
+      const { data: existingOrder, error: existingOrderError } = await database.from("store_orders").select("status").eq("stripe_session_id", session.id).maybeSingle();
+      if (existingOrderError) throw existingOrderError;
+      if (existingOrder?.status === "refunded" || existingOrder?.status === "partially_refunded") {
+        return NextResponse.json({ received: true, refundedOrderPreserved: true });
+      }
       const lineItems = await getStripe().checkout.sessions.listLineItems(session.id, { limit: 100 });
       const orderItems = lineItems.data.map((lineItem, index) => ({
         slug: productSlugs[index] || "",
@@ -96,7 +147,7 @@ export async function POST(request: Request) {
         currency: (lineItem.currency || session.currency || "gbp").toUpperCase(),
         priceId: lineItem.price?.id || "",
       }));
-      const { error: orderError } = await database.from("store_orders").upsert({
+      const { data: savedOrder, error: orderError } = await database.from("store_orders").upsert({
         stripe_session_id: session.id,
         stripe_event_id: event.id,
         status: "paid",
@@ -113,8 +164,9 @@ export async function POST(request: Request) {
         preorder_consent_at: session.metadata?.preorder_consent_at || (session.metadata?.preorder_consent === "true" ? new Date(session.created * 1000).toISOString() : null),
         checkout_completed_at: new Date(session.created * 1000).toISOString(),
         updated_at: new Date().toISOString(),
-      }, { onConflict: "stripe_session_id" });
+      }, { onConflict: "stripe_session_id" }).select("id").single();
       if (orderError) throw orderError;
+      storeOrderId = savedOrder.id;
     } catch (error) {
       console.error("Paid Store order could not be saved to the orders table:", error instanceof Error ? error.message : "Unknown error");
       return NextResponse.json({ error: "Order persistence failed; Stripe may retry this event." }, { status: 500 });
@@ -161,12 +213,44 @@ export async function POST(request: Request) {
           const product = products.find((item) => item.slug === slug);
           const title = product?.title || "your guide";
           const isPetTravel = /pet[-_]?travel[-_]?consultation/i.test(slug);
-          const sent = await sendClientEmail(isPetTravel ? "petTravelPaid" : "preorderConfirmed", clientEmail, {
-            firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
-            guideTitle: title,
-            bookingLink: CAL_LINKS.petTravel,
-          }, { idempotencyKey: (isPetTravel ? "paid-pet-travel-" : "paid-store-preorder-") + session.id + "-" + slug });
-          if (sent.status !== "sent") {
+          const readyFile = typeof product?.data?.productFileReference === "string" && product.data.productFileReference.startsWith(slug + "/");
+          const isReleasedGuide = !isPetTravel && product?.data?.availability === "available" && readyFile;
+          let sent;
+          if (isReleasedGuide && storeOrderId && serviceRoleKey) {
+            const token = createHmac("sha256", serviceRoleKey).update(`${storeOrderId}:${slug}`).digest("hex");
+            const { error: linkError } = await database.from("store_download_links").upsert({
+              order_id: storeOrderId,
+              product_slug: slug,
+              customer_email: clientEmail,
+              token_hash: createHash("sha256").update(token).digest("hex"),
+              expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+              released_at: new Date().toISOString(),
+            }, { onConflict: "order_id,product_slug", ignoreDuplicates: true });
+            if (linkError) throw linkError;
+            const { data: savedLink, error: savedLinkError } = await database.from("store_download_links").select("email_sent_at").eq("order_id", storeOrderId).eq("product_slug", slug).maybeSingle();
+            if (savedLinkError) throw savedLinkError;
+            if (!savedLink?.email_sent_at) {
+              const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com").replace(/\\/+$/, "");
+              sent = await sendClientEmail("guideReady", clientEmail, {
+                firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
+                guideTitle: title,
+                downloadLink: `${siteOrigin}/api/store/download/${token}`,
+              }, { idempotencyKey: "tap-guide-ready-" + storeOrderId + "-" + slug });
+              if (sent.status === "sent") {
+                const { error: markSentError } = await database.from("store_download_links").update({ email_sent_at: new Date().toISOString(), email_last_error: null }).eq("order_id", storeOrderId).eq("product_slug", slug);
+                if (markSentError) throw markSentError;
+              }
+            } else {
+              continue;
+            }
+          } else {
+            sent = await sendClientEmail(isPetTravel ? "petTravelPaid" : "preorderConfirmed", clientEmail, {
+              firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
+              guideTitle: title,
+              bookingLink: CAL_LINKS.petTravel,
+            }, { idempotencyKey: (isPetTravel ? "paid-pet-travel-" : "paid-store-preorder-") + session.id + "-" + slug });
+          }
+          if (sent && sent.status !== "sent") {
             console.error("Store or Pet Travel payment email failed:", slug, sent.status, sent.error || "");
             return NextResponse.json({ error: "Payment was recorded but the customer confirmation email could not be sent; Stripe may retry." }, { status: 500 });
           }
