@@ -14,6 +14,17 @@ type Enquiry = {
   updated_at: string;
 };
 
+const STAT_ICONS = {
+  mail: <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7.5 8 6 8-6" /></>,
+  inbox: <><path d="M4 13.5 6.7 6a1.5 1.5 0 0 1 1.4-1h7.8a1.5 1.5 0 0 1 1.4 1L20 13.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" /><path d="M4 13.5h4.6l1 2.2h4.8l1-2.2H20" /></>,
+  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.2 2" /></>,
+  check: <><circle cx="12" cy="12" r="9" /><path d="m8 12.4 2.8 2.8L16.4 9.4" /></>,
+} as const;
+
+function StatIcon({ name, className, size = 27, width = 1.8 }: { name: keyof typeof STAT_ICONS; className?: string; size?: number; width?: number }) {
+  return <svg className={className} viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{STAT_ICONS[name]}</svg>;
+}
+
 function value(input: unknown) {
   return typeof input === "string" || typeof input === "number" ? String(input) : "";
 }
@@ -60,6 +71,7 @@ export default function EnquiriesWorkspace({ records, loading, onStatus, onRefre
   const newCount = records.filter((record) => ["new", "pending", "submitted", "review-required"].includes(record.status)).length;
   const activeCount = records.filter((record) => ["in-progress", "awaiting-response"].includes(record.status)).length;
   const resolvedCount = records.filter((record) => record.status === "resolved").length;
+  const share = (count: number) => (records.length ? Math.round((count / records.length) * 100) : 0);
 
   async function saveInternalDetails() {
     if (!selected) return;
@@ -116,10 +128,33 @@ export default function EnquiriesWorkspace({ records, loading, onStatus, onRefre
       </header>
 
       <div className="apm-enq-stats">
-        <div className="apm-enq-stat"><span className="apm-enq-stat-icon">✉</span><div><small>Total enquiries</small><strong>{records.length}</strong></div></div>
-        <div className="apm-enq-stat"><span className="apm-enq-stat-icon is-blue">✦</span><div><small>New</small><strong>{newCount}</strong></div></div>
-        <div className="apm-enq-stat"><span className="apm-enq-stat-icon is-amber">◷</span><div><small>In progress</small><strong>{activeCount}</strong></div></div>
-        <div className="apm-enq-stat"><span className="apm-enq-stat-icon is-green">✓</span><div><small>Resolved</small><strong>{resolvedCount}</strong></div></div>
+        <div className="apm-enq-stat is-total">
+          <StatIcon name="mail" className="apm-enq-mark" size={104} width={1.6} />
+          <span className="apm-enq-stat-icon"><StatIcon name="mail" /></span>
+          <div className="apm-enq-stat-body"><small>Total enquiries</small><strong>{records.length}</strong><em>Every message received</em></div>
+          <div>
+            <div className="apm-enq-split" aria-hidden="true"><i style={{ width: `${share(newCount)}%` }} /><i style={{ width: `${share(activeCount)}%` }} /><i style={{ width: `${share(resolvedCount)}%` }} /></div>
+            <div className="apm-enq-legend"><span>● New</span><span>● Active</span><span>● Done</span></div>
+          </div>
+        </div>
+        <div className="apm-enq-stat is-blue">
+          <StatIcon name="inbox" className="apm-enq-mark" size={104} width={1.6} />
+          <span className="apm-enq-stat-icon"><StatIcon name="inbox" /></span>
+          <div className="apm-enq-stat-body"><small>New</small><strong>{newCount}</strong><em>Waiting for a reply</em></div>
+          <div className="apm-enq-share"><div className="apm-enq-track"><i style={{ width: `${share(newCount)}%` }} /></div><b>{share(newCount)}%</b></div>
+        </div>
+        <div className="apm-enq-stat is-amber">
+          <StatIcon name="clock" className="apm-enq-mark" size={104} width={1.6} />
+          <span className="apm-enq-stat-icon"><StatIcon name="clock" /></span>
+          <div className="apm-enq-stat-body"><small>In progress</small><strong>{activeCount}</strong><em>Being followed up</em></div>
+          <div className="apm-enq-share"><div className="apm-enq-track"><i style={{ width: `${share(activeCount)}%` }} /></div><b>{share(activeCount)}%</b></div>
+        </div>
+        <div className="apm-enq-stat is-green">
+          <StatIcon name="check" className="apm-enq-mark" size={104} width={1.6} />
+          <span className="apm-enq-stat-icon"><StatIcon name="check" /></span>
+          <div className="apm-enq-stat-body"><small>Resolved</small><strong>{resolvedCount}</strong><em>Closed out</em></div>
+          <div className="apm-enq-share"><div className="apm-enq-track"><i style={{ width: `${share(resolvedCount)}%` }} /></div><b>{share(resolvedCount)}%</b></div>
+        </div>
       </div>
 
       <div className="apm-enq-layout">
