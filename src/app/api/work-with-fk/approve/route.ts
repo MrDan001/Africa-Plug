@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
     const approved = input.decision === "approved";
     const name = (typeof application.data?.fullName === "string" ? application.data.fullName : typeof application.data?.name === "string" ? application.data.name : "").trim();
-    const result = await sendClientEmail(approved ? "applicationApproved" : "applicationDeclined", email, { firstName: name });
+    const result = await sendClientEmail(approved ? "applicationApproved" : "applicationDeclined", email, { firstName: name }, { idempotencyKey: "work-with-fk-decision-" + application.id + "-" + input.decision });
     if (result.status !== "sent") {
       return Response.json({ error: "The decision email could not be sent. No decision was recorded; please try again." }, { status: result.status === "not-configured" ? 503 : 502 });
     }
