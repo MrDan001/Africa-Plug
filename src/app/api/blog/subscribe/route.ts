@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 import { sendClientEmail } from "@/lib/emails/send";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
+import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,10 +22,12 @@ function escapeHtml(value: string) {
 }
 
 export async function POST(request: Request) {
-  let input: { email?: unknown; website?: unknown };
+  let input: { email?: unknown; website?: unknown; turnstileToken?: unknown };
   try { input = await request.json() as typeof input; }
   catch { return Response.json({ error: "Enter a valid email address." }, { status: 400 }); }
   if (typeof input.website === "string" && input.website.trim()) return Response.json({ ok: true, message: "Please check your inbox for a confirmation email." });
+  const verified = await verifyTurnstile(typeof input.turnstileToken === "string" ? input.turnstileToken : undefined, request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null);
+  if (!verified) return Response.json({ error: "The security check could not be verified. Please refresh the page and try again." }, { status: 400 });
   const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return Response.json({ error: "Enter a valid email address." }, { status: 400 });
