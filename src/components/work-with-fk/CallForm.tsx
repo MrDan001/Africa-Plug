@@ -21,6 +21,7 @@ export default function CallForm() {
     const formData = new FormData(event.currentTarget);
     const data: Record<string, unknown> = Object.fromEntries(formData.entries());
     data.consent = formData.get("consent") === "on";
+    data.sessionConsent = formData.get("sessionConsent") === "on";
     data.turnstileToken = token;
     try {
       const response = await fetch("/api/work-with-fk/call", {
@@ -78,6 +79,10 @@ export default function CallForm() {
         <label className="wfk-consent">
           <input type="checkbox" name="consent" required />
           <span>I agree to the <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a>.</span>
+        </label>
+        <label className="wfk-consent">
+          <input type="checkbox" name="sessionConsent" required />
+          <span>If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place.</span>
         </label>
 
         {/* Hidden honeypot field: real people never see or fill this. */}
