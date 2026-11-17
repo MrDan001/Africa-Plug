@@ -1,5 +1,6 @@
 import { put } from "@vercel/blob";
 import { cmsBridge } from "@/lib/cms-bridge";
+import { sendClientEmail } from "@/lib/emails/send";
 import { IMAGE_MAX_BYTES, IMAGE_TYPES, opportunitySchema, registerSchema } from "@/lib/tap-in/forms";
 import { sendTeamEmail } from "@/lib/tap-in/email";
 import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
@@ -100,14 +101,11 @@ export async function POST(request: Request) {
     heading: isRegister ? "T.A.P IN register interest" : "T.A.P IN opportunity submission",
     replyTo: input.email,
     rows: [...rows, ["Agreed to Privacy Policy and Terms", "Yes"]],
-    autoReply: {
-      to: input.email,
-      subject: isRegister ? "Thank you for registering your interest in T.A.P IN" : "Thank you for submitting an opportunity to T.A.P IN",
-      text: isRegister
-        ? "Thank you for registering your interest in T.A.P IN. We have received your details and will be in touch if a relevant opportunity or next step arises."
-        : "Thank you for sharing an opportunity with T.A.P IN. The Africa Plug team has received your submission and will review the details. We will be in touch if we need anything further or if it is suitable to progress.",
-    },
+
   });
+
+  const clientEmail = await sendClientEmail(isRegister ? "tapRegistered" : "tapOpportunitySubmitted", input.email, { firstName: input.name });
+  if (clientEmail.status !== "sent") console.error("T.A.P IN confirmation email failed:", clientEmail.status, clientEmail.error || "");
 
   return json({ ok: true });
 }
