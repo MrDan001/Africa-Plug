@@ -1,5 +1,5 @@
 import { createHash, createHmac } from "node:crypto";
-import { Resend } from "resend";
+import { sendClientEmail } from "@/lib/emails/send";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 
@@ -42,9 +42,7 @@ export async function POST(request: Request) {
   catch { return Response.json({ error: "Choose a Store product first." }, { status: 400 }); }
   if (!input.productId) return Response.json({ error: "Choose a Store product first." }, { status: 400 });
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
-  if (!apiKey || !from) {
+  if (!process.env.RESEND_API_KEY) {
     return Response.json({ error: "Email notifications are not configured. The product waitlist is safe, but add RESEND_API_KEY and EMAIL_FROM before sending." }, { status: 503 });
   }
   if (!process.env.ADMIN_SESSION_SECRET) {
@@ -89,7 +87,6 @@ export async function POST(request: Request) {
 
     let origin = "https://theafricaplug.com";
     try { origin = new URL(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || origin).origin; } catch { /* use the verified production site */ }
-    const resend = new Resend(apiKey);
     const summary = String(product.data?.summary || product.data?.description || "The product is now available from The Africa Plug.").slice(0, 1200);
     const productUrl = new URL("/store/" + product.slug, origin).toString();
     let sent = 0;
@@ -97,31 +94,19 @@ export async function POST(request: Request) {
 
     for (let offset = 0; offset < recipients.length; offset += 100) {
       const chunk = recipients.slice(offset, offset + 100);
-      const messages = chunk.map(([email, rows]) => {
+      for (const [email, rows] of chunk) {
         const primary = rows[0];
-        const name = String(primary.data?.name || "there").slice(0, 120);
+        const name = String(primary.data?.name || "").trim();
         const optOut = unsubscribeUrl(primary, email, origin);
-        const productTitle = escapeHtml(product.title);
-        const safeSummary = escapeHtml(summary);
-        const safeName = escapeHtml(name);
-        return {
-          from,
-          to: [email],
-          replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
-          subject: "It's ready: " + product.title,
-          text: "Hello " + name + ",\n\nYou asked to hear when " + product.title + " became available. It is now ready.\n\n" + summary + "\n\nView the product: " + productUrl + "\n\nUnsubscribe from updates about this product: " + optOut + "\n\nThe Africa Plug",
-          html: "<div style='background:#f7f5f1;padding:28px 16px;font-family:Arial,sans-serif;color:#202020'><div style='max-width:620px;margin:0 auto;background:#fff;border:1px solid #e8e3dc;padding:30px'><p style='font-size:11px;letter-spacing:3px;font-weight:700;color:#d90062'>THE AFRICA PLUG</p><p style='font-size:12px;letter-spacing:1px;color:#777'>A PRODUCT YOU FOLLOW IS NOW AVAILABLE</p><h1 style='font-family:Georgia,serif;font-size:30px;line-height:1.1'>" + productTitle + "</h1><p>Hello " + safeName + ",</p><p>You asked us to let you know when this product was ready. It is now available.</p><p style='line-height:1.6'>" + safeSummary + "</p><p style='margin:28px 0'><a href='" + productUrl + "' style='display:inline-block;padding:14px 22px;background:#ed0065;color:#fff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:1px'>VIEW PRODUCT →</a></p><hr style='border:0;border-top:1px solid #eee;margin:28px 0'><p style='font-size:11px;line-height:1.6;color:#777'>You are receiving this email because you asked for an update about this specific product. <a href='" + optOut + "' style='color:#a8004c'>Unsubscribe from this product's updates</a>.</p><p style='font-size:11px;color:#888'>The Africa Plug · connect@theafricaplug.com</p></div></div>",
-          headers: {
-            "List-Unsubscribe": "<" + optOut + ">",
-            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-          },
-        };
-      });
-      const chunkIds = chunk.flatMap(([, rows]) => rows.map((row) => row.id)).sort().join("|");
-      const idempotency = "tap-store-waitlist-" + product.id + "-" + createHash("sha256").update(chunkIds).digest("hex").slice(0, 40);
-      const result = await resend.batch.send(messages, { idempotencyKey: idempotency });
-      if (result.error) {
-        return Response.json({ error: "Email provider rejected the campaign after " + sent + " successful recipients: " + result.error.message, sent }, { status: 502 });
+        const result = await sendClientEmail("waitlistAvailable", email, {
+          firstName: name,
+          guideTitle: product.title,
+          productLink: productUrl,
+          unsubscribeLink: optOut,
+        }, { idempotencyKey: "tap-store-waitlist-" + product.id + "-" + createHash("sha256").update(rows.map((row) => row.id).sort().join("|")).digest("hex").slice(0, 40) });
+        if (result.status !== "sent") {
+          return Response.json({ error: "Email provider failed after " + sent + " successful recipients: " + (result.error || result.status), sent }, { status: 502 });
+        }
       }
       sent += chunk.length;
       const notifiedAt = new Date().toISOString();
