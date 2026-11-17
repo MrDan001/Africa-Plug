@@ -50,9 +50,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
-    // Temporarily disabled: Store product cover image upload and alt-text fields.
-    // { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
-    // { key: "imageAlt", label: "Product image alt text", type: "text" },
+    { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
+    { key: "imageAlt", label: "Product image alt text", type: "text" },
     { key: "productType", label: "Product type", type: "select", options: [{ value: "Guide", label: "Guide" }, { value: "Service", label: "Service" }], help: "Products appear under the matching Guides or Services tab." },
     { key: "externalUrl", label: "Partner or booking link (Stay Finder only)", type: "url", placeholder: "https://", help: "Optional. For Stay Finder or other outside products: an https:// link to the provider. When filled, the product links out and is never sold through the cart." },
     { key: "productFileReference", label: "Private download file path", type: "text", help: "Use Upload Protected File on the saved product row below. Files are stored privately. Never paste a public download URL here." },
@@ -758,7 +757,6 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
   /** One form control, used by both the modal editor and the inline Site & SEO form. */
   function renderField(field: Field) {
     const value = draft.data[field.key];
-    /* Temporarily disabled: image upload / image-path editor. Kept here for later reactivation.
         if (field.type === "image-upload") {
           const imageSrc = coverPreview || text(value);
           return (
@@ -794,7 +792,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
           );
         }
     
-    */
+
     return (
       <label key={field.key} className={field.type === "textarea" ? "is-wide" : undefined}>
         {field.type === "checkbox" ? (
