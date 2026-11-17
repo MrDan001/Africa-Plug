@@ -106,7 +106,11 @@ export async function POST(request: Request) {
   // 2. Email the team, then 3. send the applicant's automatic reply.
   const apiKey = process.env.RESEND_API_KEY;
   const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
-  if (!apiKey) return Response.json({ ok: true, emailNotification: "not-configured" });
+  if (!apiKey) {
+    const applicantReply = await sendClientEmail("applicationReceived", app.email, { firstName: app.fullName });
+    if (applicantReply.status !== "sent") console.error("Work With FK application acknowledgement was not sent:", applicantReply.status, applicantReply.error || "");
+    return Response.json({ ok: true, emailNotification: "not-configured" });
+  }
 
   const to = process.env.EMAIL_FK || "fk@theafricaplug.com";
   const rows: [string, string][] = [
