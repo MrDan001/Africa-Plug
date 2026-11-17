@@ -101,7 +101,7 @@ export async function POST(request: Request) {
             id: record.id, title: record.title, slug: record.slug, status: record.status,
             data: {
               ...record.data,
-              waitlistLastNotifiedAt: notifiedAt,
+              waitlistLastNotifiedAt: "__EMAIL_SENT_AT__",
               waitlistStatus: "notified",
               waitlistLastNotifiedProductSlug: product.slug,
             },
