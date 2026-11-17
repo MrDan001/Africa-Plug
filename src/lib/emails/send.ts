@@ -22,6 +22,7 @@ export async function sendClientEmail(
   id: EmailId,
   to: string,
   vars: EmailVarValues & { firstName?: string } = {},
+  options: { idempotencyKey?: string } = {},
 ): Promise<ClientEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { status: "not-configured" };
@@ -35,7 +36,7 @@ export async function sendClientEmail(
       subject: email.subject,
       text: email.text,
       html: email.html,
-    });
+    }, options.idempotencyKey ? { idempotencyKey: options.idempotencyKey } : undefined);
     if (result.error) {
       console.error(`Client email "${id}" was rejected:`, result.error.message);
       return { status: "failed", error: result.error.message };
