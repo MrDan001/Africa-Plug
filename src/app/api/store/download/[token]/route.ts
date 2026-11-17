@@ -19,11 +19,16 @@ export async function GET(_request: Request, context: { params: Promise<{ token:
     const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const tokenHash = createHash("sha256").update(token).digest("hex");
     const { data: linkRow, error: lookupError } = await db.from("store_download_links")
-      .select("product_slug,expires_at,download_count")
+      .select("order_id,product_slug,expires_at,download_count")
       .eq("token_hash", tokenHash).maybeSingle();
     if (lookupError) throw lookupError;
     if (!linkRow || new Date(linkRow.expires_at).getTime() <= Date.now() || linkRow.download_count >= 5) {
       return NextResponse.json({ error: "This link has expired or reached its five-download limit." }, { status: 410, headers: { "Cache-Control": "no-store" } });
+    }
+    const { data: order, error: orderError } = await db.from("store_orders").select("status").eq("id", linkRow.order_id).maybeSingle();
+    if (orderError) throw orderError;
+    if (!order || order.status !== "paid") {
+      return NextResponse.json({ error: "This order is no longer eligible for download." }, { status: 410, headers: { "Cache-Control": "no-store" } });
     }
     const result = await cmsBridge<{ records?: CmsRecord[] }>({ action: "cms.list", module: "products", slug: linkRow.product_slug, status: "all" });
     const product = result.records?.find((row) => row.slug === linkRow.product_slug);
