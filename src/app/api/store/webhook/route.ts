@@ -61,6 +61,23 @@ export async function POST(request: Request) {
       }
       return NextResponse.json({ received: true, dealDiagnosticPaid: true });
     }
+    if (session.metadata?.service === "fk-30-minute-call") {
+      if (session.currency !== "gbp" || session.amount_total !== 35000) {
+        console.error("30-minute call Stripe session amount or currency did not match.");
+        return NextResponse.json({ error: "Invalid 30-minute call payment details." }, { status: 400 });
+      }
+      const clientEmail = typeof session.customer_details?.email === "string" ? session.customer_details.email : typeof session.customer_email === "string" ? session.customer_email : "";
+      if (!clientEmail) return NextResponse.json({ error: "Call payment has no customer email." }, { status: 500 });
+      const sent = await sendClientEmail("callPaid", clientEmail, {
+        firstName: session.metadata?.customer_name || session.customer_details?.name || "",
+        bookingLink: CAL_LINKS.call,
+      }, { idempotencyKey: "paid-fk-call-" + session.id });
+      if (sent.status !== "sent") {
+        console.error("30-minute call payment email failed:", sent.status, sent.error || "");
+        return NextResponse.json({ error: "Payment confirmation email failed; Stripe may retry." }, { status: 500 });
+      }
+      return NextResponse.json({ received: true, callPaid: true });
+    }
     const productSlugs = (session.metadata?.product_slugs || "").split(",").filter(Boolean);
     const supabaseUrl = process.env.SUPABASE_URL;
     const serviceRoleKey = supabaseUrl ? getSupabaseServiceRoleKey(supabaseUrl) : null;
@@ -103,23 +120,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Order persistence failed; Stripe may retry this event." }, { status: 500 });
     }
 
-    if (session.metadata?.service === "fk-30-minute-call") {
-      if (session.currency !== "gbp" || session.amount_total !== 35000) {
-        console.error("30-minute call Stripe session amount or currency did not match.");
-        return NextResponse.json({ error: "Invalid 30-minute call payment details." }, { status: 400 });
-      }
-      const clientEmail = typeof session.customer_details?.email === "string" ? session.customer_details.email : typeof session.customer_email === "string" ? session.customer_email : "";
-      if (!clientEmail) return NextResponse.json({ error: "Call payment has no customer email." }, { status: 500 });
-      const sent = await sendClientEmail("callPaid", clientEmail, {
-        firstName: session.metadata?.customer_name || session.customer_details?.name || "",
-        bookingLink: CAL_LINKS.call,
-      }, { idempotencyKey: "paid-fk-call-" + session.id });
-      if (sent.status !== "sent") {
-        console.error("30-minute call payment email failed:", sent.status, sent.error || "");
-        return NextResponse.json({ error: "Payment confirmation email failed; Stripe may retry." }, { status: 500 });
-      }
-      return NextResponse.json({ received: true, callPaid: true });
-    }
     const orderSlug = `stripe-${session.id}`.toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 180);
     try {
       const previous = await cmsBridge<{ records?: Array<{ id: string; slug: string | null }> }>({ action: "cms.list", module: "enquiries", slug: orderSlug });
