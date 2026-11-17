@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export function proxy(request: NextRequest) {
   const hostname = request.headers.get("host")?.split(":")[0]?.toLowerCase();
-  if (hostname !== "africa-plug.vercel.app" && hostname !== "www.theafricaplug.com") return NextResponse.next();
+  if (hostname !== "africa-plug.vercel.app") return NextResponse.next();
 
   const destination = request.nextUrl.clone();
   destination.protocol = "https:";
