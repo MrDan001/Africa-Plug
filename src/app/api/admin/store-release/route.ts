@@ -4,6 +4,7 @@ import { sendClientEmail } from "@/lib/emails/send";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
+import { getStripe } from "@/lib/payments/stripe";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
 
     const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data: orders, error: orderError } = await db.from("store_orders")
-      .select("id,customer_email,product_slugs,status")
+      .select("id,customer_email,product_slugs,status,stripe_session_id")
       .eq("status", "paid").contains("product_slugs", [slug]);
     if (orderError) throw orderError;
 
@@ -65,8 +66,18 @@ export async function POST(request: Request) {
       if (readLinkError) throw readLinkError;
       if (savedLink?.email_sent_at) { skipped++; continue; }
       const link = `${baseUrl()}/api/store/download/${token}`;
+      let firstName = "";
+      if (typeof order.stripe_session_id === "string") {
+        try {
+          const session = await getStripe().checkout.sessions.retrieve(order.stripe_session_id);
+          const fullName = typeof session.customer_details?.name === "string" ? session.customer_details.name.trim() : "";
+          firstName = fullName.split(/\\s+/)[0] || "";
+        } catch (error) {
+          console.error("Could not retrieve Store customer name for guide email:", error instanceof Error ? error.message : "Unknown error");
+        }
+      }
       const result = await sendClientEmail("guideReady", order.customer_email, {
-        firstName: "there",
+        firstName,
         guideTitle: product.title,
         downloadLink: link,
       }, { idempotencyKey: "tap-guide-ready-" + order.id + "-" + slug });
