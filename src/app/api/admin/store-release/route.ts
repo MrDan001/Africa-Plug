@@ -71,7 +71,7 @@ export async function POST(request: Request) {
         try {
           const session = await getStripe().checkout.sessions.retrieve(order.stripe_session_id);
           const fullName = typeof session.customer_details?.name === "string" ? session.customer_details.name.trim() : "";
-          firstName = fullName.split(/\\s+/)[0] || "";
+          firstName = fullName.split(/\s+/)[0] || "";
         } catch (error) {
           console.error("Could not retrieve Store customer name for guide email:", error instanceof Error ? error.message : "Unknown error");
         }
