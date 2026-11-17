@@ -19,6 +19,7 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
   let paymentConfirmed = false;
   let purchasedSlugs: string[] = [];
   const downloadLinks = new Map<string, string>();
+  let orderRefunded = false;
 
   if (/^cs_(test|live)_[A-Za-z0-9_]+$/.test(sessionId)) {
     try {
@@ -47,6 +48,7 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
     if (serviceKey) {
       const db = createClient(process.env.SUPABASE_URL, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
       const { data: order } = await db.from("store_orders").select("id,customer_email,status").eq("stripe_session_id", sessionId).maybeSingle();
+      if (order?.status === "refunded" || order?.status === "partially_refunded") orderRefunded = true;
       if (order?.id && order.status === "paid") {
         for (const product of downloadProducts) {
           const slug = product.slug!;
@@ -62,21 +64,25 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
     }
   }
 
+  const deliverableProducts = downloadProducts.filter((product) => Boolean(product.slug && downloadLinks.has(product.slug)));
+
   return <main style={{maxWidth:760,margin:"0 auto",padding:"clamp(64px,10vw,120px) 24px",textAlign:"center"}}>
     {paymentConfirmed ? <ClearStoreCart sessionId={sessionId} /> : null}
     <p className="standard-eyebrow">THE AFRICA PLUG · STORE</p>
-    <h1 style={{fontSize:"clamp(36px,7vw,64px)",letterSpacing:"-.05em",lineHeight:1.02,margin:"16px 0"}}>{paymentConfirmed ? "Payment confirmed." : "We’re checking your order."}</h1>
+    <h1 style={{fontSize:"clamp(36px,7vw,64px)",letterSpacing:"-.05em",lineHeight:1.02,margin:"16px 0"}}>{orderRefunded ? "Payment refunded." : paymentConfirmed ? "Payment confirmed." : "We’re checking your order."}</h1>
     <p style={{maxWidth:560,margin:"0 auto 28px",lineHeight:1.8,color:"#626469"}}>{paymentConfirmed
-      ? hasPreorder
-        ? "Stripe confirms your payment. Your preorder is confirmed; we’ll email your private download link as soon as the guide is released."
-        : "Stripe confirms your payment. Keep the payment receipt sent to your email. Use the secure download links below to access the digital products included in this order."
+      ? orderRefunded
+        ? "This payment has been refunded. Any private download access for this order has been disabled."
+        : hasPreorder
+          ? "Stripe confirms your payment. Your preorder is confirmed; we’ll email your private download link as soon as the guide is released."
+          : "Stripe confirms your payment. Keep the payment receipt sent to your email. Use the secure download links below to access the digital products included in this order."
       : "We can’t confirm the payment from this page yet. Please check your Stripe receipt email and allow a few moments for the payment status to update. If you completed payment and are still unsure, contact The Africa Plug with your receipt."}</p>
     {paymentConfirmed ? <section aria-label="Your downloads" style={{maxWidth:580,margin:"0 auto 32px",textAlign:"left",padding:"20px",border:"1px solid #e2ddd5",background:"#fff"}}>
       <h2 style={{fontSize:19,margin:"0 0 12px"}}>Your downloads</h2>
-      {downloadProducts.length ? <div style={{display:"grid",gap:10}}>{downloadProducts.map((product) => <a key={product.id} href={downloadLinks.get(product.slug!) || "#"} style={{display:"flex",justifyContent:"space-between",gap:14,alignItems:"center",padding:"13px 0",borderBottom:"1px solid #eee7df",color:"#292a2c",fontWeight:700,textDecoration:"none"}}><span>{product.title}</span><span aria-hidden="true">DOWNLOAD ↗</span></a>)}</div> : null}
-      {hasPreorder ? <p style={{margin:0,lineHeight:1.7,color:"#626469"}}>Your preorder is confirmed. We&apos;ll email your private download link the moment the guide is released. Your receipt from Stripe will arrive separately.</p> : null}
-      {!downloadProducts.length && !hasPreorder ? <p style={{margin:0,lineHeight:1.7,color:"#626469"}}>Your order is confirmed. We&apos;ll send any required delivery details to your email.</p> : null}
-      {downloadProducts.length && !hasPreorder ? <p style={{fontSize:12,lineHeight:1.6,color:"#626469",margin:"12px 0 0"}}>Each private link allows up to five downloads and expires 30 days after it is issued.</p> : null}
+      {deliverableProducts.length ? <div style={{display:"grid",gap:10}}>{deliverableProducts.map((product) => <a key={product.id} href={downloadLinks.get(product.slug!) || "#"} style={{display:"flex",justifyContent:"space-between",gap:14,alignItems:"center",padding:"13px 0",borderBottom:"1px solid #eee7df",color:"#292a2c",fontWeight:700,textDecoration:"none"}}><span>{product.title}</span><span aria-hidden="true">DOWNLOAD ↗</span></a>)}</div> : null}
+      {hasPreorder && !orderRefunded ? <p style={{margin:0,lineHeight:1.7,color:"#626469"}}>Your preorder is confirmed. We&apos;ll email your private download link the moment the guide is released. Your receipt from Stripe will arrive separately.</p> : null}
+      {!deliverableProducts.length && !hasPreorder && !orderRefunded ? <p style={{margin:0,lineHeight:1.7,color:"#626469"}}>Your order is confirmed. We&apos;ll send any required delivery details to your email.</p> : null}
+      {deliverableProducts.length && !hasPreorder && !orderRefunded ? <p style={{fontSize:12,lineHeight:1.6,color:"#626469",margin:"12px 0 0"}}>Each private link allows up to five downloads and expires 30 days after it is issued.</p> : null}
     </section> : null}
     <Link href="/contact" className="text-link">CONTACT THE AFRICA PLUG <span aria-hidden="true">→</span></Link>
     <span aria-hidden="true" style={{display:"inline-block",width:24}} />
