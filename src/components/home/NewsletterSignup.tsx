@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTurnstile } from "@/components/work-with-fk/useTurnstile";
 
 export default function NewsletterSignup() {
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const { widgetRef, token } = useTurnstile(siteKey);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
@@ -17,7 +20,7 @@ export default function NewsletterSignup() {
       const response = await fetch("/api/forms/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, website, source: "Homepage — Stay Plugged In" }),
+        body: JSON.stringify({ email, name, website, source: "Homepage — Stay Plugged In", turnstileToken: token }),
       });
       const data = await response.json() as { ok?: boolean; error?: string };
       if (!response.ok || !data.ok) throw new Error(data.error || "We couldn't save your signup. Please try again.");
@@ -39,7 +42,9 @@ export default function NewsletterSignup() {
           <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 700 }}>Name (optional)<input value={name} onChange={(event) => setName(event.target.value)} maxLength={160} autoComplete="name" style={{ padding: "13px 14px", color: "#202126", background: "#fff", border: "1px solid #6a6b70", borderRadius: 3, font: "inherit" }} /></label>
           <label style={{ display: "grid", gap: 6, fontSize: 12, fontWeight: 700 }}>Email address<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} maxLength={254} autoComplete="email" style={{ padding: "13px 14px", color: "#202126", background: "#fff", border: "1px solid #6a6b70", borderRadius: 3, font: "inherit" }} /></label>
           <div aria-hidden="true" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}><label>Leave this blank<input tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label></div>
-          <button type="submit" disabled={busy} style={{ justifySelf: "start", padding: "13px 18px", cursor: busy ? "wait" : "pointer", border: 0, borderRadius: 3, background: "#d51f6d", color: "#fff", fontWeight: 800 }}>{busy ? "SAVING…" : "SIGN ME UP →"}</button>
+          <div ref={widgetRef} />
+          {!siteKey ? <p role="alert" style={{ color: "#ffd1d1", margin: 0 }}>Security verification is not configured yet.</p> : null}
+          <button type="submit" disabled={busy || !siteKey || !token} style={{ justifySelf: "start", padding: "13px 18px", cursor: busy ? "wait" : "pointer", border: 0, borderRadius: 3, background: "#d51f6d", color: "#fff", fontWeight: 800 }}>{busy ? "SAVING…" : "SIGN ME UP →"}</button>
           <p style={{ fontSize: 12, lineHeight: 1.5, color: "#c6c6ca", margin: 0 }}>By subscribing, you agree to receive email updates from The Africa Plug. You can request removal at any time.</p>
           {notice ? <p role="status" style={{ color: notice.ok ? "#a0e8c7" : "#ffd1d1", margin: 0 }}>{notice.text}</p> : null}
         </form>
