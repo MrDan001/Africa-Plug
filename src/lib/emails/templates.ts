@@ -135,9 +135,7 @@ export const EMAIL_TEMPLATES: Record<EmailId, Template> = {
     subject: "Your preorder is confirmed: {{guideTitle}}",
     named: true,
     body: [
-      "Thank you for preordering {{guideTitle}}. Your payment is confirmed.",
-      "We'll email your private download link the moment the guide is released. There's nothing else you need to do.",
-      "Your receipt from Stripe will arrive separately.",
+      "Your preorder is confirmed. We'll email your private download link the moment the guide is released. Your receipt from Stripe will arrive separately.",
     ],
   },
   guideReady: {
