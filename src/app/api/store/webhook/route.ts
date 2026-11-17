@@ -1,7 +1,9 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { cmsBridge } from "@/lib/cms-bridge";
+import { cmsBridge, getPublicCmsRecords } from "@/lib/cms-bridge";
+import { sendClientEmail } from "@/lib/emails/send";
+import { CAL_LINKS } from "@/lib/emails/links";
 import { loadApplication, saveApplicationData } from "@/lib/work-with-fk/scheduler";
 import { getStripe, getStripeWebhookSecret } from "@/lib/payments/stripe";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
@@ -47,6 +49,16 @@ export async function POST(request: Request) {
         console.error("Deal Diagnostic payment confirmation could not be saved:", error instanceof Error ? error.message : "Unknown error");
         return NextResponse.json({ error: "Payment confirmation could not be saved; Stripe may retry this event." }, { status: 500 });
       }
+      const clientEmail = typeof session.customer_details?.email === "string" ? session.customer_details.email : typeof session.customer_email === "string" ? session.customer_email : "";
+      if (!clientEmail) return NextResponse.json({ error: "Deal Diagnostic payment has no customer email; confirmation could not be sent." }, { status: 500 });
+      const paidEmail = await sendClientEmail("dealDiagnosticPaid", clientEmail, {
+        firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
+        bookingLink: CAL_LINKS.dealDiagnostic,
+      }, { idempotencyKey: "paid-deal-diagnostic-" + session.id });
+      if (paidEmail.status !== "sent") {
+        console.error("Deal Diagnostic payment confirmation email failed:", paidEmail.status, paidEmail.error || "");
+        return NextResponse.json({ error: "Payment was recorded but the booking email could not be sent; Stripe may retry." }, { status: 500 });
+      }
       return NextResponse.json({ received: true, dealDiagnosticPaid: true });
     }
     const productSlugs = (session.metadata?.product_slugs || "").split(",").filter(Boolean);
@@ -91,6 +103,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Order persistence failed; Stripe may retry this event." }, { status: 500 });
     }
 
+    if (session.metadata?.service === "fk-30-minute-call") {
+      if (session.currency !== "gbp" || session.amount_total !== 35000) {
+        console.error("30-minute call Stripe session amount or currency did not match.");
+        return NextResponse.json({ error: "Invalid 30-minute call payment details." }, { status: 400 });
+      }
+      const clientEmail = typeof session.customer_details?.email === "string" ? session.customer_details.email : typeof session.customer_email === "string" ? session.customer_email : "";
+      if (!clientEmail) return NextResponse.json({ error: "Call payment has no customer email." }, { status: 500 });
+      const sent = await sendClientEmail("callPaid", clientEmail, {
+        firstName: session.metadata?.customer_name || session.customer_details?.name || "",
+        bookingLink: CAL_LINKS.call,
+      }, { idempotencyKey: "paid-fk-call-" + session.id });
+      if (sent.status !== "sent") {
+        console.error("30-minute call payment email failed:", sent.status, sent.error || "");
+        return NextResponse.json({ error: "Payment confirmation email failed; Stripe may retry." }, { status: 500 });
+      }
+      return NextResponse.json({ received: true, callPaid: true });
+    }
     const orderSlug = `stripe-${session.id}`.toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 180);
     try {
       const previous = await cmsBridge<{ records?: Array<{ id: string; slug: string | null }> }>({ action: "cms.list", module: "enquiries", slug: orderSlug });
@@ -123,6 +152,29 @@ export async function POST(request: Request) {
     } catch (error) {
       console.error("Paid Store order could not be saved to the CMS:", error instanceof Error ? error.message : "Unknown error");
       return NextResponse.json({ error: "Order persistence failed; Stripe may retry this event." }, { status: 500 });
+    }
+    const clientEmail = typeof session.customer_details?.email === "string" ? session.customer_details.email : typeof session.customer_email === "string" ? session.customer_email : "";
+    if (clientEmail && productSlugs.length) {
+      try {
+        const products = await getPublicCmsRecords("products");
+        for (const slug of productSlugs) {
+          const product = products.find((item) => item.slug === slug);
+          const title = product?.title || "your guide";
+          const isPetTravel = /pet[-_]?travel[-_]?consultation/i.test(slug);
+          const sent = await sendClientEmail(isPetTravel ? "petTravelPaid" : "preorderConfirmed", clientEmail, {
+            firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
+            guideTitle: title,
+            bookingLink: CAL_LINKS.petTravel,
+          }, { idempotencyKey: (isPetTravel ? "paid-pet-travel-" : "paid-store-preorder-") + session.id + "-" + slug });
+          if (sent.status !== "sent") {
+            console.error("Store or Pet Travel payment email failed:", slug, sent.status, sent.error || "");
+            return NextResponse.json({ error: "Payment was recorded but the customer confirmation email could not be sent; Stripe may retry." }, { status: 500 });
+          }
+        }
+      } catch (error) {
+        console.error("Store payment confirmation email failed:", error instanceof Error ? error.message : "Unknown error");
+        return NextResponse.json({ error: "Payment was recorded but the customer confirmation email could not be sent; Stripe may retry." }, { status: 500 });
+      }
     }
   }
   return NextResponse.json({ received: true });

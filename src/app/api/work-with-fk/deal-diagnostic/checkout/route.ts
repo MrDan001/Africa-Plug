@@ -1,7 +1,7 @@
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { loadApplication, saveApplicationData } from "@/lib/work-with-fk/scheduler";
 import { getPublicSiteUrl, getStripe } from "@/lib/payments/stripe";
-import { Resend } from "resend";
+import { sendClientEmail } from "@/lib/emails/send";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -17,8 +17,19 @@ export async function POST(request: Request) {
     if (application.data?.paymentStatus === "confirmed") return Response.json({ error: "Payment is already confirmed." }, { status: 409 });
     const email = typeof application.data?.email === "string" ? application.data.email.trim() : "";
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Response.json({ error: "The application has no valid client email address." }, { status: 400 });
-    const session = await getStripe().checkout.sessions.create({
+    const stripe = getStripe();
+    const previousSessionId = typeof application.data?.stripeCheckoutSessionId === "string" ? application.data.stripeCheckoutSessionId : "";
+    if (/^cs_(test|live)_/.test(previousSessionId)) {
+      try {
+        const previous = await stripe.checkout.sessions.retrieve(previousSessionId);
+        if (previous.status === "open") await stripe.checkout.sessions.expire(previousSessionId);
+      } catch (error) {
+        console.error("Previous Deal Diagnostic checkout session could not be expired:", error instanceof Error ? error.message : "Unknown error");
+      }
+    }
+    const session = await stripe.checkout.sessions.create({
       mode: "payment", customer_email: email,
+      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
       line_items: [{ quantity: 1, price_data: { currency: "gbp", unit_amount: 250000, product_data: { name: "Deal Diagnostic with FK", description: "A 90-minute Deal Diagnostic session with FK." } } }],
       billing_address_collection: "required", client_reference_id: application.id,
       metadata: { service: "fk-deal-diagnostic", application_id: application.id },
@@ -28,23 +39,10 @@ export async function POST(request: Request) {
     if (!session.url) return Response.json({ error: "Stripe did not return a checkout URL." }, { status: 502 });
     const now = new Date().toISOString();
     let emailNotification: "sent" | "not-configured" | "failed" = "not-configured";
-    if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
-      try {
-        const rawName = typeof application.data?.fullName === "string" ? application.data.fullName.trim() : typeof application.data?.name === "string" ? application.data.name.trim() : "there";
-        const safeName = rawName.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" })[c] || "");
-        const sent = await new Resend(process.env.RESEND_API_KEY).emails.send({
-          from: process.env.EMAIL_FROM, to: [email], replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
-          subject: "Your £2,500 Deal Diagnostic payment link | The Africa Plug",
-          text: `Hello ${rawName},\n\nYour secure payment link for the £2,500 Deal Diagnostic is ready:\n\n${session.url}\n\nOnce payment is complete, we will guide you through the next steps.\n\nThe Africa Plug team`,
-          html: `<div style="background:#f7f5f1;padding:24px;font-family:Arial,sans-serif"><div style="max-width:600px;margin:0 auto;border:1px solid #dedbd4;background:#fff;padding:28px"><p style="color:#d51f6d;font-size:11px;font-weight:700;letter-spacing:2px">THE AFRICA PLUG</p><h1 style="color:#292a2c;font-size:24px">Your Deal Diagnostic payment link</h1><p style="color:#4d5057;line-height:1.7">Hello ${safeName}, your secure payment link for the <strong>£2,500 Deal Diagnostic</strong> is ready.</p><p style="margin:28px 0"><a href="${session.url}" style="display:inline-block;background:#d51f6d;color:#fff;text-decoration:none;padding:14px 22px;font-weight:700">Pay £2,500 securely</a></p><p style="color:#777b84;font-size:13px">Once payment is complete, we will guide you through the next steps. Reply to this email if you have any questions.</p><p>The Africa Plug team</p></div></div>`,
-        });
-        emailNotification = sent.error ? "failed" : "sent";
-        if (sent.error) console.error("Deal Diagnostic payment email was rejected:", sent.error.message);
-      } catch (error) {
-        emailNotification = "failed";
-        console.error("Deal Diagnostic payment email failed:", error instanceof Error ? error.message : "Unknown error");
-      }
-    }
+    const rawName = typeof application.data?.fullName === "string" ? application.data.fullName.trim() : typeof application.data?.name === "string" ? application.data.name.trim() : "";
+    const sent = await sendClientEmail("paymentLink", email, { firstName: rawName, paymentLink: session.url });
+    emailNotification = sent.status;
+    if (sent.status !== "sent") console.error("Deal Diagnostic payment link email was not sent:", sent.status, sent.error || "");
     await saveApplicationData(application, {
       paymentStatus: emailNotification === "sent" ? "link_sent" : "email_failed",
       paymentCheckoutUrl: session.url,

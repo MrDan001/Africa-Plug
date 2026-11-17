@@ -279,6 +279,26 @@ export default function TapInManager() {
     }
   }
 
+  async function sendOpportunityAlert(item: Opportunity) {
+    if (!window.confirm("Send the new opportunity email to all confirmed T.A.P IN alert subscribers?")) return;
+    setNotice(null);
+    try {
+      const response = await fetch("/api/admin/tap-in/alerts/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: item.slug }),
+      });
+      const data = await response.json() as { error?: string; message?: string; sent?: number };
+      if (!response.ok) {
+        setNotice({ tone: "error", text: data.error || "Could not send the opportunity alert." });
+        return;
+      }
+      setNotice({ tone: "success", text: data.message || "Opportunity alert sent." });
+    } catch {
+      setNotice({ tone: "error", text: "Could not connect to the email service. Please try again." });
+    }
+  }
+
   async function signOut() {
     try { await fetch("/api/admin/session", { method: "DELETE" }); }
     // Full reload on purpose: it resets the admin session gate.
@@ -399,7 +419,12 @@ export default function TapInManager() {
                           <Link className="tapin-soft" href={`/tap-in/${item.slug}`} target="_blank" rel="noreferrer"><Icon name="eye" size={14} /> View</Link>
                         ) : null}
                         {item.status === "draft" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Open</button> : null}
-                        {item.status === "live" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "closed")}><Icon name="x" size={14} /> Close</button> : null}
+                        {item.status === "live" ? (
+                          <>
+                            <button type="button" className="tapin-soft" onClick={() => void sendOpportunityAlert(item)}><Icon name="send" size={14} /> Email subscribers</button>
+                            <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "closed")}><Icon name="x" size={14} /> Close</button>
+                          </>
+                        ) : null}
                         {item.status === "closed" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Reopen</button> : null}
                         {item.status === "closed" ? <button type="button" className="tapin-ghost" onClick={() => void changeStatus(item, "archived")}>Archive</button> : null}
                         {item.status === "archived" ? <button type="button" className="tapin-ghost" onClick={() => { if (!item.country?.trim()) { setEditingId(item.id); setDraft({ ...toDraft(item), status: "draft" }); setNotice({ tone: "success", text: "Add the missing country (and region if known), then save this listing as a draft to complete its restoration." }); setView("editor"); window.scrollTo({ top: 0 }); } else { void changeStatus(item, "draft"); } }}>Restore</button> : null}
