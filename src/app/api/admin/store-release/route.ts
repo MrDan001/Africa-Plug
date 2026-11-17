@@ -1,6 +1,6 @@
 import { createHmac, createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { Resend } from "resend";
+import { sendClientEmail } from "@/lib/emails/send";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
@@ -43,10 +43,7 @@ export async function POST(request: Request) {
     const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
     let sent = 0;
     let skipped = 0;
-    const resendKey = process.env.RESEND_API_KEY;
-    const from = process.env.EMAIL_FROM;
-    if (!resendKey || !from) return Response.json({ error: "Email delivery is not configured. Set RESEND_API_KEY and EMAIL_FROM before releasing." }, { status: 503 });
-    const resend = new Resend(resendKey);
+    if (!process.env.RESEND_API_KEY) return Response.json({ error: "Email delivery is not configured. Set RESEND_API_KEY before releasing." }, { status: 503 });
 
     for (const order of orders ?? []) {
       if (!order.customer_email) { skipped++; continue; }
@@ -68,16 +65,15 @@ export async function POST(request: Request) {
       if (readLinkError) throw readLinkError;
       if (savedLink?.email_sent_at) { skipped++; continue; }
       const link = `${baseUrl()}/api/store/download/${token}`;
-      const result = await resend.emails.send({
-        from,
-        to: [order.customer_email],
-        subject: `Your guide is ready: ${product.title}`,
-        text: `Your preorder is ready. Download ${product.title} using your private link: ${link}\n\nThis link allows up to five downloads and expires 30 days after release.`,
-        html: `<div style="font-family:Arial,sans-serif;line-height:1.7;color:#292a2c"><p>Your preorder is ready.</p><p><strong>${product.title}</strong> is now available.</p><p><a href="${link}" style="display:inline-block;background:#c21e67;color:#fff;padding:13px 20px;text-decoration:none">DOWNLOAD YOUR GUIDE</a></p><p>This private link allows up to five downloads and expires 30 days after release.</p><p>The Africa Plug</p></div>`,
-      });
-      if (result.error) {
-        await db.from("store_download_links").update({ email_last_error: result.error.message }).eq("order_id", order.id).eq("product_slug", slug);
-        throw new Error(result.error.message);
+      const result = await sendClientEmail("guideReady", order.customer_email, {
+        firstName: "there",
+        guideTitle: product.title,
+        downloadLink: link,
+      }, { idempotencyKey: "tap-guide-ready-" + order.id + "-" + slug });
+      if (result.status !== "sent") {
+        const message = result.error || result.status;
+        await db.from("store_download_links").update({ email_last_error: message }).eq("order_id", order.id).eq("product_slug", slug);
+        throw new Error(message);
       }
       const { error: markSentError } = await db.from("store_download_links").update({ email_sent_at: new Date().toISOString(), email_last_error: null }).eq("order_id", order.id).eq("product_slug", slug);
       if (markSentError) throw markSentError;
