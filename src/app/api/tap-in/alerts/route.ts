@@ -25,16 +25,32 @@ export async function POST(request: Request) {
   const slug = `tap-in-alerts-${email.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`.slice(0, 170);
   const now = new Date().toISOString();
 
+  let existingSubscriber: { id: string; title: string; slug: string | null; status: string; data?: Record<string, unknown> } | undefined;
+  try {
+    const listed = await cmsBridge<{ records?: Array<{ id: string; title: string; slug: string | null; status: string; data?: Record<string, unknown> }> }>({ action: "cms.list", module: "subscribers", status: "all" });
+    existingSubscriber = (listed.records ?? []).find((record) =>
+      String(record.data?.list ?? "") === "tap-in-alerts"
+      && String(record.data?.email ?? "").trim().toLowerCase() === email
+    );
+    if (existingSubscriber?.status === "active" && existingSubscriber.data?.consent === true) {
+      return json({ ok: true, alreadySubscribed: true, message: "You’re already signed up for T.A.P IN Alerts." });
+    }
+  } catch (error) {
+    console.error("T.A.P IN alerts subscriber lookup failed:", error instanceof Error ? error.message : "Unknown error");
+    return json({ error: "We couldn’t check your sign-up right now. Please try again shortly." }, 503);
+  }
+
   let subscriberId = "";
   try {
     const saved = await cmsBridge<{ record: { id: string } }>({
       action: "cms.save",
       module: "subscribers",
       record: {
+        ...(existingSubscriber?.id ? { id: existingSubscriber.id } : {}),
         title: email,
         slug,
         status: "active",
-        data: { email, list: "tap-in-alerts", source: "T.A.P IN opportunity alerts", consent: true, consentAt: now, consentPage: "/tap-in", subscribedAt: now },
+        data: { ...(existingSubscriber?.data ?? {}), email, list: "tap-in-alerts", source: "T.A.P IN opportunity alerts", consent: true, consentAt: now, consentPage: "/tap-in", subscribedAt: now, subscriptionStatus: "active", unsubscribedAt: "" },
       },
     });
     subscriberId = saved.record.id;
