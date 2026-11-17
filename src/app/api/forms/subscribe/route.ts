@@ -11,8 +11,8 @@ export async function POST(request: Request) {
   if (typeof input.website === "string" && input.website) return Response.json({ ok: true });
 
   const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
-  if (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return Response.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
   const apiKey = process.env.MAILERLITE_API_KEY;
