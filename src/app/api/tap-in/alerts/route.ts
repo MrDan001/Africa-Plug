@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { sendClientEmail } from "@/lib/emails/send";
 import { cmsBridge } from "@/lib/cms-bridge";
 import { alertsSchema } from "@/lib/tap-in/forms";
+import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,6 +21,8 @@ export async function POST(request: Request) {
   const parsed = alertsSchema.safeParse(body);
   if (!parsed.success) return json({ error: parsed.error.issues[0]?.message ?? "Enter a valid email address." }, 400);
   if (parsed.data.website) return json({ ok: true });
+  const verified = await verifyTurnstile(parsed.data.turnstileToken, request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null);
+  if (!verified) return json({ error: "The security check could not be verified. Please refresh the page and try again." }, 400);
 
   const email = parsed.data.email.toLowerCase();
   const slug = `tap-in-alerts-${email.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`.slice(0, 170);
