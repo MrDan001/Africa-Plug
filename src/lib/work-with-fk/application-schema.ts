@@ -68,7 +68,7 @@ export const applicationSchema = z.object({
     .string()
     .trim()
     .max(30)
-    .regex(/^\\+[0-9][0-9 ()-]{5,28}$/, "Please include your country code, for example +234.")
+    .regex(/^\+[0-9][0-9 ()-]{5,28}$/, "Please include your country code, for example +234.")
     .optional()
     .or(z.literal("")),
   country: countryField,
