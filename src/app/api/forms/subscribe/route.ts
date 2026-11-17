@@ -1,14 +1,17 @@
 import { cmsBridge } from "@/lib/cms-bridge";
+import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  let input: { email?: unknown; name?: unknown; website?: unknown; source?: unknown };
+  let input: { email?: unknown; name?: unknown; website?: unknown; source?: unknown; turnstileToken?: unknown };
   try { input = await request.json() as typeof input; }
   catch { return Response.json({ error: "Enter a valid email address and try again." }, { status: 400 }); }
 
   if (typeof input.website === "string" && input.website) return Response.json({ ok: true });
+  const verified = await verifyTurnstile(typeof input.turnstileToken === "string" ? input.turnstileToken : undefined, request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null);
+  if (!verified) return Response.json({ error: "The security check could not be verified. Please refresh the page and try again." }, { status: 400 });
 
   const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
