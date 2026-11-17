@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { cmsBridge } from "@/lib/cms-bridge";
 import { applicationSchema } from "@/lib/work-with-fk/application-schema";
 import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
+import { sendClientEmail } from "@/lib/emails/send";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -104,9 +105,8 @@ export async function POST(request: Request) {
 
   // 2. Email the team, then 3. send the applicant's automatic reply.
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
   const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
-  if (!apiKey || !from) return Response.json({ ok: true, emailNotification: "not-configured" });
+  if (!apiKey) return Response.json({ ok: true, emailNotification: "not-configured" });
 
   const to = process.env.EMAIL_FK || "fk@theafricaplug.com";
   const rows: [string, string][] = [
@@ -145,19 +145,9 @@ export async function POST(request: Request) {
     console.error("Application email could not be sent:", error instanceof Error ? error.message : "Unknown error");
   }
 
-  try {
-    const reply = "Thank you for your application. The Africa Plug team will review it and be in touch if it’s a fit.";
-    const result = await resend.emails.send({
-      from,
-      to: [app.email],
-      replyTo: to,
-      subject: "Thank you for your application",
-      text: reply,
-      html: `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#292a2c"><p>${escapeHtml(reply)}</p></div>`,
-    });
-    if (result.error) console.error("Resend rejected the applicant auto reply:", result.error.message);
-  } catch (error) {
-    console.error("Applicant auto reply could not be sent:", error instanceof Error ? error.message : "Unknown error");
+  const applicantReply = await sendClientEmail("applicationReceived", app.email, { firstName: app.fullName });
+  if (applicantReply.status !== "sent") {
+    console.error("Work With FK application acknowledgement was not sent:", applicantReply.status, applicantReply.error || "");
   }
 
   // The application is saved, so it is accepted even if an email fails.
