@@ -159,7 +159,7 @@ export async function POST(request: Request) {
         const products = await getPublicCmsRecords("products");
         for (const slug of productSlugs) {
           const product = products.find((item) => item.slug === slug);
-          const title = product?.title || orderItems.find((item) => item.slug === slug)?.description || "your guide";
+          const title = product?.title || "your guide";
           const isPetTravel = /pet[-_]?travel[-_]?consultation/i.test(slug);
           const sent = await sendClientEmail(isPetTravel ? "petTravelPaid" : "preorderConfirmed", clientEmail, {
             firstName: typeof session.customer_details?.name === "string" ? session.customer_details.name : "",
