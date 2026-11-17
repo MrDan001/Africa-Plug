@@ -92,6 +92,7 @@ export const callSchema = z.object({
   country: countryField,
   question: required("your question", 500),
   consent: z.literal(true, { message: "Please agree to the Privacy Policy and Terms." }),
+  sessionConsent: z.literal(true, { message: "Please confirm the session cancellation terms." }),
   website: z.string().max(300).optional().or(z.literal("")), // honeypot
   turnstileToken: z.string().max(5000).optional().or(z.literal("")),
 });
