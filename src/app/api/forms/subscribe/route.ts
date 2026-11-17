@@ -10,28 +10,54 @@ export async function POST(request: Request) {
 
   if (typeof input.website === "string" && input.website) return Response.json({ ok: true });
 
-  // Do not tell visitors they have subscribed until a real newsletter provider is installed and synchronised.
-  if (process.env.MAILERLITE_INTEGRATION_READY !== "true") {
-    return Response.json({ error: "Stay Plugged In is being connected to its newsletter service. Please try again later." }, { status: 503, headers: { "Cache-Control": "no-store" } });
-  }
   const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
-  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
     return Response.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
-  const slug = email.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 170);
+  const apiKey = process.env.MAILERLITE_API_KEY;
+  const groupId = process.env.MAILERLITE_GROUP_ID;
+  if (!apiKey || !groupId) {
+    console.error("Stay Plugged In signup is missing MailerLite configuration.");
+    return Response.json({ error: "Newsletter sign-up is temporarily unavailable. Please try again later." }, { status: 503, headers: { "Cache-Control": "no-store" } });
+  }
+
+  const name = typeof input.name === "string" ? input.name.trim().slice(0, 160) : "";
   try {
+    const response = await fetch("https://connect.mailerlite.com/api/subscribers", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        groups: [groupId],
+        ...(name ? { fields: { name } } : {}),
+      }),
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) {
+      const detail = await response.text().catch(() => "");
+      console.error("MailerLite rejected Stay Plugged In signup:", response.status, detail.slice(0, 500));
+      return Response.json({ error: "We couldn't complete your newsletter sign-up just now. Please try again shortly." }, { status: 503, headers: { "Cache-Control": "no-store" } });
+    }
+
     await cmsBridge({
       action: "cms.save",
       module: "subscribers",
       record: {
         title: email,
-        slug,
+        slug: email.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 170),
         status: "active",
         data: {
           email,
-          name: typeof input.name === "string" ? input.name.trim().slice(0, 160) : "",
+          name,
           source: typeof input.source === "string" ? input.source.slice(0, 100) : "Stay Plugged In",
+          list: "stay-plugged-in",
+          provider: "mailerlite",
           consent: true,
           subscribedAt: new Date().toISOString(),
         },
@@ -57,9 +83,9 @@ export async function POST(request: Request) {
     } catch (analyticsError) {
       console.error("Newsletter conversion could not be recorded:", analyticsError instanceof Error ? analyticsError.message : "Unknown error");
     }
-    return Response.json({ ok: true });
+    return Response.json({ ok: true, message: "You're signed up. Stay Plugged In." });
   } catch (error) {
-    console.error("Newsletter signup could not be stored:", error instanceof Error ? error.message : "Unknown error");
-    return Response.json({ error: "We couldn't save your signup just now. Please try again shortly." }, { status: 503 });
+    console.error("Newsletter signup could not be completed:", error instanceof Error ? error.message : "Unknown error");
+    return Response.json({ error: "We couldn't save your signup just now. Please try again shortly." }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }
