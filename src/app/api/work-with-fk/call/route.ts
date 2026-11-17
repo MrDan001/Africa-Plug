@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       action: "cms.save", module: "enquiries",
       record: {
         title: `Call request: ${call.fullName}`.slice(0, 240), slug: null, status: "new",
-        data: { kind: "call", enquiryType: "30 minute call with FK", name: call.fullName, email: call.email, country: call.country, message: call.question, question: call.question, consentPrivacyTerms: true, paymentStatus: "pending", submittedAt: new Date().toISOString() },
+        data: { kind: "call", enquiryType: "30 minute call with FK", name: call.fullName, email: call.email, country: call.country, message: call.question, question: call.question, consentPrivacyTerms: true, sessionCancellationConsent: true, sessionCancellationConsentText: "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place.", paymentStatus: "pending", submittedAt: new Date().toISOString() },
       },
     });
     const origin = getPublicSiteUrl(request);
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       line_items: [{ quantity: 1, price_data: { currency: "gbp", unit_amount: 35000, product_data: { name: "30 minute call with FK", description: "A focused 30-minute video consultation with FK." } } }],
       billing_address_collection: "required",
       client_reference_id: crypto.randomUUID(),
-      metadata: { service: "fk-30-minute-call", customer_name: call.fullName, customer_country: call.country },
+      metadata: { service: "fk-30-minute-call", customer_name: call.fullName, customer_country: call.country, session_consent: "true", session_consent_text: "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place." },
       success_url: `${origin}/work-with-fk/call/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/work-with-fk/call?payment=cancelled`,
     });
