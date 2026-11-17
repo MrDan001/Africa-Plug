@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           module: "subscribers",
           record: {
             id: record.id, title: record.title, slug: record.slug, status: record.status,
-            data: { ...record.data, lastOpportunityAlertSlug: slug, lastOpportunityAlertAt: new Date().toISOString() },
+            data: { ...record.data, lastOpportunityAlertSlug: slug, lastOpportunityAlertAt: "__EMAIL_SENT_AT__" },
           },
         }],
       };
