@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTurnstile } from "@/components/work-with-fk/useTurnstile";
 
 export default function BlogNewsletterSignup() {
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const { widgetRef, token } = useTurnstile(siteKey);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string } | null>(null);
@@ -18,7 +21,7 @@ export default function BlogNewsletterSignup() {
       const response = await fetch("/api/blog/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, website: data.get("website") || "" }),
+        body: JSON.stringify({ email, website: data.get("website") || "", turnstileToken: token }),
       });
       const result = await response.json() as { ok?: boolean; error?: string; message?: string };
       if (!response.ok || !result.ok) throw new Error(result.error || "We couldn't save your subscription. Please try again.");
@@ -43,7 +46,9 @@ export default function BlogNewsletterSignup() {
         <label className="blog-newsletter-visually-hidden" htmlFor="blog-newsletter-email">Email address</label>
         <input id="blog-newsletter-email" type="email" name="email" required maxLength={254} autoComplete="email" placeholder="Enter your email address" value={email} onChange={(event) => setEmail(event.target.value)} />
         <div className="blog-newsletter-honeypot" aria-hidden="true"><label>Leave this blank<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
-        <button type="submit" disabled={busy}>{busy ? "SUBSCRIBING…" : "SUBSCRIBE"} <span aria-hidden="true">→</span></button>
+        <div ref={widgetRef} />
+        {!siteKey ? <p className="blog-newsletter-status is-error" role="alert">Security verification is not configured yet.</p> : null}
+        <button type="submit" disabled={busy || !siteKey || !token}>{busy ? "SUBSCRIBING…" : "SUBSCRIBE"} <span aria-hidden="true">→</span></button>
         <p className="blog-newsletter-note">Unsubscribe at any time. <a href="/privacy">Privacy Policy.</a></p>
         {notice ? <p className={"blog-newsletter-status is-" + notice.tone} role="status" aria-live="polite">{notice.text}</p> : null}
       </form>
