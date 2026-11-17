@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      siteName: settings.siteTitle || "Africa Plug",
+      siteName: "The Africa Plug",
       locale: "en_GB",
       type: "website",
       images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "The Africa Plug — Your connection to Africa" }],

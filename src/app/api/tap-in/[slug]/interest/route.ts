@@ -37,7 +37,7 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
 
   const submittedAt = new Date().toISOString();
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com").replace(/\/+$/, "");
-  const listingLink = `${siteUrl}/tap-in#${opportunity.slug}`;
+  const listingLink = `${siteUrl}/tap-in/${encodeURIComponent(opportunity.slug)}`
 
   // 1. Save in the site admin first, so nothing is lost if an email is missed.
   try {
@@ -63,7 +63,7 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
           message: input.looking,
           timeframe: input.timeframe || "",
           consentPrivacyTermsDueDiligence: true,
-          sourcePath: `/tap-in#${opportunity.slug}`,
+          sourcePath: `/tap-in/${encodeURIComponent(opportunity.slug)}`,
           submittedAt,
         },
       },

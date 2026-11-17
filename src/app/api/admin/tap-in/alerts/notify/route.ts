@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         shortSummary,
         opportunityLink,
         unsubscribeLink: unsubscribe.toString(),
-      }, { idempotencyKey: "tap-opportunity-" + slug + "-" + record.id });
+      }, { idempotencyKey: "tap-opportunity-" + slug + "-" + record.id, headers: { "List-Unsubscribe": `<${unsubscribe.toString()}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } });
       if (sent.status !== "sent") {
         console.error("T.A.P IN opportunity alert failed:", email, sent.status, sent.error || "");
         return Response.json({ error: "The alert campaign stopped after " + sentCount + " email(s). Please retry after checking email delivery.", sent: sentCount }, { status: 502 });

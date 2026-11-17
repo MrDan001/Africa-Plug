@@ -1,15 +1,17 @@
 import type { MetadataRoute } from "next";
 import { getBlogPosts, cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import { getPublicCmsRecords } from "@/lib/cms-bridge";
+import { listAllOpportunities } from "@/lib/tap-in/opportunities";
 
 export const dynamic = "force-dynamic";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com").replace(/\/$/, "");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, productRecords] = await Promise.all([
+  const [posts, productRecords, opportunities] = await Promise.all([
     getBlogPosts(),
     getPublicCmsRecords("products"),
+    listAllOpportunities().catch(() => []),
   ]);
   const products = productRecords.map(cmsRecordToPublicProduct).filter((item): item is NonNullable<ReturnType<typeof cmsRecordToPublicProduct>> => item !== null);
   const pages: Array<{ path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
@@ -28,10 +30,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/refunds", priority: 0.3, changeFrequency: "yearly" },
   ];
 
+  const publicOpportunities = opportunities.filter((item) => item.status === "live" || item.status === "closed");
   const lastModified = new Date();
   return [
     ...pages.map(({ path, priority, changeFrequency }) => ({ url: `${SITE_URL}${path || "/"}`, lastModified, changeFrequency, priority })),
     ...posts.map((post) => ({ url: `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`, lastModified, changeFrequency: "monthly" as const, priority: 0.65 })),
     ...products.map((product) => ({ url: `${SITE_URL}/store/${encodeURIComponent(product.slug)}`, lastModified, changeFrequency: "monthly" as const, priority: 0.65 })),
+    ...publicOpportunities.map((opportunity) => ({ url: `${SITE_URL}/tap-in/${encodeURIComponent(opportunity.slug)}`, lastModified, changeFrequency: "daily" as const, priority: 0.7 })),
   ];
 }

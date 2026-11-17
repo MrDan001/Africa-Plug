@@ -119,7 +119,7 @@ export default function TapInBoard({ listings }: { listings: PublicListing[] }) 
     return () => { document.body.style.overflow = previous; document.removeEventListener("keydown", onKey); };
   }, [selected, closePanel]);
 
-  const shareUrl = selected && typeof window !== "undefined" ? `${window.location.origin}/tap-in#${selected.slug}` : "";
+  const shareUrl = selected && typeof window !== "undefined" ? `${window.location.origin}/tap-in/${encodeURIComponent(selected.slug)}` : "";
   async function copyLink() {
     try { await navigator.clipboard.writeText(shareUrl); setCopied(true); window.setTimeout(() => setCopied(false), 2000); }
     catch { window.prompt("Copy this link:", shareUrl); }

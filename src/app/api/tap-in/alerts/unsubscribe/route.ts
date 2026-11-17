@@ -48,3 +48,34 @@ export async function GET(request: Request) {
     return page("We couldn't update your email preferences. Please try again later.");
   }
 }
+
+
+/** RFC 8058 one-click unsubscribe endpoint used by List-Unsubscribe-Post. */
+export async function POST(request: Request) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id") || "";
+  const token = url.searchParams.get("token") || "";
+  if (!id || !/^[a-f0-9]{64}$/i.test(token)) return page("This unsubscribe link is incomplete or invalid.");
+  try {
+    const result = await cmsBridge<{ records?: CmsRecord[] }>({ action: "cms.list", module: "subscribers", status: "all", id });
+    const record = (result.records ?? []).find((item) => item.id === id && item.data?.list === "tap-in-alerts");
+    if (!record) return page("This T.A.P IN alert subscription could not be found.");
+    const email = String(record.data?.email || "").trim().toLowerCase();
+    const secret = process.env.ADMIN_SESSION_SECRET;
+    if (!secret) return page("Email preferences are temporarily unavailable.");
+    const expected = createHmac("sha256", secret).update(id + ":" + email).digest("hex");
+    const supplied = Buffer.from(token, "hex");
+    const expectedBuffer = Buffer.from(expected, "hex");
+    if (supplied.length !== expectedBuffer.length || !timingSafeEqual(supplied, expectedBuffer)) return page("This unsubscribe link is invalid.");
+    if (record.status !== "unsubscribed") {
+      await cmsBridge({ action: "cms.save", module: "subscribers", record: {
+        id: record.id, title: record.title, slug: record.slug, status: "unsubscribed",
+        data: { ...record.data, consent: false, unsubscribedAt: new Date().toISOString(), subscriptionStatus: "unsubscribed" },
+      } });
+    }
+    return page("You have been unsubscribed from T.A.P IN opportunity alerts.");
+  } catch (error) {
+    console.error("T.A.P IN one-click unsubscribe failed:", error instanceof Error ? error.message : "Unknown error");
+    return page("We couldn't update your email preferences. Please try again later.");
+  }
+}

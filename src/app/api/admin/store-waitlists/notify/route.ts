@@ -100,7 +100,7 @@ export async function POST(request: Request) {
           guideTitle: product.title,
           productLink: productUrl,
           unsubscribeLink: optOut,
-        }, { idempotencyKey: "tap-store-waitlist-" + product.id + "-" + createHash("sha256").update(rows.map((row) => row.id).sort().join("|")).digest("hex").slice(0, 40) });
+        }, { idempotencyKey: "tap-store-waitlist-" + product.id + "-" + createHash("sha256").update(rows.map((row) => row.id).sort().join("|")).digest("hex").slice(0, 40), headers: { "List-Unsubscribe": `<${optOut}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } });
         if (result.status !== "sent") {
           return Response.json({ error: "Email provider failed after " + sent + " successful recipients: " + (result.error || result.status), sent }, { status: 502 });
         }

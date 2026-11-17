@@ -61,7 +61,7 @@ export async function POST(request: Request) {
           shortSummary: summary,
           articleLink: articleUrl,
           unsubscribeLink: optout,
-        }, { idempotencyKey: "tap-blog-article-" + article.id + "-" + record.id });
+        }, { idempotencyKey: "tap-blog-article-" + article.id + "-" + record.id, headers: { "List-Unsubscribe": `<${optout}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } });
         if (result.status !== "sent") {
           return Response.json({ error: "Email provider rejected the campaign after " + sent + " messages: " + (result.error || result.status), sent }, { status: 502 });
         }
