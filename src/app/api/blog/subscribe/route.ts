@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { Resend } from "resend";
+import { sendClientEmail } from "@/lib/emails/send";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 
 export const runtime = "nodejs";
@@ -30,10 +30,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
   const secret = process.env.ADMIN_SESSION_SECRET;
-  if (!apiKey || !from || !secret) {
+  if (!process.env.RESEND_API_KEY || !secret) {
     return Response.json({ error: "Blog email subscriptions are temporarily unavailable. Please try again later." }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 
@@ -77,16 +75,8 @@ export async function POST(request: Request) {
     confirmUrl.searchParams.set("id", record.id);
     confirmUrl.searchParams.set("expires", String(expiresAt));
     confirmUrl.searchParams.set("token", token);
-    const resend = new Resend(apiKey);
-    const result = await resend.emails.send({
-      from,
-      to: [email],
-      replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
-      subject: "Confirm your subscription to The Blog",
-      text: "Thanks for signing up to The Blog by The Africa Plug. Confirm your email address to receive an email when a new article is published: " + confirmUrl.toString() + "\n\nThis link expires in 48 hours. If you did not request these updates, you can ignore this email.",
-      html: "<div style='background:#f8f5ef;padding:28px 16px;font-family:Arial,sans-serif;color:#25221e'><div style='max-width:560px;margin:0 auto;background:#fffdfa;border:1px solid #ded8cf;padding:30px'><p style='font-size:10px;font-weight:800;letter-spacing:3px;color:#b65e73'>THE BLOG · THE AFRICA PLUG</p><h1 style='font:700 30px/1.1 Georgia,serif'>One last step.</h1><p style='font-size:14px;line-height:1.7'>Please confirm your email address to receive new Blog articles from The Africa Plug.</p><p style='margin:26px 0'><a href='" + escapeHtml(confirmUrl.toString()) + "' style='display:inline-block;background:#cb5274;color:white;text-decoration:none;padding:14px 22px;font-size:11px;font-weight:800;letter-spacing:1px'>CONFIRM SUBSCRIPTION →</a></p><p style='font-size:12px;color:#777169;line-height:1.6'>This confirmation link expires in 48 hours. If you did not request these updates, you can ignore this email.</p></div></div>",
-    });
-    if (result.error) throw new Error(result.error.message);
+    const sent = await sendClientEmail("blogConfirm", email, { confirmLink: confirmUrl.toString() }, { idempotencyKey: "blog-confirm-" + record.id + "-" + expiresAt });
+    if (sent.status !== "sent") throw new Error(sent.error || sent.status);
     return Response.json({ ok: true, message: "Check your inbox for a confirmation email." });
   } catch (error) {
     console.error("Blog subscription could not be saved:", error instanceof Error ? error.message : "Unknown error");
