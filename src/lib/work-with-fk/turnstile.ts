@@ -3,7 +3,7 @@ import "server-only";
 /** Verifies a Cloudflare Turnstile token. Passes when TURNSTILE_SECRET_KEY is not set (spam check switched off). */
 export async function verifyTurnstile(token: string | undefined, ip: string | null) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return true;
+  if (!secret) return false;
   if (!token) return false;
   const body = new URLSearchParams({ secret, response: token });
   if (ip) body.set("remoteip", ip);
