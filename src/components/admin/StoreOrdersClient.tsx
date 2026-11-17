@@ -140,7 +140,7 @@ export default function StoreOrdersClient() {
           {filteredOrders.map((order) => <article className="ap-admin-card" key={order.id} style={{ padding: "clamp(16px,3vw,24px)", display: "grid", gap: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 14, flexWrap: "wrap" }}>
               <div style={{ minWidth: 0 }}>
-                <span style={{ display: "inline-block", padding: "5px 8px", background: order.status === "paid" ? "#e7f6ee" : "#f5efe7", color: order.status === "paid" ? "#176447" : "#7a4e10", fontWeight: 800, fontSize: 11, textTransform: "uppercase", letterSpacing: ".08em" }}>{label(order.status)}</span>
+                <span style={{ display: "inline-block", padding: "5px 8px", background: order.status === "paid" ? "#e7f6ee" : order.status === "refunded" ? "#fdeaea" : "#f5efe7", color: order.status === "paid" ? "#176447" : order.status === "refunded" ? "#9b2525" : "#7a4e10", fontWeight: 800, fontSize: 11, textTransform: "uppercase", letterSpacing: ".08em" }}>{label(order.status)}</span>
                 <h3 style={{ margin: "10px 0 5px", fontSize: 18, overflowWrap: "anywhere" }}>{order.customer_email || "Customer email not recorded"}</h3>
                 <p style={{ margin: 0, color: "#696a70", fontSize: 13 }}>{dateTime(order.checkout_completed_at || order.created_at)}</p>
               </div>
