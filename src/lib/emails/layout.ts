@@ -1,4 +1,4 @@
-import { REFUNDS_DISPLAY, REFUNDS_URL } from "./links";
+import { REFUNDS_URL } from "./links";
 
 export function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[c] || "");
@@ -21,15 +21,16 @@ export type TextKey = "guideTitle" | "opportunityName" | "articleTitle" | "short
 export type EmailVarKey = LinkKey | TextKey;
 export type EmailVarValues = Partial<Record<EmailVarKey, string>>;
 
-const linkStyle = "color:#d51f6d;font-weight:700;word-break:break-all";
+const linkStyle = "display:inline-block;background:#d51f6d;color:#ffffff;font-weight:700;text-decoration:none;padding:12px 18px;border-radius:6px;line-height:1.4;word-break:break-word";
 const TOKEN = /(\{\{[a-zA-Z]+\}\})/g;
 const PAYMENT_LINK_LABEL = "Complete your secure payment here";
+const REFUNDS_LINK_LABEL = "View our Refunds Policy";
 
 function isLinkKey(key: string): key is LinkKey {
   return (LINK_KEYS as readonly string[]).includes(key);
 }
 
-/** Fill {{tokens}} in a line of copy. Text mode is plain text; HTML mode escapes and turns links into anchors. */
+/** Fill {{tokens}} in a line of copy. Text mode is plain text; HTML mode escapes and turns links into styled CTA blocks. */
 export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") {
   return line
     .split(TOKEN)
@@ -38,7 +39,9 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
       if (!match) return mode === "html" ? escapeHtml(part) : part;
       const key = match[1];
       if (key === "refunds") {
-        return mode === "html" ? `<a href="${REFUNDS_URL}" style="${linkStyle}">${REFUNDS_DISPLAY}</a>` : REFUNDS_DISPLAY;
+        return mode === "html"
+          ? `<a href="${REFUNDS_URL}" style="${linkStyle}">${REFUNDS_LINK_LABEL}</a>`
+          : REFUNDS_LINK_LABEL;
       }
       const value = (vars as Record<string, string | undefined>)[key]?.trim() ?? "";
       if (!value) {
@@ -46,7 +49,7 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
         throw new Error(`Email is missing a value for ${key}.`);
       }
       if (isLinkKey(key)) {
-        if (!/^https?:\/\//i.test(value)) throw new Error(`Email value for ${key} must be an http(s) URL.`);
+        if (!/^https?:\\/\\//i.test(value)) throw new Error(`Email value for ${key} must be an http(s) URL.`);
         if (key === "paymentLink") {
           return mode === "html"
             ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${PAYMENT_LINK_LABEL}</a>`
@@ -54,7 +57,7 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
         }
         return mode === "html" ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${escapeHtml(value)}</a>` : value;
       }
-      return mode === "html" ? escapeHtml(value) : value.replace(/[\r\n]+/g, " ");
+      return mode === "html" ? escapeHtml(value) : value.replace(/[\\r\\n]+/g, " ");
     })
     .join("");
 }
