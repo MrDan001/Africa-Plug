@@ -1,7 +1,7 @@
 import { createHmac } from "node:crypto";
-import { sendClientEmail } from "@/lib/emails/send";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
+import { queueAndSendCampaign, type CampaignQueueEntry } from "@/lib/emails/campaign-queue";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,6 +19,7 @@ function unsubscribeUrl(record: CmsRecord, email: string) {
   url.searchParams.set("token", token);
   return url.toString();
 }
+
 export async function POST(request: Request) {
   if (!await isAdminAuthenticated()) return Response.json({ error: "Please sign in to the admin workspace." }, { status: 401 });
   let input: { articleId?: string };
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
   if (!process.env.RESEND_API_KEY || !process.env.ADMIN_SESSION_SECRET) {
     return Response.json({ error: "Blog email delivery is not fully configured. Check RESEND_API_KEY, EMAIL_FROM and ADMIN_SESSION_SECRET." }, { status: 503 });
   }
+
   try {
     const [articlesResult, subscribersResult] = await Promise.all([
       cmsBridge<{ records?: CmsRecord[] }>({ action: "cms.list", module: "articles", status: "all", id: input.articleId }),
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
     if (!article) return Response.json({ error: "Only a published article can be emailed to Blog readers." }, { status: 409 });
     const articleDate = Date.parse(String(article.data?.publishedAt ?? ""));
     if (Number.isFinite(articleDate) && articleDate > Date.now()) return Response.json({ error: "This article is scheduled for a future date. It cannot be emailed yet." }, { status: 409 });
+
     const byEmail = new Map<string, CmsRecord>();
     for (const record of subscribersResult.records ?? []) {
       const data = record.data ?? {};
@@ -45,41 +48,40 @@ export async function POST(request: Request) {
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || data.lastArticleSlug === article.slug) continue;
       if (!byEmail.has(email)) byEmail.set(email, record);
     }
-    const recipients = Array.from(byEmail.entries());
-    if (!recipients.length) return Response.json({ ok: true, sent: 0, message: "There are no new confirmed Blog readers to notify for this article." });
-    if (recipients.length > 1000) return Response.json({ error: "This Blog list has more than 1,000 addresses. Contact support before sending a larger campaign." }, { status: 413 });
+
     const articleUrl = new URL("/blog/" + encodeURIComponent(article.slug || ""), origin()).toString();
     const articleTitle = article.title;
     const summary = String(article.data?.excerpt ?? "").slice(0, 1000);
-    let sent = 0;
-    for (let offset = 0; offset < recipients.length; offset += 100) {
-      const chunk = recipients.slice(offset, offset + 100);
-      for (const [email, record] of chunk) {
-        const optout = unsubscribeUrl(record, email);
-        const result = await sendClientEmail("blogNewArticle", email, {
-          articleTitle,
-          shortSummary: summary,
-          articleLink: articleUrl,
-          unsubscribeLink: optout,
-        }, { idempotencyKey: "tap-blog-article-" + article.id + "-" + record.id, headers: { "List-Unsubscribe": `<${optout}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } });
-        if (result.status !== "sent") {
-          return Response.json({ error: "Email provider rejected the campaign after " + sent + " messages: " + (result.error || result.status), sent }, { status: 502 });
-        }
-      }
-      sent += chunk.length;
-      const deliveredAt = new Date().toISOString();
-      await Promise.all(chunk.map(([, record]) => cmsBridge({
-        action: "cms.save",
-        module: "subscribers",
-        record: {
-          id: record.id, title: record.title, slug: record.slug, status: record.status,
-          data: { ...record.data, lastArticleSlug: article.slug, lastArticleNotifiedAt: deliveredAt },
-        },
-      })));
-    }
-    return Response.json({ ok: true, sent, message: "Article announcement sent to " + sent + " confirmed Blog reader(s)." });
+    const entries: CampaignQueueEntry[] = Array.from(byEmail.entries()).map(([email, record]) => {
+      const optout = unsubscribeUrl(record, email);
+      return {
+        campaign: "blog-article:" + article.slug,
+        to: email,
+        template: "blogNewArticle",
+        vars: { articleTitle, shortSummary: summary, articleLink: articleUrl, unsubscribeLink: optout },
+        idempotencyKey: "tap-blog-article-" + article.id + "-" + record.id,
+        headers: { "List-Unsubscribe": `<${optout}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
+        sourceUpdates: [{
+          module: "subscribers",
+          record: {
+            id: record.id, title: record.title, slug: record.slug, status: record.status,
+            data: { ...record.data, lastArticleSlug: article.slug, lastArticleNotifiedAt: "__EMAIL_SENT_AT__" },
+          },
+        }],
+      };
+    });
+
+    if (!entries.length) return Response.json({ ok: true, sent: 0, queued: 0, message: "There are no new confirmed Blog readers to notify for this article." });
+    const result = await queueAndSendCampaign(entries);
+    return Response.json({
+      ok: true,
+      ...result,
+      message: result.queued
+        ? `The article email campaign has started. ${result.sent} sent today; ${result.queued} queued for the next available daily send window.`
+        : `Article announcement sent to ${result.sent} confirmed Blog reader(s).`,
+    }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Blog reader campaign failed:", error instanceof Error ? error.message : "Unknown error");
-    return Response.json({ error: "Could not send the Blog reader email campaign." }, { status: 503 });
+    return Response.json({ error: "Could not queue the Blog reader email campaign." }, { status: 503 });
   }
 }

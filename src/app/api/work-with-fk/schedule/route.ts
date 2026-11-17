@@ -1,5 +1,4 @@
 // FILE PATH: src/app/api/work-with-fk/schedule/route.ts
-import { Resend } from "resend";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import {
   createSchedulerToken,
@@ -18,7 +17,7 @@ export const dynamic = "force-dynamic";
 const headers = { "Cache-Control": "no-store" };
 const fail = (error: string, status: number) => Response.json({ error }, { status, headers });
 
-/** Public: validates a private link and returns what the scheduler page needs. Never returns the applicant's email. */
+/** Legacy private scheduler endpoint retained for existing links. Current client and team emails use the Cal.com/payment flow. */
 export async function GET(request: Request) {
   const token = new URL(request.url).searchParams.get("token");
   try {
@@ -44,7 +43,6 @@ export async function POST(request: Request) {
   try { body = await request.json() as typeof body; }
   catch { return fail("Send a valid request.", 400); }
 
-  // Public path: the applicant confirms they have booked, using their private link.
   if (body.token !== undefined) {
     if (body.action !== "booked") return fail("Unknown action.", 400);
     try {
@@ -52,17 +50,15 @@ export async function POST(request: Request) {
       if (!access.ok) return fail(access.error, access.status);
       if (!access.application.data?.meetingBookedAt) {
         await saveApplicationData(access.application, { meetingBookedAt: new Date().toISOString() });
-        await recordServerEvent("meeting_booked", "Meeting booked (applicant confirmed)");
-        await notifyTeam(access.application.title);
+        await recordServerEvent("meeting_booked", "Meeting booked (legacy scheduler confirmation)");
       }
       return Response.json({ ok: true }, { headers });
     } catch (error) {
-      console.error("Meeting confirmation failed:", error instanceof Error ? error.message : "Unknown error");
-      return fail("We couldn't record that just now. Please try again or email the team.", 503);
+      console.error("Legacy scheduler booking confirmation failed:", error instanceof Error ? error.message : "Unknown error");
+      return fail("We couldn't record that just now. Please contact the team.", 503);
     }
   }
 
-  // Admin path.
   if (!await isAdminAuthenticated()) return fail("Please sign in to the admin workspace.", 401);
   if (typeof body.id !== "string" || !/^[0-9a-f-]{36}$/i.test(body.id)) return fail("This application ID is not valid.", 400);
   if (body.action !== "confirm-payment" && body.action !== "send-link") return fail("Choose a scheduler action.", 400);
@@ -93,26 +89,11 @@ export async function POST(request: Request) {
     return Response.json({
       ok: true,
       link,
-      emailNotification: "not-configured",
-      message: "Private scheduler link created for admin reference. Client booking is handled through the paid Cal.com flow.",
+      emailNotification: "disabled",
+      message: "Legacy scheduler link created for admin reference only. Current client booking and payment emails are handled by the Cal.com flow.",
     }, { headers });
   } catch (error) {
-    console.error("Scheduler action failed:", error instanceof Error ? error.message : "Unknown error");
+    console.error("Legacy scheduler action failed:", error instanceof Error ? error.message : "Unknown error");
     return fail("The scheduler could not be updated. Check the CMS connection and try again.", 503);
-  }
-}
-
-async function notifyTeam(applicantName: string) {
-  const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
-  if (!process.env.RESEND_API_KEY) return;
-  try {
-    await new Resend(process.env.RESEND_API_KEY).emails.send({
-      from: internalFrom,
-      to: [process.env.EMAIL_FK || "fk@theafricaplug.com"],
-      subject: `[Work With FK] Meeting booked: ${applicantName}`.slice(0, 200),
-      text: `${applicantName} has confirmed they booked a meeting through the private scheduler. Check the scheduling tool for the time.`,
-    });
-  } catch (error) {
-    console.error("Booking notification failed:", error instanceof Error ? error.message : "Unknown error");
   }
 }
