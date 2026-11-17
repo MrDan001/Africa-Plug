@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       if (!clientEmail) return NextResponse.json({ error: "Call payment has no customer email." }, { status: 500 });
       const sent = await sendClientEmail("callPaid", clientEmail, {
         firstName: session.metadata?.customer_name || session.customer_details?.name || "",
-        bookingLink: CAL_LINKS.call,
+        callBookingLink: CAL_LINKS.call,
       }, { idempotencyKey: "paid-fk-call-" + session.id });
       if (sent.status !== "sent") {
         console.error("30-minute call payment email failed:", sent.status, sent.error || "");
