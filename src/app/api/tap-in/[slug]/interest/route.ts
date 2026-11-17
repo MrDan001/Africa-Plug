@@ -36,7 +36,7 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
   if (!verified) return json({ error: "The security check could not be verified. Please refresh the page and try again." }, 400);
 
   const submittedAt = new Date().toISOString();
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app").replace(/\/+$/, "");
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com").replace(/\/+$/, "");
   const listingLink = `${siteUrl}/tap-in#${opportunity.slug}`;
 
   // 1. Save in the site admin first, so nothing is lost if an email is missed.
