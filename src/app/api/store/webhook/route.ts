@@ -130,9 +130,9 @@ export async function POST(request: Request) {
       console.error("Store order database has no valid service-role credential for the configured Supabase project.");
       return NextResponse.json({ error: "Order persistence is temporarily unavailable." }, { status: 500 });
     }
+    const database = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
     let storeOrderId = "";
     try {
-      const database = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
       const { data: existingOrder, error: existingOrderError } = await database.from("store_orders").select("status").eq("stripe_session_id", session.id).maybeSingle();
       if (existingOrderError) throw existingOrderError;
       if (existingOrder?.status === "refunded" || existingOrder?.status === "partially_refunded") {
@@ -215,7 +215,7 @@ export async function POST(request: Request) {
           const isPetTravel = /pet[-_]?travel[-_]?consultation/i.test(slug);
           const readyFile = typeof product?.data?.productFileReference === "string" && product.data.productFileReference.startsWith(slug + "/");
           const isReleasedGuide = !isPetTravel && product?.data?.availability === "available" && readyFile;
-          let sent;
+          let sent: Awaited<ReturnType<typeof sendClientEmail>> | undefined;
           if (isReleasedGuide && storeOrderId && serviceRoleKey) {
             const token = createHmac("sha256", serviceRoleKey).update(`${storeOrderId}:${slug}`).digest("hex");
             const { error: linkError } = await database.from("store_download_links").upsert({
