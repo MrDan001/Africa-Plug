@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = settings.siteTitle || "The Africa Plug | Africa Commercial Deal Consultant, Market Entry and Investment";
   const description = settings.siteDescription || "FK, Africa Commercial Deal Consultant, helps companies with market entry, regulatory approvals and commercial deals across Africa. Investment, business and entertainment from The Africa Plug.";
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://africa-plug.vercel.app"),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com"),
     title: { default: title, template: `%s | ${settings.siteTitle || "Africa Plug"}` },
     description,
     openGraph: {
@@ -28,6 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "The Africa Plug — Your connection to Africa" }],
     },
+    twitter: { card: "summary_large_image", title, description, images: ["/opengraph-image"] },
     icons: { icon: "/images/the-africa-plug-logo.jpg", apple: "/images/the-africa-plug-logo.jpg" },
   };
 }
