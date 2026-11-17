@@ -93,6 +93,9 @@ export default function StoreCartButton({ mobileFloating = false, validProductSl
   const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const currencies = new Set(items.map((item) => item.currency || "GBP"));
   const mixedCurrencies = currencies.size > 1;
+  const hasPetTravel = items.some((item) => /pet[-_]?travel[-_]?consultation/i.test(item.slug));
+  const petTravelOnly = hasPetTravel && items.length === 1;
+  const mixedServiceCart = hasPetTravel && !petTravelOnly;
   const cartCurrency = items[0]?.currency || "GBP";
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -172,11 +175,13 @@ export default function StoreCartButton({ mobileFloating = false, validProductSl
               <p className={"tapcart-note"}>
                 {mixedCurrencies
                   ? "Your cart contains different currencies. Remove products until only one currency remains to continue."
-                  : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Available guides download straight after payment. Preorders are emailed to you the moment they’re released."}
+                  : mixedServiceCart
+                    ? "Please check out the Pet Travel Consultation separately from guide purchases."
+                    : "Secure checkout is provided by Stripe. Prices are verified against the Store catalogue before payment. Available guides download straight after payment. Preorders are emailed to you the moment they’re released."}
               </p>
-              <label className="tapcart-preorder-consent"><input type="checkbox" checked={preorderConsent} onChange={(event) => setPreorderConsent(event.target.checked)} /><span>I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is.</span></label>
+              <label className="tapcart-preorder-consent"><input type="checkbox" checked={preorderConsent} onChange={(event) => setPreorderConsent(event.target.checked)} /><span>{petTravelOnly ? "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place." : "I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is."}</span></label>
               {checkoutError ? <p role="alert" className={"tapcart-error"}>{checkoutError}</p> : null}
-              <button type="button" className={"tapcart-checkout"} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies || !preorderConsent}>
+              <button type="button" className={"tapcart-checkout"} onClick={beginCheckout} disabled={checkingOut || mixedCurrencies || mixedServiceCart || !preorderConsent}>
                 {checkingOut ? "CONNECTING TO STRIPE…" : "CONTINUE TO SECURE CHECKOUT"} <span aria-hidden="true">→</span>
               </button>
               <button type="button" className={"tapcart-continue"} onClick={continueBrowsing}>CONTINUE BROWSING</button>
