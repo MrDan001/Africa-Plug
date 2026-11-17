@@ -39,19 +39,48 @@ export async function POST(request: Request) {
         .select("id,stripe_session_id,customer_email,product_slugs,status")
         .eq("stripe_payment_intent_id", paymentIntentId).maybeSingle();
       if (lookupError) throw lookupError;
-      if (!order) return NextResponse.json({ received: true, ignored: true, reason: "No matching Store order." });
+      let orderId = order?.id || "";
+      let orderSessionId = order?.stripe_session_id || "";
+      if (!orderId) {
+        // Stripe does not guarantee webhook event ordering. Recover the paid Store session
+        // so a refund arriving before checkout.session.completed cannot later become "paid".
+        const sessions = await getStripe().checkout.sessions.list({ payment_intent: paymentIntentId, limit: 1 });
+        const session = sessions.data.find((item) => item.metadata?.store === "africa-plug");
+        if (!session) return NextResponse.json({ received: true, ignored: true, reason: "No matching Store order." });
+        const productSlugs = (session.metadata?.product_slugs || "").split(",").filter(Boolean);
+        const lineItems = await getStripe().checkout.sessions.listLineItems(session.id, { limit: 100 });
+        const orderItems = lineItems.data.map((lineItem, index) => ({
+          slug: productSlugs[index] || "", description: lineItem.description || "", quantity: lineItem.quantity ?? 1,
+          amountTotal: lineItem.amount_total, currency: (lineItem.currency || session.currency || "gbp").toUpperCase(), priceId: lineItem.price?.id || "",
+        }));
+        const { data: recovered, error: recoverError } = await database.from("store_orders").upsert({
+          stripe_session_id: session.id, stripe_event_id: event.id, status: "refunded",
+          customer_email: session.customer_details?.email || session.customer_email || "",
+          stripe_payment_intent_id: paymentIntentId,
+          stripe_customer_id: typeof session.customer === "string" ? session.customer : session.customer?.id || "",
+          currency: (session.currency || "gbp").toUpperCase(), amount_total: session.amount_total ?? 0,
+          tax_amount: session.total_details?.amount_tax ?? 0, product_slugs: productSlugs, order_items: orderItems,
+          preorder_consent: session.metadata?.preorder_consent === "true",
+          preorder_consent_text: session.metadata?.preorder_consent_text || null,
+          preorder_consent_at: session.metadata?.preorder_consent_at || null,
+          checkout_completed_at: new Date(session.created * 1000).toISOString(), updated_at: new Date().toISOString(),
+        }, { onConflict: "stripe_session_id" }).select("id,stripe_session_id").single();
+        if (recoverError) throw recoverError;
+        orderId = recovered.id;
+        orderSessionId = recovered.stripe_session_id;
+      }
       const refundedAt = new Date().toISOString();
       const status = charge.refunded || charge.amount_refunded >= charge.amount ? "refunded" : "partially_refunded";
       const { error: updateError } = await database.from("store_orders").update({
         status,
         stripe_event_id: event.id,
         updated_at: refundedAt,
-      }).eq("id", order.id);
+      }).eq("id", orderId);
       if (updateError) throw updateError;
       const { error: revokeError } = await database.from("store_download_links")
-        .update({ expires_at: refundedAt }).eq("order_id", order.id);
+        .update({ expires_at: refundedAt }).eq("order_id", orderId);
       if (revokeError) throw revokeError;
-      const orderSlug = `stripe-${order.stripe_session_id}`.toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 180);
+      const orderSlug = `stripe-${orderSessionId}`.toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 180);
       try {
         const previous = await cmsBridge<{ records?: Array<{ id: string; title: string; slug: string | null; status: string; data?: Record<string, unknown> }> }>({ action: "cms.list", module: "enquiries", slug: orderSlug });
         const existing = previous.records?.find((record) => record.slug === orderSlug);
