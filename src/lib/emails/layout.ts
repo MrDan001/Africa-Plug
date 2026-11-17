@@ -49,7 +49,7 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
         throw new Error(`Email is missing a value for ${key}.`);
       }
       if (isLinkKey(key)) {
-        if (!/^https?:\\/\\//i.test(value)) throw new Error(`Email value for ${key} must be an http(s) URL.`);
+        if (!/^https?:\/\//i.test(value)) throw new Error(`Email value for ${key} must be an http(s) URL.`);
         if (key === "paymentLink") {
           return mode === "html"
             ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${PAYMENT_LINK_LABEL}</a>`
@@ -57,7 +57,7 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
         }
         return mode === "html" ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${escapeHtml(value)}</a>` : value;
       }
-      return mode === "html" ? escapeHtml(value) : value.replace(/[\\r\\n]+/g, " ");
+      return mode === "html" ? escapeHtml(value) : value.replace(/[\r\n]+/g, " ");
     })
     .join("");
 }
