@@ -1,4 +1,5 @@
 import { cmsBridge } from "@/lib/cms-bridge";
+import { sendClientEmail } from "@/lib/emails/send";
 import { findPublicOpportunityBySlug } from "@/lib/tap-in/opportunities";
 import { interestSchema } from "@/lib/tap-in/forms";
 import { sendTeamEmail } from "@/lib/tap-in/email";
@@ -104,12 +105,11 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
       ["Timeframe", input.timeframe || "Not provided"],
       ["Agreed to Privacy Policy, Terms and due diligence", "Yes"],
     ],
-    autoReply: {
-      to: input.email,
-      subject: `Thank you for your interest in ${opportunity.title}`,
-      text: `Thank you for your interest in ${opportunity.title}. The Africa Plug team will be in touch if it’s a fit.`,
-    },
+
   });
+
+  const clientEmail = await sendClientEmail("tapInterestExpressed", input.email, { firstName: input.name, opportunityName: opportunity.title });
+  if (clientEmail.status !== "sent") console.error("T.A.P IN interest confirmation email failed:", clientEmail.status, clientEmail.error || "");
 
   return json({ ok: true });
 }
