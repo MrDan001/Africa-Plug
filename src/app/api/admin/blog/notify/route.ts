@@ -63,10 +63,8 @@ export async function POST(request: Request) {
         headers: { "List-Unsubscribe": `<${optout}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
         sourceUpdates: [{
           module: "subscribers",
-          record: {
-            id: record.id, title: record.title, slug: record.slug, status: record.status,
-            data: { ...record.data, lastArticleSlug: article.slug, lastArticleNotifiedAt: "__EMAIL_SENT_AT__" },
-          },
+          record: { id: record.id },
+          patch: { lastArticleSlug: article.slug, lastArticleNotifiedAt: "__EMAIL_SENT_AT__" },
         }],
       };
     });

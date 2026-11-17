@@ -47,10 +47,8 @@ export async function POST(request: Request) {
         headers: { "List-Unsubscribe": `<${optout}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
         sourceUpdates: [{
           module: "subscribers",
-          record: {
-            id: record.id, title: record.title, slug: record.slug, status: record.status,
-            data: { ...record.data, lastOpportunityAlertSlug: slug, lastOpportunityAlertAt: "__EMAIL_SENT_AT__" },
-          },
+          record: { id: record.id },
+          patch: { lastOpportunityAlertSlug: slug, lastOpportunityAlertAt: "__EMAIL_SENT_AT__" },
         }],
       };
     });
