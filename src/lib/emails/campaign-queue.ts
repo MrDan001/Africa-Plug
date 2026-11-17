@@ -62,7 +62,14 @@ export async function processEmailCampaignQueue() {
       await saveQueue(record.id, data.campaign, "sent", { ...data, sentAt, sentDay: today, lastError: undefined });
       for (const update of data.sourceUpdates ?? []) {
         try {
-          await cmsBridge({ action: "cms.save", module: update.module, record: update.record });
+          const sourceData = Object.fromEntries(Object.entries(update.record.data).map(([key, value]) =>
+            [key, value === "__EMAIL_SENT_AT__" ? sentAt : value]
+          ));
+          await cmsBridge({
+            action: "cms.save",
+            module: update.module,
+            record: { ...update.record, data: sourceData },
+          });
         } catch (error) {
           console.error("Email campaign source record could not be marked as notified:", error instanceof Error ? error.message : "Unknown error");
         }
