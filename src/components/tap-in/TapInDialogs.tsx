@@ -205,6 +205,8 @@ export function SubmitOpportunityDialog({ onClose }: { onClose: () => void }) {
 
 /* Opportunity alerts (inline band) */
 export function AlertsSignup() {
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const { widgetRef, token } = useTurnstile(siteKey);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
@@ -217,9 +219,10 @@ export function AlertsSignup() {
     setError("");
     const data = new FormData(event.currentTarget);
     try {
-      const response = await fetch("/api/tap-in/alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), website: data.get("website") }) });
-      const result = (await response.json()) as { ok?: boolean; error?: string };
+      const response = await fetch("/api/tap-in/alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: data.get("email"), website: data.get("website"), turnstileToken: token }) });
+      const result = (await response.json()) as { ok?: boolean; error?: string; message?: string };
       if (!response.ok || !result.ok) { setError(result.error || "We couldn’t sign you up. Please try again."); return; }
+      setDoneMessage(result.message || "You’re signed up. We’ll email you when a new opportunity is published.");
       setDone(true);
     } catch {
       setError("We couldn’t connect. Please try again.");
@@ -235,8 +238,10 @@ export function AlertsSignup() {
         <label className="ti-sr" htmlFor="ti-alerts-email">Email address</label>
         <input id="ti-alerts-email" name="email" type="email" required maxLength={254} autoComplete="email" placeholder="EMAIL ADDRESS" />
         <Honeypot />
-        <button className="ti-btn ti-btn-primary" type="submit" disabled={busy}>{busy ? "SIGNING UP…" : "SIGN UP"}<span aria-hidden="true">→</span></button>
+        <button className="ti-btn ti-btn-primary" type="submit" disabled={busy || !siteKey || !token}>{busy ? "SIGNING UP…" : "SIGN UP"}<span aria-hidden="true">→</span></button>
       </div>
+      <div ref={widgetRef} />
+      {!siteKey ? <p className="ti-error" role="alert">Security verification is not configured yet.</p> : null}
       {error ? <p className="ti-error" role="alert">{error}</p> : null}
       <p className="ti-alerts-fine">Unsubscribe at any time. <a href="/privacy">Privacy Policy</a>.</p>
     </form>
