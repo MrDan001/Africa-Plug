@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { Resend } from "resend";
+import { sendClientEmail } from "@/lib/emails/send";
 import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 
 export const runtime = "nodejs";
@@ -61,22 +61,11 @@ export async function GET(request: Request) {
           data: { ...record.data, subscriptionStatus: "active", confirmedAt, confirmationExpiresAt: 0 },
         },
       });
-      const apiKey = process.env.RESEND_API_KEY;
-      const from = process.env.EMAIL_FROM;
-      if (apiKey && from) {
-        const optout = new URL("/api/blog/subscribe/unsubscribe", origin());
-        optout.searchParams.set("id", record.id);
-        optout.searchParams.set("token", unsubscribeToken(record.id, email));
-        const resend = new Resend(apiKey);
-        const sent = await resend.emails.send({
-          from, to: [email], replyTo: process.env.EMAIL_CONNECT || "connect@theafricaplug.com",
-          subject: "You're subscribed to The Blog",
-          text: "You're subscribed. We'll email you when a new article is live.\n\nYou can unsubscribe from The Blog at any time: " + optout.toString() + "\n\nThe Africa Plug",
-          html: "<div style='background:#f8f5ef;padding:28px 16px;font-family:Arial,sans-serif;color:#25221e'><div style='max-width:560px;margin:0 auto;background:#fffdfa;border:1px solid #ded8cf;padding:30px'><p style='font-size:10px;font-weight:800;letter-spacing:3px;color:#b65e73'>THE BLOG · THE AFRICA PLUG</p><h1 style='font:700 30px/1.1 Georgia,serif'>You're subscribed.</h1><p style='font-size:14px;line-height:1.7'>You're subscribed. We'll email you when a new article is live.</p><p style='font-size:12px;color:#777169;line-height:1.6'>You can unsubscribe from The Blog at any time using <a href='" + optout.toString() + "' style='color:#a64b64'>this link</a>. This subscription is separate from other Africa Plug email lists.</p></div></div>",
-          headers: { "List-Unsubscribe": "<" + optout.toString() + ">", "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
-        });
-        if (sent.error) console.error("Blog subscription confirmation email failed:", sent.error.message);
-      }
+      const optout = new URL("/api/blog/subscribe/unsubscribe", origin());
+      optout.searchParams.set("id", record.id);
+      optout.searchParams.set("token", unsubscribeToken(record.id, email));
+      const sent = await sendClientEmail("blogSubscribed", email, { unsubscribeLink: optout.toString() }, { idempotencyKey: "blog-subscribed-" + record.id });
+      if (sent.status !== "sent") console.error("Blog subscription confirmation email failed:", sent.status, sent.error || "");
       return page("You're subscribed", "You're subscribed. We'll email you when a new article is live.", true);
     }
     return page("You're already subscribed", "You're subscribed. We'll email you when a new article is live.", true);
