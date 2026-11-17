@@ -419,8 +419,12 @@ export default function TapInManager() {
                           <Link className="tapin-soft" href={`/tap-in/${item.slug}`} target="_blank" rel="noreferrer"><Icon name="eye" size={14} /> View</Link>
                         ) : null}
                         {item.status === "draft" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Open</button> : null}
-                        {item.status === "live" ? <button type="button" className="tapin-soft" onClick={() => void sendOpportunityAlert(item)}><Icon name="send" size={14} /> Email subscribers</button>
-                        <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "closed")}><Icon name="x" size={14} /> Close</button> : null}
+                        {item.status === "live" ? (
+                          <>
+                            <button type="button" className="tapin-soft" onClick={() => void sendOpportunityAlert(item)}><Icon name="send" size={14} /> Email subscribers</button>
+                            <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "closed")}><Icon name="x" size={14} /> Close</button>
+                          </>
+                        ) : null}
                         {item.status === "closed" ? <button type="button" className="tapin-solid" onClick={() => void changeStatus(item, "live")}><Icon name="send" size={14} /> Reopen</button> : null}
                         {item.status === "closed" ? <button type="button" className="tapin-ghost" onClick={() => void changeStatus(item, "archived")}>Archive</button> : null}
                         {item.status === "archived" ? <button type="button" className="tapin-ghost" onClick={() => { if (!item.country?.trim()) { setEditingId(item.id); setDraft({ ...toDraft(item), status: "draft" }); setNotice({ tone: "success", text: "Add the missing country (and region if known), then save this listing as a draft to complete its restoration." }); setView("editor"); window.scrollTo({ top: 0 }); } else { void changeStatus(item, "draft"); } }}>Restore</button> : null}
