@@ -76,7 +76,7 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
   }
 
   const referer = request.headers.get("referer") ?? "";
-  const requestUrl = referer ? new URL(referer, "https://africa-plug.vercel.app") : null;
+  const requestUrl = referer ? new URL(referer, "https://theafricaplug.com") : null;
   const cmsModule = kind === "work" ? "applications" : "enquiries";
   const status = kind === "work" ? "review-required" : "new";
   const title = `${labels[kind]} — ${lead.name}`.slice(0, 240);
