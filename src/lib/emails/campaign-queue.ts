@@ -7,7 +7,8 @@ import type { EmailVarValues } from "@/lib/emails/layout";
 
 type SourceUpdate = {
   module: CmsModule;
-  record: Pick<CmsRecord, "id" | "title" | "slug" | "status"> & { data: Record<string, unknown> };
+  record: { id: string };
+  patch: Record<string, unknown>;
 };
 export type CampaignQueueEntry = {
   campaign: string; to: string; template: EmailId;
@@ -40,6 +41,23 @@ async function saveQueue(id: string, campaign: string, status: string, data: Que
   });
 }
 
+async function sourceStillConsented(updates: SourceUpdate[]) {
+  for (const update of updates) {
+    const result = await cmsBridge<{ records?: CmsRecord[] }>({
+      action: "cms.list", module: update.module, status: "all", id: update.record.id,
+    });
+    const current = (result.records ?? []).find((record) => record.id === update.record.id);
+    if (!current) return false;
+    if (update.module === "subscribers") {
+      if (current.status !== "active" || current.data?.consent !== true || current.data?.subscriptionStatus === "unsubscribed") return false;
+    }
+    if (update.module === "enquiries") {
+      if (current.data?.waitlistEmailConsent !== true || current.data?.waitlistUnsubscribedAt || current.data?.waitlistStatus === "unsubscribed") return false;
+    }
+  }
+  return true;
+}
+
 export async function processEmailCampaignQueue() {
   const records = await listQueue();
   const now = new Date();
@@ -52,8 +70,14 @@ export async function processEmailCampaignQueue() {
     .slice(0, allowance);
   let sent = 0;
   let failed = 0;
+  let skipped = 0;
   for (const record of due) {
     const data = record.data as unknown as QueueData;
+    if (data.sourceUpdates?.length && !await sourceStillConsented(data.sourceUpdates)) {
+      await saveQueue(record.id, data.campaign, "skipped", { ...data, lastError: "Recipient withdrew consent before the scheduled send." });
+      skipped++;
+      continue;
+    }
     const result = await sendClientEmail(data.template, data.to, data.vars, {
       idempotencyKey: data.idempotencyKey, headers: data.headers,
     });
@@ -62,13 +86,21 @@ export async function processEmailCampaignQueue() {
       await saveQueue(record.id, data.campaign, "sent", { ...data, sentAt, sentDay: today, lastError: undefined });
       for (const update of data.sourceUpdates ?? []) {
         try {
-          const sourceData = Object.fromEntries(Object.entries(update.record.data).map(([key, value]) =>
+          const currentResult = await cmsBridge<{ records?: CmsRecord[] }>({
+            action: "cms.list", module: update.module, status: "all", id: update.record.id,
+          });
+          const current = (currentResult.records ?? []).find((item) => item.id === update.record.id);
+          if (!current) continue;
+          const patch = Object.fromEntries(Object.entries(update.patch).map(([key, value]) =>
             [key, value === "__EMAIL_SENT_AT__" ? sentAt : value]
           ));
           await cmsBridge({
             action: "cms.save",
             module: update.module,
-            record: { ...update.record, data: sourceData },
+            record: {
+              id: current.id, title: current.title, slug: current.slug, status: current.status,
+              data: { ...current.data, ...patch },
+            },
           });
         } catch (error) {
           console.error("Email campaign source record could not be marked as notified:", error instanceof Error ? error.message : "Unknown error");
@@ -85,7 +117,7 @@ export async function processEmailCampaignQueue() {
   }
   const refreshed = await listQueue();
   return {
-    sent, failed,
+    sent, failed, skipped,
     sentToday: sentToday + sent,
     remaining: refreshed.filter((r) => r.status === "queued").length,
     dailyLimit: DAILY_LIMIT,
