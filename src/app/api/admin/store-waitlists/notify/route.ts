@@ -76,13 +76,11 @@ export async function POST(request: Request) {
 
     let origin = "https://theafricaplug.com";
     try { origin = new URL(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || origin).origin; } catch { /* use the production site */ }
-    const summary = String(product.data?.summary || product.data?.description || "The product is now available from The Africa Plug.").slice(0, 1200);
     const productUrl = new URL("/store/" + product.slug, origin).toString();
     const entries: CampaignQueueEntry[] = recipients.map(([email, rows]) => {
       const primary = rows[0];
       const optOut = unsubscribeUrl(primary, email, origin);
       const rowHash = createHash("sha256").update(rows.map((row) => row.id).sort().join("|")).digest("hex").slice(0, 40);
-      const notifiedAt = new Date().toISOString();
       return {
         campaign: "store-waitlist:" + product.slug,
         to: email,
