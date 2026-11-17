@@ -35,6 +35,8 @@ export async function POST(request: Request) {
       if (!/^[A-Z]{3}$/.test(product.currency)) throw new Error("A product currency is invalid.");
       return { product, quantity: item.quantity };
     }));
+    const isPetTravel = items.some(({ product }) => /pet[-_]?travel[-_]?consultation/i.test(product.slug));
+    if (isPetTravel && items.length !== 1) return NextResponse.json({ error: "Please check out the Pet Travel Consultation separately from guide purchases." }, { status: 400 });
     const currencies = new Set(items.map(({ product }) => product.currency.toLowerCase()));
     if (currencies.size !== 1) return NextResponse.json({ error: "Please check out products in the same currency together." }, { status: 400 });
 
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
       automatic_tax: { enabled: process.env.STRIPE_TAX_ENABLED === "true" },
       allow_promotion_codes: true,
       client_reference_id: crypto.randomUUID(),
-      metadata: { store: "africa-plug", product_slugs: items.map(({ product }) => product.slug).join(",").slice(0, 500), preorder_consent: "true", preorder_consent_at: new Date().toISOString(), preorder_consent_text: "I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is." },
+      metadata: { store: "africa-plug", product_slugs: items.map(({ product }) => product.slug).join(",").slice(0, 500), preorder_consent: isPetTravel ? "false" : "true", preorder_consent_at: new Date().toISOString(), preorder_consent_text: isPetTravel ? "" : "I agree that my download is supplied as soon as it is available and understand that I lose my 14 day right to cancel once it is.", service_consent: isPetTravel ? "true" : "false", service_consent_text: isPetTravel ? "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place." : "" },
       success_url: `${origin}/store/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/store/checkout/cancel`,
     });
