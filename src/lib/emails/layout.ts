@@ -8,6 +8,7 @@ export function escapeHtml(value: string) {
 export const LINK_KEYS = [
   "paymentLink",
   "bookingLink",
+  "callBookingLink",
   "downloadLink",
   "productLink",
   "unsubscribeLink",
@@ -50,6 +51,11 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
       }
       if (isLinkKey(key)) {
         if (!/^https?:\/\//i.test(value)) throw new Error(`Email value for ${key} must be an http(s) URL.`);
+        if (key === "callBookingLink") {
+          return mode === "html"
+            ? `<a href="${escapeHtml(value)}" style="${linkStyle}">Book your 30-minute call with FK</a>`
+            : `Book your 30-minute call with FK: ${value}`;
+        }
         if (key === "paymentLink") {
           return mode === "html"
             ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${PAYMENT_LINK_LABEL}</a>`
