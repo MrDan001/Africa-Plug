@@ -6,9 +6,6 @@ import { cmsBridge, type CmsRecord } from "@/lib/cms-bridge";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function escapeHtml(value: string) {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
 
 function sameProduct(record: CmsRecord, product: CmsRecord) {
   const data = record.data ?? {};
