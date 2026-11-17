@@ -68,7 +68,6 @@ function useSubmit(send: (form: HTMLFormElement, token: string) => Promise<Respo
       const response = await send(event.currentTarget, token);
       const result = (await response.json()) as { ok?: boolean; error?: string; message?: string };
       if (!response.ok || !result.ok) { setError(result.error || "We couldn’t send that. Please try again."); return; }
-      setDoneMessage(result.message || "You’re signed up. We’ll email you when a new opportunity is published.");
       setDone(true);
     } catch {
       setError("We couldn’t connect to the form service. Please email connect@theafricaplug.com directly.");
