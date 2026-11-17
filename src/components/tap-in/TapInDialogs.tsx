@@ -66,8 +66,9 @@ function useSubmit(send: (form: HTMLFormElement, token: string) => Promise<Respo
     setError("");
     try {
       const response = await send(event.currentTarget, token);
-      const result = (await response.json()) as { ok?: boolean; error?: string };
+      const result = (await response.json()) as { ok?: boolean; error?: string; message?: string };
       if (!response.ok || !result.ok) { setError(result.error || "We couldn’t send that. Please try again."); return; }
+      setDoneMessage(result.message || "You’re signed up. We’ll email you when a new opportunity is published.");
       setDone(true);
     } catch {
       setError("We couldn’t connect to the form service. Please email connect@theafricaplug.com directly.");
@@ -207,6 +208,7 @@ export function AlertsSignup() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [doneMessage, setDoneMessage] = useState("You’re signed up. We’ll email you when a new opportunity is published.");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -226,7 +228,7 @@ export function AlertsSignup() {
     }
   }
 
-  if (done) return <p className="ti-alerts-done" role="status" aria-live="polite">You’re signed up. We’ll email you when a new opportunity is published.</p>;
+  if (done) return <p className="ti-alerts-done" role="status" aria-live="polite">{doneMessage}</p>;
   return (
     <form className="ti-alerts-form" onSubmit={onSubmit}>
       <div className="ti-alerts-row">
