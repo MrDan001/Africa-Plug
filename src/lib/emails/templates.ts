@@ -103,13 +103,14 @@ export const EMAIL_TEMPLATES: Record<EmailId, Template> = {
   // 30 minute call with FK
   callPaid: {
     number: 6,
-    subject: "Payment confirmed: book your call with FK",
+    subject: "Payment successful: book your 30-minute call with FK",
     named: true,
     body: [
-      "Thank you. Your payment for the 30 minute call with FK is confirmed.",
-      "If you haven't chosen your time yet, book it here:",
-      "{{bookingLink}}",
-      "This link is for you only, so please don't share it.",
+      "Thank you. Your payment for the 30-minute call with FK has been received successfully.",
+      "Choose your preferred date and time using the booking button below:",
+      "{{callBookingLink}}",
+      "If you leave this page, close your browser or lose your internet connection before booking, simply return to this email and use the booking button. You do not need to make another payment.",
+      "This booking link is for you only, so please do not share it.",
       "You can reschedule once, free of charge, with at least 48 hours' notice. Missed sessions can't be refunded or rescheduled.",
     ],
   },
