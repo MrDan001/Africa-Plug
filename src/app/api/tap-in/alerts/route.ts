@@ -25,6 +25,7 @@ export async function POST(request: Request) {
   const slug = `tap-in-alerts-${email.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}`.slice(0, 170);
   const now = new Date().toISOString();
 
+  let subscriberId = "";
   try {
     const saved = await cmsBridge<{ record: { id: string } }>({
       action: "cms.save",
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
         data: { email, list: "tap-in-alerts", source: "T.A.P IN opportunity alerts", consent: true, consentAt: now, consentPage: "/tap-in", subscribedAt: now },
       },
     });
+    subscriberId = saved.record.id;
   } catch (error) {
     console.error("T.A.P IN alerts sign up could not be stored:", error instanceof Error ? error.message : "Unknown error");
     return json({ error: "We couldn’t sign you up right now. Please try again shortly." }, 503);
@@ -46,12 +48,12 @@ export async function POST(request: Request) {
     console.error("T.A.P IN alerts confirmation email is not configured.");
     return json({ ok: true, emailNotification: "not-configured" });
   }
-  const token = createHmac("sha256", secret).update(saved.record.id + ":" + email).digest("hex");
+  const token = createHmac("sha256", secret).update(subscriberId + ":" + email).digest("hex");
   const origin = new URL(process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "https://theafricaplug.com").origin;
   const unsubscribe = new URL("/api/tap-in/alerts/unsubscribe", origin);
-  unsubscribe.searchParams.set("id", saved.record.id);
+  unsubscribe.searchParams.set("id", subscriberId);
   unsubscribe.searchParams.set("token", token);
-  const sent = await sendClientEmail("tapAlertsSignup", email, { unsubscribeLink: unsubscribe.toString() }, { idempotencyKey: "tap-alerts-signup-" + saved.record.id });
+  const sent = await sendClientEmail("tapAlertsSignup", email, { unsubscribeLink: unsubscribe.toString() }, { idempotencyKey: "tap-alerts-signup-" + subscriberId });
   if (sent.status !== "sent") console.error("T.A.P IN alerts confirmation email failed:", sent.status, sent.error || "");
   return json({ ok: true });
 }
