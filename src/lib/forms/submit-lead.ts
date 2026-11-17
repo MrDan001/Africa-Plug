@@ -174,6 +174,17 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
   const from = process.env.EMAIL_FROM;
   const internalFrom = process.env.EMAIL_INTERNAL_FROM || "The Africa Plug Notifications <notifications@theafricaplug.com>";
   const to = kind === "ask" ? (process.env.EMAIL_ASK || "ask@theafricaplug.com") : kind === "work" ? (process.env.EMAIL_FK || "fk@theafricaplug.com") : (process.env.EMAIL_CONNECT || "connect@theafricaplug.com");
+  if (!isStoreWaitlist) {
+    const template = kind === "ask" ? "askReceived"
+      : kind === "partner" ? "partnerReceived"
+      : kind === "work" ? "applicationReceived"
+      : "contactReceived";
+    const result = await sendClientEmail(template, lead.email, { firstName: lead.name });
+    if (result.status !== "sent") {
+      console.error("Website enquiry confirmation was not sent:", result.status, result.error || "");
+    }
+  }
+
   if (!apiKey || !from) {
     // The submission is safely persisted in the admin inbox even if email delivery isn't configured yet.
     return Response.json({ ok: true, emailNotification: "not-configured" });
@@ -194,16 +205,6 @@ export async function handleLeadSubmission(request: Request, kind: LeadKind) {
     console.error("Email notification could not be sent:", error instanceof Error ? error.message : "Unknown error");
   }
 
-  if (!isStoreWaitlist) {
-    const template = kind === "ask" ? "askReceived"
-      : kind === "partner" ? "partnerReceived"
-      : kind === "work" ? "applicationReceived"
-      : "contactReceived";
-    const result = await sendClientEmail(template, lead.email, { firstName: lead.name });
-    if (result.status !== "sent") {
-      console.error("Website enquiry confirmation was not sent:", result.status, result.error || "");
-    }
-  }
   // The lead is already saved; an email failure must not discard the submission.
   return Response.json({ ok: true });
 }
