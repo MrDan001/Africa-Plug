@@ -23,6 +23,7 @@ export type EmailVarValues = Partial<Record<EmailVarKey, string>>;
 
 const linkStyle = "color:#d51f6d;font-weight:700;word-break:break-all";
 const TOKEN = /(\{\{[a-zA-Z]+\}\})/g;
+const PAYMENT_LINK_LABEL = "Complete your secure payment here";
 
 function isLinkKey(key: string): key is LinkKey {
   return (LINK_KEYS as readonly string[]).includes(key);
@@ -46,6 +47,11 @@ export function fill(line: string, vars: EmailVarValues, mode: "text" | "html") 
       }
       if (isLinkKey(key)) {
         if (!/^https?:\/\//i.test(value)) throw new Error(`Email value for ${key} must be an http(s) URL.`);
+        if (key === "paymentLink") {
+          return mode === "html"
+            ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${PAYMENT_LINK_LABEL}</a>`
+            : `${PAYMENT_LINK_LABEL}: ${value}`;
+        }
         return mode === "html" ? `<a href="${escapeHtml(value)}" style="${linkStyle}">${escapeHtml(value)}</a>` : value;
       }
       return mode === "html" ? escapeHtml(value) : value.replace(/[\r\n]+/g, " ");
