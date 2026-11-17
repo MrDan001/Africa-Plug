@@ -32,6 +32,18 @@ const COUNTRY_CODES = [
 ] as const;
 
 const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
+// Retain the Africa-only list for existing T.A.P IN interfaces and filters.
+export const AFRICAN_COUNTRIES = [
+  "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde",
+  "Cameroon", "Central African Republic", "Chad", "Comoros", "Congo (Democratic Republic)",
+  "Congo (Republic)", "Côte d’Ivoire", "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea",
+  "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya",
+  "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius",
+  "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda", "São Tomé and Príncipe",
+  "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan",
+  "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe",
+] as const;
+
 export const COUNTRIES = COUNTRY_CODES
   .map((code) => countryNames.of(code) ?? code)
   .filter((name) => name.length > 0)
