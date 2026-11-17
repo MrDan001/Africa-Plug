@@ -50,6 +50,7 @@ export const opportunitySchema = z.object({
 export const alertsSchema = z.object({
   email,
   website: z.string().max(300).optional().or(z.literal("")),
+  turnstileToken: z.string().max(5000).optional().or(z.literal("")),
 });
 
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
