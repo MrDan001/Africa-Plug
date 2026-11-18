@@ -37,7 +37,7 @@ async function hasValidAdminSession(request: NextRequest) {
 }
 
 function privateEntryPath() {
-  const configured = process.env.ADMIN_ENTRY_PATH?.trim().replace(/^\\/+|\\/+$/g, "");
+  const configured = process.env.ADMIN_ENTRY_PATH?.trim();
   // Fail closed if the private entry path is missing or malformed.
   if (!configured || !/^[a-zA-Z0-9_-]{24,120}$/.test(configured)) return null;
   return `/${configured}`;
