@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = settings.siteDescription || "FK, Africa Commercial Deal Consultant, helps companies with market entry, regulatory approvals and commercial deals across Africa. Investment, business and entertainment from The Africa Plug.";
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://theafricaplug.com"),
-    title: { default: title, template: `%s | ${settings.siteTitle || "Africa Plug"}` },
+    title: { default: title, template: "%s | The Africa Plug" },
     description,
     openGraph: {
       title,
