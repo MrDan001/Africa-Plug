@@ -17,7 +17,7 @@ export function getStripeWebhookSecrets(): string[] {
 }
 
 export function getStripeWebhookSecret(): string {
-  return getStripeWebhookSecrets()[0];
+  return getStripeWebhookSecrets()[0]!;
 }
 
 export function getPublicSiteUrl(request: Request): string {
