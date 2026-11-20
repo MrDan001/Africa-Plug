@@ -123,6 +123,8 @@ export function cmsRecordToPublicProduct(record: CmsRecord) {
     externalUrl: /^https:\/\//i.test(stringValue(data.externalUrl).trim()) ? stringValue(data.externalUrl).trim() : "",
     currency: stringValue(data.currency, "GBP").toUpperCase(),
     price: Number.isFinite(rawPrice) && rawPrice >= 0 ? rawPrice : 0,
+    releaseMonth: stringValue(data.releaseMonth),
+    whatsInside: stringArray(data.whatsInside),
     downloadReady: typeof data.productFileReference === "string"
       && data.productFileReference.startsWith(record.slug + "/")
       && typeof data.productFileUploadedAt === "string"
