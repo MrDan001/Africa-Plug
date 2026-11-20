@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { AFRICAN_COUNTRIES } from "@/lib/work-with-fk/application-schema";
+import { COUNTRY_OPTIONS } from "@/lib/work-with-fk/application-schema";
 import { useTurnstile } from "./useTurnstile";
 import "./work-with-fk.css";
 
@@ -66,7 +66,7 @@ export default function CallForm() {
             <span>Country you’re based in <b>*</b></span>
             <select name="country" defaultValue="" required>
               <option value="" disabled>Select a country</option>
-              {AFRICAN_COUNTRIES.map((country) => <option key={country} value={country}>{country}</option>)}
+              {COUNTRY_OPTIONS.map((country) => <option key={country.code} value={country.code}>{country.name}</option>)}
             </select>
           </label>
           <label className="enquiry-full-width">
