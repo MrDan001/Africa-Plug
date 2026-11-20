@@ -38,6 +38,7 @@ export async function POST(request: Request) {
   const message = typeof body.message === "string" ? body.message.trim() : "";
   const token = typeof body.turnstileToken === "string" ? body.turnstileToken : "";
   if (body.website) return NextResponse.json({ ok: true, checkoutUrl: null });
+  if (!process.env.STRIPE_WEBHOOK_SECRET) return NextResponse.json({ error: "Secure payment confirmation is not fully configured yet. Please try again later." }, { status: 503 });
   if (name.length < 2 || name.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || phone.length > 50 || message.length < 10 || message.length > 5000) {
     return NextResponse.json({ error: "Please complete your name, a valid email address and your travel details." }, { status: 400 });
   }
@@ -85,7 +86,7 @@ export async function POST(request: Request) {
         customer_message: message.slice(0, 500),
         product_slug: PET_TRAVEL_SLUG,
         service_consent: "true",
-        service_consent_text: "I agree to the Privacy Policy and Terms and understand this is a paid consultation service.",
+        service_consent_text: "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place.",
         service_consent_at: submittedAt,
       },
       payment_intent_data: { metadata: { service: "pet-travel-consultation", enquiry_id: enquiryId } },
