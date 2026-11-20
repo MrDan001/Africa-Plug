@@ -28,6 +28,7 @@ declare global {
 
 export default function EnquiryForm({ kind = "contact", opportunityName, modal = false, defaultArea = "", storeEnquiryTitle, storeWaitlist = false, storeProductId = "", storeProductSlug = "" }: { kind?: Kind; opportunityName?: string; modal?: boolean; defaultArea?: string; storeEnquiryTitle?: string; storeWaitlist?: boolean; storeProductId?: string; storeProductSlug?: string }) {
   const form = config[kind];
+  const isPetTravelCheckout = !storeWaitlist && storeProductSlug === "pet-travel-consultation";
   const publicReplyEmail = kind === "ask" ? "ask@theafricaplug.com" : "connect@theafricaplug.com";
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const widgetRef = useRef<HTMLDivElement>(null);
@@ -80,14 +81,22 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
     if (opportunityName) data.opportunityName = opportunityName;
 
     try {
-      const response = await fetch(form.endpoint, {
+      const response = await fetch(isPetTravelCheckout ? "/api/store/pet-travel/checkout" : form.endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const result = await response.json() as { ok?: boolean; error?: string };
+      const result = await response.json() as { ok?: boolean; error?: string; checkoutUrl?: string | null };
       if (!response.ok || !result.ok) {
         setNotice({ ok: false, text: result.error || "We couldn't send your enquiry. Please try again." });
+        return;
+      }
+      if (isPetTravelCheckout) {
+        if (!result.checkoutUrl) {
+          setNotice({ ok: false, text: "We couldn't open secure checkout. Please try again." });
+          return;
+        }
+        window.location.assign(result.checkoutUrl);
         return;
       }
       currentForm.reset();
@@ -123,8 +132,8 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
     <section className={`enquiry-panel${modal ? " enquiry-panel-modal" : ""}`}>
       <header className="enquiry-panel-heading">
         <p className="standard-eyebrow">THE AFRICA PLUG</p>
-        <h2>{storeWaitlist ? `Join the waitlist for ${storeEnquiryTitle}` : storeEnquiryTitle ? `Enquire about ${storeEnquiryTitle}` : form.title}</h2>
-        <p>{storeWaitlist ? "Leave your details and we will let you know when this guide is ready." : storeEnquiryTitle ? "Send FK a few details and she will follow up by email." : form.description}</p>
+        <h2>{storeWaitlist ? `Join the waitlist for ${storeEnquiryTitle}` : isPetTravelCheckout ? `Book ${storeEnquiryTitle}` : storeEnquiryTitle ? `Enquire about ${storeEnquiryTitle}` : form.title}</h2>
+        <p>{storeWaitlist ? "Leave your details and we will let you know when this guide is ready." : isPetTravelCheckout ? "Tell us about your pet’s journey. You will proceed to secure payment as soon as you submit." : storeEnquiryTitle ? "Send FK a few details and she will follow up by email." : form.description}</p>
       </header>
       <form className="enquiry-form" onSubmit={submit}>
         <div className="enquiry-form-grid">
@@ -184,7 +193,7 @@ export default function EnquiryForm({ kind = "contact", opportunityName, modal =
         {siteKey ? <div className="enquiry-security"><div ref={widgetRef} /><small>Complete the security check before submitting.</small></div> : null}
         {notice && !notice.ok ? <p className="enquiry-status error" role="alert">{notice.text}{" "}Email <a href={`mailto:${publicReplyEmail}`}>{publicReplyEmail}</a> if you need another route.</p> : null}
         <div className="enquiry-submit-row">
-          <button className="standard-button" type="submit" disabled={busy || Boolean(siteKey && !token)}>{busy ? "SENDING…" : storeWaitlist ? "JOIN WAITLIST" : storeEnquiryTitle ? "SEND ENQUIRY" : form.button}<span aria-hidden="true">→</span></button>
+          <button className="standard-button" type="submit" disabled={busy || Boolean(siteKey && !token)}>{busy ? (isPetTravelCheckout ? "OPENING CHECKOUT…" : "SENDING…") : storeWaitlist ? "JOIN WAITLIST" : isPetTravelCheckout ? "PROCEED WITH PAYMENT" : storeEnquiryTitle ? "SEND ENQUIRY" : form.button}<span aria-hidden="true">→</span></button>
           <p>Or email <a href={`mailto:${publicReplyEmail}`}>{publicReplyEmail}</a> directly.</p>
         </div>
         <p className="enquiry-privacy-note">Please do not include passwords, payment card details or other sensitive information.</p>
