@@ -78,14 +78,13 @@ export function PrivacyPolicy() {
       "Digital products: when your download link was opened, so we can manage access and refund requests.",
       "Email updates: your email address if you sign up for T.A.P IN opportunity alerts, new blog articles, a product waitlist or general updates.",
       "Technical information: your IP address, browser, device, pages visited and similar data recorded by our hosting and security services.",
-      "Cookie choices: whether you accepted or declined optional analytics."
+      "Cookie choices: whether you allowed embedded YouTube videos to load when you choose to play them."
     ]},
     { heading: "3. Why we use it", paragraphs: [
       "To respond to enquiries, assess applications, deliver products and services, take payments, send updates you asked for, keep the site secure and meet our legal obligations. Under UK and Nigerian data protection law, our legal grounds are: taking steps at your request before a contract, performing a contract, our legitimate interest in running the business, your consent where needed, and legal obligations."
     ]},
     { heading: "4. Who we share it with", paragraphs: ["We never sell your information. We share only what’s needed with the services that run the site:"], bullets: [
-      "Vercel (hosting)", "Resend (email)", "Cloudflare Turnstile (spam protection)", "Stripe (payments)",
-      "Google (calendar bookings, invites and video calls)"
+      "Vercel (hosting)", "Supabase (database and secure file storage)", "Resend (email)", "MailerLite (newsletter subscriptions)", "Cal.com (calendar bookings)", "Cloudflare Turnstile (spam protection)", "Stripe (payments)"
     ]},
     { heading: "5. T.A.P IN", paragraphs: ["When you express interest in an opportunity, we don’t pass your details to the lister automatically. We review interest and make introductions ourselves, with your agreement."] },
     { heading: "6. International transfers", paragraphs: ["Some of these services process data outside your country. Where the law requires it, we use appropriate safeguards, such as approved contract terms."] },
@@ -126,11 +125,11 @@ export function CookiePolicy() {
     { heading: "1. What cookies are", paragraphs: ["Cookies are small files your browser stores when you visit a website. Similar technologies, like local storage, work in a similar way. We call them all “cookies” here."] },
     { heading: "2. The cookies we use", paragraphs: [
       "Essential: Keeps the site secure, protects forms from spam (Cloudflare Turnstile), processes payments safely (Stripe) and remembers your cookie choice. Always on, as the site can’t work properly without them.",
-      "Analytics: We don't use analytics cookies at present. If we add an analytics tool, we'll name it here and only set it if you accept.",
+      "Analytics: We do not use analytics cookies.",
       "Embedded content: Videos from YouTube may set their own cookies when you play them. Only loaded if you accept, or when you choose to use them.",
       "We don’t use advertising cookies."
     ]},
-    { heading: "3. Changing your choice", paragraphs: ["When you first visit, you can accept or decline optional cookies. You can change your choice at any time using the Cookie settings link at the bottom of every page. You can also block or delete cookies in your browser settings, though some features may not work properly."] },
+    { heading: "3. Changing your choice", paragraphs: ["When you first visit, you can choose whether embedded YouTube videos may load when you play them. You can change your choice at any time using the Cookie settings link at the bottom of every page. You can also block or delete cookies in your browser settings, though some features may not work properly."] },
     { heading: "4. Other providers", paragraphs: ["Stripe and YouTube set cookies under their own policies, which we encourage you to read."] },
     { heading: "5. Changes", paragraphs: ["We’ll update this policy if the cookies we use change. The date above shows the current version."] }
   ];
