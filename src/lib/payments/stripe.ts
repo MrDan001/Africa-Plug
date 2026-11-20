@@ -9,10 +9,15 @@ export function getStripe(): Stripe {
   return stripeClient;
 }
 
+export function getStripeWebhookSecrets(): string[] {
+  const secrets = [process.env.STRIPE_WEBHOOK_SECRET, process.env.STRIPE_WEBHOOK_SECRET_TEST]
+    .filter((secret): secret is string => Boolean(secret?.trim()));
+  if (!secrets.length) throw new Error("Stripe webhook is not configured. Add STRIPE_WEBHOOK_SECRET and, when using Stripe test mode on this endpoint, STRIPE_WEBHOOK_SECRET_TEST.");
+  return [...new Set(secrets)];
+}
+
 export function getStripeWebhookSecret(): string {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!secret) throw new Error("Stripe webhook is not configured. Add STRIPE_WEBHOOK_SECRET to the deployment environment.");
-  return secret;
+  return getStripeWebhookSecrets()[0]!;
 }
 
 export function getPublicSiteUrl(request: Request): string {

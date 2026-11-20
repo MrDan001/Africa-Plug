@@ -48,6 +48,8 @@ const FIELDS: Partial<Record<ModuleKey, Field[]>> = {
   store: [
     { key: "summary", label: "Short product summary", type: "textarea", rows: 3 },
     { key: "description", label: "Product description", type: "textarea", rows: 5 },
+    { key: "releaseMonth", label: "Guide release month", type: "text", placeholder: "Month YYYY", help: "For guides, enter the approved release month when FK confirms it." },
+    { key: "whatsInsideText", label: "What’s inside (one item per line)", type: "textarea", rows: 6, help: "For guides, add the contents or chapter list. Each line becomes a bullet on the public guide page." },
     { key: "price", label: "Price (numeric)", type: "number", help: "Enter the amount only. This catalogue value does not activate checkout by itself." },
     { key: "currency", label: "Currency code", type: "text", placeholder: "GBP" },
     { key: "imageUrl", label: "Product cover image", type: "image-upload", help: "Upload a JPG, PNG, WebP or AVIF cover image directly here. It will be stored in Supabase public media storage and attached to this product." },
@@ -208,6 +210,7 @@ function toDraft(record?: CmsRecord, moduleKey?: ModuleKey): Draft {
       : text(source.body);
     data.publishedAt = toLocalDateTime(text(source.publishedAt));
   }
+  if (moduleKey === "store") data.whatsInsideText = Array.isArray(source.whatsInside) ? source.whatsInside.map(String).join("\n") : text(source.whatsInsideText);
   if (moduleKey === "subscribers") data.email = text(source.email) || record?.title || "";
   if (moduleKey === "site-settings") {
     data.navigationText = Array.isArray(source.navigation)
@@ -269,6 +272,9 @@ function makeData(moduleKey: ModuleKey, draft: Draft) {
   if (moduleKey === "store") {
     const price = Number(data.price ?? 0);
     data.price = Number.isFinite(price) && price >= 0 ? price : 0;
+    data.releaseMonth = text(data.releaseMonth).slice(0, 80);
+    data.whatsInside = text(data.whatsInsideText).split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 30);
+    delete data.whatsInsideText;
   }
   if (moduleKey === "site-settings") {
     const navigation = text(data.navigationText).split("\n").map((line) => {
@@ -359,7 +365,7 @@ export default function AdminModuleClient({ moduleKey }: { moduleKey: ModuleKey 
     clearCoverPreview();
     const next = toDraft(undefined, moduleKey);
     if (moduleKey === "blog") next.data = { category: "Business", author: "FK", publishedAt: todayDateTime(), featureOnHomepage: false, tagsText: "", body: "", excerpt: "", image: "", imageAlt: "", imageCredit: "", takeaway: "", seoTitle: "", seoDescription: "", shareImage: "" };
-    if (moduleKey === "store") { next.status = "active"; next.data = { summary: "", description: "", price: 0, currency: "GBP", imageUrl: "", imageAlt: "", productType: "Guide", availability: "coming-soon", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false }; }
+    if (moduleKey === "store") { next.status = "active"; next.data = { summary: "", description: "", releaseMonth: "", whatsInside: [], whatsInsideText: "", price: 0, currency: "GBP", imageUrl: "", imageAlt: "", productType: "Guide", availability: "coming-soon", externalUrl: "", productFileReference: "", seoTitle: "", seoDescription: "", featured: false }; }
     if (moduleKey === "subscribers") next.data = { email: "", name: "", source: "Admin" };
     if (moduleKey === "settings") { next.title = "Commercial settings"; next.slug = "commercial-settings"; next.data = { consultationFee: "", depositAmount: "", currency: "GBP", meetingMinutes: 60, bookingUrl: "", cancellationTerms: "", rescheduleTerms: "", noShowTerms: "" }; }
     setDraft(next);

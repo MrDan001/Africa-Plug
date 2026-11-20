@@ -13,30 +13,14 @@ export default async function OpenGraphImage() {
   );
   const logoSrc = `data:image/jpeg;base64,${logoBytes.toString("base64")}`;
 
-  const sourceSize = 1254;
-  const crop = { x: 266, y: 96, width: 721, height: 1055 };
-  const logoHeight = 58;
-  const logoWidth = (crop.width / crop.height) * logoHeight;
+  const logoWidth = 190;
+  const logoHeight = 96;
 
   return new ImageResponse(
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 76, background: "#f7f5f1", color: "#292a2c", fontFamily: "Arial, Helvetica, sans-serif" }}>
       <div style={{ display: "flex", alignItems: "center", height: 64 }}>
-        <div style={{ width: logoWidth, height: logoHeight, position: "relative", overflow: "hidden", display: "flex", flex: "none", background: "#000" }}>
-          <img
-            src={logoSrc}
-            alt="The Africa Plug"
-            width={sourceSize}
-            height={sourceSize}
-            style={{
-              position: "absolute",
-              display: "block",
-              maxWidth: sourceSize,
-              height: "auto",
-              width: `${(sourceSize / crop.width) * 100}%`,
-              left: `${-(crop.x / crop.width) * 100}%`,
-              top: `${-(crop.y / crop.height) * 100}%`,
-            }}
-          />
+        <div style={{ width: logoWidth, height: logoHeight, display: "flex", alignItems: "center", justifyContent: "flex-start", flex: "none", background: "transparent" }}>
+          <img src={logoSrc} alt="The Africa Plug" width={logoWidth} height={logoHeight} style={{ display: "block", width: "100%", height: "100%", objectFit: "contain" }} />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", maxWidth: 930 }}>

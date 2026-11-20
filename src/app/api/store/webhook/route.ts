@@ -6,7 +6,7 @@ import { cmsBridge, getPublicCmsRecords } from "@/lib/cms-bridge";
 import { sendClientEmail } from "@/lib/emails/send";
 import { CAL_LINKS } from "@/lib/emails/links";
 import { loadApplication, saveApplicationData } from "@/lib/work-with-fk/scheduler";
-import { getStripe, getStripeWebhookSecret } from "@/lib/payments/stripe";
+import { getStripe, getStripeWebhookSecrets } from "@/lib/payments/stripe";
 import { getSupabaseServiceRoleKey } from "@/lib/supabase-service-role";
 
 export const runtime = "nodejs";
@@ -19,7 +19,18 @@ export async function POST(request: Request) {
   let event: Stripe.Event;
   try {
     const rawBody = await request.text();
-    event = getStripe().webhooks.constructEvent(rawBody, signature, getStripeWebhookSecret());
+    const stripe = getStripe();
+    let verifiedEvent: Stripe.Event | null = null;
+    for (const secret of getStripeWebhookSecrets()) {
+      try {
+        verifiedEvent = stripe.webhooks.constructEvent(rawBody, signature, secret);
+        break;
+      } catch {
+        // Try the other configured endpoint secret (live or test mode).
+      }
+    }
+    if (!verifiedEvent) throw new Error("No configured Stripe webhook secret matched this signature.");
+    event = verifiedEvent;
   } catch (error) {
     console.error("Stripe webhook signature verification failed:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "Invalid webhook signature." }, { status: 400 });

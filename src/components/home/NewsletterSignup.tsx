@@ -45,7 +45,7 @@ export default function NewsletterSignup() {
           <div ref={widgetRef} />
           {!siteKey ? <p role="alert" style={{ color: "#ffd1d1", margin: 0 }}>Security verification is not configured yet.</p> : null}
           <button type="submit" disabled={busy || !siteKey || !token} style={{ justifySelf: "start", padding: "13px 18px", cursor: busy ? "wait" : "pointer", border: 0, borderRadius: 3, background: "#d51f6d", color: "#fff", fontWeight: 800 }}>{busy ? "SAVING…" : "SIGN ME UP →"}</button>
-          <p style={{ fontSize: 12, lineHeight: 1.5, color: "#c6c6ca", margin: 0 }}>By subscribing, you agree to receive email updates from The Africa Plug. You can request removal at any time.</p>
+          <p style={{ fontSize: 12, lineHeight: 1.5, color: "#c6c6ca", margin: 0 }}>Unsubscribe at any time. <a href="/privacy" style={{ color: "inherit", textDecoration: "underline" }}>Privacy Policy</a>.</p>
           {notice ? <p role="status" style={{ color: notice.ok ? "#a0e8c7" : "#ffd1d1", margin: 0 }}>{notice.text}</p> : null}
         </form>
       </div>

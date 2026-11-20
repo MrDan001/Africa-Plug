@@ -2,6 +2,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/layout/CookieConsent";
 import JsonLd from "@/components/seo/JsonLd";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import PartnershipDialog from "@/components/forms/PartnershipDialog";
 
 export default function SiteLayout({
@@ -18,6 +19,7 @@ export default function SiteLayout({
         Skip to content
       </a>
       <JsonLd />
+      <BreadcrumbJsonLd />
       <Header />
       <main id="main" className="flex-1">
         {children}

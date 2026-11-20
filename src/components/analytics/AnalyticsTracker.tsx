@@ -14,12 +14,7 @@ function getUtm() {
   };
 }
 
-function hasAnalyticsConsent() {
-  try { return localStorage.getItem("tap-consent-v1") === "analytics"; } catch { return false; }
-}
-
 function record(eventName: string, extras: Record<string, unknown> = {}) {
-  if (!hasAnalyticsConsent()) return;
   const params = new URLSearchParams(window.location.search);
   const body = JSON.stringify({
     eventName,
@@ -65,9 +60,7 @@ export default function AnalyticsTracker() {
       else record("cta_click", { label, href });
     };
     document.addEventListener("click", onClick);
-    const consentChanged = () => { if (hasAnalyticsConsent()) record("page_view"); };
-    window.addEventListener("tap:consent-changed", consentChanged);
-    return () => { document.removeEventListener("click", onClick); window.removeEventListener("tap:consent-changed", consentChanged); };
+    return () => { document.removeEventListener("click", onClick); };
   }, [pathname]);
 
   return null;

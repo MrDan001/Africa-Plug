@@ -4,6 +4,7 @@ import { findPublicOpportunityBySlug } from "@/lib/tap-in/opportunities";
 import { interestSchema } from "@/lib/tap-in/forms";
 import { sendTeamEmail } from "@/lib/tap-in/email";
 import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
+import { getCountryName } from "@/lib/work-with-fk/application-schema";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -60,6 +61,7 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
           email: input.email,
           phone: input.phone || "",
           country: input.country,
+          countryName: getCountryName(input.country),
           message: input.looking,
           timeframe: input.timeframe || "",
           consentPrivacyTermsDueDiligence: true,
@@ -100,7 +102,7 @@ export async function POST(request: Request, context: { params: Promise<{ slug: 
       ["Company or organisation", input.company || "Not provided"],
       ["Email", input.email],
       ["Phone or WhatsApp", input.phone || "Not provided"],
-      ["Country based in", input.country],
+      ["Country based in", getCountryName(input.country)],
       ["What are you looking for?", input.looking],
       ["Timeframe", input.timeframe || "Not provided"],
       ["Agreed to Privacy Policy, Terms and due diligence", "Yes"],

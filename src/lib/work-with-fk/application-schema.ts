@@ -44,13 +44,40 @@ export const AFRICAN_COUNTRIES = [
   "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe",
 ] as const;
 
-export const COUNTRIES = COUNTRY_CODES
-  .map((code) => countryNames.of(code) ?? code)
-  .filter((name) => name.length > 0)
-  .sort((a, b) => a.localeCompare(b, "en"));
+const COUNTRY_LABEL_OVERRIDES: Record<string, string> = {
+  CV: "Cabo Verde",
+  CD: "Congo (Democratic Republic)",
+  CG: "Congo (Republic)",
+  ST: "São Tomé and Príncipe",
+};
 
-const countryField = z.string().trim().min(1, "Please choose a country.").max(100)
-  .refine((value) => COUNTRIES.includes(value), "Please choose a country from the list.");
+export const COUNTRY_OPTIONS = COUNTRY_CODES
+  .map((code) => ({ code, name: COUNTRY_LABEL_OVERRIDES[code] ?? countryNames.of(code) ?? code }))
+  .filter((country) => country.name.length > 0)
+  .sort((a, b) => a.name.localeCompare(b.name, "en"));
+
+export const COUNTRIES = COUNTRY_OPTIONS.map((country) => country.name);
+
+const AFRICAN_COUNTRY_CODES = [
+  "DZ","AO","BJ","BW","BF","BI","CV","CM","CF","TD","KM","CD","CG","CI","DJ","EG","GQ","ER","SZ","ET",
+  "GA","GM","GH","GN","GW","KE","LS","LR","LY","MG","MW","ML","MR","MU","MA","MZ","NA","NE","NG","RW",
+  "ST","SN","SC","SL","SO","ZA","SS","SD","TZ","TG","TN","UG","ZM","ZW",
+] as const;
+
+export const AFRICAN_COUNTRY_OPTIONS = COUNTRY_OPTIONS.filter((country) =>
+  (AFRICAN_COUNTRY_CODES as readonly string[]).includes(country.code),
+);
+
+export function isCountryCode(value: string): boolean {
+  return (COUNTRY_CODES as readonly string[]).includes(value);
+}
+
+export function getCountryName(value: string): string {
+  return COUNTRY_OPTIONS.find((country) => country.code === value)?.name ?? value;
+}
+
+const countryField = z.string().trim().length(2, "Please choose a country.")
+  .refine(isCountryCode, "Please choose a valid country from the list.");
 
 export const DEAL_STAGES = ["Before we commit", "While it’s moving", "It has stalled"] as const;
 export const TIMEFRAMES = ["Now", "Within 3 months", "Within 6 months", "Later than 6 months"] as const;
