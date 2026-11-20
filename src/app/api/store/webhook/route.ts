@@ -114,8 +114,8 @@ export async function POST(request: Request) {
         const enquiry = lookup.records?.find((record) => record.slug === enquirySlug);
         if (!enquiry) throw new Error("Matching Pet Travel enquiry was not found.");
         if (enquiry.data?.stripeSessionId !== session.id) throw new Error("Pet Travel checkout session does not match the saved enquiry.");
-        if (enquiry.data?.paymentStatus === "paid") return NextResponse.json({ received: true, petTravelPaid: true, duplicate: true });
-        await cmsBridge({
+        if (enquiry.data?.bookingEmailSentAt) return NextResponse.json({ received: true, petTravelPaid: true, duplicate: true });
+        if (enquiry.data?.paymentStatus !== "paid") await cmsBridge({
           action: "cms.save", module: "enquiries",
           record: {
             id: enquiry.id, title: enquiry.title, slug: enquiry.slug, status: "paid",
@@ -142,6 +142,22 @@ export async function POST(request: Request) {
       if (sent.status !== "sent") {
         console.error("Pet Travel booking email failed:", sent.status, sent.error || "");
         return NextResponse.json({ error: "Payment was recorded but the booking email could not be sent; Stripe may retry." }, { status: 500 });
+      }
+      try {
+        const lookup = await cmsBridge<{ records?: Array<{ id: string; title: string; slug: string | null; data?: Record<string, unknown> }> }>({
+          action: "cms.list", module: "enquiries", slug: enquirySlug,
+        });
+        const enquiry = lookup.records?.find((record) => record.slug === enquirySlug);
+        if (enquiry) await cmsBridge({
+          action: "cms.save", module: "enquiries",
+          record: {
+            id: enquiry.id, title: enquiry.title, slug: enquiry.slug, status: "paid",
+            data: { ...(enquiry.data || {}), bookingEmailSentAt: new Date().toISOString(), bookingEmailStatus: "sent" },
+          },
+        });
+      } catch (error) {
+        console.error("Pet Travel booking email status could not be saved:", error instanceof Error ? error.message : "Unknown error");
+        return NextResponse.json({ error: "Booking email was sent but its delivery status could not be recorded." }, { status: 500 });
       }
       return NextResponse.json({ received: true, petTravelPaid: true });
     }
