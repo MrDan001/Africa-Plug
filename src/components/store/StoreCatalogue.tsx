@@ -3,6 +3,7 @@ import { getPublicCmsRecords } from "@/lib/cms-bridge";
 import { cmsRecordToPublicProduct } from "@/lib/public-cms-content";
 import { STORE_CATEGORIES, getStoreCategory, parseStoreCategory } from "@/lib/store-categories";
 import { DEMO_STORE_PRODUCTS } from "@/lib/store-demo-products";
+import StoreAddToCartButton from "@/components/store/StoreAddToCartButton";
 import StoreEnquiryButton from "@/components/store/StoreEnquiryButton";
 import "./store-categories.css";
 import "./store-page.css";
@@ -49,7 +50,8 @@ export default async function StoreCatalogue({ category }: Props) {
         {visible.map((product) => {
           const type = getStoreCategory(product.category).singular;
           const isGuide = product.category === "guides";
-          const available = product.availability === "available" && (!isGuide || product.downloadReady);
+          const released = product.availability === "available" && (!isGuide || product.downloadReady);
+          const preorder = isGuide && !product.downloadReady && product.price > 0 && !product.externalUrl;
           return <article className="store-product-card" key={product.id}>
             <Link href={`/store/${product.slug}`} className="store-product-image-link" aria-label={`View ${product.title}`}>
               {product.imageUrl ? <img className="store-product-image" src={product.imageUrl} alt={product.imageAlt} /> : <div className="store-product-image store-product-image-placeholder" aria-hidden="true"><span>THE AFRICA PLUG</span><strong>{product.title}</strong></div>}
@@ -57,19 +59,17 @@ export default async function StoreCatalogue({ category }: Props) {
             <div className="store-product-copy">
               <div className="store-product-type-row">
                 <p className="store-product-kicker">{type}</p>
-                <span className={`store-product-status ${available ? "is-available" : "is-coming-soon"}`}>{available ? "AVAILABLE" : "COMING SOON"}</span>
+                <span className={`store-product-status ${released ? "is-available" : "is-coming-soon"}`}>{released ? "AVAILABLE" : preorder ? "PREORDER" : "COMING SOON"}</span>
               </div>
               <h2><Link href={`/store/${product.slug}`}>{product.title}</Link></h2>
               <p className="store-product-summary">{product.summary}</p>
               <div className="store-product-action">
-                {available ? <>
+                {(released || preorder) ? <>
                   {product.price > 0 ? <strong className="store-product-price">{formatter(product.price, product.currency)}</strong> : null}
                   {isGuide
-                    ? product.downloadReady
-                      ? <Link className="store-product-cta" href={'/store/' + product.slug}>BUY NOW <span aria-hidden="true">→</span></Link>
-                      : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} />
+                    ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" buttonLabel={preorder ? "PREORDER" : "BUY NOW"} />
                     : <StoreEnquiryButton title={product.title} buttonLabel={product.slug === "pet-travel-consultation" ? "BOOK NOW" : "ENQUIRE NOW"} productId={product.id} productSlug={product.slug} />}
-                </> : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} />}
+                </> : <StoreEnquiryButton title={product.title} buttonLabel="ENQUIRE NOW" productId={product.id} productSlug={product.slug} />}
               </div>
             </div>
           </article>;
