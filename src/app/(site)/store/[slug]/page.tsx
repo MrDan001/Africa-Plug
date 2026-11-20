@@ -46,7 +46,8 @@ export default async function ProductPage({ params }: Props) {
     : null;
   if (product) {
     const isGuide = product.category === "guides";
-    const available = product.availability === "available" && (!isGuide || product.downloadReady);
+    const released = product.availability === "available" && (!isGuide || product.downloadReady);
+    const preorder = isGuide && !product.downloadReady && product.price > 0 && !product.externalUrl;
     const isService = product.category === "services";
     return <div className="tap-product-detail-page">
       <div className="tap-product-detail-topline"><Link href="/store">← Back to The Store</Link><span>THE AFRICA PLUG / STORE</span><div className="tapcart-desktop-only"><StoreCartButton /></div></div>
@@ -55,17 +56,16 @@ export default async function ProductPage({ params }: Props) {
           {product.imageUrl ? <img className="tap-product-detail-image" src={product.imageUrl} alt={`${product.title} product image`} decoding="async" /> : <div className="tap-book-cover tap-book-cover--starter tap-detail-book-cover"><span className="tap-book-cover-brand">THE AFRICA PLUG</span><span className="tap-book-cover-index">01</span><span className="tap-book-cover-label">{product.productType}</span><h2>{product.title}</h2><span className="tap-book-cover-rule"/><span className="tap-book-cover-footer">KNOWLEDGE • TOOLS • RESEARCH</span></div>}
         </div>
         <div className="tap-product-detail-copy">
-          <p className="tap-book-category">{getStoreCategory(product.category).singular} <span className={`store-product-status ${available ? "is-available" : "is-coming-soon"}`}>{available ? "AVAILABLE" : "COMING SOON"}</span></p><h1 id="tap-product-title">{product.title}</h1><p className="tap-product-detail-summary">{product.description}</p>
-          {available && !product.externalUrl && product.price > 0 ? <p>{new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price)}</p> : null}
-          {product.externalUrl ? <><a className="tap-cat-external" href={product.externalUrl} target="_blank" rel="noopener noreferrer sponsored">VISIT <span aria-hidden="true">↗</span></a><p className="tap-cat-note">This link takes you to a partner website.</p></> : !available ? <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} /> : isService ? <div className="tap-product-action-row"><StoreEnquiryButton title={product.title} buttonLabel={product.slug === "pet-travel-consultation" ? "BOOK NOW" : "ENQUIRE NOW"} productId={product.id} productSlug={product.slug} /></div> : product.price > 0 && product.downloadReady ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" /> : <p className="tap-product-checkout-note">A protected guide download is being prepared.</p>}
-          {available && !product.externalUrl && product.price > 0 && product.downloadReady ? <p className="tap-product-checkout-note">Secure checkout verifies payment and protected delivery before completing an order.</p> : null}
+          <p className="tap-book-category">{getStoreCategory(product.category).singular} <span className={`store-product-status ${released ? "is-available" : "is-coming-soon"}`}>{released ? "AVAILABLE" : preorder ? "PREORDER" : "COMING SOON"}</span></p><h1 id="tap-product-title">{product.title}</h1><p className="tap-product-detail-summary">{product.description}</p>
+          {(!product.externalUrl && product.price > 0 && (released || preorder)) ? <p>{new Intl.NumberFormat("en-GB", { style: "currency", currency: product.currency }).format(product.price)}</p> : null}
+          {product.externalUrl ? <><a className="tap-cat-external" href={product.externalUrl} target="_blank" rel="noopener noreferrer sponsored">VISIT <span aria-hidden="true">↗</span></a><p className="tap-cat-note">This link takes you to a partner website.</p></> : preorder ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" buttonLabel="PREORDER" /> : !released ? <StoreEnquiryButton title={product.title} buttonLabel="ENQUIRE NOW" productId={product.id} productSlug={product.slug} /> : isService ? <div className="tap-product-action-row"><StoreEnquiryButton title={product.title} buttonLabel={product.slug === "pet-travel-consultation" ? "BOOK NOW" : "ENQUIRE NOW"} productId={product.id} productSlug={product.slug} /></div> : product.price > 0 && product.downloadReady ? <StoreAddToCartButton slug={product.slug} title={product.title} price={String(product.price)} currency={product.currency} cover="starter" buttonLabel="BUY NOW" /> : <p className="tap-product-checkout-note">A protected guide download is being prepared.</p>}
+          {(released || preorder) && !product.externalUrl && product.price > 0 ? <p className="tap-product-checkout-note">Secure checkout verifies payment. {preorder ? "Your private download link will be emailed when the guide is released." : "Protected delivery follows payment."}</p> : null}
         </div>
       </section>
       {isGuide ? <section className="tap-product-guide-details" aria-label="Guide details">
         <h2>Inside the guide</h2>
         <p><strong>Format:</strong> PDF</p>
         <p><strong>Release month:</strong> {product.releaseMonth || "To be announced"}</p>
-        <p>{product.description}</p>
         {product.whatsInside.length ? <ul>{product.whatsInside.map((item) => <li key={item}>{item}</li>)}</ul> : null}
         <p>You pay now. We email your download link the day it&apos;s released. You can cancel for a full refund any time before release.</p>
       </section> : null}
