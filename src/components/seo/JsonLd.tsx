@@ -84,13 +84,6 @@ export default async function JsonLd() {
         availability: "https://schema.org/PreOrder",
       },
     })),
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      ],
-    },
   ];
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(payload).replace(/</g, "\\u003c") }} />;
 }
