@@ -4,6 +4,7 @@ import { sendClientEmail } from "@/lib/emails/send";
 import { IMAGE_MAX_BYTES, IMAGE_TYPES, opportunitySchema, registerSchema } from "@/lib/tap-in/forms";
 import { sendTeamEmail } from "@/lib/tap-in/email";
 import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
+import { getCountryName } from "@/lib/work-with-fk/application-schema";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
   const data = isRegister
     ? (() => {
         const v = input as ReturnType<typeof registerSchema.parse>;
-        return { kind: "register", enquiryType: "T.A.P IN register interest", name: v.name, organisation: v.company || "", email: v.email, message: v.looking, countryOfInterest: v.country };
+        return { kind: "register", enquiryType: "T.A.P IN register interest", name: v.name, organisation: v.company || "", email: v.email, message: v.looking, countryOfInterest: v.country, countryOfInterestName: getCountryName(v.country) };
       })()
     : (() => {
         const v = input as ReturnType<typeof opportunitySchema.parse>;
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
   const rows: [string, string][] = isRegister
     ? (() => {
         const v = input as ReturnType<typeof registerSchema.parse>;
-        return [["Name", v.name], ["Company or organisation", v.company || "Not provided"], ["Email", v.email], ["What you're looking for", v.looking], ["Country of interest", v.country]] as [string, string][];
+        return [["Name", v.name], ["Company or organisation", v.company || "Not provided"], ["Email", v.email], ["What you're looking for", v.looking], ["Country of interest", getCountryName(v.country)]] as [string, string][];
       })()
     : (() => {
         const v = input as ReturnType<typeof opportunitySchema.parse>;
