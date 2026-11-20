@@ -56,7 +56,8 @@ export async function POST(request: Request) {
     const data = product?.data ?? {};
     const price = Number(data.price);
     const currency = typeof data.currency === "string" ? data.currency.toLowerCase() : "gbp";
-    if (!product || !Number.isSafeInteger(Math.round(price * 100)) || price <= 0 || !/^[a-z]{3}$/.test(currency)) {
+    const unitAmount = Math.round(price * 100);
+    if (!product || !Number.isFinite(price) || !Number.isSafeInteger(unitAmount) || unitAmount <= 0 || !/^[a-z]{3}$/.test(currency)) {
       return NextResponse.json({ error: "Pet Travel Consultation is temporarily unavailable for payment. Please contact connect@theafricaplug.com." }, { status: 503 });
     }
 
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
         quantity: 1,
         price_data: {
           currency,
-          unit_amount: Math.round(price * 100),
+          unit_amount: unitAmount,
           product_data: { name: product.title || "Pet Travel Consultation", description: "20-minute Pet Travel Consultation with The Africa Plug" },
         },
       }],
