@@ -101,6 +101,50 @@ export async function POST(request: Request) {
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object as Stripe.Checkout.Session;
     if (session.payment_status !== "paid") return NextResponse.json({ received: true, pending: true });
+    if (session.metadata?.service === "pet-travel-consultation") {
+      const enquirySlug = session.metadata.enquiry_slug || "";
+      const customerEmail = typeof session.customer_details?.email === "string" ? session.customer_details.email : typeof session.customer_email === "string" ? session.customer_email : "";
+      if (!enquirySlug.startsWith("pet-travel-") || !customerEmail || !session.amount_total || !session.currency) {
+        return NextResponse.json({ error: "Pet Travel payment details are incomplete." }, { status: 400 });
+      }
+      try {
+        const lookup = await cmsBridge<{ records?: Array<{ id: string; title: string; slug: string | null; status: string; data?: Record<string, unknown> }> }>({
+          action: "cms.list", module: "enquiries", slug: enquirySlug,
+        });
+        const enquiry = lookup.records?.find((record) => record.slug === enquirySlug);
+        if (!enquiry) throw new Error("Matching Pet Travel enquiry was not found.");
+        if (enquiry.data?.stripeSessionId !== session.id) throw new Error("Pet Travel checkout session does not match the saved enquiry.");
+        if (enquiry.data?.paymentStatus === "paid") return NextResponse.json({ received: true, petTravelPaid: true, duplicate: true });
+        await cmsBridge({
+          action: "cms.save", module: "enquiries",
+          record: {
+            id: enquiry.id, title: enquiry.title, slug: enquiry.slug, status: "paid",
+            data: {
+              ...(enquiry.data || {}),
+              paymentStatus: "paid",
+              stripeSessionId: session.id,
+              stripePaymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id || "",
+              stripeEventId: event.id,
+              paidAt: new Date().toISOString(),
+              currency: session.currency.toUpperCase(),
+              amountPaid: session.amount_total,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("Pet Travel payment could not be recorded:", error instanceof Error ? error.message : "Unknown error");
+        return NextResponse.json({ error: "Pet Travel payment could not be recorded; Stripe may retry this event." }, { status: 500 });
+      }
+      const sent = await sendClientEmail("petTravelPaid", customerEmail, {
+        firstName: session.metadata.customer_name || session.customer_details?.name || "",
+        bookingLink: CAL_LINKS.petTravel,
+      }, { idempotencyKey: "paid-pet-travel-consultation-" + session.id });
+      if (sent.status !== "sent") {
+        console.error("Pet Travel booking email failed:", sent.status, sent.error || "");
+        return NextResponse.json({ error: "Payment was recorded but the booking email could not be sent; Stripe may retry." }, { status: 500 });
+      }
+      return NextResponse.json({ received: true, petTravelPaid: true });
+    }
     if (session.metadata?.service === "fk-deal-diagnostic") {
       const applicationId = session.metadata.application_id;
       if (!applicationId || session.currency !== "gbp" || session.amount_total !== 250000) {
