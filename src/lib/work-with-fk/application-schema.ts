@@ -44,8 +44,15 @@ export const AFRICAN_COUNTRIES = [
   "Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe",
 ] as const;
 
+const COUNTRY_LABEL_OVERRIDES: Record<string, string> = {
+  CV: "Cabo Verde",
+  CD: "Congo (Democratic Republic)",
+  CG: "Congo (Republic)",
+  ST: "São Tomé and Príncipe",
+};
+
 export const COUNTRY_OPTIONS = COUNTRY_CODES
-  .map((code) => ({ code, name: countryNames.of(code) ?? code }))
+  .map((code) => ({ code, name: COUNTRY_LABEL_OVERRIDES[code] ?? countryNames.of(code) ?? code }))
   .filter((country) => country.name.length > 0)
   .sort((a, b) => a.name.localeCompare(b.name, "en"));
 
