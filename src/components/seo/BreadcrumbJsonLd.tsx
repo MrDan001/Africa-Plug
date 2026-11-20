@@ -28,7 +28,7 @@ export default function BreadcrumbJsonLd() {
   let path = "";
   for (const segment of segments) {
     path += "/" + segment;
-    const name = LABELS[segment] || decodeURIComponent(segment).replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+    const name = LABELS[segment] || segment.replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
     crumbs.push({ name, url: SITE_URL + path });
   }
   const payload = {
