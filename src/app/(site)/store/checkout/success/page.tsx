@@ -24,7 +24,12 @@ export default async function StoreCheckoutSuccessPage({ searchParams }: Props) 
   if (/^cs_(test|live)_[A-Za-z0-9_]+$/.test(sessionId)) {
     try {
       const session = await getStripe().checkout.sessions.retrieve(sessionId);
-      paymentConfirmed = session.payment_status === "paid" && session.metadata?.store === "africa-plug";
+      const isPaid = session.payment_status === "paid";
+      if (isPaid && session.metadata?.service === "pet-travel-consultation") {
+        paymentConfirmed = true;
+        redirect(CAL_LINKS.petTravel);
+      }
+      paymentConfirmed = isPaid && session.metadata?.store === "africa-plug";
       if (paymentConfirmed) {
         purchasedSlugs = (session.metadata?.product_slugs ?? "").split(",").filter(Boolean);
         const isPetTravel = purchasedSlugs.some((slug) => /pet[-_]?travel[-_]?consultation/i.test(slug));
