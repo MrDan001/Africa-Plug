@@ -49,8 +49,7 @@ export default async function StoreCatalogue({ category }: Props) {
         {visible.map((product) => {
           const type = getStoreCategory(product.category).singular;
           const isGuide = product.category === "guides";
-          const isGuidePreorder = isGuide && ["explore-africa-like-an-insider", "the-unwritten-rules-of-doing-business-in-africa"].includes(product.slug);
-          const available = product.availability === "available" && (!isGuide || product.downloadReady) && !isGuidePreorder;
+          const available = product.availability === "available" && (!isGuide || product.downloadReady);
           return <article className="store-product-card" key={product.id}>
             <Link href={`/store/${product.slug}`} className="store-product-image-link" aria-label={`View ${product.title}`}>
               {product.imageUrl ? <img className="store-product-image" src={product.imageUrl} alt={product.imageAlt} /> : <div className="store-product-image store-product-image-placeholder" aria-hidden="true"><span>THE AFRICA PLUG</span><strong>{product.title}</strong></div>}
@@ -63,16 +62,13 @@ export default async function StoreCatalogue({ category }: Props) {
               <h2><Link href={`/store/${product.slug}`}>{product.title}</Link></h2>
               <p className="store-product-summary">{product.summary}</p>
               <div className="store-product-action">
-                {isGuidePreorder ? <>
-                  <strong className="store-product-price">{formatter(product.price, product.currency)}</strong>
-                  <Link className="store-product-cta" href={"/store/" + product.slug}>PREORDER <span aria-hidden="true">→</span></Link>
-                </> : available ? <>
+                {available ? <>
                   {product.price > 0 ? <strong className="store-product-price">{formatter(product.price, product.currency)}</strong> : null}
                   {isGuide
                     ? product.downloadReady
                       ? <Link className="store-product-cta" href={'/store/' + product.slug}>BUY NOW <span aria-hidden="true">→</span></Link>
                       : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} />
-                    : <StoreEnquiryButton title={product.title} productId={product.id} productSlug={product.slug} />}
+                    : <StoreEnquiryButton title={product.title} buttonLabel={product.slug === "pet-travel-consultation" ? "BOOK NOW" : "ENQUIRE NOW"} productId={product.id} productSlug={product.slug} />}
                 </> : <StoreEnquiryButton title={product.title} buttonLabel="JOIN THE WAITLIST" waitlist productId={product.id} productSlug={product.slug} />}
               </div>
             </div>
