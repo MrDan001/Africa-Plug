@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { cmsBridge } from "@/lib/cms-bridge";
-import { applicationSchema } from "@/lib/work-with-fk/application-schema";
+import { applicationSchema, getCountryName } from "@/lib/work-with-fk/application-schema";
 import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
 import { sendClientEmail } from "@/lib/emails/send";
 
@@ -60,6 +60,7 @@ export async function POST(request: Request) {
           email: app.email,
           phone: app.phone || "",
           country: app.country,
+          countryName: getCountryName(app.country),
           countryMarket: app.markets,
           markets: app.markets,
           dealStage: app.dealStage,
@@ -119,7 +120,7 @@ export async function POST(request: Request) {
     ["Company or organisation", app.company],
     ["Email", app.email],
     ["Phone or WhatsApp", app.phone || "Not provided"],
-    ["Country based in", app.country],
+    ["Country based in", getCountryName(app.country)],
     ["Market or markets involved", app.markets],
     ["Where is the deal now?", app.dealStage],
     ["What are you trying to get done?", app.goal],
