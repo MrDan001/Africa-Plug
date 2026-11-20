@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { cmsBridge } from "@/lib/cms-bridge";
-import { callSchema } from "@/lib/work-with-fk/application-schema";
+import { callSchema, getCountryName } from "@/lib/work-with-fk/application-schema";
 import { verifyTurnstile } from "@/lib/work-with-fk/turnstile";
 import { getPublicSiteUrl, getStripe } from "@/lib/payments/stripe";
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       action: "cms.save", module: "enquiries",
       record: {
         title: `Call request: ${call.fullName}`.slice(0, 240), slug: null, status: "new",
-        data: { kind: "call", enquiryType: "30 minute call with FK", name: call.fullName, email: call.email, country: call.country, message: call.question, question: call.question, consentPrivacyTerms: true, sessionCancellationConsent: true, sessionCancellationConsentText: "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place.", paymentStatus: "pending", submittedAt: new Date().toISOString() },
+        data: { kind: "call", enquiryType: "30 minute call with FK", name: call.fullName, email: call.email, country: call.country, countryName: getCountryName(call.country), message: call.question, question: call.question, consentPrivacyTerms: true, sessionCancellationConsent: true, sessionCancellationConsentText: "If my session takes place within 14 days of booking, I ask for it to go ahead and understand that I lose my right to cancel once it has taken place.", paymentStatus: "pending", submittedAt: new Date().toISOString() },
       },
     });
     const origin = getPublicSiteUrl(request);
